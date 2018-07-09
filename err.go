@@ -2,9 +2,14 @@ package dot
 
 import "errors"
 
-type ErrorI interface {
+var (
+	_ Errorer = (*sError)(nil)
+)
+
+//Errorer dot error interface
+type Errorer interface {
 	error
-	Id() string
+	Code() string
 }
 
 type sError struct {
@@ -12,29 +17,34 @@ type sError struct {
 	id  string
 }
 
-func (c *sError) Id() string {
+//Code error id
+func (c *sError) Code() string {
 	return c.id
 }
 
+//SError return error info
 func (c *sError) Error() string {
 	return c.err.Error()
 }
 
-func NewSError(id string, info string) ErrorI {
+//New new Errorer
+func New(id string, info string) Errorer {
 	err := sError{err: errors.New(info), id: id}
 	return &err
 }
 
-type Err struct {
-	ErrNullParameter ErrorI
-	ErrExited        ErrorI
-	ErrParameter     ErrorI
+//Error dot error
+type Error struct {
+	ErrNullParameter Errorer
+	ErrExited        Errorer
+	ErrParameter     Errorer
 }
 
-var Error = &Err{}
+//SError dot的全局常用 error对象
+var SError = &Error{}
 
 func init() {
-	Error.ErrNullParameter = NewSError("dot_null_parameter", "the parameter is null")
-	Error.ErrExited = NewSError("dot_exited", "the value exited")
-	Error.ErrParameter = NewSError("dot_error_parameter", "the parameter error")
+	SError.ErrNullParameter = New("dot_null_parameter", "the parameter is null")
+	SError.ErrExited = New("dot_exited", "the value exited")
+	SError.ErrParameter = New("dot_error_parameter", "the parameter error")
 }
