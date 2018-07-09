@@ -100,11 +100,11 @@ func (c *SConfig) rootPath() {
 			c.ConfPath = exPath
 		}
 
-		if file:= filepath.Join(c.ConfPath, GCmd.ConfigFile); len(GCmd.ConfigFile) > 0 && sfile.ExitFile(file) {
+		if file := filepath.Join(c.ConfPath, GCmd.ConfigFile); len(GCmd.ConfigFile) > 0 && sfile.ExitFile(file) {
 			c.File = file
 		} else if file := filepath.Join(c.ConfPath, exName+extensionName); sfile.ExitFile(file) {
 			c.File = file
-		} else if file := filepath.Join(c.ConfPath, conf +extensionName); sfile.ExitFile(file) {
+		} else if file := filepath.Join(c.ConfPath, conf+extensionName); sfile.ExitFile(file) {
 			c.File = file
 		}
 	}
