@@ -13,8 +13,6 @@ type DotConfig struct {
 }
 
 type LineConfig struct {
-
 	DotsConfigPath string
 	Dots []DotConfig
-
 }
