@@ -17,12 +17,12 @@ func NewMetas() *Metas {
 
 func (ms *Metas) Add(m *dot.MetaData) error {
 	if m == nil || m.TypeId.String() == "" {
-		return dot.Error.ErrNullParameter
+		return dot.SError.ErrNullParameter
 	}
 
 	_, ok := ms.metas.Load(m.TypeId)
 	if ok {
-		return dot.Error.ErrExited
+		return dot.SError.ErrExited
 	}
 
 	ms.metas.LoadOrStore(m.TypeId, m)
@@ -43,7 +43,7 @@ func (ms *Metas) Get(typeId dot.TypeId) (meta *dot.MetaData, err error) {
 
 	t, ok := ms.metas.Load(typeId)
 	if !ok {
-		err = dot.Error.ErrExited
+		err = dot.SError.ErrExited
 	} else {
 		meta, ok = t.(*dot.MetaData)
 	}
