@@ -27,24 +27,28 @@ func (c *sError) Error() string {
 	return c.err.Error()
 }
 
-//New new Errorer
-func New(id string, info string) Errorer {
+//NewError new Errorer
+func NewError(id string, info string) Errorer {
 	err := sError{err: errors.New(info), id: id}
 	return &err
 }
 
 //Error dot error
 type Error struct {
-	ErrNullParameter Errorer
-	ErrExited        Errorer
-	ErrParameter     Errorer
+	ErrNullParameter    Errorer
+	ErrExisted          Errorer
+	ErrNotExisted       Errorer
+	ErrParameter        Errorer
+	ErrRelyTypeNotMatch Errorer
 }
 
 //SError dot的全局常用 error对象
 var SError = &Error{}
 
 func init() {
-	SError.ErrNullParameter = New("dot_null_parameter", "the parameter is null")
-	SError.ErrExited = New("dot_exited", "the value exited")
-	SError.ErrParameter = New("dot_error_parameter", "the parameter error")
+	SError.ErrNullParameter = NewError("dot_null_parameter", "the parameter is null")
+	SError.ErrExisted = NewError("dot_existed", "the value exited:")
+	SError.ErrNotExisted = NewError("dot_not_existed", "the not exited:")
+	SError.ErrParameter = NewError("dot_error_parameter", "the parameter error ")
+	SError.ErrRelyTypeNotMatch = NewError("dot_rely_type","rely type not match ")
 }

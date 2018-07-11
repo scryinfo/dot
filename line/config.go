@@ -1,18 +1,18 @@
 package line
 
 import (
-	"github.com/scryinfo/dot"
 	"encoding/json"
+
+	"github.com/scryinfo/dot"
 )
 
 type DotConfig struct {
-	TypeId dot.TypeId
-	InstanceId dot.InstanceId
-	RelyInsts []dot.InstanceId
-	Json *json.RawMessage
+	TypeId    dot.TypeId
+	LiveId    dot.LiveId
+	RelyLives []dot.LiveId
+	Json      *json.RawMessage
 }
 
-type LineConfig struct {
-	DotsConfigPath string
+type Config struct {
 	Dots []DotConfig
 }
