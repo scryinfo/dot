@@ -7,14 +7,14 @@ import (
 //TypeId dot 的类型唯一id
 type TypeId string
 
-//InstanceId dot 的实例唯一id
-type InstanceId string
+//LiveId dot 的实例唯一id
+type LiveId string
 
 func (c *TypeId) String() string {
 	return string(*c)
 }
 
-func (c *InstanceId) String() string {
+func (c *LiveId) String() string {
 	return string(*c)
 }
 
@@ -30,16 +30,25 @@ type MetaData struct {
 	RefType     reflect.Type
 }
 
-//RelyInstance 依赖的实例
-type RelyInstance struct {
-	InstId    InstanceId
-	RelyInsts []InstanceId
+//Live 依赖的实例
+type Live struct {
+	TypeId    TypeId
+	LiveId    LiveId
+	RelyLives []LiveId
+	Dot       Dot
 }
 
 //NewMetaData @dot.MetaData 的构造函数
 func NewMetaData() *MetaData {
 	m := &MetaData{}
 	return m
+}
+
+func (m *MetaData) Clone() *MetaData {
+	c := *m
+	c.RelyTypeIds = make([]TypeId, len(m.RelyTypeIds))
+	copy(c.RelyTypeIds, m.RelyTypeIds)
+	return &c
 }
 
 //NewDot 构造一个 dot
@@ -65,18 +74,25 @@ type Newer interface {
 type Dot interface {
 }
 
+type Injecter interface {
+	Inject()
+}
+
 //Lifer 生命周期过程为：
 // Create, Start,Stop,Destroy
 // Create 与 Start是分开的， 为了解决不同dot实例之间的依赖， 如果依赖没有问题，那么可以直接在Create中创建并开始，把Start定为空
 type Lifer interface {
 	//Create 创建 dot， 在这个方法在进行初始，也运行或监听相同内容，最好放在Start方法中实现
-	Create(conf SConfiger) error
+	Create(conf SConfig) error
 	//Start
-	Start() error
+	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+	Start(ignore bool) error
 	//Stop
-	Stop() error
+	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+	Stop(ignore bool) error
 	//Destroy 销毁 Dot
-	Destroy() error
+	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+	Destroy(ignore bool) error
 }
 
 //Tager dot自己的标签数据，dot自己使用
@@ -98,7 +114,7 @@ type Statuser interface {
 //HotConfiger hot change config
 type HotConfiger interface {
 	//Update 更新配置信息， 返回true表示成功
-	HotConfig(newConf SConfiger) bool
+	HotConfig(newConf SConfig) bool
 }
 
 //Checker 检测dot，运行一些验证或测试数据，返回对应的结果
