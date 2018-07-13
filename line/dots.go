@@ -1,7 +1,7 @@
 package line
 
 import (
-	"github.com/scryinfo/dot"
+	"github.com/scryinfo/dot/dot"
 )
 
 //Metas
@@ -19,27 +19,42 @@ func NewMetas() *Metas {
 //Lives
 type Lives struct {
 	// typeIdMap map[dot.TypeId][]*dot.Live
-	liveIdMap map[dot.LiveId]*dot.Live
+	LiveIdMap map[dot.LiveId]*dot.Live
 }
 
 func NewLives() *Lives {
 	l := &Lives{}
-	l.liveIdMap = make(map[dot.LiveId]*dot.Live)
+	l.LiveIdMap = make(map[dot.LiveId]*dot.Live)
 	return l
 }
 
 func (ms *Metas) Add(m *dot.MetaData) error {
 	if m == nil || m.TypeId.String() == "" {
-		return dot.SError.ErrNullParameter
+		return dot.SError.NilParameter
 	}
 
 	_, ok := ms.metas[m.TypeId]
 	if ok {
-		return dot.NewError(dot.SError.ErrExisted.Code(), dot.SError.ErrExisted.Error()+m.TypeId.String())
+		return dot.SError.Existed.AddNewError(m.TypeId.String())
 	}
 
 	ms.metas[m.TypeId] = m.Clone()
 
+	return nil
+}
+
+func (ms *Metas) UpdateOrAdd(m *dot.MetaData) error {
+	if m == nil || m.TypeId.String() == "" {
+		return dot.SError.NilParameter
+	}
+
+	old, ok := ms.metas[m.TypeId]
+	if ok {
+		old.NewDoter = m.NewDoter
+		old.RefType = m.RefType
+	} else {
+		ms.metas[m.TypeId] = m.Clone()
+	}
 	return nil
 }
 
@@ -55,7 +70,7 @@ func (ms *Metas) Get(typeId dot.TypeId) (meta *dot.MetaData, err error) {
 
 	meta, ok := ms.metas[typeId]
 	if !ok {
-		err = dot.NewError(dot.SError.ErrNotExisted.Code(), dot.SError.ErrNotExisted.Error()+typeId.String())
+		err = dot.SError.NotExisted.AddNewError(typeId.String())
 	}
 	return
 }
@@ -65,29 +80,46 @@ func (ms *Metas) NewDot(t dot.TypeId) (dot dot.Dot, err error) {
 	err = nil
 
 	m, err := ms.Get(t)
-	if err != nil {
-		dot = m.NewDot(nil)
+	if err == nil {
+		dot, err = m.NewDot(nil)
 	}
 	return
 }
 
 func (ms *Lives) Add(m *dot.Live) error {
 	if m == nil || m.TypeId.String() == "" {
-		return dot.SError.ErrNullParameter
+		return dot.SError.NilParameter
 	}
 
-	_, ok := ms.liveIdMap[m.LiveId]
+	_, ok := ms.LiveIdMap[m.LiveId]
 	if ok {
-		return dot.NewError(dot.SError.ErrExisted.Code(), dot.SError.ErrExisted.Error()+m.LiveId.String())
+		return dot.SError.Existed.AddNewError(m.LiveId.String())
 	}
-	ms.liveIdMap[m.LiveId] = m
+	ms.LiveIdMap[m.LiveId] = m
+
+	return nil
+}
+
+func (ms *Lives) UpdateOrAdd(m *dot.Live) error {
+	if m == nil || m.TypeId.String() == "" {
+		return dot.SError.NilParameter
+	}
+
+	old, ok := ms.LiveIdMap[m.LiveId]
+	if ok {
+		old.Dot = m.Dot
+		old.TypeId = m.TypeId
+		old.RelyLives = make([]dot.LiveId, len(m.RelyLives))
+		copy(old.RelyLives, m.RelyLives)
+	} else {
+		ms.LiveIdMap[m.LiveId] = m
+	}
 
 	return nil
 }
 
 func (ms *Lives) Remove(m *dot.Live) error {
-
-	delete(ms.liveIdMap, m.LiveId)
+	delete(ms.LiveIdMap, m.LiveId)
 	return nil
 }
 
@@ -95,9 +127,9 @@ func (ms *Lives) Get(liveId dot.LiveId) (meta *dot.Live, err error) {
 	meta = nil
 	err = nil
 
-	meta, ok := ms.liveIdMap[liveId]
+	meta, ok := ms.LiveIdMap[liveId]
 	if !ok {
-		err = dot.NewError(dot.SError.ErrNotExisted.Code(), dot.SError.ErrNotExisted.Error()+liveId.String())
+		err = dot.SError.NotExisted.AddNewError(liveId.String())
 	}
 	return
 }

@@ -26,8 +26,8 @@ type MetaData struct {
 	ShowName    string
 	Single      bool
 	RelyTypeIds []TypeId
-	NewDoter    Newer
-	RefType     reflect.Type
+	NewDoter    Newer        `json:"-"`
+	RefType     reflect.Type `json:"-"`
 }
 
 //Live 依赖的实例
@@ -52,30 +52,27 @@ func (m *MetaData) Clone() *MetaData {
 }
 
 //NewDot 构造一个 dot
-func (m *MetaData) NewDot(args interface{}) Dot {
+func (m *MetaData) NewDot(args interface{}) (dot Dot, err error) {
 
-	var d Dot
+	dot = nil
+	err = nil
 
 	if m.NewDoter != nil {
-		d = m.NewDoter.New(args)
-	} else {
-		d = reflect.New(m.RefType)
+		dot, err = m.NewDoter.New(args)
+	} else if m.RefType != nil {
+		dot = reflect.New(m.RefType).Addr()
 	}
 
-	return d
+	return
 }
 
 //Newer 创建
 type Newer interface {
-	New(args interface{}) Dot
+	New(args interface{}) (dot Dot, err error)
 }
 
 //Dot 组件
 type Dot interface {
-}
-
-type Injecter interface {
-	Inject()
 }
 
 //Lifer 生命周期过程为：
@@ -121,3 +118,8 @@ type HotConfiger interface {
 type Checker interface {
 	Check(args interface{}) interface{}
 }
+
+const (
+	//TagDot tag dot
+	TagDot = "dot"
+)
