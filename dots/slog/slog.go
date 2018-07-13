@@ -1,6 +1,6 @@
 package slog
 
-import "github.com/scryinfo/dot"
+import "github.com/scryinfo/dot/dot"
 
 type Level int
 
