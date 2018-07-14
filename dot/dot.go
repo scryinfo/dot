@@ -60,7 +60,8 @@ func (m *MetaData) NewDot(args interface{}) (dot Dot, err error) {
 	if m.NewDoter != nil {
 		dot, err = m.NewDoter.New(args)
 	} else if m.RefType != nil {
-		dot = reflect.New(m.RefType).Addr()
+		v := reflect.New(m.RefType)
+		dot = v.Interface()
 	}
 
 	return
@@ -72,8 +73,7 @@ type Newer interface {
 }
 
 //Dot 组件
-type Dot interface {
-}
+type Dot interface{}
 
 //Lifer 生命周期过程为：
 // Create, Start,Stop,Destroy
