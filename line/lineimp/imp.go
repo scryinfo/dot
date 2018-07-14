@@ -1,6 +1,7 @@
 package lineimp
 
 import (
+	"fmt"
 	"reflect"
 	"sync"
 
@@ -25,18 +26,18 @@ type lineimp struct {
 	config  line.Config
 	metas   *line.Metas
 	lives   *line.Lives
+	types   map[reflect.Type]dot.Dot
 
-	mutex sync.Mutex
+	parent line.Injecter
+	mutex  sync.Mutex
 }
 
 //New new
 func New() line.Line {
-	a := &lineimp{}
+	a := &lineimp{metas: line.NewMetas(), lives: line.NewLives(), types: make(map[reflect.Type]dot.Dot)}
 	if line.GetDefaultLine() == nil {
 		line.SetDefaultLine(a)
 	}
-	a.metas = line.NewMetas()
-	a.lives = line.NewLives()
 	return a
 }
 
@@ -50,7 +51,7 @@ func (c *lineimp) PreAdd(livings *line.TypeLives) error {
 	if err == nil {
 		for _, it := range clone.Lives {
 
-			live := dot.Live{TypeId: it.TypeId, LiveId: it.LiveId}
+			live := dot.Live{TypeId: it.TypeId, LiveId: it.LiveId, Dot: nil}
 			live.RelyLives = make([]dot.LiveId, len(it.RelyLives))
 			copy(live.RelyLives, it.RelyLives)
 			c.lives.UpdateOrAdd(&it)
@@ -91,28 +92,30 @@ func (c *lineimp) CreateDots() error {
 LIVES:
 	for _, it := range c.lives.LiveIdMap {
 
-		if skit.IsNil(it.Dot) {
+		if skit.IsNil(&it.Dot) == true {
 			var m *dot.MetaData
 			m, err = c.metas.Get(it.TypeId)
-			if m != nil {
+			if err != nil {
 				break LIVES
 			}
 
-			if m.NewDoter == nil {
+			if m.NewDoter == nil && m.RefType == nil {
 				err = dot.SError.NoDotNewer.AddNewError(m.TypeId.String())
+				break LIVES
 			}
 
 			var bconfig []byte
-			{
+			if true {
 				config := c.config.FindConfig(it.TypeId, it.LiveId)
 				if config != nil {
-					bconfig, err = config.Json.MarshalJSON()
-					if err != nil {
-						break LIVES
+					if !skit.IsNil(config.Json) {
+						bconfig, err = config.Json.MarshalJSON()
+						if err != nil {
+							break LIVES
+						}
 					}
 				}
 			}
-
 			it.Dot, err = m.NewDot(bconfig)
 		}
 	}
@@ -124,12 +127,17 @@ func (c *lineimp) ToLifer() dot.Lifer {
 	return c
 }
 
-func (c *lineimp) GetDotConfig(liveid dot.LiveId) *line.DotConfig {
+//ToInjecter to injecter
+func (c *lineimp) ToInjecter() line.Injecter {
+	return c
+}
+
+func (c *lineimp) GetDotConfig(liveid dot.LiveId) *line.LiveConfig {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	var co *line.DotConfig
-	c.config.FindConfig("", liveid)
+	var co *line.LiveConfig
+	co = c.config.FindConfig("", liveid)
 	return co
 }
 
@@ -141,8 +149,6 @@ func (c *lineimp) Inject(obj interface{}) error {
 	if skit.IsNil(obj) {
 		return dot.SError.NilParameter
 	}
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
 
 	v := reflect.ValueOf(obj)
 
@@ -158,25 +164,38 @@ func (c *lineimp) Inject(obj interface{}) error {
 
 	var errt error
 	for i := 0; i < v.NumField(); i++ {
+		errt = nil
 		f := v.Field(i)
-		structField := t.Field(i)
-		if f.CanSet() && (structField.Tag == dot.TagDot || structField.Tag.Get(dot.TagDot) != "") {
-			ft := f.Type()
-			var d dot.Dot
-			d, errt = c.GetByType(ft)
-			if errt != nil && err == nil {
-				err = errt
-			}
-			if err == nil {
-				vv := reflect.ValueOf(d)
-				if vv.IsValid() {
-					f.Set(vv)
-				} else if err == nil {
-					err = dot.SError.DotInvalid.AddNewError(ft.Name())
-				}
-			}
+		if !f.CanSet() {
+			continue
 		}
 
+		tField := t.Field(i)
+		tname, ok := tField.Tag.Lookup(dot.TagDot)
+		if !ok {
+			continue
+		}
+
+		var d dot.Dot
+		if len(tname) < 1 { //by type
+			d, errt = c.GetByType(f.Type())
+		} else { //by liveid
+			d, errt = c.GetByLiveId(dot.LiveId(tname))
+		}
+
+		if errt != nil && err == nil {
+			err = errt
+		}
+
+		if errt == nil {
+			vv := reflect.ValueOf(d)
+			fmt.Println("vv: ", vv.Type(), "f: ", f.Type(),"dd: ", reflect.TypeOf(d))
+			if vv.IsValid() && vv.Type() == f.Type() {
+				f.Set(vv)
+			} else if err == nil {
+				err = dot.SError.DotInvalid.AddNewError(tField.Type.String() + "  " + tname)
+			}
+		}
 	}
 
 	return err
@@ -187,7 +206,15 @@ func (c *lineimp) GetByType(t reflect.Type) (d dot.Dot, err error) {
 	d = nil
 	err = nil
 	c.mutex.Lock()
-	defer c.mutex.Unlock()
+	d, ok := c.types[t]
+	c.mutex.Unlock()
+	if !ok {
+		if c.parent != nil {
+			d, err = c.parent.GetByType(t)
+		} else {
+			err = dot.SError.NotExisted.AddNewError(t.String())
+		}
+	}
 
 	return
 }
@@ -197,34 +224,72 @@ func (c *lineimp) GetByLiveId(liveId dot.LiveId) (d dot.Dot, err error) {
 	d = nil
 	err = nil
 	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
 	var l *dot.Live
 	l, err = c.lives.Get(liveId)
-	if err == nil {
+	c.mutex.Unlock()
+	if err != nil {
+		if c.parent != nil {
+			d, err = c.parent.GetByLiveId(liveId)
+		}
+	} else {
 		d = l.Dot
 	}
 
 	return
 }
 
-//GetByTypeId get by typeid
-func (c *lineimp) GetByTypeId(typeId dot.TypeId) (d dot.Dot, err error) {
-	d = nil
-	err = nil
+//ReplaceOrAddByType update
+func (c *lineimp) ReplaceOrAddByType(d dot.Dot) error {
+	var err error
+	t := reflect.TypeOf(d)
+	//for t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
+	//	t = t.Elem()
+	//}
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c.types[t] = d
+	return err
+}
+
+//ReplaceOrAddByLiveId update
+func (c *lineimp) ReplaceOrAddByLiveId(d dot.Dot, id dot.LiveId) error {
+	var err error
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	if m, err2 := c.metas.Get(typeId); err2 == nil {
-		if l, err2 := c.lives.Get(dot.LiveId(m.TypeId)); err2 == nil {
-			d = l.Dot
-		} else {
-			err = err2
-		}
-	} else {
-		err = err2
-	}
-	return
+	l := dot.Live{LiveId: id, TypeId: "", Dot: d, RelyLives: nil}
+	//c.lives.Remove(&l)
+	err = c.lives.UpdateOrAdd(&l)
+
+	return err
+}
+
+//RemoveByType remove
+func (c *lineimp) RemoveByType(t reflect.Type) error {
+	var err error
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	delete(c.types, t)
+	return err
+}
+
+//RemoveByLiveId remove
+func (c *lineimp) RemoveByLiveId(id dot.LiveId) error {
+	var err error
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c.lives.RemoveById(id)
+	return err
+}
+
+//SetParent set parent injecter
+func (c *lineimp) SetParent(p line.Injecter) {
+	c.parent = p
+}
+
+//GetParent get parent injecter
+func (c *lineimp) GetParent() line.Injecter {
+	return c.parent
 }
 
 ////injecter end
@@ -240,11 +305,12 @@ FOR_FUN:
 	for {
 		//first create config
 		c.sConfig = dot.NewConfiger()
+		c.sConfig.RootPath()
 		if err = c.sConfig.Create(nil); err != nil {
 			break FOR_FUN
 		}
 
-		if err = c.sConfig.Unmarshal(c.config); err != nil {
+		if err = c.sConfig.Unmarshal(&c.config); err != nil {
 			break FOR_FUN
 		}
 
@@ -261,7 +327,7 @@ FOR_FUN:
 				}
 
 				if len(it.Lives) < 1 { //create the single live
-					live := dot.Live{TypeId: it.MetaData.TypeId, LiveId: dot.LiveId(it.MetaData.TypeId)}
+					live := dot.Live{TypeId: it.MetaData.TypeId, LiveId: dot.LiveId(it.MetaData.TypeId), Dot: nil}
 					if len(it.MetaData.RelyTypeIds) > 0 {
 						live.RelyLives = make([]dot.LiveId, len(it.MetaData.RelyTypeIds))
 						for i, li := range it.MetaData.RelyTypeIds {
@@ -276,7 +342,7 @@ FOR_FUN:
 						if len(li.LiveId.String()) < 1 {
 							li.LiveId = dot.LiveId(it.MetaData.TypeId)
 						}
-						live := dot.Live{TypeId: it.MetaData.TypeId, LiveId: li.LiveId, RelyLives: li.RelyLives}
+						live := dot.Live{TypeId: it.MetaData.TypeId, LiveId: li.LiveId, RelyLives: li.RelyLives, Dot: nil}
 						if err = c.lives.Add(&live); err != nil {
 							break FOR_FUN
 						}

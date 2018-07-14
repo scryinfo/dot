@@ -16,15 +16,38 @@ func SetDefaultLine(line Line) {
 	gline = line
 }
 
+//
 type Injecter interface {
 	//Inject inject
+	//obj只支持结构体
+	//字段中带有 dot.TagDot (dot) 的 tag
+	//如果tag为空，那么以字段的类型来注入，不为空以tag的值（dot.LiveId）进行注入
+	//在整个过程中如果出错不会退出， 返回的错误是发生的第一个错误
 	Inject(obj interface{}) error
 	//GetByType get by type
+	//如果在当前的容器中没有找到对应的，会调用 parent 查找
+	//type 的容器与 liveid的容器是单独分开的
 	GetByType(t reflect.Type) (d dot.Dot, err error)
 	//GetByLiveId get by liveid
-	GetByLiveId(liveId dot.LiveId) (d dot.Dot, err error)
-	//GetByTypeId get by typeid
-	GetByTypeId(typeId dot.TypeId) (d dot.Dot, err error)
+	//如果在当前的容器中没有找到对应的，会调用 parent 查找
+	//type 的容器与liveid的容器是单独分开的
+	GetByLiveId(id dot.LiveId) (d dot.Dot, err error)
+
+	//ReplaceOrAddByType update
+	//不会操作prarent
+	ReplaceOrAddByType(d dot.Dot) error
+	//ReplaceOrAddByLiveId update
+	//不会操作prarent
+	ReplaceOrAddByLiveId(d dot.Dot, id dot.LiveId) error
+	//RemoveByType remove
+	RemoveByType(t reflect.Type) error
+	//RemoveByLiveId remove
+	RemoveByLiveId(id dot.LiveId) error
+
+	//SetParent set parent injecter
+	SetParent(p Injecter)
+	//GetParent get parent injecter
+	GetParent() Injecter
 }
 
 //Line line
@@ -45,9 +68,11 @@ type Line interface {
 	CreateDots() error
 	//ToLifer to lifer
 	ToLifer() dot.Lifer
+	//ToInjecter to injecter
+	ToInjecter() Injecter
 
 	//GetDotConfig get
-	GetDotConfig(liveid dot.LiveId) *DotConfig
+	GetDotConfig(liveid dot.LiveId) *LiveConfig
 }
 
 //TypeLives living

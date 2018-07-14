@@ -59,8 +59,12 @@ func (ms *Metas) UpdateOrAdd(m *dot.MetaData) error {
 }
 
 func (ms *Metas) Remove(m *dot.MetaData) error {
-
 	delete(ms.metas, m.TypeId)
+	return nil
+}
+
+func (ms *Metas) RemoveById(typeid dot.TypeId) error {
+	delete(ms.metas, typeid)
 	return nil
 }
 
@@ -87,7 +91,7 @@ func (ms *Metas) NewDot(t dot.TypeId) (dot dot.Dot, err error) {
 }
 
 func (ms *Lives) Add(m *dot.Live) error {
-	if m == nil || m.TypeId.String() == "" {
+	if m == nil || m.LiveId.String() == "" {
 		return dot.SError.NilParameter
 	}
 
@@ -101,7 +105,7 @@ func (ms *Lives) Add(m *dot.Live) error {
 }
 
 func (ms *Lives) UpdateOrAdd(m *dot.Live) error {
-	if m == nil || m.TypeId.String() == "" {
+	if m == nil || m.LiveId.String() == "" {
 		return dot.SError.NilParameter
 	}
 
@@ -120,6 +124,11 @@ func (ms *Lives) UpdateOrAdd(m *dot.Live) error {
 
 func (ms *Lives) Remove(m *dot.Live) error {
 	delete(ms.LiveIdMap, m.LiveId)
+	return nil
+}
+
+func (ms *Lives) RemoveById(id dot.LiveId) error {
+	delete(ms.LiveIdMap, id)
 	return nil
 }
 
