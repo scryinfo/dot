@@ -58,7 +58,7 @@ func (m *MetaData) NewDot(args interface{}) (dot Dot, err error) {
 	err = nil
 
 	if m.NewDoter != nil {
-		dot, err = m.NewDoter.New(args)
+		dot, err = m.NewDoter(args)
 	} else if m.RefType != nil {
 		v := reflect.New(m.RefType)
 		dot = v.Interface()
@@ -67,10 +67,13 @@ func (m *MetaData) NewDot(args interface{}) (dot Dot, err error) {
 	return
 }
 
-//Newer 创建
-type Newer interface {
-	New(args interface{}) (dot Dot, err error)
-}
+// //Newer 创建
+// type Newer interface {
+// 	New(args interface{}) (dot Dot, err error)
+// }
+
+//Newer new
+type Newer = func(args interface{}) (dot Dot, err error)
 
 //Dot 组件
 type Dot interface{}

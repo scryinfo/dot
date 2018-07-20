@@ -21,12 +21,14 @@ type lineimp struct {
 	dot.Lifer
 	line.Line
 	line.Injecter
-	logger  slog.SLogger
-	sConfig dot.SConfig
-	config  line.Config
-	metas   *line.Metas
-	lives   *line.Lives
-	types   map[reflect.Type]dot.Dot
+	logger      slog.SLogger
+	sConfig     dot.SConfig
+	config      line.Config
+	metas       *line.Metas
+	lives       *line.Lives
+	types       map[reflect.Type]dot.Dot
+	newerLiveid map[dot.LiveId]dot.Newer
+	newerTypeid map[dot.TypeId]dot.Newer
 
 	parent line.Injecter
 	mutex  sync.Mutex
@@ -35,10 +37,55 @@ type lineimp struct {
 //New new
 func New() line.Line {
 	a := &lineimp{metas: line.NewMetas(), lives: line.NewLives(), types: make(map[reflect.Type]dot.Dot)}
+	a.newerLiveid = make(map[dot.LiveId]dot.Newer)
+	a.newerTypeid = make(map[dot.TypeId]dot.Newer)
 	if line.GetDefaultLine() == nil {
 		line.SetDefaultLine(a)
 	}
 	return a
+}
+
+//AddNewerByLiveId add new for liveid
+func (c *lineimp) AddNewerByLiveId(liveid dot.LiveId, newDot dot.Newer) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	if _, ok := c.newerLiveid[liveid]; ok {
+		return dot.SError.Existed.AddNewError(liveid.String())
+	}
+
+	c.newerLiveid[liveid] = newDot
+
+	return nil
+}
+
+//AddNewerByTypeId add new for type
+func (c *lineimp) AddNewerByTypeId(typeid dot.TypeId, newDot dot.Newer) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	if _, ok := c.newerTypeid[typeid]; ok {
+		return dot.SError.Existed.AddNewError(typeid.String())
+	}
+
+	c.newerTypeid[typeid] = newDot
+
+	return nil
+}
+
+//RemoveNewerByLiveId remove
+func (c *lineimp) RemoveNewerByLiveId(liveid dot.LiveId) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	delete(c.newerLiveid, liveid)
+}
+
+//RemoveNewerByTypeId remove
+func (c *lineimp) RemoveNewerByTypeId(typeid dot.TypeId) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	delete(c.newerTypeid, typeid)
 }
 
 //PreAdd the dot is nil, do not create it
@@ -51,10 +98,14 @@ func (c *lineimp) PreAdd(livings *line.TypeLives) error {
 	if err == nil {
 		for _, it := range clone.Lives {
 
+			if len(it.TypeId.String()) < 1 {
+				it.TypeId = clone.Meta.TypeId
+			}
+
 			live := dot.Live{TypeId: it.TypeId, LiveId: it.LiveId, Dot: nil}
 			live.RelyLives = make([]dot.LiveId, len(it.RelyLives))
 			copy(live.RelyLives, it.RelyLives)
-			c.lives.UpdateOrAdd(&it)
+			c.lives.UpdateOrAdd(&live)
 		}
 	}
 
@@ -93,17 +144,6 @@ LIVES:
 	for _, it := range c.lives.LiveIdMap {
 
 		if skit.IsNil(&it.Dot) == true {
-			var m *dot.MetaData
-			m, err = c.metas.Get(it.TypeId)
-			if err != nil {
-				break LIVES
-			}
-
-			if m.NewDoter == nil && m.RefType == nil {
-				err = dot.SError.NoDotNewer.AddNewError(m.TypeId.String())
-				break LIVES
-			}
-
 			var bconfig []byte
 			if true {
 				config := c.config.FindConfig(it.TypeId, it.LiveId)
@@ -116,7 +156,44 @@ LIVES:
 					}
 				}
 			}
-			it.Dot, err = m.NewDot(bconfig)
+			//liveid
+			{
+				if newer, ok := c.newerLiveid[it.LiveId]; ok {
+					it.Dot, err = newer(bconfig)
+					if err != nil {
+						break LIVES
+					} else {
+						continue LIVES
+					}
+				}
+			}
+			//typeid
+			{
+				if newer, ok := c.newerTypeid[it.TypeId]; ok {
+					it.Dot, err = newer(bconfig)
+					if err != nil {
+						break LIVES
+					} else {
+						continue LIVES
+					}
+				}
+			}
+
+			//metadata
+			{
+				var m *dot.MetaData
+				m, err = c.metas.Get(it.TypeId)
+				if err != nil {
+					break LIVES
+				}
+
+				if m.NewDoter == nil && m.RefType == nil {
+					err = dot.SError.NoDotNewer.AddNewError(m.TypeId.String())
+					break LIVES
+				}
+
+				it.Dot, err = m.NewDot(bconfig)
+			}
 		}
 	}
 
@@ -189,7 +266,7 @@ func (c *lineimp) Inject(obj interface{}) error {
 
 		if errt == nil {
 			vv := reflect.ValueOf(d)
-			fmt.Println("vv: ", vv.Type(), "f: ", f.Type(),"dd: ", reflect.TypeOf(d))
+			fmt.Println("vv: ", vv.Type(), "f: ", f.Type(), "dd: ", reflect.TypeOf(d))
 			if vv.IsValid() && vv.Type() == f.Type() {
 				f.Set(vv)
 			} else if err == nil {
