@@ -57,10 +57,23 @@ type Line interface {
 	Config() *Config
 	//SConfig 通用配置接口
 	SConfig() dot.SConfig
+
+	//order
+	//1,查找liveid对应的 newer
+	//2,查找typid对应的 newer
+	//3,查找meta上对的 newer
+	//AddNewerByLiveId add new for liveid
+	AddNewerByLiveId(liveid dot.LiveId, newDot dot.Newer) error
+	//AddNewerByTypeId add new for type
+	AddNewerByTypeId(typeid dot.TypeId, newDot dot.Newer) error
+	//RemoveNewerByLiveId remove
+	RemoveNewerByLiveId(liveid dot.LiveId)
+	//RemoveNewerByTypeId remove
+	RemoveNewerByTypeId(typeid dot.TypeId)
+
 	//PreAdd 增加dot的liveid及meta信息, 这里还没有真正创建dot，计算依赖后才生成
 	//如果是单例的话，可以不指定实例信息，实例id直接为typeid
 	//如果配置文件在有配置实例，那么会自动增加来，如果实例id已经存在，则配置更优先
-
 	PreAdd(ac *TypeLives) error
 	//Rely  检查依赖关系是否都存在
 	Rely() error
