@@ -108,3 +108,27 @@ type Dot2 struct {
 type Dot3 struct {
 	T string
 }
+
+//Create 在这个方法在进行初始，也运行或监听相同内容，最好放在Start方法中实现
+func (c *Dot3) Create(conf dot.SConfig) error {
+
+	return nil
+}
+
+//Start
+//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+func (c *Dot3) Start(ignore bool) error {
+	return nil
+}
+
+//Stop
+//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+func (c *Dot3) Stop(ignore bool) error {
+	return nil
+}
+
+//Destroy 销毁 Dot
+//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+func (c *Dot3) Destroy(ignore bool) error {
+	return nil
+}
