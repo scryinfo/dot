@@ -72,13 +72,13 @@ func add(l line.Line) {
 	})
 
 	l.PreAdd(&line.TypeLives{
-		Meta: dot.MetaData{TypeId: "789", RefType: t}, Lives: []dot.Live{
+		Meta: dot.Metadata{TypeId: "789", RefType: t}, Lives: []dot.Live{
 			dot.Live{LiveId: "1234"},
 		},
 	})
 
 	l.PreAdd(&line.TypeLives{
-		Meta: dot.MetaData{TypeId: "668"},
+		Meta: dot.Metadata{TypeId: "668"},
 	})
 }
 

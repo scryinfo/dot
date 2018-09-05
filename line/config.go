@@ -18,7 +18,7 @@ type LiveConfig struct {
 
 //DotConfig dot config
 type DotConfig struct {
-	MetaData dot.MetaData
+	MetaData dot.Metadata
 	Lives    []LiveConfig
 }
 

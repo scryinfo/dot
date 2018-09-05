@@ -4,22 +4,24 @@ import (
 	"reflect"
 )
 
-//TypeId dot 的类型唯一id
+//TypeId dot type guid
 type TypeId string
 
-//LiveId dot 的实例唯一id
+//LiveId dot live guid
 type LiveId string
 
+//String convert typeid to string
 func (c *TypeId) String() string {
 	return string(*c)
 }
 
+//String convert liveid to string
 func (c *LiveId) String() string {
 	return string(*c)
 }
 
-//MetaData dot的元数据
-type MetaData struct {
+//Metadata dot metadata
+type Metadata struct {
 	TypeId      TypeId
 	Version     string
 	Name        string
@@ -30,7 +32,7 @@ type MetaData struct {
 	RefType     reflect.Type `json:"-"`
 }
 
-//Live 依赖的实例
+//Live live/instance
 type Live struct {
 	TypeId    TypeId
 	LiveId    LiveId
@@ -38,51 +40,44 @@ type Live struct {
 	Dot       Dot
 }
 
-//NewMetaData @dot.MetaData 的构造函数
-func NewMetaData() *MetaData {
-	m := &MetaData{}
-	return m
+//NewMetadata new Metadata
+func NewMetadata() *Metadata {
+	return &Metadata{}
 }
 
-func (m *MetaData) Clone() *MetaData {
+//Clone clone Metadata
+func (m *Metadata) Clone() *Metadata {
 	c := *m
 	c.RelyTypeIds = make([]TypeId, len(m.RelyTypeIds))
 	copy(c.RelyTypeIds, m.RelyTypeIds)
 	return &c
 }
 
-//NewDot 构造一个 dot
-func (m *MetaData) NewDot(args interface{}) (dot Dot, err error) {
-
+//NewDot new a dot
+func (m *Metadata) NewDot(args interface{}) (dot Dot, err error) {
 	dot = nil
 	err = nil
-
 	if m.NewDoter != nil {
 		dot, err = m.NewDoter(args)
 	} else if m.RefType != nil {
 		v := reflect.New(m.RefType)
 		dot = v.Interface()
 	}
-
 	return
 }
 
-// //Newer 创建
-// type Newer interface {
-// 	New(args interface{}) (dot Dot, err error)
-// }
-
-//Newer new
+//Newer instace for new dot
 type Newer = func(args interface{}) (dot Dot, err error)
 
-//Dot 组件
+//Dot componet
 type Dot interface{}
 
-//Lifer 生命周期过程为：
+//Lifer life cycle
 // Create, Start,Stop,Destroy
-// Create 与 Start是分开的， 为了解决不同dot实例之间的依赖， 如果依赖没有问题，那么可以直接在Create中创建并开始，把Start定为空
+// Create and Start are separate, in order to resolve the dependencies between different dot instances,
+// if there is no problem with the dependencies, then you can directly null in Start
 type Lifer interface {
-	//Create 创建 dot， 在这个方法在进行初始，也运行或监听相同内容，最好放在Start方法中实现
+	//Create 在这个方法在进行初始，也运行或监听相同内容，最好放在Start方法中实现
 	Create(conf SConfig) error
 	//Start
 	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回

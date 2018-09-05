@@ -6,13 +6,13 @@ import (
 
 //Metas
 type Metas struct {
-	metas map[dot.TypeId]*dot.MetaData
+	metas map[dot.TypeId]*dot.Metadata
 }
 
 //NewMetas
 func NewMetas() *Metas {
 	m := &Metas{}
-	m.metas = make(map[dot.TypeId]*dot.MetaData, 0)
+	m.metas = make(map[dot.TypeId]*dot.Metadata, 0)
 	return m
 }
 
@@ -28,7 +28,7 @@ func NewLives() *Lives {
 	return l
 }
 
-func (ms *Metas) Add(m *dot.MetaData) error {
+func (ms *Metas) Add(m *dot.Metadata) error {
 	if m == nil || m.TypeId.String() == "" {
 		return dot.SError.NilParameter
 	}
@@ -43,7 +43,7 @@ func (ms *Metas) Add(m *dot.MetaData) error {
 	return nil
 }
 
-func (ms *Metas) UpdateOrAdd(m *dot.MetaData) error {
+func (ms *Metas) UpdateOrAdd(m *dot.Metadata) error {
 	if m == nil || m.TypeId.String() == "" {
 		return dot.SError.NilParameter
 	}
@@ -58,7 +58,7 @@ func (ms *Metas) UpdateOrAdd(m *dot.MetaData) error {
 	return nil
 }
 
-func (ms *Metas) Remove(m *dot.MetaData) error {
+func (ms *Metas) Remove(m *dot.Metadata) error {
 	delete(ms.metas, m.TypeId)
 	return nil
 }
@@ -68,7 +68,7 @@ func (ms *Metas) RemoveById(typeid dot.TypeId) error {
 	return nil
 }
 
-func (ms *Metas) Get(typeId dot.TypeId) (meta *dot.MetaData, err error) {
+func (ms *Metas) Get(typeId dot.TypeId) (meta *dot.Metadata, err error) {
 	meta = nil
 	err = nil
 

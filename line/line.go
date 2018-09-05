@@ -90,7 +90,7 @@ type Line interface {
 
 //TypeLives living
 type TypeLives struct {
-	Meta  dot.MetaData
+	Meta  dot.Metadata
 	Lives []dot.Live
 }
 
