@@ -6,9 +6,9 @@ import (
 
 	"reflect"
 
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/line"
-	"github.com/scryinfo/dot/line/lineimp"
+	"github.com/scryinfo/dot-0/dot"
+	"github.com/scryinfo/dot-0/line"
+	"github.com/scryinfo/dot-0/line/lineimp"
 )
 
 func main() {
@@ -51,9 +51,9 @@ func main() {
 }
 
 func add(l line.Line) {
-	t := reflect.TypeOf(((*Dot2)(nil)))
-	t = t.Elem()
-	fmt.Println("  ", t)
+	//t := reflect.TypeOf(((*Dot2)(nil)))
+	//t = t.Elem()
+	//fmt.Println("  ", t)
 
 	l.AddNewerByLiveId(dot.LiveId("668"), func(conf interface{}) (d dot.Dot, err error) {
 		d = &Dot3{}
@@ -71,15 +71,15 @@ func add(l line.Line) {
 		return
 	})
 
-	l.PreAdd(&line.TypeLives{
-		Meta: dot.MetaData{TypeId: "789", RefType: t}, Lives: []dot.Live{
-			dot.Live{LiveId: "1234"},
-		},
-	})
-
-	l.PreAdd(&line.TypeLives{
-		Meta: dot.MetaData{TypeId: "668"},
-	})
+	//l.PreAdd(&line.TypeLives{
+	//	Meta: dot.Metadata{TypeId: "789", RefType: t}, Lives: []dot.Live{
+	//		dot.Live{LiveId: "1234"},
+	//	},
+	//})
+	//
+	//l.PreAdd(&line.TypeLives{
+	//	Meta: dot.Metadata{TypeId: "668"},
+	//})
 }
 
 //直接向容器中加入指定的类型
