@@ -482,6 +482,11 @@ func (c *lineimp) Start(ignore bool) error {
 		//start log
 
 		//start other
+		for _, it := range c.lives.LiveIdMap {
+			if l, ok := it.Dot.(dot.Lifer); ok {
+				l.Start(ignore)
+			}
+		}
 		break
 	}
 
@@ -495,6 +500,11 @@ func (c *lineimp) Stop(ignore bool) error {
 
 	var err error
 	//stop others
+	for _, it := range c.lives.LiveIdMap {
+		if l, ok := it.Dot.(dot.Lifer); ok {
+			l.Start(ignore)
+		}
+	}
 
 	//stop log
 
@@ -510,6 +520,11 @@ func (c *lineimp) Destroy(ignore bool) error {
 	defer c.mutex.Unlock()
 
 	//Destroy others
+	for _, it := range c.lives.LiveIdMap {
+		if l, ok := it.Dot.(dot.Lifer); ok {
+			l.Start(ignore)
+		}
+	}
 
 	//Destroy log
 

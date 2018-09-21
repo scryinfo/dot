@@ -6,9 +6,9 @@ import (
 
 	"reflect"
 
-	"github.com/scryinfo/dot-0/dot"
-	"github.com/scryinfo/dot-0/line"
-	"github.com/scryinfo/dot-0/line/lineimp"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line"
+	"github.com/scryinfo/dot/line/lineimp"
 )
 
 func main() {
@@ -51,9 +51,9 @@ func main() {
 }
 
 func add(l line.Line) {
-	//t := reflect.TypeOf(((*Dot2)(nil)))
-	//t = t.Elem()
-	//fmt.Println("  ", t)
+	t := reflect.TypeOf(((*Dot2)(nil)))
+	t = t.Elem()
+	fmt.Println("  ", t)
 
 	l.AddNewerByLiveId(dot.LiveId("668"), func(conf interface{}) (d dot.Dot, err error) {
 		d = &Dot3{}
@@ -71,15 +71,15 @@ func add(l line.Line) {
 		return
 	})
 
-	//l.PreAdd(&line.TypeLives{
-	//	Meta: dot.Metadata{TypeId: "789", RefType: t}, Lives: []dot.Live{
-	//		dot.Live{LiveId: "1234"},
-	//	},
-	//})
-	//
-	//l.PreAdd(&line.TypeLives{
-	//	Meta: dot.Metadata{TypeId: "668"},
-	//})
+	l.PreAdd(&line.TypeLives{
+		Meta: dot.Metadata{TypeId: "789", RefType: t}, Lives: []dot.Live{
+			dot.Live{LiveId: "1234"},
+		},
+	})
+
+	l.PreAdd(&line.TypeLives{
+		Meta: dot.Metadata{TypeId: "668"},
+	})
 }
 
 //直接向容器中加入指定的类型
@@ -107,4 +107,28 @@ type Dot2 struct {
 
 type Dot3 struct {
 	T string
+}
+
+//Create 在这个方法在进行初始，也运行或监听相同内容，最好放在Start方法中实现
+func (c *Dot3) Create(conf dot.SConfig) error {
+
+	return nil
+}
+
+//Start
+//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+func (c *Dot3) Start(ignore bool) error {
+	return nil
+}
+
+//Stop
+//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+func (c *Dot3) Stop(ignore bool) error {
+	return nil
+}
+
+//Destroy 销毁 Dot
+//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+func (c *Dot3) Destroy(ignore bool) error {
+	return nil
 }
