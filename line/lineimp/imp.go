@@ -5,9 +5,8 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/slog"
-	"github.com/scryinfo/dot/line"
+	"github.com/scryinfo/dot-0/dot"
+	"github.com/scryinfo/dot-0/line"
 	"github.com/scryinfo/scryg/sutils/skit"
 )
 
@@ -21,7 +20,7 @@ type lineimp struct {
 	dot.Lifer
 	line.Line
 	line.Injecter
-	logger      slog.SLogger
+	logger      dot.SLogger
 	sConfig     dot.SConfig
 	config      line.Config
 	metas       *line.Metas
@@ -33,6 +32,8 @@ type lineimp struct {
 	parent line.Injecter
 	mutex  sync.Mutex
 }
+
+
 
 //New new
 func New() line.Line {
@@ -136,6 +137,7 @@ LIVES:
 	return err
 }
 
+//CreateDots create dots
 func (c *lineimp) CreateDots() error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -145,8 +147,9 @@ LIVES:
 
 		if skit.IsNil(&it.Dot) == true {
 			var bconfig []byte
+			var config *line.LiveConfig
 			if true {
-				config := c.config.FindConfig(it.TypeId, it.LiveId)
+				config = c.config.FindConfig(it.TypeId, it.LiveId)
 				if config != nil {
 					if !skit.IsNil(config.Json) {
 						bconfig, err = config.Json.MarshalJSON()
@@ -163,6 +166,9 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
+						if l, ok := it.Dot.(dot.Lifer); ok {
+							l.Create(nil)
+						}
 						continue LIVES
 					}
 				}
@@ -174,6 +180,9 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
+						if l, ok := it.Dot.(dot.Lifer); ok {
+							l.Create(nil)
+						}
 						continue LIVES
 					}
 				}
@@ -181,7 +190,7 @@ LIVES:
 
 			//metadata
 			{
-				var m *dot.MetaData
+				var m *dot.Metadata
 				m, err = c.metas.Get(it.TypeId)
 				if err != nil {
 					break LIVES
@@ -193,11 +202,24 @@ LIVES:
 				}
 
 				it.Dot, err = m.NewDot(bconfig)
+				if err == nil {
+					if l, ok := it.Dot.(dot.Lifer); ok {
+						l.Create(nil)
+					}
+				}
 			}
 		}
 	}
 
 	return err
+}
+
+func (c *lineimp) SLogger() dot.SLogger {
+	return c.logger
+}
+
+func (c *lineimp) SConfig() dot.SConfig {
+	return c.sConfig
 }
 
 func (c *lineimp) ToLifer() dot.Lifer {
@@ -267,7 +289,7 @@ func (c *lineimp) Inject(obj interface{}) error {
 		if errt == nil {
 			vv := reflect.ValueOf(d)
 			fmt.Println("vv: ", vv.Type(), "f: ", f.Type(), "dd: ", reflect.TypeOf(d))
-			if vv.IsValid() && vv.Type() == f.Type() {
+			if vv.IsValid() && vv.Type().AssignableTo(f.Type()) {
 				f.Set(vv)
 			} else if err == nil {
 				err = dot.SError.DotInvalid.AddNewError(tField.Type.String() + "  " + tname)
@@ -378,6 +400,9 @@ func (c *lineimp) Create(conf dot.SConfig) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	var err error
+
+	CreateLog(c)
+
 FOR_FUN:
 	for {
 		//first create config
@@ -435,6 +460,11 @@ FOR_FUN:
 	}
 
 	return err
+}
+
+func CreateLog (c *lineimp) {
+	c.logger = dot.NewLoger(-1,"out.log")
+	c.logger.Create(nil)
 }
 
 //Start

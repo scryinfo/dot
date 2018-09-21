@@ -1,0 +1,18 @@
+{
+  "Dots":[
+    {
+      "MetaData":{
+        "TypeId":"d8299d21-4f43-48bd-9a5c-654c4395ea17"
+      },
+      "Lives":[
+        {
+          "LiveId":"d8299d21-4f43-48bd-9a5c-654c4395ea17",
+          "Json":{
+            "LogLevel":1,
+            "OutputPath":"out.log"
+          }
+        }
+      ]
+    }
+  ]
+}
