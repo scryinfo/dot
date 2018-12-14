@@ -1,0 +1,17 @@
+{
+  "Dots":[
+    {
+      "MetaData":{
+        "TypeId":"dd05cbec-e3d0-4be3-a7df-87b0522ac46a"
+      },
+      "Lives":[
+        {
+          "LiveId":"dd05cbec-e3d0-4be3-a7df-87b0522ac46a",
+          "Json":{
+            "Address":"localhost:50001"
+          }
+        }
+      ]
+    }
+  ]
+}

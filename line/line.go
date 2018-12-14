@@ -58,6 +58,8 @@ type Line interface {
 	//SConfig 通用配置接口
 	SConfig() dot.SConfig
 
+	SLogger() dot.SLogger
+
 	//order
 	//1,查找liveid对应的 newer
 	//2,查找typid对应的 newer

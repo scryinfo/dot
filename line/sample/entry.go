@@ -35,7 +35,10 @@ func main() {
 		return
 	}
 
-	addDot(l)
+	l.SLogger().Infoln("1111111111111111111")
+	l.SConfig().RootPath()
+
+	//addDot(l)
 
 	t := &SomeUse{}
 
@@ -50,10 +53,10 @@ func main() {
 
 }
 
-func add(l line.Line) {
-	t := reflect.TypeOf(((*Dot2)(nil)))
-	t = t.Elem()
-	fmt.Println("  ", t)
+	func add(l line.Line) {
+		t := reflect.TypeOf(((*Dot2)(nil)))
+		t = t.Elem()
+		fmt.Println("  ", t)
 
 	l.AddNewerByLiveId(dot.LiveId("668"), func(conf interface{}) (d dot.Dot, err error) {
 		d = &Dot3{}

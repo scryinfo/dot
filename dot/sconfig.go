@@ -38,6 +38,7 @@ type SConfig interface {
 
 	//如果没有找到对应的key或数据类型不能转换，一定要特别小心默认值问题，所以在函数前面特别增加“Def”，以提示默认值
 	DefInterface(key string, def interface{}) interface{}
+	DefJson(key string, def interface{}) interface{}
 	DefArray(key string, def []interface{}) []interface{}
 	DefMap(key string, def map[string]interface{}) map[string]interface{}
 	DefString(key string, def string) string
@@ -225,6 +226,27 @@ func (c *sConfig) DefInterface(key string, def interface{}) interface{} {
 	}
 
 	return re
+}
+
+func (c *sConfig) DefJson(key string, def interface{}) interface{} {
+
+	//re := def
+	if c.simpleJson != nil {
+		keys := c.keys(key)
+		if len(keys) == 1 {
+			if t, ok := c.simpleJson.CheckGet(key); ok {
+				jsonStr, _ := json.Marshal(t)
+				json.Unmarshal(jsonStr,def)
+			}
+		} else if len(keys) > 1 {
+			t := c.simpleJson.GetPath(keys...)
+			if t != nil {
+				jsonStr, _ := json.Marshal(t)
+				json.Unmarshal(jsonStr,def)
+			}
+		}
+	}
+	return def
 }
 
 //DefArray  implement
