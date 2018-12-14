@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/slog"
 	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/scryg/sutils/skit"
 )
@@ -21,7 +20,7 @@ type lineimp struct {
 	dot.Lifer
 	line.Line
 	line.Injecter
-	logger      slog.SLogger
+	logger      dot.SLogger
 	sConfig     dot.SConfig
 	config      line.Config
 	metas       *line.Metas
@@ -33,6 +32,8 @@ type lineimp struct {
 	parent line.Injecter
 	mutex  sync.Mutex
 }
+
+
 
 //New new
 func New() line.Line {
@@ -213,6 +214,14 @@ LIVES:
 	return err
 }
 
+func (c *lineimp) SLogger() dot.SLogger {
+	return c.logger
+}
+
+func (c *lineimp) SConfig() dot.SConfig {
+	return c.sConfig
+}
+
 func (c *lineimp) ToLifer() dot.Lifer {
 	return c
 }
@@ -391,6 +400,9 @@ func (c *lineimp) Create(conf dot.SConfig) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	var err error
+
+	CreateLog(c)
+
 FOR_FUN:
 	for {
 		//first create config
@@ -450,6 +462,11 @@ FOR_FUN:
 	return err
 }
 
+func CreateLog (c *lineimp) {
+	c.logger = dot.NewLoger(-1,"out.log")
+	c.logger.Create(nil)
+}
+
 //Start
 func (c *lineimp) Start(ignore bool) error {
 	c.mutex.Lock()
@@ -465,11 +482,6 @@ func (c *lineimp) Start(ignore bool) error {
 		//start log
 
 		//start other
-		for _, it := range c.lives.LiveIdMap {
-			if l, ok := it.Dot.(dot.Lifer); ok {
-				l.Start(ignore)
-			}
-		}
 		break
 	}
 
@@ -483,11 +495,6 @@ func (c *lineimp) Stop(ignore bool) error {
 
 	var err error
 	//stop others
-	for _, it := range c.lives.LiveIdMap {
-		if l, ok := it.Dot.(dot.Lifer); ok {
-			l.Start(ignore)
-		}
-	}
 
 	//stop log
 
@@ -503,11 +510,6 @@ func (c *lineimp) Destroy(ignore bool) error {
 	defer c.mutex.Unlock()
 
 	//Destroy others
-	for _, it := range c.lives.LiveIdMap {
-		if l, ok := it.Dot.(dot.Lifer); ok {
-			l.Start(ignore)
-		}
-	}
 
 	//Destroy log
 

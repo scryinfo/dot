@@ -1,13 +1,9 @@
-package dots111111
+package dot
 
 import (
-	"encoding/json"
-	"github.com/scryinfo/dot/line"
-	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap"
-	"reflect"
+	"go.uber.org/zap/zapcore"
 	"time"
-	"github.com/scryinfo/dot/dot"
 )
 
 type Level = zapcore.Level
@@ -37,7 +33,7 @@ type MakeStringer  func() string
 //所有日志调用时，不要在参数中调用函数，函数的运行是先于日志等级的，如果一定要调用函数，可以使用回调函数的方式（注回调函数一定要正常运行）
 //S表示 scryinfo, log这个名字用的地方太多，加一个s以示区别
 type SLogger interface {
-	dot.Lifer
+	Lifer
 
 	//GetLevel get level
 	GetLevel() int8
@@ -158,31 +154,31 @@ func (log *ULog)Fatal(mstr MakeStringer){
 	}
 }
 
-func Add(l line.Line)  {
-	l.AddNewerByLiveId(dot.LiveId("d8299d21-4f43-48bd-9a5c-654c4395ea17"), func(conf interface{}) (d dot.Dot, err error) {
-		d = &ULog{
-		}
-		err = nil
-		t := reflect.ValueOf(conf)
-		if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
-			if t.Len() > 0 && t.Index(0).Kind() == reflect.Uint8 {
-				v := t.Slice(0, t.Len())
-				json.Unmarshal(v.Bytes(), d)
-			}
-		} else {
-			err = dot.SError.Parameter
-		}
-		return
-	})
-}
+//func Add(l line.Line)  {
+//	l.AddNewerByLiveId(LiveId("d8299d21-4f43-48bd-9a5c-654c4395ea17"), func(conf interface{}) (d Dot, err error) {
+//		d = &ULog{
+//		}
+//		err = nil
+//		t := reflect.ValueOf(conf)
+//		if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
+//			if t.Len() > 0 && t.Index(0).Kind() == reflect.Uint8 {
+//				v := t.Slice(0, t.Len())
+//				json.Unmarshal(v.Bytes(), d)
+//			}
+//		} else {
+//			err = SError.Parameter
+//		}
+//		return
+//	})
+//}
 
 
-func (log *ULog) Create (conf dot.SConfig) (err error)  {
+func (log *ULog) Create (conf SConfig) (err error)  {
 
 	//log.LogLevel = -1
 
 
-	encoderCfg := zapcore.EncoderConfig{
+		encoderCfg := zapcore.EncoderConfig{
 		// Keys can be anything except the empty string.
 		TimeKey:        "T",
 		LevelKey:       "L",
@@ -205,7 +201,7 @@ func (log *ULog) Create (conf dot.SConfig) (err error)  {
 
 	customCfg := zap.Config{
 		Level:            log.level,
-		Development:      false,
+		Development:      true,
 		Encoding:         "console",
 		EncoderConfig:    encoderCfg,
 		OutputPaths:      []string{"stderr", log.OutputPath},
