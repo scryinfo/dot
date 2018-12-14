@@ -59,7 +59,7 @@ func main()  {
 		return
 	}
 
-	l.SLogger().SetLevel()
+	//l.SLogger().SetLevel()
 
 	//llll := l.SLogger()
 
