@@ -1,18 +1,20 @@
-package main
+package client
 
 import (
 	"fmt"
+	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/client"
 	pb "github.com/scryinfo/dot/line/demo/pb"
 	"github.com/scryinfo/dot/line/lineimp"
 	"log"
 )
 
-func main()  {
+func A()  {
 	l := lineimp.New()
 	l.ToLifer().Create(nil)
 
-	gclient.Add(l,"dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
+	gclient.Add(l,dot.LiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46a"))
+	gclient.Add(l,dot.LiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46b"))
 
 	err := l.Rely()
 	if err != nil {
@@ -32,14 +34,16 @@ func main()  {
 		return
 	}
 
+	var f gclient.GrpcClienter
+	{
+		d, _:= l.ToInjecter().GetByLiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46a")
+		f = d.(gclient.GrpcClienter)
+	}
+
 	//f := &gclient.GrpcClient{}
 	//l.ToInjecter().Inject(f)
 
-	var f gclient.GrpcClienter
-	{
-		d, _:= l.ToInjecter().GetByLiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
-		f = d.(gclient.GrpcClienter)
-	}
+
 
 	conn := f.GetConn()
 
