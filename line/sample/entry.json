@@ -1,14 +1,41 @@
 {
   "Dots":[
     {
+      "":"一个类型有多个dot实例， 且使用AddNewerByLiveId 方式创建",
       "MetaData":{
-        "TypeId":"668"
+        "TypeId":"3"
       },
       "Lives":[
         {
-          "LiveId":"668",
+          "LiveId":"31",
           "Json":{
-            "T":"888888888888888"
+            "T":"8888888"
+          }
+        },
+        {
+          "LiveId":"32",
+          "Json":{
+            "T":"8888888"
+          }
+        }
+      ]
+    },
+    {
+      "":"一个类型有多个dot实例， 且使用AddNewerByTypeId 与 AddNewerByLiveId 方式创建， 如果两个方式都提供那么 LiveId更优先",
+      "MetaData":{
+        "TypeId":"type_live"
+      },
+      "Lives":[
+        {
+          "LiveId":"41",
+          "Json":{
+            "T":"200data"
+          }
+        },
+        {
+          "LiveId":"42",
+          "Json":{
+            "T":"300data"
           }
         }
       ]
