@@ -26,12 +26,29 @@ type Grpc struct {
 	cancel context.CancelFunc
 }
 
-type GrpcClient struct {
-	Grpcs GrpcClienter `dot:"dd05cbec-e3d0-4be3-a7df-87b0522ac46a"`
-}
+//type GrpcClient struct {
+//	Grpcs GrpcClienter `dot:"dd05cbec-e3d0-4be3-a7df-87b0522ac46a"`
+//}
 
-func Add(l line.Line)  {
-	l.AddNewerByLiveId(dot.LiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46a"), func(conf interface{}) (d dot.Dot, err error) {
+//func Add(l line.Line)  {
+//	l.AddNewerByLiveId(dot.LiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46a"), func(conf interface{}) (d dot.Dot, err error) {
+//		d = &Grpc{}
+//		err = nil
+//		t := reflect.ValueOf(conf)
+//		if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
+//			if t.Len() > 0 && t.Index(0).Kind() == reflect.Uint8 {
+//				v := t.Slice(0, t.Len())
+//				json.Unmarshal(v.Bytes(), d)
+//			}
+//		} else {
+//			err = dot.SError.Parameter
+//		}
+//		return
+//	})
+//}
+
+func Add(l line.Line,id dot.LiveId)  {
+	l.AddNewerByLiveId(id, func(conf interface{}) (d dot.Dot, err error) {
 		d = &Grpc{}
 		err = nil
 		t := reflect.ValueOf(conf)

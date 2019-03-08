@@ -74,6 +74,13 @@ type SLogger interface {
 	Fatalln(msg string, fields ...zap.Field)
 	//Fatal fatal
 	Fatal(mstr MakeStringer)
+
+	SetLogFile(fiel string)
+}
+
+func (log *ULog) SetLogFile(file string)  {
+	log.OutputPath = file
+	log.Create(nil)
 }
 
 //NewConfiger new sConfig

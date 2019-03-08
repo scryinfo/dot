@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
-	pb"github.com/scryinfo/dot/line/demo/pb"
 	"github.com/scryinfo/dot/dots/grpc/server"
+	pb "github.com/scryinfo/dot/line/demo/pb"
 	"github.com/scryinfo/dot/line/lineimp"
 	"golang.org/x/net/context"
-	"time"
 )
 
 //使用注释
@@ -35,9 +34,10 @@ import (
 func main()  {
 
 	l := lineimp.New()
+	//l.
 	l.ToLifer().Create(nil)
 
-	//l.(*lineimp).CreateLog(nil,"out.log")
+	//l.(*lineimp).CreateLog(nil,"ut.log")
 
 	gserver.Add(l)
 
@@ -63,11 +63,16 @@ func main()  {
 
 	//llll := l.SLogger()
 
-	//ccc := l.SConfig()
+	//ccc := l.SCon
+	//
+	//
+	// fig()
 
 	//ccc.Start(true)
 
 	//fmt.Println(llll.GetLevel())#243447
+	l.SLogger().SetLogFile("out1.log")
+
 
 	l.SLogger().Debugln("123123123123")
 
@@ -81,14 +86,13 @@ func main()  {
 
 	//fmt.Println(pp)
 
-	dddddddd:= f.Grpcs.GetD()
-	fmt.Println(dddddddd)
+	//dddddddd:= f.Grpcs.GetD()
+	//fmt.Println(dddddddd)
 
 	//用户实现 start
 	s := f.Grpcs.GetServer()
 	pb.RegisterTestServer(s, &servers{})
 	pb.RegisterGreeterServer(s, &servers{})
-	pb.RegisterRechargeServer(s,&servers{})
 
 	//用户实现 end
 
@@ -108,8 +112,4 @@ func (s *servers) SayHello(ctx context.Context, in *pb.TestRequest) (*pb.TestRep
 
 func (s *servers) SayHello1(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	return &pb.HelloReply{Message: "SayHello1" + in.Name}, nil
-}
-
-func (s *servers) GetRechargeAddr(ctx context.Context,in *pb.GetRechargeAddrRequest)(*pb.GetRechargeAddrReply,error){
-	return &pb.GetRechargeAddrReply{EeeAddr:"123",Ts:time.Now().Unix(),MetaData:"哈哈哈",PubKey:[]byte("123456"),SignedTxHash:[]byte("456789")},nil
 }
