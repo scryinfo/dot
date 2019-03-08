@@ -17,12 +17,10 @@ type GrpcInterface interface {
 	StartService()
 	Stop(ignore bool) error
 	Destroy(ignore bool) error
-	GetD() string
 }
 
 type Grpc struct {
 	Port string
-	Dddd string
 	S *grpc.Server
 	lis net.Listener
 }
@@ -47,10 +45,6 @@ func Add(l line.Line)  {
 		}
 		return
 	})
-}
-
-func (g *Grpc) GetD () string {
-	return g.Dddd
 }
 
 func (g *Grpc) GetServer() (s *grpc.Server) {

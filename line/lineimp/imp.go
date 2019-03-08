@@ -284,6 +284,7 @@ func (c *lineimp) Inject(obj interface{}) error {
 
 		if errt != nil && err == nil {
 			err = errt
+			fmt.Println("err:",err.Error())
 		}
 
 		if errt == nil {
@@ -463,7 +464,12 @@ FOR_FUN:
 }
 
 func CreateLog (c *lineimp) {
-	c.logger = dot.NewLoger(-1,"out.log")
+	//if c.Logfile == ""{
+		c.logger = dot.NewLoger(-1,"out.log")
+	//}else {
+	//	c.logger = dot.NewLoger(-1,c.Logfile)
+	//}
+
 	c.logger.Create(nil)
 }
 

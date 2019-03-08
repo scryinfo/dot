@@ -1,4 +1,4 @@
-package main
+package main1
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-func main()  {
+func main1()  {
 	l := lineimp.New()
 	l.ToLifer().Create(nil)
 
@@ -34,6 +34,8 @@ func main()  {
 
 	f := &gclient.GrpcClient{}
 	l.ToInjecter().Inject(f)
+
+
 
 	conn := f.Grpcs.GetConn()
 
