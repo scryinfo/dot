@@ -97,15 +97,21 @@ func (c *lineimp) PreAdd(livings *line.TypeLives) error {
 	clone := livings
 	err := c.metas.UpdateOrAdd(&clone.Meta)
 	if err == nil {
-		for _, it := range clone.Lives {
+		if clone.Lives != nil {
+			for _, it := range clone.Lives {
 
-			if len(it.TypeId.String()) < 1 {
-				it.TypeId = clone.Meta.TypeId
+				if len(it.TypeId.String()) < 1 {
+					it.TypeId = clone.Meta.TypeId
+				}
+
+				live := dot.Live{TypeId: it.TypeId, LiveId: it.LiveId, Dot: nil}
+				live.RelyLives = make([]dot.LiveId, len(it.RelyLives))
+				copy(live.RelyLives, it.RelyLives)
+				c.lives.UpdateOrAdd(&live)
 			}
-
-			live := dot.Live{TypeId: it.TypeId, LiveId: it.LiveId, Dot: nil}
-			live.RelyLives = make([]dot.LiveId, len(it.RelyLives))
-			copy(live.RelyLives, it.RelyLives)
+		}else{
+			lid := (dot.LiveId)(clone.Meta.TypeId)
+			live := dot.Live{TypeId: clone.Meta.TypeId, LiveId: lid, Dot: nil, RelyLives:[]dot.LiveId {lid}}
 			c.lives.UpdateOrAdd(&live)
 		}
 	}
@@ -211,6 +217,15 @@ LIVES:
 		}
 	}
 
+	//增加类型与 dot的对应关系, 只记录typeid == liveId的
+	for _, it := range c.lives.LiveIdMap {
+
+		if !skit.IsNil(&it.Dot) && ((string)(it.TypeId) == (string)(it.LiveId)){
+			t := reflect.TypeOf(it.Dot)
+			c.types[t] = it.Dot
+		}
+	}
+
 	return err
 }
 
@@ -284,6 +299,7 @@ func (c *lineimp) Inject(obj interface{}) error {
 
 		if errt != nil && err == nil {
 			err = errt
+			fmt.Println("err:",err.Error())
 		}
 
 		if errt == nil {
@@ -463,7 +479,12 @@ FOR_FUN:
 }
 
 func CreateLog (c *lineimp) {
-	c.logger = dot.NewLoger(-1,"out.log")
+	//if c.Logfile == ""{
+		c.logger = dot.NewLoger(-1,"out.log")
+	//}else {
+	//	c.logger = dot.NewLoger(-1,c.Logfile)
+	//}
+
 	c.logger.Create(nil)
 }
 
