@@ -12,6 +12,10 @@ import (
 	"reflect"
 )
 
+const (
+	DotId = "634658a8-7598-4785-b4ac-bb201ff0010f"
+)
+
 type GrpcInterface interface {
 	GetServer() *grpc.Server
 	StartService()
@@ -32,7 +36,7 @@ type GrpcServer struct {
 }
 
 func Add(l line.Line)  {
-	l.AddNewerByLiveId(dot.LiveId("634658a8-7598-4785-b4ac-bb201ff0010f"), func(conf interface{}) (d dot.Dot, err error) {
+	l.AddNewerByLiveId(dot.LiveId(DotId), func(conf interface{}) (d dot.Dot, err error) {
 		d = &Grpc{}
 		err = nil
 		t := reflect.ValueOf(conf)
