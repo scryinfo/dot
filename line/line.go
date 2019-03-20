@@ -90,6 +90,11 @@ type Line interface {
 	GetDotConfig(liveid dot.LiveId) *LiveConfig
 }
 
+// 如果组件需要知道当前的line那么，就实现这个接口，此接口会在组件的Create方法之前调用
+type NeedLine interface {
+	SetLine(l Line)
+}
+
 //TypeLives living
 type TypeLives struct {
 	Meta  dot.Metadata
