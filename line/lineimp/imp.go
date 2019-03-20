@@ -173,6 +173,12 @@ LIVES:
 						break LIVES
 					} else {
 						if l, ok := it.Dot.(dot.Lifer); ok {
+
+							{// 在Create 之前检测是否实现 NeedLine 接口
+								if nl, ok := it.Dot.(line.NeedLine); ok{
+									nl.SetLine(c)
+								}
+							}
 							l.Create(nil)
 						}
 						continue LIVES
@@ -187,6 +193,11 @@ LIVES:
 						break LIVES
 					} else {
 						if l, ok := it.Dot.(dot.Lifer); ok {
+							{// 在Create 之前检测是否实现 NeedLine 接口
+								if nl, ok := it.Dot.(line.NeedLine); ok{
+									nl.SetLine(c)
+								}
+							}
 							l.Create(nil)
 						}
 						continue LIVES
@@ -210,6 +221,11 @@ LIVES:
 				it.Dot, err = m.NewDot(bconfig)
 				if err == nil {
 					if l, ok := it.Dot.(dot.Lifer); ok {
+						{// 在Create 之前检测是否实现 NeedLine 接口
+							if nl, ok := it.Dot.(line.NeedLine); ok{
+								nl.SetLine(c)
+							}
+						}
 						l.Create(nil)
 					}
 				}
