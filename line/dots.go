@@ -1,7 +1,7 @@
 package line
 
 import (
-	"github.com/scryinfo/dot/dot"
+	"github.com/scryInfo/dot/dot"
 )
 
 //Metas

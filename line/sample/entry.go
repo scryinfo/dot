@@ -6,9 +6,9 @@ import (
 
 	"reflect"
 
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/line"
-	"github.com/scryinfo/dot/line/lineimp"
+	"github.com/scryInfo/dot/dot"
+	"github.com/scryInfo/dot/line"
+	"github.com/scryInfo/dot/line/lineimp"
 )
 
 func main() {

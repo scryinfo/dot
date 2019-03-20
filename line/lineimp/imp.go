@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/line"
-	"github.com/scryinfo/scryg/sutils/skit"
+	"github.com/scryInfo/dot/dot"
+	"github.com/scryInfo/dot/line"
+	"github.com/scryInfo/scryg/sutils/skit"
 )
 
 var (
