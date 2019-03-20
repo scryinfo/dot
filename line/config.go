@@ -3,7 +3,7 @@ package line
 import (
 	"encoding/json"
 
-	"github.com/scryinfo/dot/dot"
+	"github.com/scryInfo/dot/dot"
 )
 
 //LiveConfig live config

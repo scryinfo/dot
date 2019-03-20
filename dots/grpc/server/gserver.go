@@ -3,8 +3,8 @@ package gserver
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/line"
+	"github.com/scryInfo/dot/dot"
+	"github.com/scryInfo/dot/line"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/scryinfo/dot/line/lineimp"
-	"github.com/scryinfo/dot/line"
+	"github.com/scryInfo/dot/line/lineimp"
+	"github.com/scryInfo/dot/line"
 	"fmt"
-	"github.com/scryinfo/dot/dot"
+	"github.com/scryInfo/dot/dot"
 )
 
 // 创建容器

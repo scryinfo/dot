@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/line/lineimp"
+	"github.com/scryInfo/dot/dot"
+	"github.com/scryInfo/dot/line/lineimp"
 )
 
 var (
