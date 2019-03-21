@@ -259,7 +259,9 @@ LIVES:
 	}
 
 	for _, it := range tdots {
-		c.Inject(it)
+		if it.Dot != nil {
+			c.Inject(it.Dot)
+		}
 	}
 
 	return err
