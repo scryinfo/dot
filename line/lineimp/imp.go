@@ -246,6 +246,8 @@ LIVES:
 			t := reflect.TypeOf(it.Dot)
 			c.types[t] = it.Dot
 		}
+
+		c.Inject(it.Dot)
 	}
 
 	return err
@@ -512,9 +514,6 @@ func CreateLog (c *lineimp) {
 
 //Start
 func (c *lineimp) Start(ignore bool) error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
 	var err error
 	for {
 		//start config
@@ -525,6 +524,23 @@ func (c *lineimp) Start(ignore bool) error {
 		//start log
 
 		//start other
+		{
+			var tdots []*dot.Live
+			c.mutex.Lock()
+			tdots = make([]*dot.Live, 0,len(c.lives.LiveIdMap))
+			for _, it := range c.lives.LiveIdMap {
+				if it != nil && it.Dot != nil {
+					tdots = append(tdots, it)
+				}
+			}
+			c.mutex.Unlock()
+			for _,it := range tdots {
+				if d,ok := it.Dot.(dot.Lifer); ok{
+					d.Start(ignore)
+				}
+			}
+		}
+
 		break
 	}
 
@@ -533,12 +549,24 @@ func (c *lineimp) Start(ignore bool) error {
 
 //Stop
 func (c *lineimp) Stop(ignore bool) error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
 	var err error
 	//stop others
-
+	{
+		var tdots []*dot.Live
+		c.mutex.Lock()
+		tdots = make([]*dot.Live, 0,len(c.lives.LiveIdMap))
+		for _, it := range c.lives.LiveIdMap {
+			if it != nil && it.Dot != nil {
+				tdots = append(tdots, it)
+			}
+		}
+		c.mutex.Unlock()
+		for _,it := range tdots {
+			if d,ok := it.Dot.(dot.Lifer); ok{
+				d.Stop(ignore)
+			}
+		}
+	}
 	//stop log
 
 	//stop config
@@ -549,10 +577,23 @@ func (c *lineimp) Stop(ignore bool) error {
 
 //Destroy 销毁 Dot
 func (c *lineimp) Destroy(ignore bool) error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
 	//Destroy others
+	{
+		var tdots []*dot.Live
+		c.mutex.Lock()
+		tdots = make([]*dot.Live, 0,len(c.lives.LiveIdMap))
+		for _, it := range c.lives.LiveIdMap {
+			if it != nil && it.Dot != nil {
+				tdots = append(tdots, it)
+			}
+		}
+		c.mutex.Unlock()
+		for _,it := range tdots {
+			if d,ok := it.Dot.(dot.Lifer); ok{
+				d.Destroy(ignore)
+			}
+		}
+	}
 
 	//Destroy log
 
