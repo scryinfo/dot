@@ -145,11 +145,20 @@ LIVES:
 
 //CreateDots create dots
 func (c *lineimp) CreateDots() error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
+	var tdots []*dot.Live
+	{
+		c.mutex.Lock()
+		tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
+		for _, it := range c.lives.LiveIdMap {
+			if it != nil {
+				tdots = append(tdots, it)
+			}
+		}
+		c.mutex.Unlock()
+	}
 	var err error
 LIVES:
-	for _, it := range c.lives.LiveIdMap {
+	for _, it := range tdots {
 
 		if skit.IsNil(&it.Dot) == true {
 			var bconfig []byte
@@ -179,9 +188,9 @@ LIVES:
 									nl.SetLine(c)
 								}
 							}
-							c.mutex.Unlock()
+							//c.mutex.Unlock()
 							l.Create(nil)
-							c.mutex.Lock()
+							//c.mutex.Lock()
 						}
 						continue LIVES
 					}
@@ -200,9 +209,9 @@ LIVES:
 									nl.SetLine(c)
 								}
 							}
-							c.mutex.Unlock()
+							//c.mutex.Unlock()
 							l.Create(nil)
-							c.mutex.Lock()
+							//c.mutex.Lock()
 						}
 						continue LIVES
 					}
@@ -230,9 +239,9 @@ LIVES:
 								nl.SetLine(c)
 							}
 						}
-						c.mutex.Unlock()
+						//c.mutex.Unlock()
 						l.Create(nil)
-						c.mutex.Lock()
+						//c.mutex.Lock()
 					}
 				}
 			}
@@ -240,14 +249,17 @@ LIVES:
 	}
 
 	//增加类型与 dot的对应关系, 只记录typeid == liveId的
-	for _, it := range c.lives.LiveIdMap {
-
+	for _, it := range tdots {
 		if !skit.IsNil(&it.Dot) && ((string)(it.TypeId) == (string)(it.LiveId)){
 			t := reflect.TypeOf(it.Dot)
+			c.mutex.Lock()
 			c.types[t] = it.Dot
+			c.mutex.Unlock()
 		}
+	}
 
-		c.Inject(it.Dot)
+	for _, it := range tdots {
+		c.Inject(it)
 	}
 
 	return err
@@ -324,6 +336,11 @@ func (c *lineimp) Inject(obj interface{}) error {
 		if errt != nil && err == nil {
 			err = errt
 			fmt.Println("err:",err.Error())
+		}
+
+		if d == nil {
+			fmt.Println("can not find the dot tname:{}", tname)
+			continue
 		}
 
 		if errt == nil {
