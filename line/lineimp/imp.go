@@ -179,7 +179,9 @@ LIVES:
 									nl.SetLine(c)
 								}
 							}
+							c.mutex.Unlock()
 							l.Create(nil)
+							c.mutex.Lock()
 						}
 						continue LIVES
 					}
@@ -198,7 +200,9 @@ LIVES:
 									nl.SetLine(c)
 								}
 							}
+							c.mutex.Unlock()
 							l.Create(nil)
+							c.mutex.Lock()
 						}
 						continue LIVES
 					}
@@ -226,7 +230,9 @@ LIVES:
 								nl.SetLine(c)
 							}
 						}
+						c.mutex.Unlock()
 						l.Create(nil)
+						c.mutex.Lock()
 					}
 				}
 			}
