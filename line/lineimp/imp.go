@@ -251,8 +251,8 @@ LIVES:
 	//增加logger 与 config
 	{
 		c.mutex.Lock()
-		c.types[reflect.TypeOf(c.logger)] = c.logger
-		c.types[reflect.TypeOf(c.config)] = c.config
+		c.types[reflect.TypeOf(c.logger).Elem()] = c.logger
+		c.types[reflect.TypeOf(c.config).Elem()] = c.config
 		c.mutex.Unlock()
 	}
 
