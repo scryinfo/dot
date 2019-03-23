@@ -36,6 +36,8 @@ type Injecter interface {
 	//ReplaceOrAddByType update
 	//不会操作prarent
 	ReplaceOrAddByType(d dot.Dot) error
+	//不会操作prarent
+	ReplaceOrAddByParamType(d dot.Dot, t reflect.Type) error
 	//ReplaceOrAddByLiveId update
 	//不会操作prarent
 	ReplaceOrAddByLiveId(d dot.Dot, id dot.LiveId) error

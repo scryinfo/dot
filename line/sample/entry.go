@@ -175,6 +175,8 @@ type SomeUse struct {
 	DotLive10 *Dot4 `dot:"41"`
 	DotLive11 *Dot4 `dot:"42"`
 
+	Logger dot.SLogger `dot:""`
+
 }
 
 type Dot2 struct {

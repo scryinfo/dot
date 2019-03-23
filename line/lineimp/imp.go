@@ -251,8 +251,16 @@ LIVES:
 	//增加logger 与 config
 	{
 		c.mutex.Lock()
-		c.types[reflect.TypeOf(c.logger).Elem()] = c.logger
-		c.types[reflect.TypeOf(c.config).Elem()] = c.config
+		c.types[reflect.TypeOf(c.logger)] = c.logger
+		{
+			t := reflect.TypeOf((*dot.SLogger)(nil)).Elem()
+			c.types[t] = c.logger
+		}
+		c.types[reflect.TypeOf(c.config)] = c.config
+		{
+			t := reflect.TypeOf((*dot.SConfig)(nil)).Elem()
+			c.types[t] = c.sConfig
+		}
 		c.mutex.Unlock()
 	}
 
@@ -408,6 +416,18 @@ func (c *lineimp) GetByLiveId(liveId dot.LiveId) (d dot.Dot, err error) {
 func (c *lineimp) ReplaceOrAddByType(d dot.Dot) error {
 	var err error
 	t := reflect.TypeOf(d)
+	//for t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
+	//	t = t.Elem()
+	//}
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	c.types[t] = d
+	return err
+}
+
+//ReplaceOrAddByParamType update
+func (c *lineimp) ReplaceOrAddByParamType(d dot.Dot, t reflect.Type) error {
+	var err error
 	//for t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
 	//	t = t.Elem()
 	//}
