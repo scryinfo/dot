@@ -9,6 +9,9 @@ import (
 type Level = zapcore.Level
 
 const (
+
+	LogLiveId = "d8299d21-4f43-48bd-9a5c-654c4395ea17"
+
 	// DebugLevel logs are typically voluminous, and are usually disabled in
 	// production.
 	DebugLevel = zapcore.DebugLevel
