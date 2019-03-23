@@ -248,6 +248,14 @@ LIVES:
 		}
 	}
 
+	//增加logger 与 config
+	{
+		c.mutex.Lock()
+		c.types[reflect.TypeOf(c.logger)] = c.logger
+		c.types[reflect.TypeOf(c.config)] = c.config
+		c.mutex.Unlock()
+	}
+
 	//增加类型与 dot的对应关系, 只记录typeid == liveId的
 	for _, it := range tdots {
 		if !skit.IsNil(&it.Dot) && ((string)(it.TypeId) == (string)(it.LiveId)){

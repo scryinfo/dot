@@ -12,6 +12,10 @@ import (
 	"github.com/scryInfo/scryg/sutils/sfile"
 )
 
+const (
+	SconfigLiveId = ""
+)
+
 var (
 	_ SConfig = (*sConfig)(nil) //just static check implemet the interface
 )
