@@ -17,12 +17,12 @@ import (
 var f gclient.GrpcClienter
 var t gclient.GrpcClienter
 
-func init()  {
+func init() {
 	l := lineimp.New()
 	l.ToLifer().Create(nil)
 
-	gclient.Add(l,dot.LiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46a"))
-	gclient.Add(l,dot.LiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46b"))
+	gclient.Add(l, dot.LiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46a"))
+	gclient.Add(l, dot.LiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46b"))
 
 	err := l.Rely()
 	if err != nil {
@@ -43,17 +43,17 @@ func init()  {
 	}
 
 	{
-		d, _:= l.ToInjecter().GetByLiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46a")
+		d, _ := l.ToInjecter().GetByLiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46a")
 		f = d.(gclient.GrpcClienter)
 	}
 
 	{
-		d, _:= l.ToInjecter().GetByLiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
+		d, _ := l.ToInjecter().GetByLiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
 		t = d.(gclient.GrpcClienter)
 	}
 }
 
-func A()  {
+func A() {
 	conn := f.GetConn()
 
 	ctx := f.GetCtx()
@@ -63,7 +63,7 @@ func A()  {
 
 	c1, err := c.SayHello(ctx, &pb.TestRequest{Name: "shrimpliaoA"})
 
-	fmt.Println("err",err)
+	fmt.Println("err", err)
 
 	fmt.Printf("@@@c1: %s", c1.Message)
 
@@ -73,7 +73,7 @@ func A()  {
 	f.Destroy(false)
 }
 
-func B()  {
+func B() {
 	conn := t.GetConn()
 
 	ctx := t.GetCtx()
@@ -83,7 +83,7 @@ func B()  {
 
 	c1, err := c.SayHello(ctx, &pb.TestRequest{Name: "shrimpliaoB"})
 
-	fmt.Println("err",err)
+	fmt.Println("err", err)
 
 	fmt.Printf("@@@c1: %s", c1.Message)
 
@@ -93,7 +93,7 @@ func B()  {
 	t.Destroy(false)
 }
 
-func main()  {
+func main() {
 	A()
 	B()
 }

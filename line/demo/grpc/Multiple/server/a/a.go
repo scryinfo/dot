@@ -29,9 +29,7 @@ import (
 用户需要实现 grpc server 具体方法内容
 */
 
-
-
-func main()  {
+func main() {
 
 	l := lineimp.New()
 	//l.
@@ -72,7 +70,6 @@ func main()  {
 
 	//fmt.Println(llll.GetLevel())#243447
 	l.SLogger().SetLogFile("out1.log")
-
 
 	l.SLogger().Debugln("123123123123")
 

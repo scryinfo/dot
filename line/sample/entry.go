@@ -67,7 +67,7 @@ func add(l line.Line) {
 		// 给typeid指定newer
 		l.PreAdd(&line.TypeLives{
 			Meta: dot.Metadata{TypeId: "1", NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
-				return &Dot1{Name:"Create by type 1"}, nil
+				return &Dot1{Name: "Create by type 1"}, nil
 			}},
 		})
 	}
@@ -176,7 +176,6 @@ type SomeUse struct {
 	DotLive11 *Dot4 `dot:"42"`
 
 	Logger dot.SLogger `dot:""`
-
 }
 
 type Dot2 struct {

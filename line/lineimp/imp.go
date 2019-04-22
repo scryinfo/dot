@@ -33,8 +33,6 @@ type lineimp struct {
 	mutex  sync.Mutex
 }
 
-
-
 //New new
 func New() line.Line {
 	a := &lineimp{metas: line.NewMetas(), lives: line.NewLives(), types: make(map[reflect.Type]dot.Dot)}
@@ -109,9 +107,9 @@ func (c *lineimp) PreAdd(livings *line.TypeLives) error {
 				copy(live.RelyLives, it.RelyLives)
 				c.lives.UpdateOrAdd(&live)
 			}
-		}else{
+		} else {
 			lid := (dot.LiveId)(clone.Meta.TypeId)
-			live := dot.Live{TypeId: clone.Meta.TypeId, LiveId: lid, Dot: nil, RelyLives:[]dot.LiveId {lid}}
+			live := dot.Live{TypeId: clone.Meta.TypeId, LiveId: lid, Dot: nil, RelyLives: []dot.LiveId{lid}}
 			c.lives.UpdateOrAdd(&live)
 		}
 	}
@@ -183,8 +181,8 @@ LIVES:
 					} else {
 						if l, ok := it.Dot.(dot.Lifer); ok {
 
-							{// 在Create 之前检测是否实现 NeedLine 接口
-								if nl, ok := it.Dot.(line.NeedLine); ok{
+							{ // 在Create 之前检测是否实现 NeedLine 接口
+								if nl, ok := it.Dot.(line.NeedLine); ok {
 									nl.SetLine(c)
 								}
 							}
@@ -204,8 +202,8 @@ LIVES:
 						break LIVES
 					} else {
 						if l, ok := it.Dot.(dot.Lifer); ok {
-							{// 在Create 之前检测是否实现 NeedLine 接口
-								if nl, ok := it.Dot.(line.NeedLine); ok{
+							{ // 在Create 之前检测是否实现 NeedLine 接口
+								if nl, ok := it.Dot.(line.NeedLine); ok {
 									nl.SetLine(c)
 								}
 							}
@@ -234,8 +232,8 @@ LIVES:
 				it.Dot, err = m.NewDot(bconfig)
 				if err == nil {
 					if l, ok := it.Dot.(dot.Lifer); ok {
-						{// 在Create 之前检测是否实现 NeedLine 接口
-							if nl, ok := it.Dot.(line.NeedLine); ok{
+						{ // 在Create 之前检测是否实现 NeedLine 接口
+							if nl, ok := it.Dot.(line.NeedLine); ok {
 								nl.SetLine(c)
 							}
 						}
@@ -266,7 +264,7 @@ LIVES:
 
 	//增加类型与 dot的对应关系, 只记录typeid == liveId的
 	for _, it := range tdots {
-		if !skit.IsNil(&it.Dot) && ((string)(it.TypeId) == (string)(it.LiveId)){
+		if !skit.IsNil(&it.Dot) && ((string)(it.TypeId) == (string)(it.LiveId)) {
 			t := reflect.TypeOf(it.Dot)
 			c.mutex.Lock()
 			c.types[t] = it.Dot
@@ -353,7 +351,7 @@ func (c *lineimp) Inject(obj interface{}) error {
 
 		if errt != nil && err == nil {
 			err = errt
-			fmt.Println("err:",err.Error())
+			fmt.Println("err:", err.Error())
 		}
 
 		if d == nil {
@@ -548,10 +546,10 @@ FOR_FUN:
 
 	return err
 }
-
-func CreateLog (c *lineimp) {
+//todo 这个方法就为私有，且按照组件的方式来实现
+func CreateLog(c *lineimp) {
 	//if c.Logfile == ""{
-		c.logger = dot.NewLoger(-1,"out.log")
+	c.logger = dot.NewLoger(-1, "out.log")
 	//}else {
 	//	c.logger = dot.NewLoger(-1,c.Logfile)
 	//}
@@ -574,15 +572,15 @@ func (c *lineimp) Start(ignore bool) error {
 		{
 			var tdots []*dot.Live
 			c.mutex.Lock()
-			tdots = make([]*dot.Live, 0,len(c.lives.LiveIdMap))
+			tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
 			for _, it := range c.lives.LiveIdMap {
 				if it != nil && it.Dot != nil {
 					tdots = append(tdots, it)
 				}
 			}
 			c.mutex.Unlock()
-			for _,it := range tdots {
-				if d,ok := it.Dot.(dot.Lifer); ok{
+			for _, it := range tdots {
+				if d, ok := it.Dot.(dot.Lifer); ok {
 					d.Start(ignore)
 				}
 			}
@@ -601,15 +599,15 @@ func (c *lineimp) Stop(ignore bool) error {
 	{
 		var tdots []*dot.Live
 		c.mutex.Lock()
-		tdots = make([]*dot.Live, 0,len(c.lives.LiveIdMap))
+		tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
 		for _, it := range c.lives.LiveIdMap {
 			if it != nil && it.Dot != nil {
 				tdots = append(tdots, it)
 			}
 		}
 		c.mutex.Unlock()
-		for _,it := range tdots {
-			if d,ok := it.Dot.(dot.Lifer); ok{
+		for _, it := range tdots {
+			if d, ok := it.Dot.(dot.Lifer); ok {
 				d.Stop(ignore)
 			}
 		}
@@ -628,15 +626,15 @@ func (c *lineimp) Destroy(ignore bool) error {
 	{
 		var tdots []*dot.Live
 		c.mutex.Lock()
-		tdots = make([]*dot.Live, 0,len(c.lives.LiveIdMap))
+		tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
 		for _, it := range c.lives.LiveIdMap {
 			if it != nil && it.Dot != nil {
 				tdots = append(tdots, it)
 			}
 		}
 		c.mutex.Unlock()
-		for _,it := range tdots {
-			if d,ok := it.Dot.(dot.Lifer); ok{
+		for _, it := range tdots {
+			if d, ok := it.Dot.(dot.Lifer); ok {
 				d.Destroy(ignore)
 			}
 		}

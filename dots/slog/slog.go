@@ -2,12 +2,12 @@ package dots111111
 
 import (
 	"encoding/json"
+	"github.com/scryInfo/dot/dot"
 	"github.com/scryInfo/dot/line"
-	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"reflect"
 	"time"
-	"github.com/scryInfo/dot/dot"
 )
 
 type Level = zapcore.Level
@@ -30,8 +30,7 @@ const (
 )
 
 //MakeStringer 生成日志字符串
-type MakeStringer  func() string
-
+type MakeStringer func() string
 
 //SLogger 日志属于一个组件Dot,但它太基础了，大部分 Dot都需要，所以定义到 dot.go文件中
 //所有日志调用时，不要在参数中调用函数，函数的运行是先于日志等级的，如果一定要调用函数，可以使用回调函数的方式（注回调函数一定要正常运行）
@@ -81,87 +80,96 @@ type SLogger interface {
 }
 
 //NewConfiger new sConfig
-func NewLoger(lv int8,file string) *ULog {
+func NewLoger(lv int8, file string) *ULog {
 	return &ULog{
-		LogLevel:lv,
-		OutputPath:file,
+		LogLevel:   lv,
+		OutputPath: file,
 	}
 }
 
 type ULog struct {
 	level      zap.AtomicLevel
 	OutputPath string
-	Logger         *zap.Logger
-	LogLevel      int8
+	Logger     *zap.Logger
+	LogLevel   int8
 }
 
 type DotLog struct {
 	Log SLogger `dot:"d8299d21-4f43-48bd-9a5c-654c4395ea17"`
 }
 
-func (log *ULog) GetLevel() int8{
-	return  log.LogLevel
+func (log *ULog) GetLevel() int8 {
+	return log.LogLevel
 }
+
 //SetLevel set level
-func (log *ULog)SetLevel(levels int8){
+func (log *ULog) SetLevel(levels int8) {
 	log.level.SetLevel(zapcore.Level(levels))
 }
+
 //Debugln debug
-func (log *ULog)Debugln(msg string, fields ...zap.Field){
-	log.Logger.Debug(msg,fields...)
+func (log *ULog) Debugln(msg string, fields ...zap.Field) {
+	log.Logger.Debug(msg, fields...)
 }
+
 //Debug debug
-func (log *ULog)Debug(mstr MakeStringer){
+func (log *ULog) Debug(mstr MakeStringer) {
 	if ce := log.Logger.Check(DebugLevel, mstr()); ce != nil {
 		log.Logger.Debug(mstr())
 	}
 }
+
 //Infoln info
-func (log *ULog)Infoln(msg string, fields ...zap.Field){
-	log.Logger.Info(msg,fields...)
+func (log *ULog) Infoln(msg string, fields ...zap.Field) {
+	log.Logger.Info(msg, fields...)
 }
+
 //Info info
-func (log *ULog)Info(mstr MakeStringer){
+func (log *ULog) Info(mstr MakeStringer) {
 	if ce := log.Logger.Check(DebugLevel, mstr()); ce != nil {
 		log.Logger.Info(mstr())
 	}
 }
+
 ////Warnln warn
-func (log *ULog)Warnln(msg string, fields ...zap.Field){
-	log.Logger.Warn(msg,fields...)
+func (log *ULog) Warnln(msg string, fields ...zap.Field) {
+	log.Logger.Warn(msg, fields...)
 }
+
 //Warn warn
-func (log *ULog)Warn(mstr MakeStringer){
+func (log *ULog) Warn(mstr MakeStringer) {
 	if ce := log.Logger.Check(DebugLevel, mstr()); ce != nil {
 		log.Logger.Warn(mstr())
 	}
 }
 
 ////Errorln error
-func (log *ULog)Errorln(msg string, fields ...zap.Field){
-	log.Logger.Error(msg,fields...)
+func (log *ULog) Errorln(msg string, fields ...zap.Field) {
+	log.Logger.Error(msg, fields...)
 }
+
 ////Error error
-func (log *ULog)Error(mstr MakeStringer){
+func (log *ULog) Error(mstr MakeStringer) {
 	if ce := log.Logger.Check(DebugLevel, mstr()); ce != nil {
 		log.Logger.Error(mstr())
 	}
 }
+
 ////Fatalln fatal
-func (log *ULog)Fatalln(msg string, fields ...zap.Field){
-	log.Logger.Fatal(msg,fields...)
+func (log *ULog) Fatalln(msg string, fields ...zap.Field) {
+	log.Logger.Fatal(msg, fields...)
 }
+
 ////Fatal fatal
-func (log *ULog)Fatal(mstr MakeStringer){
+func (log *ULog) Fatal(mstr MakeStringer) {
 	if ce := log.Logger.Check(DebugLevel, mstr()); ce != nil {
 		log.Logger.Fatal(mstr())
 	}
 }
 
-func Add(l line.Line)  {
+func Add(l line.Line) {
 	l.AddNewerByLiveId(dot.LiveId("d8299d21-4f43-48bd-9a5c-654c4395ea17"), func(conf interface{}) (d dot.Dot, err error) {
-		d = &ULog{
-		}
+		d = &ULog{}
 		err = nil
 		t := reflect.ValueOf(conf)
 		if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
@@ -176,11 +184,9 @@ func Add(l line.Line)  {
 	})
 }
 
-
-func (log *ULog) Create (conf dot.SConfig) (err error)  {
+func (log *ULog) Create(conf dot.SConfig) (err error) {
 
 	//log.LogLevel = -1
-
 
 	encoderCfg := zapcore.EncoderConfig{
 		// Keys can be anything except the empty string.
@@ -212,11 +218,11 @@ func (log *ULog) Create (conf dot.SConfig) (err error)  {
 		ErrorOutputPaths: []string{"stderr"},
 	}
 
-	logger,err := customCfg.Build()
+	logger, err := customCfg.Build()
 
-	if err != nil{
+	if err != nil {
 
-	}else {
+	} else {
 		log.Logger = logger
 	}
 
@@ -224,7 +230,7 @@ func (log *ULog) Create (conf dot.SConfig) (err error)  {
 }
 
 //启动连接
-func (log *ULog) Start (ignore bool) error {
+func (log *ULog) Start(ignore bool) error {
 	return nil
 }
 
@@ -233,9 +239,10 @@ func (log *ULog) Start (ignore bool) error {
 func (log *ULog) Stop(ignore bool) error {
 	return nil
 }
+
 //Destroy 销毁 Dot
 //ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
-func (log *ULog) Destroy(ignore bool) error{
+func (log *ULog) Destroy(ignore bool) error {
 	defer log.Logger.Sync()
 	return nil
 }

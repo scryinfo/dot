@@ -1,16 +1,16 @@
 package main
 
 import (
-	"github.com/scryInfo/dot/line/lineimp"
-	"github.com/scryInfo/dot/line"
 	"fmt"
 	"github.com/scryInfo/dot/dot"
+	"github.com/scryInfo/dot/line"
+	"github.com/scryInfo/dot/line/lineimp"
 )
 
 // 创建容器
 //添加fmt组件
 
-func main()  {
+func main() {
 	l := lineimp.New()
 	l.ToLifer().Create(nil)
 
@@ -25,12 +25,12 @@ func main()  {
 }
 
 //注册fmt组件
-func addFmt(l line.Line)  {
-	l.ToInjecter().ReplaceOrAddByLiveId(&Fmt1{},dot.LiveId("1"))
+func addFmt(l line.Line) {
+	l.ToInjecter().ReplaceOrAddByLiveId(&Fmt1{}, dot.LiveId("1"))
 }
 
 //实际对象
-type Fmt1 struct {}
+type Fmt1 struct{}
 
 //创建使用对象
 type Fmt2 struct {
@@ -39,5 +39,5 @@ type Fmt2 struct {
 
 //组件方法
 func (f Fmt1) Println(s string) (n int, err error) {
-	return  fmt.Println(s)
+	return fmt.Println(s)
 }

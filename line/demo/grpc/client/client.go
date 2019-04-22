@@ -8,11 +8,11 @@ import (
 	"log"
 )
 
-func main()  {
+func main() {
 	l := lineimp.New()
 	l.ToLifer().Create(nil)
 
-	gclient.Add(l,"dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
+	gclient.Add(l, "dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
 
 	err := l.Rely()
 	if err != nil {
@@ -37,7 +37,7 @@ func main()  {
 
 	var f gclient.GrpcClienter
 	{
-		d, _:= l.ToInjecter().GetByLiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
+		d, _ := l.ToInjecter().GetByLiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
 		f = d.(gclient.GrpcClienter)
 	}
 
@@ -45,14 +45,13 @@ func main()  {
 
 	ctx := f.GetCtx()
 
-
 	//用户实现 start
 
 	c := pb.NewTestClient(conn)
 
 	c1, err := c.SayHello(ctx, &pb.TestRequest{Name: "shrimpliao"})
 
-	fmt.Println("err",err)
+	fmt.Println("err", err)
 
 	log.Printf("@@@c1: %s", c1.Message)
 

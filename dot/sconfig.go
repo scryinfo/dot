@@ -240,13 +240,13 @@ func (c *sConfig) DefJson(key string, def interface{}) interface{} {
 		if len(keys) == 1 {
 			if t, ok := c.simpleJson.CheckGet(key); ok {
 				jsonStr, _ := json.Marshal(t)
-				json.Unmarshal(jsonStr,def)
+				json.Unmarshal(jsonStr, def)
 			}
 		} else if len(keys) > 1 {
 			t := c.simpleJson.GetPath(keys...)
 			if t != nil {
 				jsonStr, _ := json.Marshal(t)
-				json.Unmarshal(jsonStr,def)
+				json.Unmarshal(jsonStr, def)
 			}
 		}
 	}

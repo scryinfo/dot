@@ -76,8 +76,10 @@ type Dot interface{}
 // Create, Start,Stop,Destroy
 // Create and Start are separate, in order to resolve the dependencies between different dot instances,
 // if there is no problem with the dependencies, then you can directly null in Start
+//todo 建议把这个接口分为四个，这样实现起来更方便，没有必要实现多余的接口
 type Lifer interface {
 	//Create 在这个方法在进行初始，也运行或监听相同内容，最好放在Start方法中实现
+	//todo 这个方法的参数，现在是没有使用的，建议删除，来简化接口
 	Create(conf SConfig) error
 	//Start
 	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
