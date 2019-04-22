@@ -20,7 +20,7 @@ type CmdParameterName string
 
 func (c CmdParameterName) String() string {
 	return string(c)
-}	
+}
 
 //命令行参数
 const (

@@ -24,14 +24,14 @@ type GrpcClienter interface {
 
 type Grpc struct {
 	Address string
-	ctx context.Context
-	conn *grpc.ClientConn
-	cancel context.CancelFunc
+	ctx     context.Context
+	conn    *grpc.ClientConn
+	cancel  context.CancelFunc
 }
 
 //给指定的 liveid 增加 newer
 // Deprecated: Use AddType instead.
-func Add(l line.Line,id dot.LiveId)  {
+func Add(l line.Line, id dot.LiveId) {
 	l.AddNewerByLiveId(id, func(conf interface{}) (d dot.Dot, err error) {
 		d = &Grpc{}
 		err = nil
@@ -49,7 +49,7 @@ func Add(l line.Line,id dot.LiveId)  {
 }
 
 //给gclient 增加newer, 只要没有特殊的指， 都会使用这个
-func AddType(l line.Line)  {
+func AddType(l line.Line) {
 	l.AddNewerByTypeId(DotTypeId, func(conf interface{}) (d dot.Dot, err error) {
 		d = &Grpc{}
 		err = nil
@@ -66,8 +66,7 @@ func AddType(l line.Line)  {
 	})
 }
 
-
-func (g *Grpc) GetCtx () context.Context {
+func (g *Grpc) GetCtx() context.Context {
 	return g.ctx
 }
 
@@ -75,22 +74,22 @@ func (g *Grpc) GetConn() *grpc.ClientConn {
 	return g.conn
 }
 
-func (g *Grpc) Create (conf dot.SConfig) error {
-	conn,err := grpc.Dial(g.Address,grpc.WithInsecure())
+func (g *Grpc) Create(conf dot.SConfig) error {
+	conn, err := grpc.Dial(g.Address, grpc.WithInsecure())
 	g.conn = conn
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 	//defer conn.Close()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	g.ctx=ctx
-	g.cancel=cancel
+	g.ctx = ctx
+	g.cancel = cancel
 	//defer cancel()
 	return err
 }
 
 //启动连接
-func (g *Grpc) Start (ignore bool) error {
+func (g *Grpc) Start(ignore bool) error {
 	return nil
 }
 
@@ -102,7 +101,7 @@ func (g *Grpc) Stop(ignore bool) error {
 
 //Destroy 销毁 Dot
 //ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
-func (g *Grpc) Destroy(ignore bool) error{
+func (g *Grpc) Destroy(ignore bool) error {
 	g.conn.Close()
 	g.cancel()
 	return nil

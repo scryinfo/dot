@@ -7,15 +7,14 @@ import (
 )
 
 var (
-	_ dot.SLogger     = (*dot.ULog)(nil)
+	_ dot.SLogger = (*dot.ULog)(nil)
 )
 
-func main()  {
+func main() {
 
 	//if sv,ok := slog.ULog.(slog.SLogger); ok {
 	//	fmt.Printf("v implements String(): %s\n", sv)
 	//}
-
 
 	l := lineimp.New()
 	l.ToLifer().Create(nil)
