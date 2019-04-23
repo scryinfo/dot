@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/scryInfo/dot"
-	"github.com/scryInfo/dot/dots"
 	"github.com/scryInfo/dot/dots/grpc/client"
+	"github.com/scryInfo/dot/dots/line"
 	"log"
 )
 
 func main() {
-	l := dots.New()
+	l := line.New()
 	l.ToLifer().Create(nil)
 
 	gclient.Add(l, "dd05cbec-e3d0-4be3-a7df-87b0522ac46b")

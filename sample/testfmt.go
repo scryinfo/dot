@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/dots"
+	"github.com/scryInfo/dot/dots/line"
 )
 
 // 创建容器
 //添加fmt组件
 
 func main() {
-	l := dots.New()
+	l := line.New()
 	l.ToLifer().Create(nil)
 
 	addFmt(l)

@@ -1,4 +1,4 @@
-package dots
+package sconfig
 
 import (
 	"encoding/json"
@@ -465,4 +465,3 @@ func (c *sConfig) keys(k string) []string {
 	}
 	return re
 }
-

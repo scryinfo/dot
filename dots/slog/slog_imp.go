@@ -1,4 +1,4 @@
-package dots
+package slog
 
 import (
 	"github.com/scryInfo/dot/dot"
@@ -6,7 +6,6 @@ import (
 	"go.uber.org/zap/zapcore"
 	"time"
 )
-
 
 func (log *sLogger) SetLogFile(file string) {
 	log.OutputPath = file
@@ -181,4 +180,3 @@ func (log *sLogger) Destroy(ignore bool) error {
 func TimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString("[" + t.Format("2006-01-02 15:04:05") + "]")
 }
-

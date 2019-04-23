@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/scryInfo/dot"
-	"github.com/scryInfo/dot/dots"
 	"github.com/scryInfo/dot/dots/grpc/server"
+	"github.com/scryInfo/dot/dots/line"
 	"golang.org/x/net/context"
 )
 
@@ -31,7 +31,7 @@ import (
 
 func main() {
 
-	l := dots.New()
+	l := line.New()
 	//l.
 	l.ToLifer().Create(nil)
 
