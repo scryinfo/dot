@@ -1,8 +1,6 @@
-package line
+package dots
 
-import (
-	"github.com/scryInfo/dot/dot"
-)
+import "github.com/scryInfo/dot/dot"
 
 //Metas
 type Metas struct {

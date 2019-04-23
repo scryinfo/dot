@@ -3,33 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-
+	"github.com/scryInfo/dot/dots"
 	"reflect"
 
 	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/line"
-	"github.com/scryInfo/dot/line/lineimp"
 )
 
 func main() {
-	l := lineimp.New()
-	l.ToLifer().Create(nil)
+	l,err := dots.BuildAndStart(add)
 
-	add(l)
-
-	err := l.Rely()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = l.CreateDots()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = l.ToLifer().Start(false)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -46,26 +28,25 @@ func main() {
 
 	t = nil
 
-	defer func() {
-		l.ToLifer().Stop(true)
-		l.ToLifer().Destroy(true)
-	}()
+	dots.StopAndDestroy(l,true)
+
 
 }
 
-func add(l line.Line) {
+func add(l dot.Line) error{
+	var err error
 	{
 		t := reflect.TypeOf(((*Dot1)(nil)))
 		t = t.Elem()
 		fmt.Println("  ", t)
-		l.PreAdd(&line.TypeLives{
+		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "1", RefType: t}, Lives: []dot.Live{
 				dot.Live{LiveId: "12"},
 			},
 		})
 
 		// 给typeid指定newer
-		l.PreAdd(&line.TypeLives{
+		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "1", NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
 				return &Dot1{Name: "Create by type 1"}, nil
 			}},
@@ -77,7 +58,7 @@ func add(l line.Line) {
 		t = t.Elem()
 		fmt.Println("  ", t)
 		//这里没有指定 newer, 那么会直接使用反射 reflect.New 来创建
-		l.PreAdd(&line.TypeLives{
+		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "2", RefType: t}, Lives: []dot.Live{
 				dot.Live{LiveId: "21"}, dot.Live{LiveId: "22"},
 			},
@@ -85,7 +66,7 @@ func add(l line.Line) {
 	}
 
 	{ // 以下为使用 LiveId对就应的Newer，
-		l.AddNewerByLiveId(dot.LiveId("31"), func(conf interface{}) (d dot.Dot, err error) {
+		err = l.AddNewerByLiveId(dot.LiveId("31"), func(conf interface{}) (d dot.Dot, err error) {
 			d = &Dot3{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -101,7 +82,7 @@ func add(l line.Line) {
 			return
 		})
 
-		l.AddNewerByLiveId(dot.LiveId("32"), func(conf interface{}) (d dot.Dot, err error) {
+		err = l.AddNewerByLiveId(dot.LiveId("32"), func(conf interface{}) (d dot.Dot, err error) {
 			d = &Dot3{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -119,7 +100,7 @@ func add(l line.Line) {
 	}
 
 	{ // 以下为使用 typeid 与 LiveId对就应的Newer，如果两个都提供，那么优先使用liveid对应的
-		l.AddNewerByLiveId(dot.LiveId("41"), func(conf interface{}) (d dot.Dot, err error) {
+		err = l.AddNewerByLiveId(dot.LiveId("41"), func(conf interface{}) (d dot.Dot, err error) {
 			d = &Dot4{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -135,7 +116,7 @@ func add(l line.Line) {
 			return
 		})
 
-		l.AddNewerByTypeId(dot.TypeId("type_live"), func(conf interface{}) (d dot.Dot, err error) {
+		err = l.AddNewerByTypeId(dot.TypeId("type_live"), func(conf interface{}) (d dot.Dot, err error) {
 			d = &Dot4{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -150,10 +131,11 @@ func add(l line.Line) {
 			return
 		})
 	}
+	return err
 }
 
 //直接向容器中加入指定的类型
-func addDot(l line.Line) {
+func addDot(l dot.Line) {
 	l.ToInjecter().ReplaceOrAddByType(&Dot1{Name: "null"})
 	l.ToInjecter().ReplaceOrAddByLiveId(&Dot1{Name: "6666"}, dot.LiveId("6666"))
 }

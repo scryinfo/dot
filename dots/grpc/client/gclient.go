@@ -3,7 +3,6 @@ package gclient
 import (
 	"encoding/json"
 	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/line"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"log"
@@ -31,7 +30,7 @@ type Grpc struct {
 
 //给指定的 liveid 增加 newer
 // Deprecated: Use AddType instead.
-func Add(l line.Line, id dot.LiveId) {
+func Add(l dot.Line, id dot.LiveId) {
 	l.AddNewerByLiveId(id, func(conf interface{}) (d dot.Dot, err error) {
 		d = &Grpc{}
 		err = nil
@@ -49,7 +48,7 @@ func Add(l line.Line, id dot.LiveId) {
 }
 
 //给gclient 增加newer, 只要没有特殊的指， 都会使用这个
-func AddType(l line.Line) {
+func AddType(l dot.Line) {
 	l.AddNewerByTypeId(DotTypeId, func(conf interface{}) (d dot.Dot, err error) {
 		d = &Grpc{}
 		err = nil

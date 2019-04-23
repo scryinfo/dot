@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/scryInfo/dot"
+	"github.com/scryInfo/dot/dots"
 	"github.com/scryInfo/dot/dots/grpc/client"
-	pb "github.com/scryInfo/dot/line/demo/pb"
-	"github.com/scryInfo/dot/line/lineimp"
 	"log"
 )
 
 func main() {
-	l := lineimp.New()
+	l := dots.New()
 	l.ToLifer().Create(nil)
 
 	gclient.Add(l, "dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
@@ -47,9 +47,9 @@ func main() {
 
 	//用户实现 start
 
-	c := pb.NewTestClient(conn)
+	c := dot.NewTestClient(conn)
 
-	c1, err := c.SayHello(ctx, &pb.TestRequest{Name: "shrimpliao"})
+	c1, err := c.SayHello(ctx, &dot.TestRequest{Name: "shrimpliao"})
 
 	fmt.Println("err", err)
 

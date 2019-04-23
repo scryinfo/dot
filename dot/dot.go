@@ -76,18 +76,31 @@ type Dot interface{}
 // Create, Start,Stop,Destroy
 // Create and Start are separate, in order to resolve the dependencies between different dot instances,
 // if there is no problem with the dependencies, then you can directly null in Start
-//todo 建议把这个接口分为四个，这样实现起来更方便，没有必要实现多余的接口
+// Lifer的所有方法运行时不能阻塞， 现在的line的实现是同步调用的
 type Lifer interface {
-	//Create 在这个方法在进行初始，也运行或监听相同内容，最好放在Start方法中实现
-	//todo 这个方法的参数，现在是没有使用的，建议删除，来简化接口
-	Create(conf SConfig) error
-	//Start
+	Creater
+	Srater
+	Stopper
+	Destroyer
+}
+
+type Creater interface {
+	//Create 在这个方法在进行初始，运行或监听相同内容，最好放在Start方法中实现
+	Create(l Line) error
+}
+
+type Srater interface {
 	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
 	Start(ignore bool) error
-	//Stop
+}
+
+type Stopper interface {
 	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
 	Stop(ignore bool) error
-	//Destroy 销毁 Dot
+}
+
+type Destroyer interface {
+	//销毁 Dot
 	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
 	Destroy(ignore bool) error
 }
@@ -108,8 +121,8 @@ type Statuser interface {
 	Status() StatusType
 }
 
-//HotConfiger hot change config
-type HotConfiger interface {
+//HotConfig hot change config
+type HotConfig interface {
 	//Update 更新配置信息， 返回true表示成功
 	HotConfig(newConf SConfig) bool
 }

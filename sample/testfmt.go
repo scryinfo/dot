@@ -3,15 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/line"
-	"github.com/scryInfo/dot/line/lineimp"
+	"github.com/scryInfo/dot/dots"
 )
 
 // 创建容器
 //添加fmt组件
 
 func main() {
-	l := lineimp.New()
+	l := dots.New()
 	l.ToLifer().Create(nil)
 
 	addFmt(l)
@@ -25,7 +24,7 @@ func main() {
 }
 
 //注册fmt组件
-func addFmt(l line.Line) {
+func addFmt(l dot.Line) {
 	l.ToInjecter().ReplaceOrAddByLiveId(&Fmt1{}, dot.LiveId("1"))
 }
 

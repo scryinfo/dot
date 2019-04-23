@@ -1,4 +1,4 @@
-package lineimp
+package dots
 
 import (
 	"fmt"
@@ -6,40 +6,45 @@ import (
 	"sync"
 
 	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/line"
 	"github.com/scryInfo/scryg/sutils/skit"
 )
 
 var (
-	_ dot.Lifer     = (*lineimp)(nil)
-	_ line.Line     = (*lineimp)(nil)
-	_ line.Injecter = (*lineimp)(nil)
+	_ dot.Lifer    = (*lineimp)(nil)
+	_ dot.Line     = (*lineimp)(nil)
+	_ dot.Injecter = (*lineimp)(nil)
 )
 
 type lineimp struct {
 	dot.Lifer
-	line.Line
-	line.Injecter
+	dot.Line
+	dot.Injecter
 	logger      dot.SLogger
 	sConfig     dot.SConfig
-	config      line.Config
-	metas       *line.Metas
-	lives       *line.Lives
+	config      dot.Config
+	metas       *Metas
+	lives       *Lives
 	types       map[reflect.Type]dot.Dot
 	newerLiveid map[dot.LiveId]dot.Newer
 	newerTypeid map[dot.TypeId]dot.Newer
 
-	parent line.Injecter
+	parent dot.Injecter
 	mutex  sync.Mutex
+
+	lineBuilder *dot.Builder
 }
 
 //New new
-func New() line.Line {
-	a := &lineimp{metas: line.NewMetas(), lives: line.NewLives(), types: make(map[reflect.Type]dot.Dot)}
-	a.newerLiveid = make(map[dot.LiveId]dot.Newer)
-	a.newerTypeid = make(map[dot.TypeId]dot.Newer)
-	if line.GetDefaultLine() == nil {
-		line.SetDefaultLine(a)
+func New(builer *dot.Builder) dot.Line {
+	a := &lineimp{metas: NewMetas(),
+		lives: NewLives(), types: make(map[reflect.Type]dot.Dot),
+		newerLiveid : make(map[dot.LiveId]dot.Newer),
+		newerTypeid : make(map[dot.TypeId]dot.Newer),
+		lineBuilder: builer,
+	}
+
+	if dot.GetDefaultLine() == nil {
+		dot.SetDefaultLine(a)
 	}
 	return a
 }
@@ -88,7 +93,7 @@ func (c *lineimp) RemoveNewerByTypeId(typeid dot.TypeId) {
 }
 
 //PreAdd the dot is nil, do not create it
-func (c *lineimp) PreAdd(livings *line.TypeLives) error {
+func (c *lineimp) PreAdd(livings *dot.TypeLives) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -160,7 +165,7 @@ LIVES:
 
 		if skit.IsNil(&it.Dot) == true {
 			var bconfig []byte
-			var config *line.LiveConfig
+			var config *dot.LiveConfig
 			if true {
 				config = c.config.FindConfig(it.TypeId, it.LiveId)
 				if config != nil {
@@ -179,15 +184,15 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
-						if l, ok := it.Dot.(dot.Lifer); ok {
+						if l, ok := it.Dot.(dot.Creater); ok {
 
 							{ // 在Create 之前检测是否实现 NeedLine 接口
-								if nl, ok := it.Dot.(line.NeedLine); ok {
+								if nl, ok := it.Dot.(dot.NeedLine); ok {
 									nl.SetLine(c)
 								}
 							}
 							//c.mutex.Unlock()
-							l.Create(nil)
+							l.Create(c)
 							//c.mutex.Lock()
 						}
 						continue LIVES
@@ -201,14 +206,14 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
-						if l, ok := it.Dot.(dot.Lifer); ok {
+						if l, ok := it.Dot.(dot.Creater); ok {
 							{ // 在Create 之前检测是否实现 NeedLine 接口
-								if nl, ok := it.Dot.(line.NeedLine); ok {
+								if nl, ok := it.Dot.(dot.NeedLine); ok {
 									nl.SetLine(c)
 								}
 							}
 							//c.mutex.Unlock()
-							l.Create(nil)
+							l.Create(c)
 							//c.mutex.Lock()
 						}
 						continue LIVES
@@ -231,14 +236,14 @@ LIVES:
 
 				it.Dot, err = m.NewDot(bconfig)
 				if err == nil {
-					if l, ok := it.Dot.(dot.Lifer); ok {
+					if l, ok := it.Dot.(dot.Creater); ok {
 						{ // 在Create 之前检测是否实现 NeedLine 接口
-							if nl, ok := it.Dot.(line.NeedLine); ok {
+							if nl, ok := it.Dot.(dot.NeedLine); ok {
 								nl.SetLine(c)
 							}
 						}
 						//c.mutex.Unlock()
-						l.Create(nil)
+						l.Create(c)
 						//c.mutex.Lock()
 					}
 				}
@@ -294,15 +299,15 @@ func (c *lineimp) ToLifer() dot.Lifer {
 }
 
 //ToInjecter to injecter
-func (c *lineimp) ToInjecter() line.Injecter {
+func (c *lineimp) ToInjecter() dot.Injecter {
 	return c
 }
 
-func (c *lineimp) GetDotConfig(liveid dot.LiveId) *line.LiveConfig {
+func (c *lineimp) GetDotConfig(liveid dot.LiveId) *dot.LiveConfig {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	var co *line.LiveConfig
+	var co *dot.LiveConfig
 	co = c.config.FindConfig("", liveid)
 	return co
 }
@@ -467,12 +472,12 @@ func (c *lineimp) RemoveByLiveId(id dot.LiveId) error {
 }
 
 //SetParent set parent injecter
-func (c *lineimp) SetParent(p line.Injecter) {
+func (c *lineimp) SetParent(p dot.Injecter) {
 	c.parent = p
 }
 
 //GetParent get parent injecter
-func (c *lineimp) GetParent() line.Injecter {
+func (c *lineimp) GetParent() dot.Injecter {
 	return c.parent
 }
 
@@ -481,7 +486,7 @@ func (c *lineimp) GetParent() line.Injecter {
 //Create create
 //如果 liveid为空， 直接赋值为 typeid
 //如果 liveid重复，直接返回 dot.SError.ErrExistedLiveId
-func (c *lineimp) Create(conf dot.SConfig) error {
+func (c *lineimp) Create(l dot.Line) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	var err error
@@ -491,9 +496,9 @@ func (c *lineimp) Create(conf dot.SConfig) error {
 FOR_FUN:
 	for {
 		//first create config
-		c.sConfig = dot.NewConfiger()
+		c.sConfig = NewConfiger()
 		c.sConfig.RootPath()
-		if err = c.sConfig.Create(nil); err != nil {
+		if err = c.sConfig.Create(l); err != nil {
 			break FOR_FUN
 		}
 
@@ -549,12 +554,12 @@ FOR_FUN:
 //todo 这个方法就为私有，且按照组件的方式来实现
 func CreateLog(c *lineimp) {
 	//if c.Logfile == ""{
-	c.logger = dot.NewLoger(-1, "out.log")
+	c.logger = NewSLogger(-1, "out.log")
 	//}else {
-	//	c.logger = dot.NewLoger(-1,c.Logfile)
+	//	c.logger = dot.NewSLogger(-1,c.Logfile)
 	//}
 
-	c.logger.Create(nil)
+	c.logger.Create(c)
 }
 
 //Start
@@ -580,7 +585,7 @@ func (c *lineimp) Start(ignore bool) error {
 			}
 			c.mutex.Unlock()
 			for _, it := range tdots {
-				if d, ok := it.Dot.(dot.Lifer); ok {
+				if d, ok := it.Dot.(dot.Srater); ok {
 					d.Start(ignore)
 				}
 			}
@@ -607,7 +612,7 @@ func (c *lineimp) Stop(ignore bool) error {
 		}
 		c.mutex.Unlock()
 		for _, it := range tdots {
-			if d, ok := it.Dot.(dot.Lifer); ok {
+			if d, ok := it.Dot.(dot.Stopper); ok {
 				d.Stop(ignore)
 			}
 		}
@@ -634,7 +639,7 @@ func (c *lineimp) Destroy(ignore bool) error {
 		}
 		c.mutex.Unlock()
 		for _, it := range tdots {
-			if d, ok := it.Dot.(dot.Lifer); ok {
+			if d, ok := it.Dot.(dot.Destroyer); ok {
 				d.Destroy(ignore)
 			}
 		}
@@ -645,6 +650,10 @@ func (c *lineimp) Destroy(ignore bool) error {
 	//Destroy config
 	c.sConfig.Destroy(ignore)
 	return nil
+}
+
+func (c *lineimp) GetLineBuilder() *dot.Builder {
+	return c.lineBuilder
 }
 
 ///////////////
