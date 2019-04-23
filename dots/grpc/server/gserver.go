@@ -32,8 +32,8 @@ type GrpcServer struct {
 	Grpcs GrpcInterface `dot:"634658a8-7598-4785-b4ac-bb201ff0010f"`
 }
 
-func Add(l dot.Line) {
-	l.AddNewerByLiveId(dot.LiveId(DotId), func(conf interface{}) (d dot.Dot, err error) {
+func Add(l dot.Line) error {
+	err := l.AddNewerByLiveId(dot.LiveId(DotId), func(conf interface{}) (d dot.Dot, err error) {
 		d = &Grpc{}
 		err = nil
 		t := reflect.ValueOf(conf)
@@ -48,6 +48,7 @@ func Add(l dot.Line) {
 		}
 		return
 	})
+	return err
 }
 
 func (g *Grpc) GetServer() (s *grpc.Server) {

@@ -28,28 +28,9 @@ type Grpc struct {
 	cancel  context.CancelFunc
 }
 
-//给指定的 liveid 增加 newer
-// Deprecated: Use AddType instead.
-func Add(l dot.Line, id dot.LiveId) {
-	l.AddNewerByLiveId(id, func(conf interface{}) (d dot.Dot, err error) {
-		d = &Grpc{}
-		err = nil
-		t := reflect.ValueOf(conf)
-		if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
-			if t.Len() > 0 && t.Index(0).Kind() == reflect.Uint8 {
-				v := t.Slice(0, t.Len())
-				json.Unmarshal(v.Bytes(), d)
-			}
-		} else {
-			err = dot.SError.Parameter
-		}
-		return
-	})
-}
-
 //给gclient 增加newer, 只要没有特殊的指， 都会使用这个
-func AddType(l dot.Line) {
-	l.AddNewerByTypeId(DotTypeId, func(conf interface{}) (d dot.Dot, err error) {
+func AddType(l dot.Line) error {
+	err := l.AddNewerByTypeId(DotTypeId, func(conf interface{}) (d dot.Dot, err error) {
 		d = &Grpc{}
 		err = nil
 		t := reflect.ValueOf(conf)
@@ -63,6 +44,7 @@ func AddType(l dot.Line) {
 		}
 		return
 	})
+	return err
 }
 
 func (g *Grpc) GetCtx() context.Context {

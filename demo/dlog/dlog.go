@@ -2,12 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/scryInfo/dot/dot"
 	"github.com/scryInfo/dot/dots/line"
-)
-
-var (
-	_ dot.SLogger = (*dot.ULog)(nil)
 )
 
 func main() {
@@ -16,64 +11,18 @@ func main() {
 	//	fmt.Printf("v implements String(): %s\n", sv)
 	//}
 
-	l := line.New()
-	l.ToLifer().Create(nil)
+	l, _ := line.BuildAndStart(nil)
 
-	//fmt.Println(ll)
+	log := l.SLogger()
 
-	//dot.Add(l)
-
-	err := l.Rely()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = l.CreateDots()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = l.ToLifer().Start(false)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	f := &dot.DotLog{}
-	l.ToInjecter().Inject(f)
-
-	//lineimp.CreateLog()
-
-	f.Log.Debug(func() string {
+	log.Debug(func() string {
 		return "6666666666"
 	})
 
-	f.Log.Debugln("ssssssssssssssssssssss")
+	log.Debugln("ssssssssssssssssssssss")
 
-	fmt.Println(f.Log.GetLevel())
+	fmt.Println(log.GetLevel())
 
-	//var m runtime.MemStats
-	//
-	//runtime.ReadMemStats(&m)
-	//
-	//fmt.Printf("%d KB\n",m.Alloc/1024)
+	line.StopAndDestroy(l, true)
 
 }
-
-//func addUlog(l line.Line)  {
-//	l.AddNewerByLiveId(dot.LiveId("3"), func(conf interface{}) (d dot.Dot, err error) {
-//		d = &slog.sLogger{
-//			Level:slog.DebugLevel,
-//			OutputPath:"out1.log",
-//		}
-//		err = nil
-//		//t := reflect.ValueOf(conf)
-//		return
-//	})
-//	l.PreAdd(&line.TypeLives{
-//		Meta: dot.Metadata{TypeId: "3"},Lives: []dot.Live{
-//			dot.Live{LiveId: "3"}},
-//	})
-//}
