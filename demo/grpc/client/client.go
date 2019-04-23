@@ -2,35 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/scryInfo/dot"
+	proto "github.com/scryInfo/dot/demo/pb"
+	"github.com/scryInfo/dot/dot"
 	"github.com/scryInfo/dot/dots/grpc/client"
 	"github.com/scryInfo/dot/dots/line"
 	"log"
 )
 
 func main() {
-	l := line.New()
-	l.ToLifer().Create(nil)
-
-	gclient.Add(l, "dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
-
-	err := l.Rely()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = l.CreateDots()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = l.ToLifer().Start(false)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	l, _ := line.BuildAndStart(func(l dot.Line) error {
+		gclient.Add(l, "dd05cbec-e3d0-4be3-a7df-87b0522ac46b")
+		return nil
+	})
 
 	//f := &gclient.GrpcClient{}
 	//l.ToInjecter().Inject(f)
@@ -47,9 +30,9 @@ func main() {
 
 	//用户实现 start
 
-	c := dot.NewTestClient(conn)
+	c := proto.NewTestClient(conn)
 
-	c1, err := c.SayHello(ctx, &dot.TestRequest{Name: "shrimpliao"})
+	c1, err := c.SayHello(ctx, &proto.TestRequest{Name: "shrimpliao"})
 
 	fmt.Println("err", err)
 
@@ -57,6 +40,5 @@ func main() {
 
 	//用户实现 end
 
-	f.Stop(false)
-	f.Destroy(false)
+	line.StopAndDestroy(l, true)
 }
