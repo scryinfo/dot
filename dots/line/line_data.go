@@ -1,4 +1,4 @@
-package dots
+package line
 
 import "github.com/scryInfo/dot/dot"
 

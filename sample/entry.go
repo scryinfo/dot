@@ -3,14 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/scryInfo/dot/dots"
+	"github.com/scryInfo/dot/dots/line"
 	"reflect"
 
 	"github.com/scryInfo/dot/dot"
 )
 
 func main() {
-	l,err := dots.BuildAndStart(add)
+	l, err := line.BuildAndStart(add)
 
 	if err != nil {
 		fmt.Println(err)
@@ -28,12 +28,11 @@ func main() {
 
 	t = nil
 
-	dots.StopAndDestroy(l,true)
-
+	line.StopAndDestroy(l, true)
 
 }
 
-func add(l dot.Line) error{
+func add(l dot.Line) error {
 	var err error
 	{
 		t := reflect.TypeOf(((*Dot1)(nil)))

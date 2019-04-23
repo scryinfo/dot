@@ -1,4 +1,4 @@
-package dots
+package line
 
 import (
 	"github.com/scryInfo/dot/dot"
@@ -6,10 +6,10 @@ import (
 
 //  构造line并调用 create rely createdots start
 //  add会在 create之后rely之前调用
-func BuildAndStart(add dot.BuildNewer) (l dot.Line, err error)  {
+func BuildAndStart(add dot.BuildNewer) (l dot.Line, err error) {
 	err = nil
 	builder := &dot.Builder{Add: add}
-	l,err = BuildAndStartBy(builder)
+	l, err = BuildAndStartBy(builder)
 	return
 }
 
@@ -30,7 +30,6 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 	if err != nil {
 		return
 	}
-
 
 	if builder.Add != nil {
 		err = builder.Add(l)
@@ -55,7 +54,6 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 		return
 	}
 
-
 	if builder.BeforeStart != nil {
 		builder.BeforeStart(l)
 	}
@@ -70,7 +68,7 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 	return
 }
 
-func StopAndDestroy(l dot.Line, ignore bool)  {
+func StopAndDestroy(l dot.Line, ignore bool) {
 	builder := l.GetLineBuilder()
 
 	if builder.BeforeStop != nil {

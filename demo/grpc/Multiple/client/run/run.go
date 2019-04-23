@@ -10,15 +10,15 @@ import (
 	"fmt"
 	dot2 "github.com/scryInfo/dot"
 	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/dots"
 	"github.com/scryInfo/dot/dots/grpc/client"
+	"github.com/scryInfo/dot/dots/line"
 )
 
 var f gclient.GrpcClienter
 var t gclient.GrpcClienter
 
 func init() {
-	l := dots.New()
+	l := line.New()
 	l.ToLifer().Create(nil)
 
 	gclient.Add(l, dot.LiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46a"))

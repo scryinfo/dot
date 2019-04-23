@@ -109,12 +109,12 @@ type BuildNewer func(l Line) error
 type LifeEvent func(l Line)
 
 type Builder struct {
-	Add         BuildNewer
+	Add BuildNewer
 
-	BeforeCeate LifeEvent  //line的create之前
-	AfterCreate LifeEvent  //line的create之后
-	BeforeStart LifeEvent  //line的start之前
-	AfterStart  LifeEvent  //line的start之后
+	BeforeCeate LifeEvent //line的create之前
+	AfterCreate LifeEvent //line的create之后
+	BeforeStart LifeEvent //line的start之前
+	AfterStart  LifeEvent //line的start之后
 
 	BeforeStop    LifeEvent //line的stop 之前
 	AfterStop     LifeEvent //line的stop 之后
@@ -122,9 +122,8 @@ type Builder struct {
 	AfterDestroy  LifeEvent //line的destroy 之后
 
 	BeforeCreateDots LifeEvent // 在create dots之前
-	AfterCreateDots LifeEvent  // 在create dots之后
+	AfterCreateDots  LifeEvent // 在create dots之后
 }
-
 
 //NewTypeLives new living
 func NewTypeLives() *TypeLives {

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/dots"
+	"github.com/scryInfo/dot/dots/line"
 )
 
 var (
@@ -16,7 +16,7 @@ func main() {
 	//	fmt.Printf("v implements String(): %s\n", sv)
 	//}
 
-	l := dots.New()
+	l := line.New()
 	l.ToLifer().Create(nil)
 
 	//fmt.Println(ll)

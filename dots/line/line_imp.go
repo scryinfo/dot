@@ -1,7 +1,9 @@
-package dots
+package line
 
 import (
 	"fmt"
+	"github.com/scryInfo/dot/dots/sconfig"
+	"github.com/scryInfo/dot/dots/slog"
 	"reflect"
 	"sync"
 
@@ -38,8 +40,8 @@ type lineimp struct {
 func New(builer *dot.Builder) dot.Line {
 	a := &lineimp{metas: NewMetas(),
 		lives: NewLives(), types: make(map[reflect.Type]dot.Dot),
-		newerLiveid : make(map[dot.LiveId]dot.Newer),
-		newerTypeid : make(map[dot.TypeId]dot.Newer),
+		newerLiveid: make(map[dot.LiveId]dot.Newer),
+		newerTypeid: make(map[dot.TypeId]dot.Newer),
 		lineBuilder: builer,
 	}
 
@@ -496,7 +498,7 @@ func (c *lineimp) Create(l dot.Line) error {
 FOR_FUN:
 	for {
 		//first create config
-		c.sConfig = NewConfiger()
+		c.sConfig = sconfig.NewConfiger()
 		c.sConfig.RootPath()
 		if err = c.sConfig.Create(l); err != nil {
 			break FOR_FUN
@@ -551,10 +553,11 @@ FOR_FUN:
 
 	return err
 }
+
 //todo 这个方法就为私有，且按照组件的方式来实现
 func CreateLog(c *lineimp) {
 	//if c.Logfile == ""{
-	c.logger = NewSLogger(-1, "out.log")
+	c.logger = slog.NewSLogger(-1, "out.log")
 	//}else {
 	//	c.logger = dot.NewSLogger(-1,c.Logfile)
 	//}
