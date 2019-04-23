@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/scryInfo/dot"
+	"github.com/scryInfo/dot/dots"
 	"github.com/scryInfo/dot/dots/grpc/server"
-	pb "github.com/scryInfo/dot/line/demo/pb"
-	"github.com/scryInfo/dot/line/lineimp"
 	"golang.org/x/net/context"
 )
 
@@ -31,7 +31,7 @@ import (
 
 func main() {
 
-	l := lineimp.New()
+	l := dots.New()
 	//l.
 	l.ToLifer().Create(nil)
 
@@ -88,8 +88,7 @@ func main() {
 
 	//用户实现 start
 	s := f.Grpcs.GetServer()
-	pb.RegisterTestServer(s, &servers{})
-	pb.RegisterGreeterServer(s, &servers{})
+	dot.RegisterTestServer(s, &servers{})
 
 	//用户实现 end
 
@@ -103,10 +102,6 @@ func main() {
 
 type servers struct{}
 
-func (s *servers) SayHello(ctx context.Context, in *pb.TestRequest) (*pb.TestReply, error) {
-	return &pb.TestReply{Message: "SayHello" + in.Name}, nil
-}
-
-func (s *servers) SayHello1(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	return &pb.HelloReply{Message: "SayHello1" + in.Name}, nil
+func (s *servers) SayHello(ctx context.Context, in *dot.TestRequest) (*dot.TestReply, error) {
+	return &dot.TestReply{Message: "SayHelloBBBB" + in.Name}, nil
 }

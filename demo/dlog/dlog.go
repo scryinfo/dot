@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/line/lineimp"
+	"github.com/scryInfo/dot/dots"
 )
 
 var (
@@ -12,11 +12,11 @@ var (
 
 func main() {
 
-	//if sv,ok := slog.ULog.(slog.SLogger); ok {
+	//if sv,ok := slog.sLogger.(slog.SLogger); ok {
 	//	fmt.Printf("v implements String(): %s\n", sv)
 	//}
 
-	l := lineimp.New()
+	l := dots.New()
 	l.ToLifer().Create(nil)
 
 	//fmt.Println(ll)
@@ -64,7 +64,7 @@ func main() {
 
 //func addUlog(l line.Line)  {
 //	l.AddNewerByLiveId(dot.LiveId("3"), func(conf interface{}) (d dot.Dot, err error) {
-//		d = &slog.ULog{
+//		d = &slog.sLogger{
 //			Level:slog.DebugLevel,
 //			OutputPath:"out1.log",
 //		}

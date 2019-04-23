@@ -8,17 +8,17 @@ package main
 
 import (
 	"fmt"
+	dot2 "github.com/scryInfo/dot"
 	"github.com/scryInfo/dot/dot"
+	"github.com/scryInfo/dot/dots"
 	"github.com/scryInfo/dot/dots/grpc/client"
-	pb "github.com/scryInfo/dot/line/demo/pb"
-	"github.com/scryInfo/dot/line/lineimp"
 )
 
 var f gclient.GrpcClienter
 var t gclient.GrpcClienter
 
 func init() {
-	l := lineimp.New()
+	l := dots.New()
 	l.ToLifer().Create(nil)
 
 	gclient.Add(l, dot.LiveId("dd05cbec-e3d0-4be3-a7df-87b0522ac46a"))
@@ -59,9 +59,9 @@ func A() {
 	ctx := f.GetCtx()
 
 	//用户实现 start
-	c := pb.NewTestClient(conn)
+	c := dot2.NewTestClient(conn)
 
-	c1, err := c.SayHello(ctx, &pb.TestRequest{Name: "shrimpliaoA"})
+	c1, err := c.SayHello(ctx, &dot2.TestRequest{Name: "shrimpliaoA"})
 
 	fmt.Println("err", err)
 
@@ -79,9 +79,9 @@ func B() {
 	ctx := t.GetCtx()
 
 	//用户实现 start
-	c := pb.NewTestClient(conn)
+	c := dot2.NewTestClient(conn)
 
-	c1, err := c.SayHello(ctx, &pb.TestRequest{Name: "shrimpliaoB"})
+	c1, err := c.SayHello(ctx, &dot2.TestRequest{Name: "shrimpliaoB"})
 
 	fmt.Println("err", err)
 
