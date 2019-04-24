@@ -368,7 +368,7 @@ func (c *lineimp) Inject(obj interface{}) error {
 
 		if errt == nil {
 			vv := reflect.ValueOf(d)
-			fmt.Println("vv: ", vv.Type(), "f: ", f.Type(), "dd: ", reflect.TypeOf(d))
+			//fmt.Println("vv: ", vv.Type(), "f: ", f.Type(), "dd: ", reflect.TypeOf(d))
 			if vv.IsValid() && vv.Type().AssignableTo(f.Type()) {
 				f.Set(vv)
 			} else if err == nil {
