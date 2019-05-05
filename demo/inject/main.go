@@ -14,7 +14,7 @@ func main()  {
 
 
 func SetPrivateField()  {
-	{//非interface的指针
+	{//指针
 		t := &T{fPtr: nil, fInterface: nil}
 		field := reflect.ValueOf(t).Elem().FieldByName("fPtr")
 		if field.CanAddr() { // have to true
