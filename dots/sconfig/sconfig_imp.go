@@ -90,7 +90,7 @@ func (c *sConfig) RootPath() {
 func (c *sConfig) Create(l dot.Line) error {
 
 	fname := filepath.Join(c.ConfigPath(), c.ConfigFile())
-	if !sfile.ExitFile(fname) {
+	if len(c.ConfigFile()) < 1 || !sfile.ExitFile(fname) {
 		return nil
 	}
 	f, err := os.Open(fname)
