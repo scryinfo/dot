@@ -504,6 +504,10 @@ FOR_FUN:
 			break FOR_FUN
 		}
 
+		if c.config.Dots == nil || len(c.config.Dots) < 1 { //no config
+			break FOR_FUN
+		}
+
 		if err = c.sConfig.Unmarshal(&c.config); err != nil {
 			break FOR_FUN
 		}
