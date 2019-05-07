@@ -89,9 +89,17 @@ func (c *sConfig) RootPath() {
 //Create implement
 func (c *sConfig) Create(l dot.Line) error {
 
-	f, err := os.Open(filepath.Join(c.ConfigPath(), c.ConfigFile()))
+	fname := filepath.Join(c.ConfigPath(), c.ConfigFile())
+	if !sfile.ExitFile(fname) {
+		return nil
+	}
+	f, err := os.Open(fname)
 	if err != nil {
 		return err
+	}
+
+	if state ,err := f.Stat(); err == nil && state.Size() < 1 {
+		return nil
 	}
 	defer f.Close()
 	c.simpleJson, err = simplejson.NewFromReader(f)
