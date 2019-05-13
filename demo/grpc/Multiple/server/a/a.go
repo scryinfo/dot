@@ -35,7 +35,7 @@ func main() {
 	//l.
 	l.ToLifer().Create(nil)
 
-	//l.(*lineimp).CreateLog(nil,"ut.log")
+	//l.(*lineimp).createLog(nil,"ut.log")
 
 	gserver.Add(l)
 

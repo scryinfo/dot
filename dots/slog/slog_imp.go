@@ -7,33 +7,46 @@ import (
 	"time"
 )
 
-func (log *sLogger) SetLogFile(file string) {
-	log.OutputPath = file
-	log.Create(nil)
-}
+var (
+	_ dot.SLogger = (*sLogger)(nil)
+)
 
 //NewConfiger new sConfig
-func NewSLogger(lv int8, file string) *sLogger {
+func NewSLogger(conf *dot.LogConfig) *sLogger {
+	if conf == nil {
+		conf  =  &dot.LogConfig{
+			File : "log.log",
+			Level : zapcore.InfoLevel.String(),
+		}
+	}
+
+	if len(conf.Level) < 1 {
+		conf.Level = zapcore.InfoLevel.String()
+	}
+	if len(conf.File) < 1 {
+		conf.File = "log.log"
+	}
 	return &sLogger{
-		LogLevel:   lv,
-		OutputPath: file,
+		conf: *conf,
 	}
 }
 
 type sLogger struct {
-	level      zap.AtomicLevel
-	OutputPath string
-	Logger     *zap.Logger
-	LogLevel   int8
+	level    zap.AtomicLevel
+	Logger   *zap.Logger
+	conf dot.LogConfig
 }
 
-func (log *sLogger) GetLevel() int8 {
-	return log.LogLevel
+func (log *sLogger) GetLevel() dot.Level {
+	l := zap.InfoLevel
+	_ = (&l).UnmarshalText([]byte(log.conf.Level))
+	return l
 }
 
 //SetLevel set level
-func (log *sLogger) SetLevel(levels int8) {
-	log.level.SetLevel(zapcore.Level(levels))
+func (log *sLogger) SetLevel(levels dot.Level) {
+	log.conf.Level = levels.String()
+	log.level.SetLevel(levels)
 }
 
 //Debugln debug
@@ -96,27 +109,7 @@ func (log *sLogger) Fatal(mstr dot.MakeStringer) {
 	}
 }
 
-//func Add(l line.Line)  {
-//	l.AddNewerByLiveId(LiveId("d8299d21-4f43-48bd-9a5c-654c4395ea17"), func(conf interface{}) (d Dot, err error) {
-//		d = &sLogger{
-//		}
-//		err = nil
-//		t := reflect.ValueOf(conf)
-//		if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
-//			if t.Len() > 0 && t.Index(0).Kind() == reflect.Uint8 {
-//				v := t.Slice(0, t.Len())
-//				json.Unmarshal(v.Bytes(), d)
-//			}
-//		} else {
-//			err = SError.Parameter
-//		}
-//		return
-//	})
-//}
-
 func (log *sLogger) Create(l dot.Line) (err error) {
-
-	//log.LogLevel = -1
 
 	encoderCfg := zapcore.EncoderConfig{
 		// Keys can be anything except the empty string.
@@ -135,7 +128,7 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 
 	atom := zap.NewAtomicLevel()
 
-	atom.SetLevel(zapcore.Level(log.LogLevel))
+	atom.SetLevel(log.GetLevel())
 
 	log.level = atom
 
@@ -144,7 +137,7 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 		Development:      true,
 		Encoding:         "console",
 		EncoderConfig:    encoderCfg,
-		OutputPaths:      []string{"stderr", log.OutputPath},
+		OutputPaths:      []string{"stderr", log.conf.Level},
 		ErrorOutputPaths: []string{"stderr"},
 	}
 
