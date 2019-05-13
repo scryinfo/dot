@@ -1,4 +1,8 @@
 {
+  "log": {
+    "file": "log.log",
+    "level": "debug"
+  },
   "Dots":[
     {
       "":"一个类型有多个dot实例， 且使用AddNewerByLiveId 方式创建",

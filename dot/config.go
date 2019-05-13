@@ -22,6 +22,7 @@ type DotConfig struct {
 
 //Config config
 type Config struct {
+	Log LogConfig
 	Dots []DotConfig
 }
 

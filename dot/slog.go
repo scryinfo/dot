@@ -36,9 +36,9 @@ type SLogger interface {
 	Lifer
 
 	//GetLevel get level
-	GetLevel() int8
+	GetLevel() Level
 	//SetLevel set level
-	SetLevel(level int8)
+	SetLevel(level Level)
 
 	//Debugf debug
 	//Debugf(format string, args ...interface{})
@@ -75,5 +75,9 @@ type SLogger interface {
 	//Fatal fatal
 	Fatal(mstr MakeStringer)
 
-	SetLogFile(fiel string)
+}
+
+type LogConfig struct {
+	File string
+	Level string
 }

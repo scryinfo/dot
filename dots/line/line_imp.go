@@ -48,6 +48,7 @@ func New(builer *dot.Builder) dot.Line {
 	if dot.GetDefaultLine() == nil {
 		dot.SetDefaultLine(a)
 	}
+
 	return a
 }
 
@@ -493,24 +494,28 @@ func (c *lineimp) Create(l dot.Line) error {
 	defer c.mutex.Unlock()
 	var err error
 
-	CreateLog(c)
-
 FOR_FUN:
 	for {
 		//first create config
 		c.sConfig = sconfig.NewConfiger()
 		c.sConfig.RootPath()
 		if err = c.sConfig.Create(l); err != nil {
+			createLog(c)
 			break FOR_FUN
 		}
 
 		if c.config.Dots == nil || len(c.config.Dots) < 1 { //no config
+			createLog(c)
 			break FOR_FUN
 		}
 
 		if err = c.sConfig.Unmarshal(&c.config); err != nil {
+			createLog(c)
 			break FOR_FUN
 		}
+
+		//create log
+		createLog(c)
 
 		{ //handle config
 			for _, it := range c.config.Dots {
@@ -559,13 +564,8 @@ FOR_FUN:
 }
 
 //todo 这个方法就为私有，且按照组件的方式来实现
-func CreateLog(c *lineimp) {
-	//if c.Logfile == ""{
-	c.logger = slog.NewSLogger(-1, "out.log")
-	//}else {
-	//	c.logger = dot.NewSLogger(-1,c.Logfile)
-	//}
-
+func createLog(c *lineimp) {
+	c.logger = slog.NewSLogger(&(c.config.Log))
 	c.logger.Create(c)
 }
 
