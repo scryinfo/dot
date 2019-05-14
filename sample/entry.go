@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	dot.Logger().Infoln("sdf")
 	l, err := line.BuildAndStart(add)
 
 	if err != nil {

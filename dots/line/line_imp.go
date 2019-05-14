@@ -564,8 +564,8 @@ FOR_FUN:
 
 //todo 这个方法就为私有，且按照组件的方式来实现
 func createLog(c *lineimp) {
-	c.logger = slog.NewSLogger(&(c.config.Log))
-	c.logger.Create(c)
+	c.logger = slog.NewSLogger(&(c.config.Log), c)
+	dot.SetLogger(c.logger)
 }
 
 //Start

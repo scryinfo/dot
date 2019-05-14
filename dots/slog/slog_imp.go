@@ -12,7 +12,7 @@ var (
 )
 
 //NewConfiger new sConfig
-func NewSLogger(conf *dot.LogConfig) *sLogger {
+func NewSLogger(conf *dot.LogConfig, l dot.Line) *sLogger {
 	if conf == nil {
 		conf  =  &dot.LogConfig{
 			File : "log.log",
@@ -26,9 +26,11 @@ func NewSLogger(conf *dot.LogConfig) *sLogger {
 	if len(conf.File) < 1 {
 		conf.File = "log.log"
 	}
-	return &sLogger{
+	re := &sLogger{
 		conf: *conf,
 	}
+	re.Create(l)
+	return  re
 }
 
 type sLogger struct {
