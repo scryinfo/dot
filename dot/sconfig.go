@@ -24,12 +24,13 @@ type SConfig interface {
 
 	//优先从内存中取数据出来操作， 如果内存为nil查看是否有对就原配置文件
 	Unmarshal(s interface{}) error
+	//解析key为对应的类型
+	UnmarshalKey(key string, obj interface{}) error
 
 	Marshal(data []byte) error
 
 	//如果没有找到对应的key或数据类型不能转换，一定要特别小心默认值问题，所以在函数前面特别增加“Def”，以提示默认值
 	DefInterface(key string, def interface{}) interface{}
-	DefJson(key string, def interface{}) interface{}
 	DefArray(key string, def []interface{}) []interface{}
 	DefMap(key string, def map[string]interface{}) map[string]interface{}
 	DefString(key string, def string) string
