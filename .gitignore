@@ -7,3 +7,5 @@
 /demo/dlog/dlog.exe
 /demo/grpc/client/client.exe
 /sample/debug
+/sample/before.log
+/sample/log.log

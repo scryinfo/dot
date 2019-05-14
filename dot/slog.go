@@ -26,6 +26,21 @@ const (
 	FatalLevel = zapcore.FatalLevel
 )
 
+//默认日志，如果日志还没有创建，那么返回的日志是直接输出到“before.log”文件中，且是输出所有的日志
+var logger SLogger = nil
+//返回默认的日志， 这个接口是为了方便调用日志的
+//这个方法并没有考虑线程安全，在程序初始化成功后，不建议修改它的值
+//注： 默认日志，如果日志还没有创建，那么返回的日志是直接输出到控制台的，且是输出所有的日志
+func Logger() SLogger {
+	return logger
+}
+
+//设置默认的日志，
+//这个方法并没有考虑线程安全，在程序初始化成功后，不建议修改它的值
+func SetLogger(log SLogger)  {
+	logger = log
+}
+
 //MakeStringer 生成日志字符串
 type MakeStringer func() string
 
@@ -33,7 +48,7 @@ type MakeStringer func() string
 //所有日志调用时，不要在参数中调用函数，函数的运行是先于日志等级的，如果一定要调用函数，可以使用回调函数的方式（注回调函数一定要正常运行）
 //S表示 scryInfo, log这个名字用的地方太多，加一个s以示区别
 type SLogger interface {
-	Lifer
+	//Lifer
 
 	//GetLevel get level
 	GetLevel() Level
@@ -81,3 +96,10 @@ type LogConfig struct {
 	File string `json:"file"`
 	Level string `json:"level"`
 }
+
+//初始化一个默认的日志， 让程序在一开始就可以使用日志，输出到“before.log”文件中，且是输出所有的日志
+func init()  {
+	SetLogger(newBlog())
+}
+
+
