@@ -137,7 +137,7 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 		Development:      true,
 		Encoding:         "console",
 		EncoderConfig:    encoderCfg,
-		OutputPaths:      []string{"stderr", log.conf.Level},
+		OutputPaths:      []string{"stderr", log.conf.File},
 		ErrorOutputPaths: []string{"stderr"},
 	}
 
