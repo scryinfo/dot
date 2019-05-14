@@ -504,7 +504,7 @@ FOR_FUN:
 			break FOR_FUN
 		}
 
-		if c.config.Dots == nil || len(c.config.Dots) < 1 { //no config
+		if len(c.config.Dots) < 1 { //no config
 			createLog(c)
 			break FOR_FUN
 		}
