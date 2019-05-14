@@ -200,25 +200,30 @@ func (c *sConfig) DefInterface(key string, def interface{}) interface{} {
 	return re
 }
 
-func (c *sConfig) DefJson(key string, def interface{}) interface{} {
+func (c *sConfig) UnmarshalKey(key string, obj interface{}) error {
 
-	//re := def
+	var err error = nil
 	if c.simpleJson != nil {
+		var bs []byte = nil
 		keys := c.keys(key)
 		if len(keys) == 1 {
 			if t, ok := c.simpleJson.CheckGet(key); ok {
-				jsonStr, _ := json.Marshal(t)
-				json.Unmarshal(jsonStr, def)
+				bs, err = json.Marshal(t)
 			}
 		} else if len(keys) > 1 {
 			t := c.simpleJson.GetPath(keys...)
 			if t != nil {
-				jsonStr, _ := json.Marshal(t)
-				json.Unmarshal(jsonStr, def)
+				bs, err = json.Marshal(t)
+			}
+		}
+		if err == nil {
+			err = json.Unmarshal(bs, obj)
+			if err != nil {
+				obj = nil
 			}
 		}
 	}
-	return def
+	return err
 }
 
 //DefArray  implement
