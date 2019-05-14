@@ -22,6 +22,7 @@ type SConfig interface {
 	//如果没有配置或配置为空，返回nil
 	Map() (m map[string]interface{}, err error)
 
+	//优先从内存中取数据出来操作， 如果内存为nil查看是否有对就原配置文件
 	Unmarshal(s interface{}) error
 
 	Marshal(data []byte) error

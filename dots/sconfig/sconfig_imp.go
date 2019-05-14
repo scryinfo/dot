@@ -161,10 +161,10 @@ func (c *sConfig) Unmarshal(s interface{}) error {
 	f := filepath.Join(c.ConfigPath(), c.ConfigFile())
 	var data []byte
 	var err error
-	if sfile.ExitFile(f) {
-		data, err = ioutil.ReadFile(filepath.Join(c.ConfigPath(), c.ConfigFile()))
-	} else if c.simpleJson != nil {
+	if c.simpleJson != nil {
 		data, err = c.simpleJson.MarshalJSON()
+	}else if sfile.ExitFile(f) {
+		data, err = ioutil.ReadFile(filepath.Join(c.ConfigPath(), c.ConfigFile()))
 	}
 
 	if err == nil {
