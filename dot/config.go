@@ -7,23 +7,23 @@ import (
 //LiveConfig live config
 type LiveConfig struct {
 	//LiveId
-	LiveId LiveId
+	LiveId LiveId `json:"liveId"`
 	//RelyLives rely lives
-	RelyLives []LiveId
+	RelyLives []LiveId `json:"relyLives"`
 	//Json json
-	Json *json.RawMessage
+	Json *json.RawMessage `json:"json"`
 }
 
 //DotConfig dot config
 type DotConfig struct {
-	MetaData Metadata
-	Lives    []LiveConfig
+	MetaData Metadata `json:"metaData"`
+	Lives    []LiveConfig `json:"lives"`
 }
 
 //Config config
 type Config struct {
-	Log LogConfig `json:"Log"`
-	Dots []DotConfig `json:"Dots"`
+	Log LogConfig `json:"log"`
+	Dots []DotConfig `json:"dots"`
 }
 
 //FindConfig find config

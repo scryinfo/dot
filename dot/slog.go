@@ -78,6 +78,6 @@ type SLogger interface {
 }
 
 type LogConfig struct {
-	File string `json:"File"`
-	Level string `json:"Level"`
+	File string `json:"file"`
+	Level string `json:"level"`
 }

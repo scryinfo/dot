@@ -1,24 +1,24 @@
 {
-  "Log": {
-    "File": "log.log",
-    "Level": "debug"
+  "log": {
+    "file": "log.log",
+    "level": "debug"
   },
-  "Dots":[
+  "dots":[
     {
       "":"一个类型有多个dot实例， 且使用AddNewerByLiveId 方式创建",
-      "MetaData":{
-        "TypeId":"3"
+      "metaData":{
+        "typeId":"3"
       },
-      "Lives":[
+      "lives":[
         {
-          "LiveId":"31",
-          "Json":{
+          "liveId":"31",
+          "json":{
             "T":"8888888"
           }
         },
         {
-          "LiveId":"32",
-          "Json":{
+          "liveId":"32",
+          "json":{
             "T":"8888888"
           }
         }
@@ -26,19 +26,19 @@
     },
     {
       "":"一个类型有多个dot实例， 且使用AddNewerByTypeId 与 AddNewerByLiveId 方式创建， 如果两个方式都提供那么 LiveId更优先",
-      "MetaData":{
-        "TypeId":"type_live"
+      "metaData":{
+        "typeId":"type_live"
       },
-      "Lives":[
+      "lives":[
         {
-          "LiveId":"41",
-          "Json":{
+          "liveId":"41",
+          "json":{
             "T":"200data"
           }
         },
         {
-          "LiveId":"42",
-          "Json":{
+          "liveId":"42",
+          "json":{
             "T":"300data"
           }
         }
