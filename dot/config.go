@@ -22,8 +22,8 @@ type DotConfig struct {
 
 //Config config
 type Config struct {
-	Log LogConfig
-	Dots []DotConfig
+	Log LogConfig `json:"Log"`
+	Dots []DotConfig `json:"Dots"`
 }
 
 //FindConfig find config
