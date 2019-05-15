@@ -22,12 +22,12 @@ func (c *LiveId) String() string {
 
 //Metadata dot metadata
 type Metadata struct {
-	TypeId      TypeId `json:"typeId"`
-	Version     string `json:"version"`
-	Name        string `json:"name"`
-	ShowName    string `json:"showName"`
-	Single      bool `json:"single"`
-	RelyTypeIds []TypeId `json:"relyTypeIds"`
+	TypeId      TypeId       `json:"typeId"`
+	Version     string       `json:"version"`
+	Name        string       `json:"name"`
+	ShowName    string       `json:"showName"`
+	Single      bool         `json:"single"`
+	RelyTypeIds []TypeId     `json:"relyTypeIds"`
 	NewDoter    Newer        `json:"-"`
 	RefType     reflect.Type `json:"-"`
 }

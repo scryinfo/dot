@@ -13,7 +13,7 @@ const (
 //这个是为了解决在日志还没有被初化前， 日志输出的问题
 //blog == before log
 type blog struct {
-	logger   *zap.Logger
+	logger *zap.Logger
 }
 
 func (c *blog) Destroy(ignore bool) error {
@@ -24,51 +24,51 @@ func (c *blog) Destroy(ignore bool) error {
 	return nil
 }
 
-func(c *blog) GetLevel() Level{
+func (c *blog) GetLevel() Level {
 	return zap.DebugLevel
 }
 
-func(c *blog) SetLevel(level Level) {
+func (c *blog) SetLevel(level Level) {
 
 }
 
-func(c *blog) Debugln(msg string, fields ...zap.Field) {
+func (c *blog) Debugln(msg string, fields ...zap.Field) {
 	c.logger.Debug(msg, fields...)
 }
 
-func(c *blog) Debug(mstr MakeStringer) {
+func (c *blog) Debug(mstr MakeStringer) {
 	c.logger.Debug(mstr())
 }
 
-func(c *blog) Infoln(msg string, fields ...zap.Field) {
+func (c *blog) Infoln(msg string, fields ...zap.Field) {
 	c.logger.Debug(msg, fields...)
 }
 
-func(c *blog) Info(mstr MakeStringer) {
+func (c *blog) Info(mstr MakeStringer) {
 	c.logger.Debug(mstr())
 }
 
-func(c *blog) Warnln(msg string, fields ...zap.Field) {
+func (c *blog) Warnln(msg string, fields ...zap.Field) {
 	c.logger.Debug(msg, fields...)
 }
 
-func(c *blog) Warn(mstr MakeStringer) {
+func (c *blog) Warn(mstr MakeStringer) {
 	c.logger.Debug(mstr())
 }
 
-func(c *blog) Errorln(msg string, fields ...zap.Field) {
+func (c *blog) Errorln(msg string, fields ...zap.Field) {
 	c.logger.Debug(msg, fields...)
 }
 
-func(c *blog) Error(mstr MakeStringer) {
+func (c *blog) Error(mstr MakeStringer) {
 	c.logger.Debug(mstr())
 }
 
-func(c *blog) Fatalln(msg string, fields ...zap.Field) {
+func (c *blog) Fatalln(msg string, fields ...zap.Field) {
 	c.logger.Debug(msg, fields...)
 }
 
-func(c *blog) Fatal(mstr MakeStringer) {
+func (c *blog) Fatal(mstr MakeStringer) {
 	c.logger.Debug(mstr())
 }
 
@@ -93,7 +93,6 @@ func newBlog() *blog {
 
 	atom.SetLevel(zap.DebugLevel)
 
-
 	customCfg := zap.Config{
 		Level:            atom,
 		Development:      true,
@@ -110,6 +109,5 @@ func newBlog() *blog {
 		fmt.Println(err)
 	}
 
-	return &blog{logger:logger}
+	return &blog{logger: logger}
 }
-

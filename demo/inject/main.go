@@ -6,19 +6,17 @@ import (
 	"unsafe"
 )
 
-func main()  {
+func main() {
 	SetPrivateField()
-
 
 }
 
-
-func SetPrivateField()  {
-	{//指针
+func SetPrivateField() {
+	{ //指针
 		t := &T{fPtr: nil, fInterface: nil}
 		field := reflect.ValueOf(t).Elem().FieldByName("fPtr")
 		if field.CanAddr() { // have to true
-			fp := field.Addr().Pointer()  //得到字段的地址
+			fp := field.Addr().Pointer()             //得到字段的地址
 			fpp := ((**uintptr)(unsafe.Pointer(fp))) //转换为指指针
 			t2 := &T2{f2: 10}
 			fp2 := (*uintptr)(unsafe.Pointer(t2))
@@ -26,7 +24,7 @@ func SetPrivateField()  {
 			fmt.Println(t.fPtr.f2)
 		}
 	}
-	{//interface
+	{ //interface
 		t := &T{fPtr: nil, fInterface: nil}
 		field := reflect.ValueOf(t).Elem().FieldByName("fInterface")
 		if field.CanAddr() {
@@ -41,8 +39,8 @@ func SetPrivateField()  {
 
 			{ // 方式二，通用使用反射实现
 				var t2 interface{} = &Inter2Imp{F: 15}
-				v := reflect.ValueOf(t2).Convert(field.Type())  //一定使用Convert 转换为字段的类型， 因为t2的中的类型 为interface{},  不是 Inter2类型
-				v2 := reflect.ValueOf(v)  //通过反射取到 ptr的值， 这里不能使用Pointer，会panic，因为 t2不是指针类型
+				v := reflect.ValueOf(t2).Convert(field.Type()) //一定使用Convert 转换为字段的类型， 因为t2的中的类型 为interface{},  不是 Inter2类型
+				v2 := reflect.ValueOf(v)                       //通过反射取到 ptr的值， 这里不能使用Pointer，会panic，因为 t2不是指针类型
 				ptr := v2.FieldByName("ptr")
 				fp2 := (*interface{})(unsafe.Pointer(ptr.Pointer()))
 				*fpp = *fp2
@@ -54,7 +52,6 @@ func SetPrivateField()  {
 	}
 
 }
-
 
 type T struct {
 	fPtr       *T2

@@ -14,9 +14,9 @@ var (
 //NewConfiger new sConfig
 func NewSLogger(conf *dot.LogConfig, l dot.Line) *sLogger {
 	if conf == nil {
-		conf  =  &dot.LogConfig{
-			File : "log.log",
-			Level : zapcore.InfoLevel.String(),
+		conf = &dot.LogConfig{
+			File:  "log.log",
+			Level: zapcore.InfoLevel.String(),
 		}
 	}
 
@@ -30,13 +30,13 @@ func NewSLogger(conf *dot.LogConfig, l dot.Line) *sLogger {
 		conf: *conf,
 	}
 	re.Create(l)
-	return  re
+	return re
 }
 
 type sLogger struct {
-	level    zap.AtomicLevel
-	Logger   *zap.Logger
-	conf dot.LogConfig
+	level  zap.AtomicLevel
+	Logger *zap.Logger
+	conf   dot.LogConfig
 }
 
 func (log *sLogger) GetLevel() dot.Level {
