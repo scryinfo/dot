@@ -16,13 +16,13 @@ type LiveConfig struct {
 
 //DotConfig dot config
 type DotConfig struct {
-	MetaData Metadata `json:"metaData"`
+	MetaData Metadata     `json:"metaData"`
 	Lives    []LiveConfig `json:"lives"`
 }
 
 //Config config
 type Config struct {
-	Log LogConfig `json:"log"`
+	Log  LogConfig   `json:"log"`
 	Dots []DotConfig `json:"dots"`
 }
 

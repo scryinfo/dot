@@ -499,9 +499,11 @@ FOR_FUN:
 		//first create config
 		c.sConfig = sconfig.NewConfiger()
 		c.sConfig.RootPath()
-		if err = c.sConfig.Create(l); err != nil {
-			createLog(c)
-			break FOR_FUN
+		if s, ok := c.sConfig.(dot.Creater); ok {
+			if err = s.Create(l); err != nil {
+				createLog(c)
+				break FOR_FUN
+			}
 		}
 
 		if err = c.sConfig.Unmarshal(&c.config); err != nil {
@@ -573,11 +575,17 @@ func (c *lineimp) Start(ignore bool) error {
 	var err error
 	for {
 		//start config
-		if err = c.sConfig.Start(ignore); err != nil {
-			break
+		if s, ok := c.sConfig.(dot.Srater); ok {
+			if err = s.Start(ignore); err != nil {
+				break
+			}
 		}
-
 		//start log
+		if s, ok := c.logger.(dot.Srater); ok {
+			if err = s.Start(ignore); err != nil {
+				break
+			}
+		}
 
 		//start other
 		{
@@ -624,9 +632,14 @@ func (c *lineimp) Stop(ignore bool) error {
 		}
 	}
 	//stop log
+	if d, ok := c.logger.(dot.Stopper); ok {
+		err = d.Stop(ignore)
+	}
 
 	//stop config
-	err = c.sConfig.Stop(ignore)
+	if d, ok := c.sConfig.(dot.Stopper); ok {
+		err = d.Stop(ignore)
+	}
 
 	return err
 }
@@ -652,9 +665,15 @@ func (c *lineimp) Destroy(ignore bool) error {
 	}
 
 	//Destroy log
+	if d, ok := c.logger.(dot.Destroyer); ok {
+		d.Destroy(ignore)
+	}
 
 	//Destroy config
-	c.sConfig.Destroy(ignore)
+	if d, ok := c.sConfig.(dot.Destroyer); ok {
+		d.Destroy(ignore)
+	}
+
 	return nil
 }
 

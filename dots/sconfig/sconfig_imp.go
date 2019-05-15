@@ -98,7 +98,7 @@ func (c *sConfig) Create(l dot.Line) error {
 		return err
 	}
 
-	if state ,err := f.Stat(); err == nil && state.Size() < 1 {
+	if state, err := f.Stat(); err == nil && state.Size() < 1 {
 		return nil
 	}
 	defer f.Close()
@@ -163,7 +163,7 @@ func (c *sConfig) Unmarshal(s interface{}) error {
 	var err error
 	if c.simpleJson != nil {
 		data, err = c.simpleJson.MarshalJSON()
-	}else if sfile.ExitFile(f) {
+	} else if sfile.ExitFile(f) {
 		data, err = ioutil.ReadFile(filepath.Join(c.ConfigPath(), c.ConfigFile()))
 	}
 

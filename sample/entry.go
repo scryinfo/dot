@@ -21,8 +21,6 @@ func main() {
 	l.SLogger().Infoln("1111111111111111111")
 	l.SConfig().RootPath()
 
-	//addDot(l)
-
 	t := &SomeUse{}
 
 	l.ToInjecter().Inject(t)
