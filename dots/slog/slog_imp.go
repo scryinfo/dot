@@ -168,7 +168,10 @@ func (log *sLogger) Stop(ignore bool) error {
 //Destroy 销毁 Dot
 //ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
 func (log *sLogger) Destroy(ignore bool) error {
-	defer log.Logger.Sync()
+	if log.Logger != nil {
+		log.Logger.Sync()
+		log.Logger = nil
+	}
 	return nil
 }
 

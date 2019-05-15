@@ -38,6 +38,12 @@ func Logger() SLogger {
 //设置默认的日志，
 //这个方法并没有考虑线程安全，在程序初始化成功后，不建议修改它的值
 func SetLogger(log SLogger)  {
+	if logger != nil{
+		if d,ok := logger.(Destroyer); ok {
+			d.Destroy(true)
+		}
+		logger = nil
+	}
 	logger = log
 }
 

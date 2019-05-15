@@ -16,6 +16,14 @@ type blog struct {
 	logger   *zap.Logger
 }
 
+func (c *blog) Destroy(ignore bool) error {
+	if c.logger != nil {
+		c.logger.Sync()
+		c.logger = nil
+	}
+	return nil
+}
+
 func(c *blog) GetLevel() Level{
 	return zap.DebugLevel
 }
