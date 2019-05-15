@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	proto "github.com/scryInfo/dot/demo/pb"
-	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/dots/grpc/client"
-	"github.com/scryInfo/dot/dots/line"
+	proto "github.com/scryinfo/dot/demo/pb"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/grpc/client"
+	"github.com/scryinfo/dot/dots/line"
 	"log"
 )
 

@@ -3,8 +3,8 @@ package sconfig
 import (
 	"encoding/json"
 	"github.com/bitly/go-simplejson"
-	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/scryg/sutils/sfile"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/scryg/sutils/sfile"
 	"io/ioutil"
 	"os"
 	"path/filepath"

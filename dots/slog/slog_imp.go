@@ -1,7 +1,7 @@
 package slog
 
 import (
-	"github.com/scryInfo/dot/dot"
+	"github.com/scryinfo/dot/dot"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"time"

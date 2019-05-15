@@ -2,13 +2,13 @@ package line
 
 import (
 	"fmt"
-	"github.com/scryInfo/dot/dots/sconfig"
-	"github.com/scryInfo/dot/dots/slog"
+	"github.com/scryinfo/dot/dots/sconfig"
+	"github.com/scryinfo/dot/dots/slog"
 	"reflect"
 	"sync"
 
-	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/scryg/sutils/skit"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/scryg/sutils/skit"
 )
 
 var (

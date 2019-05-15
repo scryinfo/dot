@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/scryInfo/dot"
-	"github.com/scryInfo/dot/dots/grpc/server"
-	"github.com/scryInfo/dot/dots/line"
+	"github.com/scryinfo/dot"
+	"github.com/scryinfo/dot/dots/grpc/server"
+	"github.com/scryinfo/dot/dots/line"
 	"golang.org/x/net/context"
 )
 
