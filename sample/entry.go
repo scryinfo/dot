@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/scryInfo/dot/dots/line"
+	"github.com/scryinfo/dot/dots/line"
 	"reflect"
 
-	"github.com/scryInfo/dot/dot"
+	"github.com/scryinfo/dot/dot"
 )
 
 func main() {

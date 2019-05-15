@@ -7,7 +7,7 @@ const (
 )
 
 //SConfig 配置属于一个组件Dot,但它太基础了，每一个Dot都需要，所以定义到 dot.go文件中
-//S表示scryInfo config 这个名字用的地方太多，加一个s以示区别
+//S表示scryinfo config 这个名字用的地方太多，加一个s以示区别
 type SConfig interface {
 	//RootPath root path
 	RootPath()

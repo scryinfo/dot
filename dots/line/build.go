@@ -1,7 +1,7 @@
 package line
 
 import (
-	"github.com/scryInfo/dot/dot"
+	"github.com/scryinfo/dot/dot"
 )
 
 //  构造line并调用 create rely createdots start

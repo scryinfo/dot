@@ -8,10 +8,10 @@ package main
 
 import (
 	"fmt"
-	dot2 "github.com/scryInfo/dot"
-	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/dots/grpc/client"
-	"github.com/scryInfo/dot/dots/line"
+	dot2 "github.com/scryinfo/dot"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/grpc/client"
+	"github.com/scryinfo/dot/dots/line"
 )
 
 var f gclient.GrpcClienter

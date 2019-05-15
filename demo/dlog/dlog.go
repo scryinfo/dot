@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/scryInfo/dot/dots/line"
+	"github.com/scryinfo/dot/dots/line"
 )
 
 func main() {

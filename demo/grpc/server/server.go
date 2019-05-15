@@ -1,10 +1,10 @@
 package main
 
 import (
-	proto "github.com/scryInfo/dot/demo/pb"
-	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/dots/grpc/server"
-	"github.com/scryInfo/dot/dots/line"
+	proto "github.com/scryinfo/dot/demo/pb"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/grpc/server"
+	"github.com/scryinfo/dot/dots/line"
 	"golang.org/x/net/context"
 )
 
