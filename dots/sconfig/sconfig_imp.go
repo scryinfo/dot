@@ -2,13 +2,14 @@ package sconfig
 
 import (
 	"encoding/json"
-	"github.com/bitly/go-simplejson"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/scryg/sutils/sfile"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/bitly/go-simplejson"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
 var (
@@ -32,14 +33,14 @@ var (
 //4，以上文件都不存在，则没有配置文件
 //注： 是检测文件是否存在
 type sConfig struct {
-	confPath   string
-	file       string
-	simpleJson *simplejson.Json
+	confPath   string           //配置路径
+	file       string           //文件名
+	simpleJson *simplejson.Json //整个配置
 }
 
 const (
-	extensionName = ".json"
-	separator     = "_"
+	extensionName = ".json" //配置文件的扩展名
+	separator     = "_"     //分隔符
 	conf          = "conf"
 )
 
@@ -106,15 +107,15 @@ func (c *sConfig) Create(l dot.Line) error {
 	return err
 }
 
-//Start  implement
-func (c *sConfig) Start(ignore bool) error {
-	return nil
-}
-
-//Stop  implement
-func (c *sConfig) Stop(ignore bool) error {
-	return nil
-}
+////Start  implement
+//func (c *sConfig) Start(ignore bool) error {
+//	return nil
+//}
+//
+////Stop  implement
+//func (c *sConfig) Stop(ignore bool) error {
+//	return nil
+//}
 
 //Destroy  implement
 func (c *sConfig) Destroy(ignore bool) error {

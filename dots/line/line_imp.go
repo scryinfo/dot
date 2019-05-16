@@ -2,12 +2,12 @@ package line
 
 import (
 	"fmt"
-	"github.com/scryinfo/dot/dots/sconfig"
-	"github.com/scryinfo/dot/dots/slog"
 	"reflect"
 	"sync"
 
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/sconfig"
+	"github.com/scryinfo/dot/dots/slog"
 	"github.com/scryinfo/scryg/sutils/skit"
 )
 
@@ -22,8 +22,8 @@ type lineimp struct {
 	dot.Line
 	dot.Injecter
 	logger      dot.SLogger
-	sConfig     dot.SConfig
-	config      dot.Config
+	sConfig     dot.SConfig //对外的通用配置
+	config      dot.Config  //组件的配置对象
 	metas       *Metas
 	lives       *Lives
 	types       map[reflect.Type]dot.Dot

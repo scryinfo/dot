@@ -3,34 +3,36 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/scryinfo/dot/dots/line"
+	"os"
 	"reflect"
 
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/line"
+	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
 func main() {
-	dot.Logger().Infoln("sdf")
-	l, err := line.BuildAndStart(add)
+	l, err := line.BuildAndStart(add) //first step create line and dots
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	l.SLogger().Infoln("1111111111111111111")
-	l.SConfig().RootPath()
-
+	dot.Logger().Infoln("try the log")
 	t := &SomeUse{}
 
-	l.ToInjecter().Inject(t)
+	l.ToInjecter().Inject(t)                    //second step use the injecter or others
+	dot.GetDefaultLine().ToInjecter().Inject(t) //or second step, use the default line(in the sample, the default line  == l)
 
-	t = nil
+	ssignal.WatiCtrlC(func(s os.Signal) bool { //third wait for exit
+		return false
+	})
 
-	line.StopAndDestroy(l, true)
-
+	line.StopAndDestroy(l, true) //fourth step stop and destroy dots
 }
 
+//how to new the dots of config
 func add(l dot.Line) error {
 	var err error
 	{
