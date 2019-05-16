@@ -3,7 +3,7 @@ package line
 import (
 	"reflect"
 
-	"github.com/scryInfo/dot/dot"
+	"github.com/scryinfo/dot/dot"
 )
 
 var gline Line

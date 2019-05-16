@@ -2,8 +2,8 @@ package gclient
 
 import (
 	"encoding/json"
-	"github.com/scryInfo/dot/dot"
-	"github.com/scryInfo/dot/line"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"log"
