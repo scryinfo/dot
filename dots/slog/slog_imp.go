@@ -1,10 +1,11 @@
 package slog
 
 import (
+	"time"
+
 	"github.com/scryinfo/dot/dot"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"time"
 )
 
 var (
@@ -154,16 +155,16 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 	return err
 }
 
-//启动连接
-func (log *sLogger) Start(ignore bool) error {
-	return nil
-}
-
-//Stop
-//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
-func (log *sLogger) Stop(ignore bool) error {
-	return nil
-}
+////start
+//func (log *sLogger) Start(ignore bool) error {
+//	return nil
+//}
+//
+////Stop
+////ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+//func (log *sLogger) Stop(ignore bool) error {
+//	return nil
+//}
 
 //Destroy 销毁 Dot
 //ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
