@@ -171,13 +171,9 @@ LIVES:
 			var config *dot.LiveConfig
 			if true {
 				config = c.config.FindConfig(it.TypeId, it.LiveId)
-				if config != nil {
-					if !skit.IsNil(config.Json) {
-						bconfig, err = config.Json.MarshalJSON()
-						if err != nil {
-							break LIVES
-						}
-					}
+				bconfig, err = dot.MarshalConfig(config)
+				if err != nil {
+					break LIVES
 				}
 			}
 			//liveid
@@ -187,13 +183,16 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
-						if l, ok := it.Dot.(dot.Creater); ok {
-
-							{ // 在Create 之前检测是否实现 NeedLine 接口
-								if nl, ok := it.Dot.(dot.NeedLine); ok {
-									nl.SetLine(c)
-								}
+						{ // 在Create 之前检测是否需要特定的信息
+							if nl, ok := it.Dot.(dot.SetterLine); ok {
+								nl.SetLine(c)
 							}
+
+							if nl, ok := it.Dot.(dot.SetterTypeAndLiveId); ok {
+								nl.SetTypeId(it.TypeId, it.LiveId)
+							}
+						}
+						if l, ok := it.Dot.(dot.Creater); ok {
 							//c.mutex.Unlock()
 							l.Create(c)
 							//c.mutex.Lock()
@@ -209,12 +208,16 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
-						if l, ok := it.Dot.(dot.Creater); ok {
-							{ // 在Create 之前检测是否实现 NeedLine 接口
-								if nl, ok := it.Dot.(dot.NeedLine); ok {
-									nl.SetLine(c)
-								}
+						{ // 在Create 之前检测是否需要特定的信息
+							if nl, ok := it.Dot.(dot.SetterLine); ok {
+								nl.SetLine(c)
 							}
+
+							if nl, ok := it.Dot.(dot.SetterTypeAndLiveId); ok {
+								nl.SetTypeId(it.TypeId, it.LiveId)
+							}
+						}
+						if l, ok := it.Dot.(dot.Creater); ok {
 							//c.mutex.Unlock()
 							l.Create(c)
 							//c.mutex.Lock()
@@ -239,12 +242,16 @@ LIVES:
 
 				it.Dot, err = m.NewDot(bconfig)
 				if err == nil {
-					if l, ok := it.Dot.(dot.Creater); ok {
-						{ // 在Create 之前检测是否实现 NeedLine 接口
-							if nl, ok := it.Dot.(dot.NeedLine); ok {
-								nl.SetLine(c)
-							}
+					{ // 在Create 之前检测是否需要特定的信息
+						if nl, ok := it.Dot.(dot.SetterLine); ok {
+							nl.SetLine(c)
 						}
+
+						if nl, ok := it.Dot.(dot.SetterTypeAndLiveId); ok {
+							nl.SetTypeId(it.TypeId, it.LiveId)
+						}
+					}
+					if l, ok := it.Dot.(dot.Creater); ok {
 						//c.mutex.Unlock()
 						l.Create(c)
 						//c.mutex.Lock()
