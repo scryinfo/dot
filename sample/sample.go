@@ -19,7 +19,7 @@ func main() {
 		return
 	}
 
-	dot.Logger().Infoln("try the log")
+	dot.Logger().Infoln("dot ok")
 	t := &SomeUse{}
 
 	l.ToInjecter().Inject(t)                    //second step use the injecter or others

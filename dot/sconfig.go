@@ -1,6 +1,9 @@
 package dot
 
-import ()
+import (
+	"encoding/json"
+	"github.com/scryinfo/scryg/sutils/skit"
+)
 
 const (
 	SconfigLiveId = ""
@@ -39,4 +42,26 @@ type SConfig interface {
 	DefBool(key string, def bool) bool
 	DefFloat32(key string, def float32) float32
 	DefFloat64(key string, def float64) float64
+}
+
+func UnMarshalConfig(conf []byte, obj interface{}) (err error) {
+	err = nil
+	if conf != nil {
+		err = json.Unmarshal(conf, obj)
+	} else {
+		err = SError.Parameter
+	}
+	return err
+}
+
+func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
+	conf = nil
+	err = nil
+
+	if lconf != nil {
+		if !skit.IsNil(lconf.Json) {
+			conf, err = lconf.Json.MarshalJSON()
+		}
+	}
+	return conf, err
 }

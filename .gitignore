@@ -11,3 +11,6 @@
 /sample/log.log
 /go.sum
 /sample/sample.exe
+/sample/grpc_conns/before.log
+/sample/grpc_conns/grpc_conns.exe
+/sample/grpc_conns/log.log

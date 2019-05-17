@@ -93,8 +93,13 @@ type Line interface {
 }
 
 // 如果组件需要知道当前的line那么，就实现这个接口，此接口会在组件的Create方法之前调用
-type NeedLine interface {
+type SetterLine interface {
 	SetLine(l Line)
+}
+
+// 如果组件需要知道当前的TypeId 或 LiveId 那么，就实现这个接口，此接口会在组件的Create方法之前调用
+type SetterTypeAndLiveId interface {
+	SetTypeId(tid TypeId, lid LiveId)
 }
 
 //TypeLives living

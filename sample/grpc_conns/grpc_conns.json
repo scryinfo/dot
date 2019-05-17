@@ -1,0 +1,27 @@
+{
+  "log": {
+    "file": "log.log",
+    "level": "debug"
+  },
+  "dots":[
+    {
+      "":"grpc connections",
+      "metaData":{
+        "typeId":"7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
+      },
+      "lives":[
+        {
+          "liveId":"7bf0a017-ef0c-496a-b04c-b1dc262abc8d",
+          "json":{
+            "scheme":"grpcconns",
+            "services": [{
+              "name": "serviceName",
+              "balance": "first",
+              "addrs": ["localhost:5012","localhost:5013"]
+            }]
+          }
+        }
+      ]
+    }
+  ]
+}
