@@ -23,10 +23,11 @@ Destroyer
 可以通过配置文件或代码，来说明组件之间的关系， 这时line会计算组件之前的依赖关系，使用者不用管它们的创建顺序  
 
 # 默认组件
-## 配置
+## 配置 dots/sconfig
 现在配置支持json格式，以后会支持toml、yaml、命令行及环境变量
-## 日志
+## 日志 dots/slog
 基于zap的日志
 
-
+## grpc的客户端负载均衡 dots/grpc/conns
+提供grpc的客户端负载均衡， 具体使用参考 sample/grpc_conns
 
