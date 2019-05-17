@@ -104,20 +104,19 @@ func (c *lineimp) PreAdd(livings *dot.TypeLives) error {
 	err := c.metas.UpdateOrAdd(&clone.Meta)
 	if err == nil {
 		if clone.Lives != nil {
-			for _, it := range clone.Lives {
-
+			for i := range clone.Lives {
+				it := &clone.Lives[i]
 				if len(it.TypeId.String()) < 1 {
 					it.TypeId = clone.Meta.TypeId
 				}
 
-				live := dot.Live{TypeId: it.TypeId, LiveId: it.LiveId, Dot: nil}
-				live.RelyLives = make([]dot.LiveId, len(it.RelyLives))
-				copy(live.RelyLives, it.RelyLives)
-				c.lives.UpdateOrAdd(&live)
+				//live := dot.Live{TypeId: it.TypeId, LiveId: it.LiveId, Dot: nil}
+				//live.RelyLives = CloneRelyLiveId(it.RelyLives)
+				c.lives.UpdateOrAdd(it)
 			}
 		} else {
 			lid := (dot.LiveId)(clone.Meta.TypeId)
-			live := dot.Live{TypeId: clone.Meta.TypeId, LiveId: lid, Dot: nil, RelyLives: []dot.LiveId{lid}}
+			live := dot.Live{TypeId: clone.Meta.TypeId, LiveId: lid, Dot: nil, RelyLives: nil}
 			c.lives.UpdateOrAdd(&live)
 		}
 	}
@@ -135,14 +134,10 @@ LIVES:
 	for _, it := range c.lives.LiveIdMap {
 		for _, dit := range it.RelyLives {
 			live, err = c.lives.Get(dit)
-			if err != nil {
+			if err != nil || live == nil {
 				break LIVES
 			}
-
-			if live.TypeId != it.TypeId {
-				err = dot.SError.RelyTypeNotMatch.AddNewError(live.LiveId.String())
-				break LIVES
-			}
+			//todo check more about for live
 		}
 	}
 
@@ -289,7 +284,7 @@ LIVES:
 
 	for _, it := range tdots {
 		if it.Dot != nil {
-			c.Inject(it.Dot)
+			c.injectInLine(it.Dot, it)
 		}
 	}
 
@@ -358,20 +353,94 @@ func (c *lineimp) Inject(obj interface{}) error {
 		}
 
 		var d dot.Dot
-		if len(tname) < 1 { //by type
-			d, errt = c.GetByType(f.Type())
-		} else { //by liveid
-			d, errt = c.GetByLiveId(dot.LiveId(tname))
+		{
+			if len(tname) < 1 { //by type
+				d, errt = c.GetByType(f.Type())
+			} else { //by liveid
+				d, errt = c.GetByLiveId(dot.LiveId(tname))
+			}
+
+			if errt != nil && err == nil {
+				err = errt
+				fmt.Println("err:", err.Error())
+			}
+
+			if d == nil {
+				fmt.Println("can not find the dot tname:{}", tname)
+				continue
+			}
 		}
 
-		if errt != nil && err == nil {
-			err = errt
-			fmt.Println("err:", err.Error())
+		if errt == nil {
+			vv := reflect.ValueOf(d)
+			//fmt.Println("vv: ", vv.Type(), "f: ", f.Type(), "dd: ", reflect.TypeOf(d))
+			if vv.IsValid() && vv.Type().AssignableTo(f.Type()) {
+				f.Set(vv)
+			} else if err == nil {
+				err = dot.SError.DotInvalid.AddNewError(tField.Type.String() + "  " + tname)
+			}
 		}
+	}
 
-		if d == nil {
-			fmt.Println("can not find the dot tname:{}", tname)
+	return err
+}
+
+func (c *lineimp) injectInLine(obj interface{}, live *dot.Live) error {
+	var err error
+	if skit.IsNil(obj) {
+		return dot.SError.NilParameter
+	}
+
+	v := reflect.ValueOf(obj)
+
+	for v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	if v.Kind() != reflect.Struct {
+		return dot.SError.NotStruct
+	}
+
+	t := v.Type()
+
+	var errt error
+	for i := 0; i < v.NumField(); i++ {
+		errt = nil
+		f := v.Field(i)
+		if !f.CanSet() {
 			continue
+		}
+
+		tField := t.Field(i)
+		tname, ok := tField.Tag.Lookup(dot.TagDot)
+		if !ok {
+			continue
+		}
+
+		var d dot.Dot
+		{
+			if len(live.RelyLives) > 0 { //配置优先
+				if lid, ok := live.RelyLives[tField.Name]; ok {
+					d, errt = c.GetByLiveId(dot.LiveId(lid))
+				}
+			}
+			if d == nil {
+				if len(tname) < 1 { //by type
+					d, errt = c.GetByType(f.Type())
+				} else { //by liveid
+					d, errt = c.GetByLiveId(dot.LiveId(tname))
+				}
+			}
+
+			if errt != nil && err == nil {
+				err = errt
+				fmt.Println("err:", err.Error())
+			}
+
+			if d == nil {
+				fmt.Println("can not find the dot tname:{}", tname)
+				continue
+			}
 		}
 
 		if errt == nil {
@@ -540,9 +609,10 @@ FOR_FUN:
 				if len(it.Lives) < 1 { //create the single live
 					live := dot.Live{TypeId: it.MetaData.TypeId, LiveId: dot.LiveId(it.MetaData.TypeId), Dot: nil}
 					if len(it.MetaData.RelyTypeIds) > 0 {
-						live.RelyLives = make([]dot.LiveId, len(it.MetaData.RelyTypeIds))
-						for i, li := range it.MetaData.RelyTypeIds {
-							live.RelyLives[i] = dot.LiveId(li)
+						live.RelyLives = make(map[string]dot.LiveId, len(it.MetaData.RelyTypeIds))
+						for i := range it.MetaData.RelyTypeIds {
+							li := &it.MetaData.RelyTypeIds[i]
+							live.RelyLives[li.String()] = dot.LiveId(*li)
 						}
 					}
 					if err = c.lives.Add(&live); err != nil {

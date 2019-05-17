@@ -9,22 +9,44 @@ import (
 )
 
 const (
-	DotTypeId = "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
+	ConnsTypeId = "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
 )
 
 //grpc的连接， 支持一个 Scheme， 下有多个服务，每个服务可以有多个地址（客户端的负载均衡）
-type Conns struct {
-	conns map[string]*grpc.ClientConn
-	//ctx context.Context
-	config Config
-	lid dot.LiveId
+type Conns interface {
+	//返回默认的连接，这是只有一个连接
+	DefaultClientConn() *grpc.ClientConn
+	//返回服务名对应的连接
+	ClientConn(serviceName string) *grpc.ClientConn
+	//return service name
+	ServiceName() []string
+	//return schemeName,  Scheme is defined at https://github.com/grpc/grpc/blob/master/doc/naming.md
+	SchemeName() string
 }
 
-func (c *Conns) SetTypeId(tid dot.TypeId, lid dot.LiveId) {
+type config struct {
+	Scheme   string          `json:"scheme"`
+	Services []serviceConfig `json:"services"`
+}
+
+type serviceConfig struct {
+	Name    string   `json:"name"`
+	Addrs   []string `json:"addrs"`
+	Balance string   `json:"balance"` // round or first, the default value is round
+}
+
+type connsImp struct {
+	conns map[string]*grpc.ClientConn
+	//ctx context.Context
+	config config
+	lid    dot.LiveId
+}
+
+func (c *connsImp) SetTypeId(tid dot.TypeId, lid dot.LiveId) {
 	c.lid = lid
 }
 
-func NewDailConnections(conf interface{}) (dot.Dot, error) {
+func NewDailConns(conf interface{}) (dot.Dot, error) {
 	var err error = nil
 	var bs []byte = nil
 	if bt, ok := conf.([]byte); ok {
@@ -32,20 +54,28 @@ func NewDailConnections(conf interface{}) (dot.Dot, error) {
 	} else {
 		return nil, dot.SError.Parameter
 	}
-	dconf := &Config{}
+	dconf := &config{}
 	err = dot.UnMarshalConfig(bs, dconf)
 	if err != nil {
 		return nil, err
 	}
 
-	d := &Conns{
+	d := &connsImp{
 		config: *dconf,
 	}
 
 	return d, err
 }
 
-func (c *Conns) Create(l dot.Line) error {
+func TypeLiveConns() *dot.TypeLives {
+	return &dot.TypeLives{
+		Meta: dot.Metadata{TypeId: ConnsTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+			return NewDailConns(conf)
+		}},
+	}
+}
+
+func (c *connsImp) Create(l dot.Line) error {
 	var err error = nil
 	sa := make(map[string][]string, len(c.config.Services))
 	{
@@ -72,7 +102,7 @@ func (c *Conns) Create(l dot.Line) error {
 	return err
 }
 
-func (c *Conns) Stop(ignore bool) error {
+func (c *connsImp) Stop(ignore bool) error {
 	var err error = nil
 	if len(c.conns) > 0 {
 		conns := c.conns
@@ -96,7 +126,7 @@ func (c *Conns) Stop(ignore bool) error {
 	return err
 }
 
-func (c *Conns) DefaultClientConn() *grpc.ClientConn {
+func (c *connsImp) DefaultClientConn() *grpc.ClientConn {
 	var conn *grpc.ClientConn = nil
 	if len(c.conns) == 1 {
 		for _, v := range c.conns {
@@ -107,7 +137,7 @@ func (c *Conns) DefaultClientConn() *grpc.ClientConn {
 	return conn
 }
 
-func (c *Conns) ClientConn(serviceName string) *grpc.ClientConn {
+func (c *connsImp) ClientConn(serviceName string) *grpc.ClientConn {
 	var conn *grpc.ClientConn = nil
 	if len(c.conns) > 0 {
 		if c, ok := c.conns[serviceName]; ok {
@@ -117,7 +147,7 @@ func (c *Conns) ClientConn(serviceName string) *grpc.ClientConn {
 	return conn
 }
 
-func (c *Conns) ServiceName() []string {
+func (c *connsImp) ServiceName() []string {
 	var sn []string = nil
 	if len(c.config.Services) > 0 {
 		sn = make([]string, 0, len(c.config.Services))
@@ -128,6 +158,6 @@ func (c *Conns) ServiceName() []string {
 	return sn
 }
 
-func (c *Conns) SchemeName() string {
+func (c *connsImp) SchemeName() string {
 	return c.config.Scheme
 }
