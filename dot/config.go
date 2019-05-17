@@ -8,8 +8,8 @@ import (
 type LiveConfig struct {
 	//LiveId
 	LiveId LiveId `json:"liveId"`
-	//RelyLives rely lives
-	RelyLives []LiveId `json:"relyLives"`
+	//RelyLives rely lives， 如果不能确定key的值那么 key的值为 livid的值
+	RelyLives map[string]LiveId `json:"relyLives"`
 	//Json json
 	Json *json.RawMessage `json:"json"`
 }

@@ -36,7 +36,7 @@ type Metadata struct {
 type Live struct {
 	TypeId    TypeId
 	LiveId    LiveId
-	RelyLives []LiveId
+	RelyLives map[string]LiveId
 	Dot       Dot
 }
 

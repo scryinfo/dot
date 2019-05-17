@@ -22,6 +22,20 @@
           }
         }
       ]
+    },
+    {
+      "metaData":{
+        "typeId":"2d281e77-3133-4718-a5b7-9eea069591ca"
+      },
+      "lives":[
+        {
+          "liveId":"2d281e77-3133-4718-a5b7-9eea069591ca",
+          "relyLives": {"Conns_" : "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"},
+          "json":{
+            "name":"serviceName"
+          }
+        }
+      ]
     }
   ]
 }

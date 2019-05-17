@@ -1,6 +1,8 @@
 package line
 
-import "github.com/scryinfo/dot/dot"
+import (
+	"github.com/scryinfo/dot/dot"
+)
 
 //Metas
 type Metas struct {
@@ -111,8 +113,14 @@ func (ms *Lives) UpdateOrAdd(m *dot.Live) error {
 	if ok {
 		old.Dot = m.Dot
 		old.TypeId = m.TypeId
-		old.RelyLives = make([]dot.LiveId, len(m.RelyLives))
-		copy(old.RelyLives, m.RelyLives)
+		if len(m.RelyLives) > 0 { //merge the rely lives
+			if old.RelyLives == nil {
+				old.RelyLives = make(map[string]dot.LiveId, len(m.RelyLives))
+			}
+			for k, v := range m.RelyLives {
+				old.RelyLives[k] = v
+			}
+		}
 	} else {
 		ms.LiveIdMap[m.LiveId] = m
 	}
@@ -139,4 +147,12 @@ func (ms *Lives) Get(liveId dot.LiveId) (meta *dot.Live, err error) {
 		err = dot.SError.NotExisted.AddNewError(liveId.String())
 	}
 	return
+}
+
+func CloneRelyLiveId(old map[string]dot.LiveId) map[string]dot.LiveId {
+	re := make(map[string]dot.LiveId, len(old))
+	for k, v := range old {
+		re[k] = v
+	}
+	return re
 }

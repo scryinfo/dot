@@ -20,6 +20,9 @@ func main() {
 	dot.Logger().Infoln("dot ok")
 	//second step ....
 
+	dd, _ := l.ToInjecter().GetByLiveId(dot.LiveId(conns.ConnNameTypeId))
+	fmt.Println(dd)
+
 	ssignal.WatiCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
 	})
@@ -30,10 +33,7 @@ func main() {
 func add(l dot.Line) error {
 	var err error
 	// 给typeid指定newer
-	err = l.PreAdd(&dot.TypeLives{
-		Meta: dot.Metadata{TypeId: conns.DotTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
-			return conns.NewDailConnections(conf)
-		}},
-	})
+	err = l.PreAdd(conns.TypeLiveConns())
+	err = l.PreAdd(conns.TypeLiveConnName())
 	return err
 }
