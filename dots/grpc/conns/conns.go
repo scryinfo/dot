@@ -40,13 +40,9 @@ type connsImp struct {
 	conns map[string]*grpc.ClientConn
 	//ctx context.Context
 	config connsConfig
-	lid    dot.LiveId
 }
 
-func (c *connsImp) SetTypeId(tid dot.TypeId, lid dot.LiveId) {
-	c.lid = lid
-}
-
+//构造组件
 func newDailConns(conf interface{}) (dot.Dot, error) {
 	var err error = nil
 	var bs []byte = nil
@@ -68,6 +64,7 @@ func newDailConns(conf interface{}) (dot.Dot, error) {
 	return d, err
 }
 
+//产生newer组件时需要的数据结构
 func TypeLiveConns() *dot.TypeLives {
 	return &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: ConnsTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
