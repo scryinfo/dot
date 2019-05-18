@@ -23,35 +23,32 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 	if builder.BeforeCeate != nil {
 		builder.BeforeCeate(l)
 	}
-	err = l.ToLifer().Create(nil)
-	if builder.AfterCreate != nil {
-		builder.AfterCreate(l)
-	}
-	if err != nil {
-		return
-	}
+	{
+		err = l.ToLifer().Create(nil)
 
-	if builder.Add != nil {
-		err = builder.Add(l)
 		if err != nil {
 			return
 		}
-	}
 
-	err = l.Rely()
+		if builder.Add != nil {
+			err = builder.Add(l)
+			if err != nil {
+				return
+			}
+		}
+
+		err = l.Rely()
+		if err != nil {
+			return
+		}
+
+		err = l.CreateDots()
+	}
 	if err != nil {
 		return
 	}
-
-	if builder.BeforeCreateDots != nil {
-		builder.BeforeCreateDots(l)
-	}
-	err = l.CreateDots()
-	if builder.AfterCreateDots != nil {
-		builder.AfterCreateDots(l)
-	}
-	if err != nil {
-		return
+	if builder.AfterCreate != nil {
+		builder.AfterCreate(l)
 	}
 
 	if builder.BeforeStart != nil {
@@ -61,6 +58,7 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 	if builder.AfterStart != nil {
 		builder.AfterStart(l)
 	}
+
 	if err != nil {
 		return
 	}

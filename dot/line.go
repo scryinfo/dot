@@ -102,6 +102,16 @@ type SetterTypeAndLiveId interface {
 	SetTypeId(tid TypeId, lid LiveId)
 }
 
+// 在所有的Start 之后, 在builder的AfterStart之前
+type AfterStarter interface {
+	AfterStart(l Line)
+}
+
+// 在所有的stop 之前调用， 在Builder的BeforeStop之后
+type BeforeStopper interface {
+	BeforeStop(l Line)
+}
+
 //TypeLives living
 type TypeLives struct {
 	Meta  Metadata
@@ -125,9 +135,6 @@ type Builder struct {
 	AfterStop     LifeEvent //line的stop 之后
 	BeforeDestroy LifeEvent //line的destroy 之前
 	AfterDestroy  LifeEvent //line的destroy 之后
-
-	BeforeCreateDots LifeEvent // 在create dots之前
-	AfterCreateDots  LifeEvent // 在create dots之后
 }
 
 //NewTypeLives new living

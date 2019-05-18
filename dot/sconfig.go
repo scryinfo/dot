@@ -2,6 +2,7 @@ package dot
 
 import (
 	"encoding/json"
+
 	"github.com/scryinfo/scryg/sutils/skit"
 )
 

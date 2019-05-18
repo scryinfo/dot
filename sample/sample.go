@@ -13,11 +13,11 @@ import (
 
 func main() {
 	l, err := line.BuildAndStart(add) //first step create line and dots
-
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
 
 	dot.Logger().Infoln("dot ok")
 	t := &SomeUse{}
@@ -29,7 +29,6 @@ func main() {
 		return false
 	})
 
-	line.StopAndDestroy(l, true) //fourth step stop and destroy dots
 }
 
 //how to new the dots of config

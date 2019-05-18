@@ -631,10 +631,6 @@ FOR_FUN:
 				}
 			}
 		}
-
-		//create log
-
-		//create others
 		break
 	}
 
@@ -666,6 +662,7 @@ func (c *lineimp) Start(ignore bool) error {
 
 		//start other
 		{
+
 			var tdots []*dot.Live
 			c.mutex.Lock()
 			tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
@@ -675,10 +672,20 @@ func (c *lineimp) Start(ignore bool) error {
 				}
 			}
 			c.mutex.Unlock()
+
+			afterStarts := make([]dot.AfterStarter, 0, 20)
 			for _, it := range tdots {
 				if d, ok := it.Dot.(dot.Srater); ok {
 					d.Start(ignore)
 				}
+
+				if s, ok := it.Dot.(dot.AfterStarter); ok {
+					afterStarts = append(afterStarts, s)
+				}
+			}
+
+			for _, s := range afterStarts {
+				s.AfterStart(c)
 			}
 		}
 
@@ -694,14 +701,25 @@ func (c *lineimp) Stop(ignore bool) error {
 	//stop others
 	{
 		var tdots []*dot.Live
+		beforeStops := make([]dot.BeforeStopper, 0, 20)
+
 		c.mutex.Lock()
 		tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
 		for _, it := range c.lives.LiveIdMap {
 			if it != nil && it.Dot != nil {
 				tdots = append(tdots, it)
+
+				if s, ok := it.Dot.(dot.BeforeStopper); ok {
+					beforeStops = append(beforeStops, s)
+				}
 			}
 		}
 		c.mutex.Unlock()
+
+		for _, it := range beforeStops {
+			it.BeforeStop(c)
+		}
+
 		for _, it := range tdots {
 			if d, ok := it.Dot.(dot.Stopper); ok {
 				d.Stop(ignore)

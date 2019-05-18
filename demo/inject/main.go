@@ -8,7 +8,6 @@ import (
 
 func main() {
 	SetPrivateField()
-
 }
 
 func SetPrivateField() {
