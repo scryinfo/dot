@@ -25,12 +25,14 @@ type ConfigNobl struct {
 	KeyPath string `json:"keyPath"`
 }
 
+//grpc 的 server组件，不带 bl 的；一个server可以同时在多个地址或端口上监听；支持tls
 type ServerNobl struct {
 	conf      ConfigNobl
 	server    *grpc.Server
 	listeners []net.Listener
 }
 
+//构造组件
 func newServerNobl(conf interface{}) (dot.Dot, error) {
 	var err error = nil
 	var bs []byte = nil
@@ -52,6 +54,7 @@ func newServerNobl(conf interface{}) (dot.Dot, error) {
 	return d, err
 }
 
+//产生newer组件时需要的数据结构
 func TypeLiveConns() *dot.TypeLives {
 	return &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: ServerNoblTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
@@ -115,11 +118,7 @@ func (c *ServerNobl) Create(l dot.Line) error {
 	return err
 }
 
-func (c *ServerNobl) Start(ignore bool) error {
-
-	return nil
-}
-
+//在所有的组件完成 start后运行，这样能可以确保所有的 服务都已注册到grpc server上
 func (c *ServerNobl) AfterStart(l dot.Line) {
 	c.startServer()
 }
