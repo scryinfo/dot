@@ -19,7 +19,7 @@ type configName struct {
 	Name string `json:"name"`
 }
 
-func NewConnName(conf interface{}) (dot.Dot, error) {
+func newConnName(conf interface{}) (dot.Dot, error) {
 	var err error = nil
 	var bs []byte = nil
 	if bt, ok := conf.([]byte); ok {
@@ -43,7 +43,7 @@ func NewConnName(conf interface{}) (dot.Dot, error) {
 func TypeLiveConnName() *dot.TypeLives {
 	return &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: ConnNameTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
-			return NewConnName(conf)
+			return newConnName(conf)
 		}},
 	}
 }

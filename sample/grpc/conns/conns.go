@@ -12,11 +12,12 @@ import (
 
 func main() {
 	l, err := line.BuildAndStart(add) //first step create line and dots
-
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
+
 	dot.Logger().Infoln("dot ok")
 	//second step ....
 
@@ -27,7 +28,6 @@ func main() {
 		return false
 	})
 
-	line.StopAndDestroy(l, true) //fourth step stop and destroy dots
 }
 
 func add(l dot.Line) error {

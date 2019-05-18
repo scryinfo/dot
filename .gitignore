@@ -14,3 +14,13 @@
 /sample/grpc_conns/before.log
 /sample/grpc_conns/grpc_conns.exe
 /sample/grpc_conns/log.log
+/dots/certificate/before.log
+/sample/certificate/before.log
+/sample/certificate/ca.key
+/sample/certificate/ca.pem
+/sample/certificate/certificate.exe
+/sample/certificate/client.key
+/sample/certificate/client.pem
+/sample/certificate/log.log
+/sample/certificate/server.key
+/sample/certificate/server.pem

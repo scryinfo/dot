@@ -2,6 +2,7 @@ package conns
 
 import (
 	"fmt"
+
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/lb"
 	"google.golang.org/grpc"
@@ -24,7 +25,7 @@ type Conns interface {
 	SchemeName() string
 }
 
-type config struct {
+type connsConfig struct {
 	Scheme   string          `json:"scheme"`
 	Services []serviceConfig `json:"services"`
 }
@@ -38,7 +39,7 @@ type serviceConfig struct {
 type connsImp struct {
 	conns map[string]*grpc.ClientConn
 	//ctx context.Context
-	config config
+	config connsConfig
 	lid    dot.LiveId
 }
 
@@ -46,7 +47,7 @@ func (c *connsImp) SetTypeId(tid dot.TypeId, lid dot.LiveId) {
 	c.lid = lid
 }
 
-func NewDailConns(conf interface{}) (dot.Dot, error) {
+func newDailConns(conf interface{}) (dot.Dot, error) {
 	var err error = nil
 	var bs []byte = nil
 	if bt, ok := conf.([]byte); ok {
@@ -54,7 +55,7 @@ func NewDailConns(conf interface{}) (dot.Dot, error) {
 	} else {
 		return nil, dot.SError.Parameter
 	}
-	dconf := &config{}
+	dconf := &connsConfig{}
 	err = dot.UnMarshalConfig(bs, dconf)
 	if err != nil {
 		return nil, err
@@ -70,7 +71,7 @@ func NewDailConns(conf interface{}) (dot.Dot, error) {
 func TypeLiveConns() *dot.TypeLives {
 	return &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: ConnsTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
-			return NewDailConns(conf)
+			return newDailConns(conf)
 		}},
 	}
 }

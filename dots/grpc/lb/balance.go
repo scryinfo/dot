@@ -1,9 +1,10 @@
 package lb
 
 import (
+	"strings"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/balancer/roundrobin"
-	"strings"
 )
 
 const (
