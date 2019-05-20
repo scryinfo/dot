@@ -78,13 +78,13 @@ type Dot interface{}
 // if there is no problem with the dependencies, then you can directly null in Start
 // Lifer的所有方法运行时不能阻塞， 现在的line的实现是同步调用的
 type Lifer interface {
-	Creater
+	Creator
 	Srater
 	Stopper
 	Destroyer
 }
 
-type Creater interface {
+type Creator interface {
 	//Create 在这个方法在进行初始，运行或监听相同内容，最好放在Start方法中实现
 	Create(l Line) error
 }

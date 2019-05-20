@@ -187,7 +187,7 @@ LIVES:
 								nl.SetTypeId(it.TypeId, it.LiveId)
 							}
 						}
-						if l, ok := it.Dot.(dot.Creater); ok {
+						if l, ok := it.Dot.(dot.Creator); ok {
 							//c.mutex.Unlock()
 							l.Create(c)
 							//c.mutex.Lock()
@@ -212,7 +212,7 @@ LIVES:
 								nl.SetTypeId(it.TypeId, it.LiveId)
 							}
 						}
-						if l, ok := it.Dot.(dot.Creater); ok {
+						if l, ok := it.Dot.(dot.Creator); ok {
 							//c.mutex.Unlock()
 							l.Create(c)
 							//c.mutex.Lock()
@@ -246,7 +246,7 @@ LIVES:
 							nl.SetTypeId(it.TypeId, it.LiveId)
 						}
 					}
-					if l, ok := it.Dot.(dot.Creater); ok {
+					if l, ok := it.Dot.(dot.Creator); ok {
 						//c.mutex.Unlock()
 						l.Create(c)
 						//c.mutex.Lock()
@@ -575,7 +575,7 @@ FOR_FUN:
 		//first create config
 		c.sConfig = sconfig.NewConfiger()
 		c.sConfig.RootPath()
-		if s, ok := c.sConfig.(dot.Creater); ok {
+		if s, ok := c.sConfig.(dot.Creator); ok {
 			if err = s.Create(l); err != nil {
 				createLog(c)
 				break FOR_FUN
