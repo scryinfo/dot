@@ -16,6 +16,7 @@ const (
 	DotId = "634658a8-7598-4785-b4ac-bb201ff0010f"
 )
 
+// Deprecated: Use grpc/server/ServerNoblImp instead
 type GrpcInterface interface {
 	GetServer() *grpc.Server
 	StartService()

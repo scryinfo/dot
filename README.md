@@ -27,7 +27,8 @@ Destroyer
 现在配置支持json格式，以后会支持toml、yaml、命令行及环境变量
 ## 日志 dots/slog
 基于zap的日志
-
 ## grpc的客户端负载均衡 dots/grpc/conns
 提供grpc的客户端负载均衡， sample/grpc_conns是一个使用的例子
+## 证书生成组件 dots/certificate
+生成根证书及子证书， sample/certificate 是一个使用的例子
 
