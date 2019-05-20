@@ -13,6 +13,7 @@ const (
 	ConnsTypeId = "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
 )
 
+
 //grpc的连接， 支持一个 Scheme， 下有多个服务，每个服务可以有多个地址（客户端的负载均衡）
 type Conns interface {
 	//返回默认的连接，这是只有一个连接

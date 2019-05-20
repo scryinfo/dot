@@ -16,6 +16,11 @@ const (
 	ServerNoblTypeId = "77a766e7-c288-413f-946b-bc9de6df3d70"
 )
 
+type ServerNobl interface {
+	Server() *grpc.Server
+}
+
+
 type ConfigNobl struct {
 	//sample :  1.1.1.1:568
 	Addrs []string `json:"addrs"`
@@ -26,7 +31,7 @@ type ConfigNobl struct {
 }
 
 //grpc 的 server组件，不带 bl 的；一个server可以同时在多个地址或端口上监听；支持tls
-type ServerNobl struct {
+type ServerNoblImp struct {
 	conf      ConfigNobl
 	server    *grpc.Server
 	listeners []net.Listener
@@ -47,7 +52,7 @@ func newServerNobl(conf interface{}) (dot.Dot, error) {
 		return nil, err
 	}
 
-	d := &ServerNobl{
+	d := &ServerNoblImp{
 		conf: *dconf,
 	}
 
@@ -63,7 +68,7 @@ func TypeLiveConns() *dot.TypeLives {
 	}
 }
 
-func (c *ServerNobl) Create(l dot.Line) error {
+func (c *ServerNoblImp) Create(l dot.Line) error {
 	var err error = nil
 	{
 		c.listeners = make([]net.Listener, 0, len(c.conf.Addrs))
@@ -119,15 +124,15 @@ func (c *ServerNobl) Create(l dot.Line) error {
 }
 
 //在所有的组件完成 start后运行，这样能可以确保所有的 服务都已注册到grpc server上
-func (c *ServerNobl) AfterStart(l dot.Line) {
+func (c *ServerNoblImp) AfterStart(l dot.Line) {
 	c.startServer()
 }
 
-func (c *ServerNobl) Server() *grpc.Server {
+func (c *ServerNoblImp) Server() *grpc.Server {
 	return c.server
 }
 
-func (c *ServerNobl) startServer() {
+func (c *ServerNoblImp) startServer() {
 	for _, lis := range c.listeners {
 		go func(li net.Listener) {
 			err := c.server.Serve(li)

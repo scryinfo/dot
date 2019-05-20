@@ -39,6 +39,7 @@ func add(l dot.Line) error {
 	return err
 }
 
+//生成 ca证书，生成ca证书下的 server与client证书
 func makeSample(cs *certificate.Ecdsa) error {
 
 	caPri, err := certificate.MakePriKey()

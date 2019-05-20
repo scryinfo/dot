@@ -14,6 +14,7 @@ const (
 	DotTypeId = "24b8f11f-8600-4786-91e1-0d0dc7bc8969"
 )
 
+// Deprecated: Use grpc/conns instead
 type GrpcClienter interface {
 	GetCtx() context.Context
 	GetConn() *grpc.ClientConn
