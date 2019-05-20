@@ -20,7 +20,6 @@ type ServerNobl interface {
 	Server() *grpc.Server
 }
 
-
 type ConfigNobl struct {
 	//sample :  1.1.1.1:568
 	Addrs []string `json:"addrs"`
