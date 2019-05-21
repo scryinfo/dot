@@ -15,15 +15,12 @@ import (
 )
 
 var (
-	_ dot.Lifer    = (*lineimp)(nil)
-	_ dot.Line     = (*lineimp)(nil)
-	_ dot.Injecter = (*lineimp)(nil)
+	_ dot.Lifer    = (*lineImp)(nil)
+	_ dot.Line     = (*lineImp)(nil)
+	_ dot.Injecter = (*lineImp)(nil)
 )
 
-type lineimp struct {
-	dot.Lifer
-	dot.Line
-	dot.Injecter
+type lineImp struct {
 	logger      dot.SLogger
 	sConfig     dot.SConfig //对外的通用配置
 	config      dot.Config  //组件的配置对象
@@ -39,9 +36,9 @@ type lineimp struct {
 	lineBuilder *dot.Builder
 }
 
-//New new
-func New(builer *dot.Builder) dot.Line {
-	a := &lineimp{metas: NewMetas(),
+//NewLine new
+func NewLine(builer *dot.Builder) dot.Line {
+	a := &lineImp{metas: NewMetas(),
 		lives: NewLives(), types: make(map[reflect.Type]dot.Dot),
 		newerLiveid: make(map[dot.LiveId]dot.Newer),
 		newerTypeid: make(map[dot.TypeId]dot.Newer),
@@ -55,8 +52,12 @@ func New(builer *dot.Builder) dot.Line {
 	return a
 }
 
+func (c * lineImp) Id() string  {
+	return c.lineBuilder.LineId
+}
+
 //AddNewerByLiveId add new for liveid
-func (c *lineimp) AddNewerByLiveId(liveid dot.LiveId, newDot dot.Newer) error {
+func (c *lineImp) AddNewerByLiveId(liveid dot.LiveId, newDot dot.Newer) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -70,7 +71,7 @@ func (c *lineimp) AddNewerByLiveId(liveid dot.LiveId, newDot dot.Newer) error {
 }
 
 //AddNewerByTypeId add new for type
-func (c *lineimp) AddNewerByTypeId(typeid dot.TypeId, newDot dot.Newer) error {
+func (c *lineImp) AddNewerByTypeId(typeid dot.TypeId, newDot dot.Newer) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	if _, ok := c.newerTypeid[typeid]; ok {
@@ -83,7 +84,7 @@ func (c *lineimp) AddNewerByTypeId(typeid dot.TypeId, newDot dot.Newer) error {
 }
 
 //RemoveNewerByLiveId remove
-func (c *lineimp) RemoveNewerByLiveId(liveid dot.LiveId) {
+func (c *lineImp) RemoveNewerByLiveId(liveid dot.LiveId) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -91,7 +92,7 @@ func (c *lineimp) RemoveNewerByLiveId(liveid dot.LiveId) {
 }
 
 //RemoveNewerByTypeId remove
-func (c *lineimp) RemoveNewerByTypeId(typeid dot.TypeId) {
+func (c *lineImp) RemoveNewerByTypeId(typeid dot.TypeId) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -99,7 +100,7 @@ func (c *lineimp) RemoveNewerByTypeId(typeid dot.TypeId) {
 }
 
 //PreAdd the dot is nil, do not create it
-func (c *lineimp) PreAdd(livings *dot.TypeLives) error {
+func (c *lineImp) PreAdd(livings *dot.TypeLives) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -127,7 +128,7 @@ func (c *lineimp) PreAdd(livings *dot.TypeLives) error {
 	return err
 }
 
-func (c *lineimp) Rely() error {
+func (c *lineImp) Rely() error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -148,7 +149,7 @@ LIVES:
 }
 
 //CreateDots create dots
-func (c *lineimp) CreateDots() error {
+func (c *lineImp) CreateDots() error {
 	var tdots []*dot.Live
 	{
 		c.mutex.Lock()
@@ -294,24 +295,28 @@ LIVES:
 	return err
 }
 
-func (c *lineimp) SLogger() dot.SLogger {
+func (c *lineImp) Config() *dot.Config {
+	return &c.config
+}
+
+func (c *lineImp) SLogger() dot.SLogger {
 	return c.logger
 }
 
-func (c *lineimp) SConfig() dot.SConfig {
+func (c *lineImp) SConfig() dot.SConfig {
 	return c.sConfig
 }
 
-func (c *lineimp) ToLifer() dot.Lifer {
+func (c *lineImp) ToLifer() dot.Lifer {
 	return c
 }
 
 //ToInjecter to injecter
-func (c *lineimp) ToInjecter() dot.Injecter {
+func (c *lineImp) ToInjecter() dot.Injecter {
 	return c
 }
 
-func (c *lineimp) GetDotConfig(liveid dot.LiveId) *dot.LiveConfig {
+func (c *lineImp) GetDotConfig(liveid dot.LiveId) *dot.LiveConfig {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -323,7 +328,7 @@ func (c *lineimp) GetDotConfig(liveid dot.LiveId) *dot.LiveConfig {
 /////injecter
 
 //Inject see https://github.com/facebookgo/inject
-func (c *lineimp) Inject(obj interface{}) error {
+func (c *lineImp) Inject(obj interface{}) error {
 	var err error
 	if skit.IsNil(obj) {
 		return dot.SError.NilParameter
@@ -388,7 +393,7 @@ func (c *lineimp) Inject(obj interface{}) error {
 	return err
 }
 
-func (c *lineimp) injectInLine(obj interface{}, live *dot.Live) error {
+func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 	var err error
 	if skit.IsNil(obj) {
 		return dot.SError.NilParameter
@@ -461,7 +466,7 @@ func (c *lineimp) injectInLine(obj interface{}, live *dot.Live) error {
 }
 
 //GetByType get by type
-func (c *lineimp) GetByType(t reflect.Type) (d dot.Dot, err error) {
+func (c *lineImp) GetByType(t reflect.Type) (d dot.Dot, err error) {
 	d = nil
 	err = nil
 	c.mutex.Lock()
@@ -479,7 +484,7 @@ func (c *lineimp) GetByType(t reflect.Type) (d dot.Dot, err error) {
 }
 
 //GetByLiveId get by liveid
-func (c *lineimp) GetByLiveId(liveId dot.LiveId) (d dot.Dot, err error) {
+func (c *lineImp) GetByLiveId(liveId dot.LiveId) (d dot.Dot, err error) {
 	d = nil
 	err = nil
 	c.mutex.Lock()
@@ -498,7 +503,7 @@ func (c *lineimp) GetByLiveId(liveId dot.LiveId) (d dot.Dot, err error) {
 }
 
 //ReplaceOrAddByType update
-func (c *lineimp) ReplaceOrAddByType(d dot.Dot) error {
+func (c *lineImp) ReplaceOrAddByType(d dot.Dot) error {
 	var err error
 	t := reflect.TypeOf(d)
 	//for t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
@@ -511,7 +516,7 @@ func (c *lineimp) ReplaceOrAddByType(d dot.Dot) error {
 }
 
 //ReplaceOrAddByParamType update
-func (c *lineimp) ReplaceOrAddByParamType(d dot.Dot, t reflect.Type) error {
+func (c *lineImp) ReplaceOrAddByParamType(d dot.Dot, t reflect.Type) error {
 	var err error
 	//for t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
 	//	t = t.Elem()
@@ -523,7 +528,7 @@ func (c *lineimp) ReplaceOrAddByParamType(d dot.Dot, t reflect.Type) error {
 }
 
 //ReplaceOrAddByLiveId update
-func (c *lineimp) ReplaceOrAddByLiveId(d dot.Dot, id dot.LiveId) error {
+func (c *lineImp) ReplaceOrAddByLiveId(d dot.Dot, id dot.LiveId) error {
 	var err error
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -536,7 +541,7 @@ func (c *lineimp) ReplaceOrAddByLiveId(d dot.Dot, id dot.LiveId) error {
 }
 
 //RemoveByType remove
-func (c *lineimp) RemoveByType(t reflect.Type) error {
+func (c *lineImp) RemoveByType(t reflect.Type) error {
 	var err error
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -545,7 +550,7 @@ func (c *lineimp) RemoveByType(t reflect.Type) error {
 }
 
 //RemoveByLiveId remove
-func (c *lineimp) RemoveByLiveId(id dot.LiveId) error {
+func (c *lineImp) RemoveByLiveId(id dot.LiveId) error {
 	var err error
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -554,12 +559,12 @@ func (c *lineimp) RemoveByLiveId(id dot.LiveId) error {
 }
 
 //SetParent set parent injecter
-func (c *lineimp) SetParent(p dot.Injecter) {
+func (c *lineImp) SetParent(p dot.Injecter) {
 	c.parent = p
 }
 
 //GetParent get parent injecter
-func (c *lineimp) GetParent() dot.Injecter {
+func (c *lineImp) GetParent() dot.Injecter {
 	return c.parent
 }
 
@@ -568,7 +573,7 @@ func (c *lineimp) GetParent() dot.Injecter {
 //Create create
 //如果 liveid为空， 直接赋值为 typeid
 //如果 liveid重复，直接返回 dot.SError.ErrExistedLiveId
-func (c *lineimp) Create(l dot.Line) error {
+func (c *lineImp) Create(l dot.Line) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	var err error
@@ -641,13 +646,13 @@ FOR_FUN:
 }
 
 //todo 这个方法就为私有，且按照组件的方式来实现
-func createLog(c *lineimp) {
+func createLog(c *lineImp) {
 	c.logger = slog.NewSLogger(&(c.config.Log), c)
 	dot.SetLogger(c.logger)
 }
 
 //Start
-func (c *lineimp) Start(ignore bool) error {
+func (c *lineImp) Start(ignore bool) error {
 	var err error
 	for {
 		//start config
@@ -699,7 +704,7 @@ func (c *lineimp) Start(ignore bool) error {
 }
 
 //Stop
-func (c *lineimp) Stop(ignore bool) error {
+func (c *lineImp) Stop(ignore bool) error {
 	var err error
 	//stop others
 	{
@@ -743,7 +748,7 @@ func (c *lineimp) Stop(ignore bool) error {
 }
 
 //Destroy 销毁 Dot
-func (c *lineimp) Destroy(ignore bool) error {
+func (c *lineImp) Destroy(ignore bool) error {
 	//Destroy others
 	{
 		var tdots []*dot.Live
@@ -775,7 +780,7 @@ func (c *lineimp) Destroy(ignore bool) error {
 	return nil
 }
 
-func (c *lineimp) GetLineBuilder() *dot.Builder {
+func (c *lineImp) GetLineBuilder() *dot.Builder {
 	return c.lineBuilder
 }
 

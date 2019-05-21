@@ -7,16 +7,6 @@ import (
 	"reflect"
 )
 
-var gline Line
-
-func GetDefaultLine() Line {
-	return gline
-}
-
-func SetDefaultLine(line Line) {
-	gline = line
-}
-
 //
 type Injecter interface {
 	//Inject inject
@@ -56,6 +46,8 @@ type Injecter interface {
 //Line line
 type Line interface {
 
+	//返回Line的唯一名字
+	Id() string
 	//Line的接口
 	Config() *Config
 	//SConfig 通用配置接口
@@ -129,15 +121,16 @@ type LifeEvent func(l Line)
 type Builder struct {
 	Add BuildNewer
 
-	BeforeCeate LifeEvent //line的create之前
-	AfterCreate LifeEvent //line的create之后
-	BeforeStart LifeEvent //line的start之前
-	AfterStart  LifeEvent //line的start之后
-
+	BeforeCreate LifeEvent //line的create之前
+	AfterCreate  LifeEvent //line的create之后
+	BeforeStart  LifeEvent //line的start之前
+	AfterStart   LifeEvent //line的start之后
 	BeforeStop    LifeEvent //line的stop 之前
 	AfterStop     LifeEvent //line的stop 之后
 	BeforeDestroy LifeEvent //line的destroy 之前
 	AfterDestroy  LifeEvent //line的destroy 之后
+
+	LineId string //line的唯一id， 默认值为 “default”
 }
 
 //NewTypeLives new living

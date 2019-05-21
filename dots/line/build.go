@@ -11,7 +11,7 @@ import (
 //  add会在 create之后rely之前调用
 func BuildAndStart(add dot.BuildNewer) (l dot.Line, err error) {
 	err = nil
-	builder := &dot.Builder{Add: add}
+	builder := &dot.Builder{Add: add, LineId:"default"}
 	l, err = BuildAndStartBy(builder)
 	return
 }
@@ -21,10 +21,14 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 
 	err = nil
 
-	l = New(builder)
+	if len(builder.LineId) < 1 {
+		builder.LineId = "default"
+	}
 
-	if builder.BeforeCeate != nil {
-		builder.BeforeCeate(l)
+	l = NewLine(builder)
+
+	if builder.BeforeCreate != nil {
+		builder.BeforeCreate(l)
 	}
 	{
 		err = l.ToLifer().Create(nil)
