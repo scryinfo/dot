@@ -1,3 +1,5 @@
+[中文](./README-cn.md)  
+[EN](./README.md)  
 # dot  
 Component development specification, including component definition, component dependencies, component life cycle, dependency injection, and common basic components  
 * Dot: A component which has no type or interface requirements, anything can be a component  
