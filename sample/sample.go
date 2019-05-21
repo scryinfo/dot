@@ -59,7 +59,7 @@ func add(l dot.Line) error {
 		t := reflect.TypeOf(((*Dot2)(nil)))
 		t = t.Elem()
 		fmt.Println("  ", t)
-		//这里没有指定 newer, 那么会直接使用反射 reflect.New 来创建
+		//这里没有指定 newer, 那么会直接使用反射 reflect.NewLine 来创建
 		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "2", RefType: t}, Lives: []dot.Live{
 				dot.Live{LiveId: "21"}, dot.Live{LiveId: "22"},
