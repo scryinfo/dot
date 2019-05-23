@@ -7,10 +7,10 @@ import (
 	"google.golang.org/grpc/resolver"
 )
 
-//客户端的负载均衡
+//Client load balancing 
 type clientBuilder struct {
 	scheme       string
-	serviceAddrs map[string][]string //key 服务名， value 服务所对应的地址（如 12.23.23.23：909）
+	serviceAddrs map[string][]string //key service name, value service corresponding address(such as 12.23.23.23：909）
 }
 
 func NewClientBuilder(schema string, serviceAddrs map[string][]string) resolver.Builder {

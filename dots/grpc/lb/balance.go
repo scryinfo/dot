@@ -15,7 +15,7 @@ const (
 	First = "first"
 )
 
-//如果没有找到，那么返回 Round Balance
+//If not found, then return Round Balance
 func Balance(bname string) grpc.DialOption {
 	var do grpc.DialOption = nil
 	switch strings.ToLower(bname) {
@@ -29,10 +29,10 @@ func Balance(bname string) grpc.DialOption {
 	return do
 }
 
-func BalancerRound() grpc.DialOption { //todo grpc实现 balance管理里使用了 全局变量，且没有考虑多线程的情况， 这里是一个改时点
+func BalancerRound() grpc.DialOption { //todo grpc realization balance management use global variables, and do not consider multi thread condition, this is a temporary point
 	return grpc.WithBalancerName(roundrobin.Name)
 }
 
-func BalancerFirst() grpc.DialOption { //todo grpc实现 balance管理里使用了 全局变量，且没有考虑多线程的情况， 这里是一个改时点
+func BalancerFirst() grpc.DialOption { //todo grpc realization balance management use global variables, and do not consider multi thread condition, this is a temporary point
 	return grpc.WithBalancerName(grpc.PickFirstBalancerName)
 }

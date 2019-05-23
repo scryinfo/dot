@@ -7,8 +7,8 @@ import (
 	"github.com/scryinfo/dot/dot"
 )
 
-//  构造line并调用 create rely createdots start
-//  add会在 create之后rely之前调用
+//  Construct line and call create rely createdots start
+//  add will be called before reply, after create
 func BuildAndStart(add dot.BuildNewer) (l dot.Line, err error) {
 	err = nil
 	builder := &dot.Builder{Add: add, LineId:"default"}
@@ -16,7 +16,7 @@ func BuildAndStart(add dot.BuildNewer) (l dot.Line, err error) {
 	return
 }
 
-//  构造line并调用 create rely createdots start
+//  Construct line and call create rely createdots start
 func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 
 	err = nil

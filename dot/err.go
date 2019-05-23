@@ -55,7 +55,7 @@ type Error struct {
 	DotInvalid       Errorer
 }
 
-//SError dot的全局常用 error对象
+//SError error object frequently used by dot
 var SError = &Error{}
 
 func init() {

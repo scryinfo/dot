@@ -16,11 +16,11 @@ const (
 	ConnsTypeId = "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
 )
 
-//grpc的连接， 支持一个 Scheme， 下有多个服务，每个服务可以有多个地址（客户端的负载均衡）
+//grpc connection, support one Scheme, multi services are below, every service can have multi address(client load balancing)
 type Conns interface {
-	//返回默认的连接，这是只有一个连接
+	//Return default connection, only one connection
 	DefaultClientConn() *grpc.ClientConn
-	//返回服务名对应的连接
+	//Return server name corresponding connection
 	ClientConn(serviceName string) *grpc.ClientConn
 	//return service name
 	ServiceName() []string
@@ -45,7 +45,7 @@ type connsImp struct {
 	config connsConfig
 }
 
-//构造组件
+//Construction component
 func newDailConns(conf interface{}) (dot.Dot, error) {
 	var err error = nil
 	var bs []byte = nil
@@ -67,7 +67,7 @@ func newDailConns(conf interface{}) (dot.Dot, error) {
 	return d, err
 }
 
-//产生newer组件时需要的数据结构
+//Data structure needed when generating newer component 
 func TypeLiveConns() *dot.TypeLives {
 	return &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: ConnsTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {

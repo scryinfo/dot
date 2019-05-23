@@ -47,7 +47,7 @@ func add(l dot.Line) error {
 			},
 		})
 
-		// 给typeid指定newer
+		// Point newer for typeid
 		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "1", NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
 				return &Dot1{Name: "Create by type 1"}, nil
@@ -59,7 +59,7 @@ func add(l dot.Line) error {
 		t := reflect.TypeOf(((*Dot2)(nil)))
 		t = t.Elem()
 		fmt.Println("  ", t)
-		//这里没有指定 newer, 那么会直接使用反射 reflect.NewLine 来创建
+		//If no newer assignment, then use reflect.NewLine to create it
 		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "2", RefType: t}, Lives: []dot.Live{
 				dot.Live{LiveId: "21"}, dot.Live{LiveId: "22"},
@@ -67,7 +67,7 @@ func add(l dot.Line) error {
 		})
 	}
 
-	{ // 以下为使用 LiveId对就应的Newer，
+	{ // The following is Newer using LiveId，
 		err = l.AddNewerByLiveId(dot.LiveId("31"), func(conf interface{}) (d dot.Dot, err error) {
 			d = &Dot3{}
 			err = nil
@@ -101,7 +101,7 @@ func add(l dot.Line) error {
 		})
 	}
 
-	{ // 以下为使用 typeid 与 LiveId对就应的Newer，如果两个都提供，那么优先使用liveid对应的
+	{ // The following is Newer using typeid and LiveId，if both are provided, then use Liveid priorly
 		err = l.AddNewerByLiveId(dot.LiveId("41"), func(conf interface{}) (d dot.Dot, err error) {
 			d = &Dot4{}
 			err = nil
@@ -136,7 +136,7 @@ func add(l dot.Line) error {
 	return err
 }
 
-//直接向容器中加入指定的类型
+//Add assigned type to container directly
 func addDot(l dot.Line) {
 	l.ToInjecter().ReplaceOrAddByType(&Dot1{Name: "null"})
 	l.ToInjecter().ReplaceOrAddByLiveId(&Dot1{Name: "6666"}, dot.LiveId("6666"))
@@ -174,26 +174,26 @@ type Dot4 struct {
 	T string
 }
 
-//Create 在这个方法在进行初始，也运行或监听相同内容，最好放在Start方法中实现
+//Create use this method to initialize, run or monitor same content, better realize it in start method
 func (c *Dot3) Create(conf dot.SConfig) error {
 
 	return nil
 }
 
 //Start
-//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+//ignore When calliing other Lifer, if true erred then continue, if false erred return directly
 func (c *Dot3) Start(ignore bool) error {
 	return nil
 }
 
 //Stop
-//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+//ignore When calliing other Lifer, if true erred then continue, if false erred return directly
 func (c *Dot3) Stop(ignore bool) error {
 	return nil
 }
 
-//Destroy 销毁 Dot
-//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+//Destroy Destroy Dot
+//ignore When calliing other Lifer, if true erred then continue, if false erred return directly 
 func (c *Dot3) Destroy(ignore bool) error {
 	return nil
 }

@@ -164,13 +164,13 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 //}
 //
 ////Stop
-////ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+////ignore When calling other Lifer, if true erred then continue, if false erred then return directly
 //func (log *sLogger) Stop(ignore bool) error {
 //	return nil
 //}
 
-//Destroy 销毁 Dot
-//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+//Destroy Destroy Dot
+//ignore When calling other Lifer, if true erred then continue, if false erred then return directly
 func (log *sLogger) Destroy(ignore bool) error {
 	if log.Logger != nil {
 		log.Logger.Sync()

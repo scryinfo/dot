@@ -26,20 +26,20 @@ type ServerNobl interface {
 type ConfigNobl struct {
 	//sample :  1.1.1.1:568
 	Addrs []string `json:"addrs"`
-	//sample:  keys/s1.pem,   相对于当前exe的路径
+	//sample:  keys/s1.pem,   Comparing with current exe path
 	PemPath string `json:"pemPath"`
-	//sample:  keys/s1.pem,   相对于当前exe的路径
+	//sample:  keys/s1.pem,   Comparing with current exe path
 	KeyPath string `json:"keyPath"`
 }
 
-//grpc 的 server组件，不带 bl 的；一个server可以同时在多个地址或端口上监听；支持tls
+//grpc server component, without bl; one server can monitor in multi address or API at the same time,support tls
 type ServerNoblImp struct {
 	conf      ConfigNobl
 	server    *grpc.Server
 	listeners []net.Listener
 }
 
-//构造组件
+//Construct component
 func newServerNobl(conf interface{}) (dot.Dot, error) {
 	var err error = nil
 	var bs []byte = nil
@@ -61,7 +61,7 @@ func newServerNobl(conf interface{}) (dot.Dot, error) {
 	return d, err
 }
 
-//产生newer组件时需要的数据结构
+//Data structure needed when generating newer component
 func TypeLiveConns() *dot.TypeLives {
 	return &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: ServerNoblTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
@@ -125,7 +125,7 @@ func (c *ServerNoblImp) Create(l dot.Line) error {
 	return err
 }
 
-//在所有的组件完成 start后运行，这样能可以确保所有的 服务都已注册到grpc server上
+//Run after every component finished start, this can ensure all service has been registered on grpc server
 func (c *ServerNoblImp) AfterStart(l dot.Line) {
 	c.startServer()
 }

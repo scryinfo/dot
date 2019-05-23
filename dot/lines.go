@@ -5,12 +5,12 @@ package dot
 
 var gDefaultline Line
 
-//返回默认的Line， 一般的程序中只会有一个line
+//Return default Line，general program only has one line 
 func GetDefaultLine() Line {
 	return gDefaultline
 }
 
-//设置默认的line
+//Set default line
 func SetDefaultLine(line Line) {
 	gDefaultline = line
 }

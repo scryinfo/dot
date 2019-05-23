@@ -79,7 +79,7 @@ type Dot interface{}
 // Create, Start,Stop,Destroy
 // Create and Start are separate, in order to resolve the dependencies between different dot instances,
 // if there is no problem with the dependencies, then you can directly null in Start
-// Lifer的所有方法运行时不能阻塞， 现在的line的实现是同步调用的
+// All methods of Lifer cannot be stucked while running, now the realization of line is sync call
 type Lifer interface {
 	Creator
 	Srater
@@ -88,27 +88,27 @@ type Lifer interface {
 }
 
 type Creator interface {
-	//Create 在这个方法在进行初始，运行或监听相同内容，最好放在Start方法中实现
+	//Create When this method is initializing, running or monitoring same content, better to realize it in Start method
 	Create(l Line) error
 }
 
 type Srater interface {
-	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly 
 	Start(ignore bool) error
 }
 
 type Stopper interface {
-	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly 
 	Stop(ignore bool) error
 }
 
 type Destroyer interface {
-	//销毁 Dot
-	//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+	//Destroy Dot
+	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
 	Destroy(ignore bool) error
 }
 
-//Tager dot自己的标签数据，dot自己使用
+//Tager dot signature data, used by dot
 type Tager interface {
 	//SetTag set tag
 	SetTag(tag interface{})
@@ -126,11 +126,11 @@ type Statuser interface {
 
 //HotConfig hot change config
 type HotConfig interface {
-	//Update 更新配置信息， 返回true表示成功
+	//Update Update config info, return true means successful
 	HotConfig(newConf SConfig) bool
 }
 
-//Checker 检测dot，运行一些验证或测试数据，返回对应的结果
+//Checker Check dot，run some verification or test data, return the result
 type Checker interface {
 	Check(args interface{}) interface{}
 }

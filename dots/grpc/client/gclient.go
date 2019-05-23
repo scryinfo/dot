@@ -32,7 +32,7 @@ type Grpc struct {
 	cancel  context.CancelFunc
 }
 
-//给gclient 增加newer, 只要没有特殊的指， 都会使用这个
+//Add newer to gclient, it will be always used unless specially specified  
 func AddType(l dot.Line) error {
 	err := l.AddNewerByTypeId(DotTypeId, func(conf interface{}) (d dot.Dot, err error) {
 		d = &Grpc{}
@@ -73,19 +73,19 @@ func (g *Grpc) Create(conf dot.SConfig) error {
 	return err
 }
 
-//启动连接
+//Start connection 
 func (g *Grpc) Start(ignore bool) error {
 	return nil
 }
 
 //Stop
-//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+//ignore When calling other Lifer, true erred will continue, false erred will return directly
 func (g *Grpc) Stop(ignore bool) error {
 	return nil
 }
 
-//Destroy 销毁 Dot
-//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+//Destroy Destroy Dot
+//ignore When calling other Lifer, true erred will continue, false erred will return directly
 func (g *Grpc) Destroy(ignore bool) error {
 	g.conn.Close()
 	g.cancel()
