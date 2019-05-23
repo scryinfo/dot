@@ -7,33 +7,33 @@ import (
 	"flag"
 )
 
-//Cmd 类型 通用的命令行参数
+//Cmd type general command line parameters
 type Cmd struct {
-	//ConfigPath 配置文件路径
+	//ConfigPath config file path 
 	ConfigPath string
-	//ConfigFile 配置文件名，不包含路径
+	//ConfigFile config file name without path
 	ConfigFile string
 }
 
-//GCmd 全局变量 通用的命令行参数
+//GCmd Global variables general command line parameters
 var GCmd Cmd
 
-//CmdParameterName 命令行参数名字
+//CmdParameterName Command line parameter name
 type CmdParameterName string
 
 func (c CmdParameterName) String() string {
 	return string(c)
 }
 
-//命令行参数
+//Command line parameters
 const (
-	//配置文件路径，增加Cmd以示与struct cmd 相关
+	//Config file path, add Cmd to show relations with struct cmd 
 	CmdConfigPath CmdParameterName = "configpath"
-	//配置文件名，不包含路径
+	//Config file name without path
 	CmdConfigFile CmdParameterName = "configfile"
 )
 
-//CmdDefines 通用命令参数的初始化
+//CmdDefines General command parameter initialization
 func FlagDefines() {
 	flag.StringVar(&GCmd.ConfigPath, CmdConfigPath.String(), "", "config path")
 	flag.StringVar(&GCmd.ConfigPath, CmdConfigFile.String(), "", "config file, not include path")

@@ -13,28 +13,28 @@ const (
 	SconfigLiveId = ""
 )
 
-//SConfig 配置属于一个组件Dot,但它太基础了，每一个Dot都需要，所以定义到 dot.go文件中
-//S表示scryinfo config 这个名字用的地方太多，加一个s以示区别
+//SConfig config belongs to one component Dot, but it is so basic, every Dot need it, so define it in dot.go file
+//S represents scryinfo config this name is used frequently, so add s to distinguish it 
 type SConfig interface {
 	//RootPath root path
 	RootPath()
-	//配置文件路径
+	//Config file path
 	ConfigPath() string
-	//不包含路径，只有文件名
+	//Without path, only file name
 	ConfigFile() string
-	//key 是否存在
+	//Whether key existing 
 	Key(key string) bool
-	//如果没有配置或配置为空，返回nil
+	//If no config or config is empty, return nil
 	Map() (m map[string]interface{}, err error)
 
-	//优先从内存中取数据出来操作， 如果内存为nil查看是否有对就原配置文件
+	//Priorly bring data from RAM and operate, if RAM is nil then check whether original config file existing
 	Unmarshal(s interface{}) error
-	//解析key为对应的类型
+	//Analyze key is corresponding type
 	UnmarshalKey(key string, obj interface{}) error
 
 	Marshal(data []byte) error
 
-	//如果没有找到对应的key或数据类型不能转换，一定要特别小心默认值问题，所以在函数前面特别增加“Def”，以提示默认值
+	//If no corresponding key or data type cannot be converted, must pay attention to default value, so add "Def" before function to notify default value
 	DefInterface(key string, def interface{}) interface{}
 	DefArray(key string, def []interface{}) []interface{}
 	DefMap(key string, def map[string]interface{}) map[string]interface{}

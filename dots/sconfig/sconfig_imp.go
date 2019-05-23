@@ -20,30 +20,30 @@ var (
 )
 
 //sConfig implement SConfig
-//执行文件目录 expath，执行文件名 exname (不包含扩展名),expath的同层目录的conf目录 exconf， 配置文件目录 confpath
-//配置文件目录查找过程为：
-// 1，命令行参数 confpath
-// 2, expath下的 exname_conf
-// 3, expath下的 conf
-// 4，exconf下的 exname_conf
-// 5，exconf的 conf
-// 6，以上目录都不存在，则使用 expath 作为 confpath
-//注： 是检查目录是否存在，不是检测是否有对应的变量
-//配置文件查找过程
-//1，命令行参数 conffile
-//2，查找confpath下的 exname.json
-//3，查找confpath下的 conf.json
-//4，以上文件都不存在，则没有配置文件
-//注： 是检测文件是否存在
+//Run executable file content expath，xecutable file name exname (without extension name),expath same content, conf content exconf， config file content confpath
+//The process for searching config file content:
+// 1，Command line parameter confpath
+// 2, exname_conf under expath
+// 3, conf under expath
+// 4，exname_conf under exconf
+// 5，conf in exconf
+// 6，If the content above does not existed, then use expath as confpath
+//Note: Check whether content existing rather than check whether corrsponding parameters existing
+//Config file searching process
+//1，Command line parameter conffile
+//2，Search exname.json under confpath
+//3，Search conf.json under confpath
+//4，If file above do not existing, then no config file
+//Note: Check whether file existing
 type sConfig struct {
-	confPath   string           //配置路径
-	file       string           //文件名
-	simpleJson *simplejson.Json //整个配置
+	confPath   string           //Config path
+	file       string           //File name
+	simpleJson *simplejson.Json //All config
 }
 
 const (
-	extensionName = ".json" //配置文件的扩展名
-	separator     = "_"     //分隔符
+	extensionName = ".json" //extension name of config file 配置文件的扩展名
+	separator     = "_"     //Separator
 	conf          = "conf"
 )
 

@@ -69,26 +69,26 @@ func (g *Grpc) Create(conf dot.SConfig) (err error) {
 	return err
 }
 
-//启动连接
+//Start connection 
 func (g *Grpc) Start(ignore bool) error {
 	return nil
 }
 
 //Stop
-//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+//ignore When calling other Lifer, if true erred then continue, false erred then return directly
 func (g *Grpc) Stop(ignore bool) error {
 	g.S.Stop()
 	return nil
 }
 
-//Destroy 销毁 Dot
-//ignore 在调用其它Lifer时，true 出错出后继续，false 出现一个错误直接返回
+//Destroy Destroy Dot
+//ignore When calling other Lifer, if true erred then continue, false erred then return directly
 func (g *Grpc) Destroy(ignore bool) error {
 	g.lis.Close()
 	return nil
 }
 
-//注册服务，并执行
+//Register service and operate
 func (g Grpc) StartService() {
 	reflection.Register(g.S)
 	if err := g.S.Serve(g.lis); err != nil {

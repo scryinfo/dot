@@ -22,8 +22,8 @@ var (
 
 type lineImp struct {
 	logger      dot.SLogger
-	sConfig     dot.SConfig //对外的通用配置
-	config      dot.Config  //组件的配置对象
+	sConfig     dot.SConfig //External general config 
+	config      dot.Config  //Config object of component
 	metas       *Metas
 	lives       *Lives
 	types       map[reflect.Type]dot.Dot
@@ -182,7 +182,7 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
-						{ // 在Create 之前检测是否需要特定的信息
+						{ // Check whether special info needed before Create 
 							if nl, ok := it.Dot.(dot.SetterLine); ok {
 								nl.SetLine(c)
 							}
@@ -207,7 +207,7 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
-						{ // 在Create 之前检测是否需要特定的信息
+						{ // Check whether special info needed before Create
 							if nl, ok := it.Dot.(dot.SetterLine); ok {
 								nl.SetLine(c)
 							}
@@ -241,7 +241,7 @@ LIVES:
 
 				it.Dot, err = m.NewDot(bconfig)
 				if err == nil {
-					{ // 在Create 之前检测是否需要特定的信息
+					{ // Check whether special info needed before Create
 						if nl, ok := it.Dot.(dot.SetterLine); ok {
 							nl.SetLine(c)
 						}
@@ -260,7 +260,7 @@ LIVES:
 		}
 	}
 
-	//增加logger 与 config
+	//Add logger and config
 	{
 		c.mutex.Lock()
 		c.types[reflect.TypeOf(c.logger)] = c.logger
@@ -276,7 +276,7 @@ LIVES:
 		c.mutex.Unlock()
 	}
 
-	//增加类型与 dot的对应关系, 只记录typeid == liveId的
+	//Add type and relationships with dot, only record whose typeid == liveId
 	for _, it := range tdots {
 		if !skit.IsNil(&it.Dot) && ((string)(it.TypeId) == (string)(it.LiveId)) {
 			t := reflect.TypeOf(it.Dot)
@@ -427,7 +427,7 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 
 		var d dot.Dot
 		{
-			if len(live.RelyLives) > 0 { //配置优先
+			if len(live.RelyLives) > 0 { //Config prior
 				if lid, ok := live.RelyLives[tField.Name]; ok {
 					d, errt = c.GetByLiveId(dot.LiveId(lid))
 				}
@@ -571,8 +571,8 @@ func (c *lineImp) GetParent() dot.Injecter {
 ////injecter end
 
 //Create create
-//如果 liveid为空， 直接赋值为 typeid
-//如果 liveid重复，直接返回 dot.SError.ErrExistedLiveId
+//If liveid is empty， directly assign typeid
+//If liveid repeated，directly return dot.SError.ErrExistedLiveId
 func (c *lineImp) Create(l dot.Line) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -645,7 +645,7 @@ FOR_FUN:
 	return err
 }
 
-//todo 这个方法就为私有，且按照组件的方式来实现
+//todo this method is private and will be realized with component method 
 func createLog(c *lineImp) {
 	c.logger = slog.NewSLogger(&(c.config.Log), c)
 	dot.SetLogger(c.logger)
@@ -747,7 +747,7 @@ func (c *lineImp) Stop(ignore bool) error {
 	return err
 }
 
-//Destroy 销毁 Dot
+//Destroy Destroy Dot
 func (c *lineImp) Destroy(ignore bool) error {
 	//Destroy others
 	{

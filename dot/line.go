@@ -10,27 +10,27 @@ import (
 //
 type Injecter interface {
 	//Inject inject
-	//obj只支持结构体
-	//字段中带有 dot.TagDot (dot) 的 tag
-	//如果tag为空，那么以字段的类型来注入，不为空以tag的值（dot.LiveId）进行注入
-	//在整个过程中如果出错不会退出， 返回的错误是发生的第一个错误
+	//obj only support structure
+	//dot.TagDot (dot) tag is in the field
+	//If tag is empty, then input with field type, otherwise input with tag value（dot.LiveId）
+	//In the process if error occurred, it will not quit, returned error is the first one occurred
 	Inject(obj interface{}) error
 	//GetByType get by type
-	//如果在当前的容器中没有找到对应的，会调用 parent 查找
-	//type 的容器与 liveid的容器是单独分开的
+	//If no related object in current container, then will call parent to search 
+	//type container is seperate with liveid container
 	GetByType(t reflect.Type) (d Dot, err error)
 	//GetByLiveId get by liveid
-	//如果在当前的容器中没有找到对应的，会调用 parent 查找
-	//type 的容器与liveid的容器是单独分开的
+	//If no related object in current container, then will call parent to search
+	//type container is seperate with liveid container
 	GetByLiveId(id LiveId) (d Dot, err error)
 
 	//ReplaceOrAddByType update
-	//不会操作prarent
+	//Cannot operate parent
 	ReplaceOrAddByType(d Dot) error
-	//不会操作prarent
+	//Cannot operate parent
 	ReplaceOrAddByParamType(d Dot, t reflect.Type) error
 	//ReplaceOrAddByLiveId update
-	//不会操作prarent
+	//Cannot operate parent
 	ReplaceOrAddByLiveId(d Dot, id LiveId) error
 	//RemoveByType remove
 	RemoveByType(t reflect.Type) error
@@ -46,19 +46,19 @@ type Injecter interface {
 //Line line
 type Line interface {
 
-	//返回Line的唯一名字
+	//Return unique Line name
 	Id() string
-	//Line的接口
+	//Line API
 	Config() *Config
-	//SConfig 通用配置接口
+	//SConfig general config API
 	SConfig() SConfig
 
 	SLogger() SLogger
 
 	//order
-	//1,查找liveid对应的 newer
-	//2,查找typid对应的 newer
-	//3,查找meta上对的 newer
+	//1,Search liveid corresponding newer
+	//2,Search typid corresponding newer
+	//3,Search right newer in meta
 	//AddNewerByLiveId add new for liveid
 	AddNewerByLiveId(liveid LiveId, newDot Newer) error
 	//AddNewerByTypeId add new for type
@@ -68,11 +68,11 @@ type Line interface {
 	//RemoveNewerByTypeId remove
 	RemoveNewerByTypeId(typeid TypeId)
 
-	//PreAdd 增加dot的liveid及meta信息, 这里还没有真正创建dot，计算依赖后才生成
-	//如果是单例的话，可以不指定实例信息，实例id直接为typeid
-	//如果配置文件在有配置实例，那么会自动增加来，如果实例id已经存在，则配置更优先
+	//PreAdd Add dot liveid and meta info, here no dot is created, it will be generated after Computing dependence
+	//If it is the single sample, don't need to point sample info, sample id is typeid
+	//If config file has config sample, then it will be added automatically, if sample id already existing, then config is prior
 	PreAdd(ac *TypeLives) error
-	//Rely  检查依赖关系是否都存在
+	//Rely  Check whether dependency existing 
 	Rely() error
 	//CreateDots create dots
 	CreateDots() error
@@ -87,22 +87,22 @@ type Line interface {
 	GetLineBuilder() *Builder
 }
 
-// 如果组件需要知道当前的line那么，就实现这个接口，此接口会在组件的Create方法之前调用
+// If component need to know current line, then realize this API, and this API Will be called before component Create
 type SetterLine interface {
 	SetLine(l Line)
 }
 
-// 如果组件需要知道当前的TypeId 或 LiveId 那么，就实现这个接口，此接口会在组件的Create方法之前调用
+// If component need to know current TypeId or LiveId, then realize this API, and this API Will be called before component Create
 type SetterTypeAndLiveId interface {
 	SetTypeId(tid TypeId, lid LiveId)
 }
 
-// 在所有的Start 之后, 在builder的AfterStart之前
+// After all start, before builder AfterStart
 type AfterStarter interface {
 	AfterStart(l Line)
 }
 
-// 在所有的stop 之前调用， 在Builder的BeforeStop之后
+// Call before all stop, after Builder Beforestop
 type BeforeStopper interface {
 	BeforeStop(l Line)
 }
@@ -113,24 +113,24 @@ type TypeLives struct {
 	Lives []Live
 }
 
-//为配置文件中的dot增加typeid， newer
-//这个函数是在 line的create之后运行的，也可以增加其它的初始内容
+//Add typeid, newer for dot in config file
+//This function is run after line create, also you can add other initialized content
 type BuildNewer func(l Line) error
 type LifeEvent func(l Line)
 
 type Builder struct {
 	Add BuildNewer
 
-	BeforeCreate LifeEvent //line的create之前
-	AfterCreate  LifeEvent //line的create之后
-	BeforeStart  LifeEvent //line的start之前
-	AfterStart   LifeEvent //line的start之后
-	BeforeStop    LifeEvent //line的stop 之前
-	AfterStop     LifeEvent //line的stop 之后
-	BeforeDestroy LifeEvent //line的destroy 之前
-	AfterDestroy  LifeEvent //line的destroy 之后
+	BeforeCreate LifeEvent //Before line create
+	AfterCreate  LifeEvent //after line create
+	BeforeStart  LifeEvent //Before line start
+	AfterStart   LifeEvent //After line start
+	BeforeStop    LifeEvent //Before line stop 
+	AfterStop     LifeEvent //After line stop 
+	BeforeDestroy LifeEvent //Before line destroy 
+	AfterDestroy  LifeEvent //After line destroy 
 
-	LineId string //line的唯一id， 默认值为 “default”
+	LineId string //line unique id， default value is “default”
 }
 
 //NewTypeLives new living

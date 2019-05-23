@@ -11,7 +11,7 @@ import (
 type LiveConfig struct {
 	//LiveId
 	LiveId LiveId `json:"liveId"`
-	//RelyLives rely lives， 如果不能确定key的值那么 key的值为 livid的值
+	//RelyLives rely lives， If cannot confirm key value then key value is livid value
 	RelyLives map[string]LiveId `json:"relyLives"`
 	//Json json
 	Json *json.RawMessage `json:"json"`

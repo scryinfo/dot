@@ -32,7 +32,7 @@ func main() {
 
 func add(l dot.Line) error {
 	var err error
-	// 给typeid指定newer
+	// Point newer for typeid
 	err = l.PreAdd(conns.TypeLiveConns())
 	err = l.PreAdd(conns.TypeLiveConnName())
 	return err

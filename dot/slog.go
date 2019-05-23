@@ -29,18 +29,18 @@ const (
 	FatalLevel = zapcore.FatalLevel
 )
 
-//默认日志，如果日志还没有创建，那么返回的日志是直接输出到“before.log”文件中，且是输出所有的日志
+//Default log, if not created, then returned log will be output to “before.log” file，all log will be returned
 var logger SLogger = nil
 
-//返回默认的日志， 这个接口是为了方便调用日志的
-//这个方法并没有考虑线程安全，在程序初始化成功后，不建议修改它的值
-//注： 默认日志，如果日志还没有创建，那么返回的日志是直接输出到控制台的，且是输出所有的日志
+//Return default log, this API is used to call log easily
+//This method does not consider thread security, Adjusting value is not suggested after program initialization 
+//Note: Default log, if log is not created, then returned log will be output to control panel, all log will be output
 func Logger() SLogger {
 	return logger
 }
 
-//设置默认的日志，
-//这个方法并没有考虑线程安全，在程序初始化成功后，不建议修改它的值
+//Set default log,
+//This method does not consider thread security, Adjusting value is not suggested after program initialization 
 func SetLogger(log SLogger) {
 	if logger != nil {
 		if d, ok := logger.(Destroyer); ok {
@@ -51,12 +51,12 @@ func SetLogger(log SLogger) {
 	logger = log
 }
 
-//MakeStringer 生成日志字符串
+//MakeStringer Generate log string
 type MakeStringer func() string
 
-//SLogger 日志属于一个组件Dot,但它太基础了，大部分 Dot都需要，所以定义到 dot.go文件中
-//所有日志调用时，不要在参数中调用函数，函数的运行是先于日志等级的，如果一定要调用函数，可以使用回调函数的方式（注回调函数一定要正常运行）
-//S表示 scryinfo, log这个名字用的地方太多，加一个s以示区别
+//SLogger log belongs to one component Dot, but it is too basic, most Dot need it, so defined it to dot.go file
+//All log calling should not call function in parameters, function run priorly than log, if must call function, you should use callback(must run normally)
+//S represents scryinfo, log name used frequently so add s to distinguish it
 type SLogger interface {
 
 	//GetLevel get level
@@ -105,7 +105,7 @@ type LogConfig struct {
 	Level string `json:"level"`
 }
 
-//初始化一个默认的日志， 让程序在一开始就可以使用日志，输出到“before.log”文件中，且是输出所有的日志
+//Initialize one default log, let program use log at first, output to “before.log” file, all log will be output
 func init() {
 	SetLogger(newBlog())
 }

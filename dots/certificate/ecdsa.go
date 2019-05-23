@@ -45,8 +45,8 @@ func TypeLiveEcdsa() *dot.TypeLives {
 	}
 }
 
-//生成ca证书与私钥
-// keyFile 私钥文件， pemFile ca证书文件
+//Generate ca certificate and private key
+// keyFile private key, pemFile ca certificate file
 func (c *Ecdsa) GenerateCaCertKey(caPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (ca *x509.Certificate, err error) {
 
 	var serialNumber *big.Int = nil
@@ -112,8 +112,8 @@ func (c *Ecdsa) GenerateCaCertKey(caPri *ecdsa.PrivateKey, keyFile string, pemFi
 	return ca, err
 }
 
-//生成子证书与私钥
-// keyFile 私钥文件， pemFile 子证书文件
+//Generate subcertificate and private key
+// keyFile private file, pemFile subcertificate file
 func (c *Ecdsa) GenerateCertKey(caParent *x509.Certificate, caPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (err error) {
 	var serialNumber *big.Int = nil
 	serialNumber, err = c.makeSerialNumber()
@@ -176,7 +176,7 @@ func (c *Ecdsa) GenerateCertKey(caParent *x509.Certificate, caPri *ecdsa.Private
 	return err
 }
 
-//从keyFile中读取私钥
+//Read private key from keyFile
 func (c *Ecdsa) PrivateKey(keyFile string) (pri *ecdsa.PrivateKey, err error) {
 
 	file, err := exPathFile(keyFile)
@@ -204,7 +204,7 @@ func (c *Ecdsa) PrivateKey(keyFile string) (pri *ecdsa.PrivateKey, err error) {
 
 }
 
-//从pemFile中读取公钥
+//Read public key from pemFile
 func (c *Ecdsa) PublicKey(pemFile string) (pubKey *ecdsa.PublicKey, err error) {
 
 	cer, err := c.Certificate(pemFile)
@@ -221,7 +221,7 @@ func (c *Ecdsa) PublicKey(pemFile string) (pubKey *ecdsa.PublicKey, err error) {
 	return pubKey, err
 }
 
-//从pemFile中读取证书
+//Read certificate from pemFile
 func (c *Ecdsa) Certificate(pemFile string) (cert *x509.Certificate, err error) {
 	file, err := exPathFile(pemFile)
 
@@ -256,7 +256,7 @@ func (c *Ecdsa) makeSerialNumber() (serial *big.Int, err error) {
 	return
 }
 
-//如果不是绝对路径，那么就相对于可执行文件所在路径， 且创建文件所在的目录
+//If not absolute path, then comparing executable file path, create content where file existing
 func exPathFileAndMakeDirs(file string) (nfile string, err error) {
 	nfile = ""
 	tfile := ""
@@ -284,7 +284,7 @@ func exPathFileAndMakeDirs(file string) (nfile string, err error) {
 	return
 }
 
-//如果相对于可执行文件不存在， 就直接看参数file是否存在
+//If comparing executable file do not exist, then check whether parameter file existing or not
 func exPathFile(file string) (tfile string, err error) {
 	tfile = ""
 	if filepath.IsAbs(file) {
@@ -314,7 +314,7 @@ func exPathFile(file string) (tfile string, err error) {
 	return
 }
 
-//生成私钥
+//Generate private key
 func MakePriKey() (*ecdsa.PrivateKey, error) {
 	return ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 }

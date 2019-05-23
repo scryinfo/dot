@@ -14,7 +14,7 @@ const (
 	blogName = "before.log"
 )
 
-//这个是为了解决在日志还没有被初化前， 日志输出的问题
+//This is to solve the problem that log output before log initialization
 //blog == before log
 type blog struct {
 	logger *zap.Logger
@@ -109,7 +109,7 @@ func newBlog() *blog {
 	logger, err := customCfg.Build()
 
 	if err != nil {
-		//todo 这里还没有日志， 无法输出来日志
+		//todo Here is no log, log cannot be output
 		fmt.Println(err)
 	}
 
