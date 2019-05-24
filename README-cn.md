@@ -33,5 +33,7 @@ Destroyer
 提供grpc的客户端负载均衡， sample/grpc_conns是一个使用的例子
 ## 证书生成组件 dots/certificate
 生成根证书及子证书， sample/certificate 是一个使用的例子
+## gin组件
+简化gin的使用，且把slog与gin的日志整合在一起， sample/gindot 是一个使用例子
 
 # [Code Style -- Go](https://github.com/scryinfo/scryg/blob/master/codestyle_go-cn.md)
