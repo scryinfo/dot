@@ -8,7 +8,7 @@
 * Lifer: 是组件生命周期管理接口，实现接口后方法会被Line自动运行，下面是这四个接口 
 ```
 Creator  // 
-Srater
+Starter
 Stopper
 Destroyer
 ```
