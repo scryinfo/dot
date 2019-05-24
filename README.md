@@ -7,8 +7,8 @@ Component development specification, including component definition, component d
 * Newer:  Construct component, the Newer is used to construct the component, and if it is not specified, then construct it by default "refect.New"
 * Lifer: Is the component life cycle management interface, the implementation of the interface and the method will be automatically run by Line, the following are the four interfaces 
 ```go
-Creator 
-Srater
+Creator
+Starter
 Stopper
 Destroyer
 ```
