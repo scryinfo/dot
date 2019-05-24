@@ -193,7 +193,7 @@ func (c *Dot3) Stop(ignore bool) error {
 }
 
 //Destroy Destroy Dot
-//ignore When calliing other Lifer, if true erred then continue, if false erred return directly 
+//ignore When calliing other Lifer, if true erred then continue, if false erred return directly
 func (c *Dot3) Destroy(ignore bool) error {
 	return nil
 }

@@ -9,7 +9,7 @@ import (
 
 //Cmd type general command line parameters
 type Cmd struct {
-	//ConfigPath config file path 
+	//ConfigPath config file path
 	ConfigPath string
 	//ConfigFile config file name without path
 	ConfigFile string
@@ -27,7 +27,7 @@ func (c CmdParameterName) String() string {
 
 //Command line parameters
 const (
-	//Config file path, add Cmd to show relations with struct cmd 
+	//Config file path, add Cmd to show relations with struct cmd
 	CmdConfigPath CmdParameterName = "configpath"
 	//Config file name without path
 	CmdConfigFile CmdParameterName = "configfile"

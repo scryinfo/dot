@@ -33,14 +33,14 @@ const (
 var logger SLogger = nil
 
 //Return default log, this API is used to call log easily
-//This method does not consider thread security, Adjusting value is not suggested after program initialization 
+//This method does not consider thread security, Adjusting value is not suggested after program initialization
 //Note: Default log, if log is not created, then returned log will be output to control panel, all log will be output
 func Logger() SLogger {
 	return logger
 }
 
 //Set default log,
-//This method does not consider thread security, Adjusting value is not suggested after program initialization 
+//This method does not consider thread security, Adjusting value is not suggested after program initialization
 func SetLogger(log SLogger) {
 	if logger != nil {
 		if d, ok := logger.(Destroyer); ok {
@@ -98,6 +98,8 @@ type SLogger interface {
 	Fatalln(msg string, fields ...zap.Field)
 	//Fatal fatal
 	Fatal(mstr MakeStringer)
+	//NewLogger return new logger
+	NewLogger(callerSkip int) SLogger
 }
 
 type LogConfig struct {

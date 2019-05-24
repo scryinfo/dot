@@ -82,7 +82,7 @@ type Dot interface{}
 // All methods of Lifer cannot be stucked while running, now the realization of line is sync call
 type Lifer interface {
 	Creator
-	Srater
+	Starter
 	Stopper
 	Destroyer
 }
@@ -92,13 +92,13 @@ type Creator interface {
 	Create(l Line) error
 }
 
-type Srater interface {
-	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly 
+type Starter interface {
+	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
 	Start(ignore bool) error
 }
 
 type Stopper interface {
-	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly 
+	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
 	Stop(ignore bool) error
 }
 

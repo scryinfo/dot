@@ -24,3 +24,6 @@
 /sample/certificate/log.log
 /sample/certificate/server.key
 /sample/certificate/server.pem
+/sample/gindot/before.log
+/sample/gindot/gindot.exe
+/sample/gindot/log.log

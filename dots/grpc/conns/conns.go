@@ -67,7 +67,7 @@ func newDailConns(conf interface{}) (dot.Dot, error) {
 	return d, err
 }
 
-//Data structure needed when generating newer component 
+//Data structure needed when generating newer component
 func TypeLiveConns() *dot.TypeLives {
 	return &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: ConnsTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {

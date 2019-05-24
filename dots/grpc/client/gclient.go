@@ -32,7 +32,7 @@ type Grpc struct {
 	cancel  context.CancelFunc
 }
 
-//Add newer to gclient, it will be always used unless specially specified  
+//Add newer to gclient, it will be always used unless specially specified
 func AddType(l dot.Line) error {
 	err := l.AddNewerByTypeId(DotTypeId, func(conf interface{}) (d dot.Dot, err error) {
 		d = &Grpc{}
@@ -73,7 +73,7 @@ func (g *Grpc) Create(conf dot.SConfig) error {
 	return err
 }
 
-//Start connection 
+//Start connection
 func (g *Grpc) Start(ignore bool) error {
 	return nil
 }

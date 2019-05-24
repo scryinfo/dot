@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/resolver"
 )
 
-//Client load balancing 
+//Client load balancing
 type clientBuilder struct {
 	scheme       string
 	serviceAddrs map[string][]string //key service name, value service corresponding address(such as 12.23.23.23：909）

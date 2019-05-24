@@ -16,7 +16,7 @@ type Injecter interface {
 	//In the process if error occurred, it will not quit, returned error is the first one occurred
 	Inject(obj interface{}) error
 	//GetByType get by type
-	//If no related object in current container, then will call parent to search 
+	//If no related object in current container, then will call parent to search
 	//type container is seperate with liveid container
 	GetByType(t reflect.Type) (d Dot, err error)
 	//GetByLiveId get by liveid
@@ -72,7 +72,7 @@ type Line interface {
 	//If it is the single sample, don't need to point sample info, sample id is typeid
 	//If config file has config sample, then it will be added automatically, if sample id already existing, then config is prior
 	PreAdd(ac *TypeLives) error
-	//Rely  Check whether dependency existing 
+	//Rely  Check whether dependency existing
 	Rely() error
 	//CreateDots create dots
 	CreateDots() error
@@ -121,14 +121,14 @@ type LifeEvent func(l Line)
 type Builder struct {
 	Add BuildNewer
 
-	BeforeCreate LifeEvent //Before line create
-	AfterCreate  LifeEvent //after line create
-	BeforeStart  LifeEvent //Before line start
-	AfterStart   LifeEvent //After line start
-	BeforeStop    LifeEvent //Before line stop 
-	AfterStop     LifeEvent //After line stop 
-	BeforeDestroy LifeEvent //Before line destroy 
-	AfterDestroy  LifeEvent //After line destroy 
+	BeforeCreate  LifeEvent //Before line create
+	AfterCreate   LifeEvent //after line create
+	BeforeStart   LifeEvent //Before line start
+	AfterStart    LifeEvent //After line start
+	BeforeStop    LifeEvent //Before line stop
+	AfterStop     LifeEvent //After line stop
+	BeforeDestroy LifeEvent //Before line destroy
+	AfterDestroy  LifeEvent //After line destroy
 
 	LineId string //line unique id， default value is “default”
 }
