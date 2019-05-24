@@ -14,7 +14,7 @@ const (
 )
 
 //SConfig config belongs to one component Dot, but it is so basic, every Dot need it, so define it in dot.go file
-//S represents scryinfo config this name is used frequently, so add s to distinguish it 
+//S represents scryinfo config this name is used frequently, so add s to distinguish it
 type SConfig interface {
 	//RootPath root path
 	RootPath()
@@ -22,7 +22,7 @@ type SConfig interface {
 	ConfigPath() string
 	//Without path, only file name
 	ConfigFile() string
-	//Whether key existing 
+	//Whether key existing
 	Key(key string) bool
 	//If no config or config is empty, return nil
 	Map() (m map[string]interface{}, err error)

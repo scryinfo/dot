@@ -115,6 +115,16 @@ func (log *sLogger) Fatal(mstr dot.MakeStringer) {
 	}
 }
 
+//NewLogger return new logger
+func (log *sLogger) NewLogger(callerSkip int) dot.SLogger {
+	n := &sLogger{
+		conf:   log.conf,
+		level:  log.level,
+		Logger: log.Logger.WithOptions(zap.AddCallerSkip(callerSkip)),
+	}
+	return n
+}
+
 func (log *sLogger) Create(l dot.Line) (err error) {
 
 	encoderCfg := zapcore.EncoderConfig{
@@ -147,7 +157,7 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 		ErrorOutputPaths: []string{"stderr"},
 	}
 
-	logger, err := customCfg.Build()
+	logger, err := customCfg.Build(zap.AddCallerSkip(1))
 
 	if err != nil {
 

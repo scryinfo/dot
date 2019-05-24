@@ -14,6 +14,10 @@ const (
 	blogName = "before.log"
 )
 
+var (
+	_ SLogger = (*blog)(nil)
+)
+
 //This is to solve the problem that log output before log initialization
 //blog == before log
 type blog struct {
@@ -74,6 +78,13 @@ func (c *blog) Fatalln(msg string, fields ...zap.Field) {
 
 func (c *blog) Fatal(mstr MakeStringer) {
 	c.logger.Debug(mstr())
+}
+
+func (c *blog) NewLogger(callerSkip int) SLogger {
+	n := &blog{
+		logger: c.logger.WithOptions(zap.AddCallerSkip(callerSkip)),
+	}
+	return n
 }
 
 func newBlog() *blog {

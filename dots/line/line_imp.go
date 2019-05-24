@@ -22,7 +22,7 @@ var (
 
 type lineImp struct {
 	logger      dot.SLogger
-	sConfig     dot.SConfig //External general config 
+	sConfig     dot.SConfig //External general config
 	config      dot.Config  //Config object of component
 	metas       *Metas
 	lives       *Lives
@@ -52,7 +52,7 @@ func NewLine(builer *dot.Builder) dot.Line {
 	return a
 }
 
-func (c * lineImp) Id() string  {
+func (c *lineImp) Id() string {
 	return c.lineBuilder.LineId
 }
 
@@ -182,7 +182,7 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
-						{ // Check whether special info needed before Create 
+						{ // Check whether special info needed before Create
 							if nl, ok := it.Dot.(dot.SetterLine); ok {
 								nl.SetLine(c)
 							}
@@ -255,11 +255,16 @@ LIVES:
 						l.Create(c)
 						//c.mutex.Lock()
 					}
+				} else {
+					break LIVES
 				}
 			}
 		}
 	}
 
+	if err != nil {
+		return err
+	}
 	//Add logger and config
 	{
 		c.mutex.Lock()
@@ -645,7 +650,7 @@ FOR_FUN:
 	return err
 }
 
-//todo this method is private and will be realized with component method 
+//todo this method is private and will be realized with component method
 func createLog(c *lineImp) {
 	c.logger = slog.NewSLogger(&(c.config.Log), c)
 	dot.SetLogger(c.logger)
@@ -656,13 +661,13 @@ func (c *lineImp) Start(ignore bool) error {
 	var err error
 	for {
 		//start config
-		if s, ok := c.sConfig.(dot.Srater); ok {
+		if s, ok := c.sConfig.(dot.Starter); ok {
 			if err = s.Start(ignore); err != nil {
 				break
 			}
 		}
 		//start log
-		if s, ok := c.logger.(dot.Srater); ok {
+		if s, ok := c.logger.(dot.Starter); ok {
 			if err = s.Start(ignore); err != nil {
 				break
 			}
@@ -683,7 +688,7 @@ func (c *lineImp) Start(ignore bool) error {
 
 			afterStarts := make([]dot.AfterStarter, 0, 20)
 			for _, it := range tdots {
-				if d, ok := it.Dot.(dot.Srater); ok {
+				if d, ok := it.Dot.(dot.Starter); ok {
 					d.Start(ignore)
 				}
 

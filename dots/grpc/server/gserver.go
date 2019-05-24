@@ -69,7 +69,7 @@ func (g *Grpc) Create(conf dot.SConfig) (err error) {
 	return err
 }
 
-//Start connection 
+//Start connection
 func (g *Grpc) Start(ignore bool) error {
 	return nil
 }
