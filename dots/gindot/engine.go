@@ -2,6 +2,9 @@ package gindot
 
 import (
 	"fmt"
+	"github.com/scryinfo/scryg/sutils/sfile"
+	"os"
+	"path/filepath"
 	"reflect"
 	"time"
 
@@ -10,22 +13,24 @@ import (
 )
 
 const (
-	//GinTypeId for gin dot
-	GinTypeId = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
-	//GinLiveId for gin dot
-	GinLiveId = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+	//EngineTypeId for gin dot
+	EngineTypeId = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+	//EngineLiveId for gin dot
+	EngineLiveId = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
 )
 
 type configEngine struct {
-	Addrs        []string `json:"addrs"`        // addres smaple:  [":8080", "127.0.0.1:80"]
+	Addr         string   `json:"addrs"` // addres smaple:  ":8080"
+	KeyFile      string   `json:"keyFile"`
+	PemFile      string   `json:"pemFile"`
 	LogSkipPaths []string `json:"logSkipPaths"` // not write info log, sample: ["/tt", "/other"]
 }
 
 //GinEngine  gin dot
 type Engine struct {
-	ginEngine *gin.Engine
-	config    configEngine
-	logger    dot.SLogger
+	ginEngine     *gin.Engine
+	config        configEngine
+	loggerOnlyGin dot.SLogger
 }
 
 //DefaultGinEngine return the default gin dot,
@@ -37,7 +42,7 @@ func DefaultGinEngine() *gin.Engine {
 		logger.Errorln("the line do not create, do not call it")
 		return nil
 	}
-	d, err := l.ToInjecter().GetByLiveId(GinLiveId)
+	d, err := l.ToInjecter().GetByLiveId(EngineLiveId)
 	if err != nil {
 		logger.Errorln(err.Error())
 		return nil
@@ -74,7 +79,7 @@ func newGinDot(conf interface{}) (dot.Dot, error) {
 //TypeLiveGinDot generate data for structural  dot
 func TypeLiveGinDot() *dot.TypeLives {
 	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: GinTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeId: EngineTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
 			return newGinDot(conf)
 		}},
 	}
@@ -83,7 +88,7 @@ func TypeLiveGinDot() *dot.TypeLives {
 //Create create the gin
 func (c *Engine) Create(l dot.Line) error {
 	c.ginEngine = gin.New()
-	c.logger = dot.Logger().NewLogger(1)
+	c.loggerOnlyGin = dot.Logger().NewLogger(1)
 	c.ginEngine.Use(c.makeLogger(l), gin.Recovery())
 	return nil
 }
@@ -116,9 +121,45 @@ func (c *Engine) RouterGet(h interface{}, pre string) {
 }
 
 func (c *Engine) startServer() {
-	err := c.ginEngine.Run(c.config.Addrs...)
-	if err != nil {
-		c.logger.Errorln(err.Error())
+	llog := dot.Logger() //do not use the c.loggerOnlyGin, it only for gin
+	if len(c.config.KeyFile) > 0 && len(c.config.PemFile) > 0 {
+		keyFile := c.config.KeyFile
+		pemFile := c.config.PemFile
+		{
+			ex, err := os.Executable()
+			if err == nil {
+				ex = filepath.Dir(ex)
+			} else {
+				ex = ""
+			}
+			if !filepath.IsAbs(keyFile) { //preferred to use the executable path
+				t := filepath.Join(ex, keyFile)
+				if sfile.ExitFile(t) {
+					keyFile = t
+				}
+			}
+
+			if !filepath.IsAbs(pemFile) { //preferred to use the executable path
+				t := filepath.Join(ex, pemFile)
+				if sfile.ExitFile(t) {
+					pemFile = t
+				}
+			}
+			if sfile.ExitFile(pemFile) && sfile.ExitFile(keyFile) {
+				err := c.ginEngine.RunTLS(c.config.Addr, pemFile, keyFile)
+				if err != nil {
+					llog.Errorln(err.Error())
+				}
+			} else {
+				llog.Errorln("the keyfile or pemfile do not exist")
+				return
+			}
+		}
+	} else {
+		err := c.ginEngine.Run(c.config.Addr)
+		if err != nil {
+			llog.Errorln(err.Error())
+		}
 	}
 }
 
@@ -136,7 +177,7 @@ func (c *Engine) makeLogger(l dot.Line) gin.HandlerFunc {
 			skip[path] = struct{}{}
 		}
 	}
-	logger := c.logger
+	logger := c.loggerOnlyGin
 
 	return func(c *gin.Context) {
 		// Start timer

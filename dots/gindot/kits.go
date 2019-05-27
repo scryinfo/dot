@@ -56,6 +56,7 @@ func RouterGet(g *gin.RouterGroup, h interface{}, pre string) {
 }
 
 //TypeLiveGinDot generate data for structural  dot
+//routerId: is the liveid of  gindot/router component
 func PreAddControlDot(ctype reflect.Type, routerId dot.LiveId) *dot.TypeLives {
 	tl := &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: dot.TypeId(ctype.Name()), RefType: ctype, NewDoter: nil},
