@@ -108,6 +108,30 @@ type Destroyer interface {
 	Destroy(ignore bool) error
 }
 
+//Before the dot create
+type BeforeCreate func(dot Dot, l Line)
+
+//after the dot create
+type AfterCreate func(dot Dot, l Line)
+
+//Before the dot start
+type BeforeStart func(dot Dot, l Line)
+
+//After the dot start
+type AfterStart func(dot Dot, l Line)
+
+//Before the dot stop
+type BeforeStop func(dot Dot, l Line)
+
+//After the dot stop
+type AfterStop func(dot Dot, l Line)
+
+//Before the dot destroy
+type BeforeDestroy func(dot Dot, l Line)
+
+//After the dot destroy
+type AfterDestroy func(dot Dot, l Line)
+
 //Tager dot signature data, used by dot
 type Tager interface {
 	//SetTag set tag
