@@ -126,7 +126,7 @@ func (c *ServerNoblImp) Create(l dot.Line) error {
 }
 
 //Run after every component finished start, this can ensure all service has been registered on grpc server
-func (c *ServerNoblImp) AfterStart(l dot.Line) {
+func (c *ServerNoblImp) AfterAllStart(l dot.Line) {
 	c.startServer()
 }
 

@@ -85,6 +85,28 @@ type Line interface {
 	GetDotConfig(liveid LiveId) *LiveConfig
 
 	GetLineBuilder() *Builder
+
+	//dot events start
+	//SetBeforeCreate(lid dot.LiveId, f dot.BeforeCreate)
+	//BeforeCreate(lid dot.LiveId) dot.BeforeCreate
+	//
+	//SetAfterCreate(lid dot.LiveId, f dot.AfterCreate)
+	//
+	//AfterCreate(lid dot.LiveId) dot.AfterCreate
+	//
+	//SetBeforeStart(lid dot.LiveId, f dot.BeforeStart)
+	//BeforeStart(lid dot.LiveId) dot.BeforeStart
+	//SetAfterStart(lid dot.LiveId, f dot.AfterStart)
+	//AfterStart(lid dot.LiveId) dot.AfterStart
+	//SetBeforeStop(lid dot.LiveId, f dot.BeforeStop)
+	//BeforeStop(lid dot.LiveId) dot.BeforeStop
+	//SetAfterStop(lid dot.LiveId, f dot.AfterStop)
+	//AfterStop(lid dot.LiveId)  dot.AfterStop
+	// SetBeforeDestroy(lid dot.LiveId, f dot.BeforeDestroy)
+	//BeforeDestroy(lid dot.LiveId)  dot.BeforeDestroy
+	//SetAfterDestroy(lid dot.LiveId, f dot.AfterDestroy)
+	//AfterDestroy(lid dot.LiveId) dot.AfterDestroy
+	//dot events end
 }
 
 // If component need to know current line, then realize this API, and this API Will be called before component Create
@@ -97,14 +119,14 @@ type SetterTypeAndLiveId interface {
 	SetTypeId(tid TypeId, lid LiveId)
 }
 
-// After all start, before builder AfterStart
-type AfterStarter interface {
-	AfterStart(l Line)
+// After all start, before builder AfterAllStart
+type AfterAllStarter interface {
+	AfterAllStart(l Line)
 }
 
 // Call before all stop, after Builder Beforestop
-type BeforeStopper interface {
-	BeforeStop(l Line)
+type BeforeAllStopper interface {
+	BeforeAllStop(l Line)
 }
 
 //TypeLives living

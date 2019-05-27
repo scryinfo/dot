@@ -20,9 +20,9 @@ const (
 )
 
 type configEngine struct {
-	Addr         string   `json:"addrs"` // addres smaple:  ":8080"
-	KeyFile      string   `json:"keyFile"` //if it is not abs path, preferred to use the executable path
-	PemFile      string   `json:"pemFile"` //if it is not abs path, preferred to use the executable path
+	Addr         string   `json:"addrs"`        // addres smaple:  ":8080"
+	KeyFile      string   `json:"keyFile"`      //if it is not abs path, preferred to use the executable path
+	PemFile      string   `json:"pemFile"`      //if it is not abs path, preferred to use the executable path
 	LogSkipPaths []string `json:"logSkipPaths"` // not write info log, sample: ["/tt", "/other"]
 }
 
@@ -93,8 +93,8 @@ func (c *Engine) Create(l dot.Line) error {
 	return nil
 }
 
-//AfterStart run the function after start
-func (c *Engine) AfterStart(l dot.Line) {
+//AfterAllStart run the function after start
+func (c *Engine) AfterAllStart(l dot.Line) {
 	go c.startServer()
 }
 

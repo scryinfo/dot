@@ -34,6 +34,9 @@ type lineImp struct {
 	mutex  sync.Mutex
 
 	lineBuilder *dot.Builder
+
+	//dot event
+	dotEvents dotEvent
 }
 
 //NewLine new
@@ -44,6 +47,7 @@ func NewLine(builer *dot.Builder) dot.Line {
 		newerTypeid: make(map[dot.TypeId]dot.Newer),
 		lineBuilder: builer,
 	}
+	a.dotEvents.Init()
 
 	if dot.GetDefaultLine() == nil {
 		dot.SetDefaultLine(a)
@@ -191,11 +195,20 @@ LIVES:
 								nl.SetTypeId(it.TypeId, it.LiveId)
 							}
 						}
-						if l, ok := it.Dot.(dot.Creator); ok {
-							//c.mutex.Unlock()
-							l.Create(c)
-							//c.mutex.Lock()
+
+						//if b, ok := it.Dot.(dot.BeforeCreator); ok { // dot not care the dot.Creator
+						//	b.BeforeCreate(it.Dot, c)
+						//}
+
+						if creator, ok := it.Dot.(dot.Creator); ok {
+							if err = creator.Create(c); err != nil {
+								break LIVES
+							}
 						}
+
+						//if a, ok := it.Dot.(dot.AfterCreator); ok { // dot not care the dot.Creator
+						//	a.AfterCreate(it.Dot, c)
+						//}
 						continue LIVES
 					}
 				}
@@ -216,11 +229,19 @@ LIVES:
 								nl.SetTypeId(it.TypeId, it.LiveId)
 							}
 						}
-						if l, ok := it.Dot.(dot.Creator); ok {
-							//c.mutex.Unlock()
-							l.Create(c)
-							//c.mutex.Lock()
+						//if b, ok := it.Dot.(dot.BeforeCreator); ok { // dot not care the dot.Creator
+						//	b.BeforeCreate(it.Dot, c)
+						//}
+
+						if creator, ok := it.Dot.(dot.Creator); ok {
+							if err = creator.Create(c); err != nil {
+								break LIVES
+							}
 						}
+
+						//if a, ok := it.Dot.(dot.AfterCreator); ok { // dot not care the dot.Creator
+						//	a.AfterCreate(it.Dot, c)
+						//}
 						continue LIVES
 					}
 				}
@@ -250,11 +271,21 @@ LIVES:
 							nl.SetTypeId(it.TypeId, it.LiveId)
 						}
 					}
-					if l, ok := it.Dot.(dot.Creator); ok {
-						//c.mutex.Unlock()
-						l.Create(c)
-						//c.mutex.Lock()
+					//if b, ok := it.Dot.(dot.BeforeCreator); ok { // dot not care the dot.Creator
+					//	b.BeforeCreate(it.Dot, c)
+					//}
+
+					if creator, ok := it.Dot.(dot.Creator); ok {
+						if err = creator.Create(c); err != nil {
+							break LIVES
+						}
 					}
+
+					//if a, ok := it.Dot.(dot.AfterCreator); ok { // dot not care the dot.Creator
+					//	a.AfterCreate(it.Dot, c)
+					//}
+
+					continue LIVES
 				} else {
 					break LIVES
 				}
@@ -659,6 +690,7 @@ func createLog(c *lineImp) {
 //Start
 func (c *lineImp) Start(ignore bool) error {
 	var err error
+	logger := dot.Logger()
 	for {
 		//start config
 		if s, ok := c.sConfig.(dot.Starter); ok {
@@ -675,7 +707,6 @@ func (c *lineImp) Start(ignore bool) error {
 
 		//start other
 		{
-
 			var tdots []*dot.Live
 			c.mutex.Lock()
 			tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
@@ -686,35 +717,54 @@ func (c *lineImp) Start(ignore bool) error {
 			}
 			c.mutex.Unlock()
 
-			afterStarts := make([]dot.AfterStarter, 0, 20)
+			afterStarts := make([]dot.AfterAllStarter, 0, 20)
 			for _, it := range tdots {
+
+				//if b, ok := it.Dot.(dot.BeforeStarter); ok {
+				//	b.BeforeStart(it.Dot, c)
+				//}
+
 				if d, ok := it.Dot.(dot.Starter); ok {
-					d.Start(ignore)
+					terr := d.Start(ignore)
+					if terr != nil {
+						if err != nil {
+							logger.Errorln(err.Error())
+						}
+						err = terr
+						if !ignore {
+							return err
+						}
+					}
 				}
 
-				if s, ok := it.Dot.(dot.AfterStarter); ok {
+				//if a, ok := it.Dot.(dot.AfterStarter); ok {
+				//	a.AfterStart(it.Dot, c)
+				//}
+
+				if s, ok := it.Dot.(dot.AfterAllStarter); ok {
 					afterStarts = append(afterStarts, s)
 				}
 			}
 
 			for _, s := range afterStarts {
-				s.AfterStart(c)
+				s.AfterAllStart(c)
 			}
 		}
 
 		break
 	}
 
-	return nil
+	return err
 }
 
 //Stop
 func (c *lineImp) Stop(ignore bool) error {
 	var err error
+	logger := dot.Logger()
 	//stop others
 	{
 		var tdots []*dot.Live
-		beforeStops := make([]dot.BeforeStopper, 0, 20)
+		beforeStops := make([]dot.BeforeAllStopper, 0, 20)
 
 		c.mutex.Lock()
 		tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
@@ -722,7 +772,7 @@ func (c *lineImp) Stop(ignore bool) error {
 			if it != nil && it.Dot != nil {
 				tdots = append(tdots, it)
 
-				if s, ok := it.Dot.(dot.BeforeStopper); ok {
+				if s, ok := it.Dot.(dot.BeforeAllStopper); ok {
 					beforeStops = append(beforeStops, s)
 				}
 			}
@@ -730,13 +780,32 @@ func (c *lineImp) Stop(ignore bool) error {
 		c.mutex.Unlock()
 
 		for _, it := range beforeStops {
-			it.BeforeStop(c)
+			it.BeforeAllStop(c)
 		}
 
 		for _, it := range tdots {
+
+			//if b, ok := it.Dot.(dot.BeforeStopper); ok {
+			//	b.BeforeStop(it.Dot, c)
+			//}
+
 			if d, ok := it.Dot.(dot.Stopper); ok {
-				d.Stop(ignore)
+				terr := d.Stop(ignore)
+				if terr != nil {
+					if err != nil {
+						logger.Error(err.Error)
+					}
+					err = terr
+				}
+
+				if !ignore {
+					return err
+				}
 			}
+
+			//if a, ok := it.Dot.(dot.AfterStopper); ok {
+			//	a.AfterStop(it.Dot, c)
+			//}
 		}
 	}
 	//stop log
@@ -754,6 +823,8 @@ func (c *lineImp) Stop(ignore bool) error {
 
 //Destroy Destroy Dot
 func (c *lineImp) Destroy(ignore bool) error {
+	var err error
+	logger := dot.Logger()
 	//Destroy others
 	{
 		var tdots []*dot.Live
@@ -766,9 +837,27 @@ func (c *lineImp) Destroy(ignore bool) error {
 		}
 		c.mutex.Unlock()
 		for _, it := range tdots {
+
+			//if b, ok := it.Dot.(dot.BeforeDestroyer); ok {
+			//	b.BeforeDestroy(it.Dot, c)
+			//}
+
 			if d, ok := it.Dot.(dot.Destroyer); ok {
-				d.Destroy(ignore)
+				terr := d.Destroy(ignore)
+				if terr != nil {
+					if err != nil {
+						logger.Errorln(err.Error())
+					}
+					err = terr
+				}
+				if !ignore {
+					return err
+				}
 			}
+
+			//if a, ok := it.Dot.(dot.AfterDestroyer); ok {
+			//	a.AfterDestroy(it.Dot, c)
+			//}
 		}
 	}
 
@@ -782,7 +871,7 @@ func (c *lineImp) Destroy(ignore bool) error {
 		d.Destroy(ignore)
 	}
 
-	return nil
+	return err
 }
 
 func (c *lineImp) GetLineBuilder() *dot.Builder {
