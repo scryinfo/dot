@@ -21,8 +21,8 @@ const (
 
 type configEngine struct {
 	Addr         string   `json:"addrs"` // addres smaple:  ":8080"
-	KeyFile      string   `json:"keyFile"`
-	PemFile      string   `json:"pemFile"`
+	KeyFile      string   `json:"keyFile"` //if it is not abs path, preferred to use the executable path
+	PemFile      string   `json:"pemFile"` //if it is not abs path, preferred to use the executable path
 	LogSkipPaths []string `json:"logSkipPaths"` // not write info log, sample: ["/tt", "/other"]
 }
 
