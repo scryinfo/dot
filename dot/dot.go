@@ -24,7 +24,7 @@ func (c *LiveId) String() string {
 }
 
 //Event
-type Event func(live *Live, l Line)
+type Event = func(live *Live, l Line)
 
 //Events
 type Events struct {

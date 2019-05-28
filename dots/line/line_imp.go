@@ -57,7 +57,7 @@ func NewLine(builer *dot.Builder) dot.Line {
 }
 
 func (c *lineImp) Id() string {
-	return c.lineBuilder.LineId
+	return c.lineBuilder.LineLiveId
 }
 
 //AddNewerByLiveId add new for liveid

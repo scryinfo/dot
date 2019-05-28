@@ -15,12 +15,45 @@ Destroyer
 * Injecter ：主要是组件依赖注入，增删改查组件， 通过这个接口增加的组件，创建过程是自己完成，它是Line的一部分   
 
 组件的运行过程如下：  
-* Newer:  创建组件  
-* Creator: 创建完成后调用  
-* Starter: 所有有Create之后调用  
-* 程序运行  
-* Stopper: 程序将要退出时调用  
-* Destroyer: 所有的stop调用后再调用  
+***
+Create Config and Log  
+1. Make Default Log
+2. Make Config 
+3. Make Log of config
+***
+Create  
+1. Builder.BeforeCreate 
+2. Newer
+3. dot.SetterLine
+4. dot.SetterTypeAndLiveId
+5. Events.BeforeCreate
+6. dot.Creator
+7. Events.AfterCreate //go to "2. Newer", untill all done  
+8. Inject all dependentes of dots  
+9. Builder.AfterCreate  
+***
+Start  
+1. Builder.BeforeStart 
+2. Events.BeforeStart
+3. dot.Starter
+4. Events.AfterStart //go to "2. Events.BeforeStart", untill all done
+5. dot.AfterAllStart
+6. Builder.AfterStart  
+***
+Stop  
+1. Builder.BeforeStop
+2. dot.BeforeAllStopper
+3. Events.BeforeStop
+4. dot.Stopper
+5. Events.AfterStop //go to "2. Events.BeforeStop", until all done
+6. Builder.AfterStop  
+***
+Destroy  
+1. Builder.BeforeDestroy 
+2. Events.BeforeDestroy
+3. dot.Destroyer
+4. Events.AfterStop //go to "2. Events.BeforeDestroy", until all done
+5. Builder.AfterDestroy  
 
 可以通过配置文件或代码，来说明组件之间的关系， 这时line会计算组件之间的依赖关系，使用者不用管它们的创建顺序  
 
