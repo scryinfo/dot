@@ -20,7 +20,6 @@ type Router struct {
 	Engine_    *Engine `dot:""`
 	router     *gin.RouterGroup
 	config     configRouter
-	afterStart func(d *Router, lid dot.LiveId)
 	liveId     dot.LiveId
 }
 
@@ -45,14 +44,10 @@ func newRouter(conf interface{}) (*Router, error) {
 }
 
 //TypeLiveRouter generate data for structural  dot
-func TypeLiveRouter(call func(d *Router, lid dot.LiveId)) *dot.TypeLives {
+func TypeLiveRouter() *dot.TypeLives {
 	return &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: RouterTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
-			d, err := newRouter(conf)
-			if d != nil {
-				d.afterStart = call
-			}
-			return d, err
+			return newRouter(conf)
 		}},
 	}
 }
@@ -64,9 +59,6 @@ func (c *Router) SetTypeId(tid dot.TypeId, lid dot.LiveId) {
 //Start start the gin
 func (c *Router) Start(ignore bool) error {
 	c.router = c.Engine_.GinEngine().Group(c.config.RelativePath)
-	if c.afterStart != nil {
-		c.afterStart(c, c.liveId)
-	}
 	return nil
 }
 

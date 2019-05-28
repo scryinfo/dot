@@ -36,7 +36,7 @@ type lineImp struct {
 	lineBuilder *dot.Builder
 
 	//dot event
-	dotEvents dotEvent
+	dotEventer dotEventerImp
 }
 
 //NewLine new
@@ -47,7 +47,7 @@ func NewLine(builer *dot.Builder) dot.Line {
 		newerTypeid: make(map[dot.TypeId]dot.Newer),
 		lineBuilder: builer,
 	}
-	a.dotEvents.Init()
+	a.dotEventer.Init()
 
 	if dot.GetDefaultLine() == nil {
 		dot.SetDefaultLine(a)
@@ -165,6 +165,41 @@ func (c *lineImp) CreateDots() error {
 		}
 		c.mutex.Unlock()
 	}
+	creator := func(it *dot.Live) error {
+		{ // Check whether special info needed before Create
+			if nl, ok := it.Dot.(dot.SetterLine); ok {
+				nl.SetLine(c)
+			}
+
+			if nl, ok := it.Dot.(dot.SetterTypeAndLiveId); ok {
+				nl.SetTypeId(it.TypeId, it.LiveId)
+			}
+		}
+
+		if b := c.dotEventer.TypeEvents(it.TypeId); b != nil && b.BeforeCreate != nil { // dot not care the dot.Creator
+			b.BeforeCreate(it, c)
+		}
+
+		if b := c.dotEventer.LiveEvents(it.LiveId); b != nil && b.BeforeCreate != nil { // dot not care the dot.Creator
+			b.BeforeCreate(it, c)
+		}
+
+		if creator, ok := it.Dot.(dot.Creator); ok {
+			if err := creator.Create(c); err != nil {
+				return err
+			}
+		}
+
+		if a := c.dotEventer.LiveEvents(it.LiveId); a != nil && a.AfterCreate != nil { // dot not care the dot.Creator
+			a.AfterCreate(it, c)
+		}
+
+		if a := c.dotEventer.TypeEvents(it.TypeId); a != nil && a.AfterCreate != nil { // dot not care the dot.Creator
+			a.AfterCreate(it, c)
+		}
+
+		return nil
+	}
 	var err error
 LIVES:
 	for _, it := range tdots {
@@ -186,29 +221,9 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
-						{ // Check whether special info needed before Create
-							if nl, ok := it.Dot.(dot.SetterLine); ok {
-								nl.SetLine(c)
-							}
-
-							if nl, ok := it.Dot.(dot.SetterTypeAndLiveId); ok {
-								nl.SetTypeId(it.TypeId, it.LiveId)
-							}
+						if err = creator(it); err != nil {
+							break LIVES
 						}
-
-						//if b, ok := it.Dot.(dot.BeforeCreator); ok { // dot not care the dot.Creator
-						//	b.BeforeCreate(it.Dot, c)
-						//}
-
-						if creator, ok := it.Dot.(dot.Creator); ok {
-							if err = creator.Create(c); err != nil {
-								break LIVES
-							}
-						}
-
-						//if a, ok := it.Dot.(dot.AfterCreator); ok { // dot not care the dot.Creator
-						//	a.AfterCreate(it.Dot, c)
-						//}
 						continue LIVES
 					}
 				}
@@ -220,28 +235,9 @@ LIVES:
 					if err != nil {
 						break LIVES
 					} else {
-						{ // Check whether special info needed before Create
-							if nl, ok := it.Dot.(dot.SetterLine); ok {
-								nl.SetLine(c)
-							}
-
-							if nl, ok := it.Dot.(dot.SetterTypeAndLiveId); ok {
-								nl.SetTypeId(it.TypeId, it.LiveId)
-							}
+						if err = creator(it); err != nil {
+							break LIVES
 						}
-						//if b, ok := it.Dot.(dot.BeforeCreator); ok { // dot not care the dot.Creator
-						//	b.BeforeCreate(it.Dot, c)
-						//}
-
-						if creator, ok := it.Dot.(dot.Creator); ok {
-							if err = creator.Create(c); err != nil {
-								break LIVES
-							}
-						}
-
-						//if a, ok := it.Dot.(dot.AfterCreator); ok { // dot not care the dot.Creator
-						//	a.AfterCreate(it.Dot, c)
-						//}
 						continue LIVES
 					}
 				}
@@ -262,29 +258,9 @@ LIVES:
 
 				it.Dot, err = m.NewDot(bconfig)
 				if err == nil {
-					{ // Check whether special info needed before Create
-						if nl, ok := it.Dot.(dot.SetterLine); ok {
-							nl.SetLine(c)
-						}
-
-						if nl, ok := it.Dot.(dot.SetterTypeAndLiveId); ok {
-							nl.SetTypeId(it.TypeId, it.LiveId)
-						}
+					if err = creator(it); err != nil {
+						break LIVES
 					}
-					//if b, ok := it.Dot.(dot.BeforeCreator); ok { // dot not care the dot.Creator
-					//	b.BeforeCreate(it.Dot, c)
-					//}
-
-					if creator, ok := it.Dot.(dot.Creator); ok {
-						if err = creator.Create(c); err != nil {
-							break LIVES
-						}
-					}
-
-					//if a, ok := it.Dot.(dot.AfterCreator); ok { // dot not care the dot.Creator
-					//	a.AfterCreate(it.Dot, c)
-					//}
-
 					continue LIVES
 				} else {
 					break LIVES
@@ -350,6 +326,10 @@ func (c *lineImp) ToLifer() dot.Lifer {
 //ToInjecter to injecter
 func (c *lineImp) ToInjecter() dot.Injecter {
 	return c
+}
+
+func (c *lineImp) ToDotEventer() dot.Eventer {
+	return &c.dotEventer
 }
 
 func (c *lineImp) GetDotConfig(liveid dot.LiveId) *dot.LiveConfig {
@@ -691,6 +671,7 @@ func createLog(c *lineImp) {
 func (c *lineImp) Start(ignore bool) error {
 	var err error
 	logger := dot.Logger()
+
 	for {
 		//start config
 		if s, ok := c.sConfig.(dot.Starter); ok {
@@ -720,9 +701,13 @@ func (c *lineImp) Start(ignore bool) error {
 			afterStarts := make([]dot.AfterAllStarter, 0, 20)
 			for _, it := range tdots {
 
-				//if b, ok := it.Dot.(dot.BeforeStarter); ok {
-				//	b.BeforeStart(it.Dot, c)
-				//}
+				if b := c.dotEventer.TypeEvents(it.TypeId); b != nil && b.BeforeStart != nil {
+					b.BeforeStart(it, c)
+				}
+
+				if b := c.dotEventer.LiveEvents(it.LiveId); b != nil && b.BeforeStart != nil {
+					b.BeforeStart(it, c)
+				}
 
 				if d, ok := it.Dot.(dot.Starter); ok {
 					terr := d.Start(ignore)
@@ -737,9 +722,13 @@ func (c *lineImp) Start(ignore bool) error {
 					}
 				}
 
-				//if a, ok := it.Dot.(dot.AfterStarter); ok {
-				//	a.AfterStart(it.Dot, c)
-				//}
+				if a := c.dotEventer.LiveEvents(it.LiveId); a != nil && a.AfterStart != nil {
+					a.AfterStart(it, c)
+				}
+
+				if a := c.dotEventer.TypeEvents(it.TypeId); a != nil && a.AfterStart != nil {
+					a.AfterStart(it, c)
+				}
 
 				if s, ok := it.Dot.(dot.AfterAllStarter); ok {
 					afterStarts = append(afterStarts, s)
@@ -785,9 +774,13 @@ func (c *lineImp) Stop(ignore bool) error {
 
 		for _, it := range tdots {
 
-			//if b, ok := it.Dot.(dot.BeforeStopper); ok {
-			//	b.BeforeStop(it.Dot, c)
-			//}
+			if b := c.dotEventer.TypeEvents(it.TypeId); b != nil && b.BeforeStop != nil {
+				b.BeforeStop(it, c)
+			}
+
+			if b := c.dotEventer.LiveEvents(it.LiveId); b != nil && b.BeforeStop != nil {
+				b.BeforeStop(it, c)
+			}
 
 			if d, ok := it.Dot.(dot.Stopper); ok {
 				terr := d.Stop(ignore)
@@ -803,9 +796,14 @@ func (c *lineImp) Stop(ignore bool) error {
 				}
 			}
 
-			//if a, ok := it.Dot.(dot.AfterStopper); ok {
-			//	a.AfterStop(it.Dot, c)
-			//}
+			if a := c.dotEventer.LiveEvents(it.LiveId); a != nil && a.AfterStop != nil {
+				a.AfterStop(it, c)
+			}
+
+			if a := c.dotEventer.TypeEvents(it.TypeId); a != nil && a.AfterStop != nil {
+				a.AfterStop(it, c)
+			}
+
 		}
 	}
 	//stop log
@@ -838,9 +836,13 @@ func (c *lineImp) Destroy(ignore bool) error {
 		c.mutex.Unlock()
 		for _, it := range tdots {
 
-			//if b, ok := it.Dot.(dot.BeforeDestroyer); ok {
-			//	b.BeforeDestroy(it.Dot, c)
-			//}
+			if b  := c.dotEventer.TypeEvents(it.TypeId); b != nil && b.BeforeDestroy != nil {
+				b.BeforeDestroy(it, c)
+			}
+
+			if b  := c.dotEventer.LiveEvents(it.LiveId); b != nil && b.BeforeDestroy != nil {
+				b.BeforeDestroy(it, c)
+			}
 
 			if d, ok := it.Dot.(dot.Destroyer); ok {
 				terr := d.Destroy(ignore)
@@ -855,9 +857,15 @@ func (c *lineImp) Destroy(ignore bool) error {
 				}
 			}
 
-			//if a, ok := it.Dot.(dot.AfterDestroyer); ok {
-			//	a.AfterDestroy(it.Dot, c)
-			//}
+			if a := c.dotEventer.LiveEvents(it.LiveId); a != nil && a.AfterDestroy != nil {
+				a.AfterDestroy(it, c)
+			}
+
+			if a := c.dotEventer.TypeEvents(it.TypeId); a != nil && a.AfterDestroy != nil {
+				a.AfterDestroy(it, c)
+			}
+
+
 		}
 	}
 

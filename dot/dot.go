@@ -23,6 +23,40 @@ func (c *LiveId) String() string {
 	return string(*c)
 }
 
+//Event
+type Event func(live *Live, l Line)
+
+//Events
+type Events struct {
+	//Before the dot create
+	BeforeCreate Event
+	//after the dot create
+	AfterCreate Event
+	//Before the dot start
+	BeforeStart Event
+	//After the dot start
+	AfterStart Event
+	//Before the dot stop
+	BeforeStop Event
+	//After the dot stop
+	AfterStop Event
+	//Before the dot destroy
+	BeforeDestroy Event
+	//After the dot destroy
+	AfterDestroy Event
+}
+
+type TypeEvents = Events
+type LiveEvents = Events
+
+//Eventer
+type Eventer interface {
+	SetLiveEvents(lid LiveId, liveEvents *LiveEvents)
+	LiveEvents(lid LiveId) *LiveEvents
+	SetTypeEvents(lid TypeId, typeEvents *TypeEvents)
+	TypeEvents(lid TypeId) *TypeEvents
+}
+
 //Metadata dot metadata
 type Metadata struct {
 	TypeId      TypeId       `json:"typeId"`
@@ -37,10 +71,10 @@ type Metadata struct {
 
 //Live live/instance
 type Live struct {
-	TypeId    TypeId
-	LiveId    LiveId
-	RelyLives map[string]LiveId
-	Dot       Dot
+	TypeId     TypeId
+	LiveId     LiveId
+	RelyLives  map[string]LiveId
+	Dot        Dot
 }
 
 //NewMetadata new Metadata
@@ -107,30 +141,6 @@ type Destroyer interface {
 	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
 	Destroy(ignore bool) error
 }
-
-//Before the dot create
-type BeforeCreate func(dot Dot, l Line)
-
-//after the dot create
-type AfterCreate func(dot Dot, l Line)
-
-//Before the dot start
-type BeforeStart func(dot Dot, l Line)
-
-//After the dot start
-type AfterStart func(dot Dot, l Line)
-
-//Before the dot stop
-type BeforeStop func(dot Dot, l Line)
-
-//After the dot stop
-type AfterStop func(dot Dot, l Line)
-
-//Before the dot destroy
-type BeforeDestroy func(dot Dot, l Line)
-
-//After the dot destroy
-type AfterDestroy func(dot Dot, l Line)
 
 //Tager dot signature data, used by dot
 type Tager interface {
