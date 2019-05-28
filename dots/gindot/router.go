@@ -17,10 +17,10 @@ type configRouter struct {
 
 //Router  gin router
 type Router struct {
-	Engine_    *Engine `dot:""`
-	router     *gin.RouterGroup
-	config     configRouter
-	liveId     dot.LiveId
+	Engine_ *Engine `dot:""`
+	router  *gin.RouterGroup
+	config  configRouter
+	liveId  dot.LiveId
 }
 
 //construct dot

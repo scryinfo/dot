@@ -176,12 +176,22 @@ func (c *lineImp) CreateDots() error {
 			}
 		}
 
-		if b := c.dotEventer.TypeEvents(it.TypeId); b != nil && b.BeforeCreate != nil { // dot not care the dot.Creator
-			b.BeforeCreate(it, c)
+		if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 { // dot not care the dot.Creator
+			for i := range b {
+				e := &b[i]
+				if e.BeforeCreate != nil {
+					e.BeforeCreate(it, c)
+				}
+			}
 		}
 
-		if b := c.dotEventer.LiveEvents(it.LiveId); b != nil && b.BeforeCreate != nil { // dot not care the dot.Creator
-			b.BeforeCreate(it, c)
+		if b := c.dotEventer.LiveEvents(it.LiveId); len(b) > 0 { // dot not care the dot.Creator
+			for i := range b {
+				e := &b[i]
+				if e.BeforeCreate != nil {
+					e.BeforeCreate(it, c)
+				}
+			}
 		}
 
 		if creator, ok := it.Dot.(dot.Creator); ok {
@@ -190,12 +200,22 @@ func (c *lineImp) CreateDots() error {
 			}
 		}
 
-		if a := c.dotEventer.LiveEvents(it.LiveId); a != nil && a.AfterCreate != nil { // dot not care the dot.Creator
-			a.AfterCreate(it, c)
+		if a := c.dotEventer.LiveEvents(it.LiveId); len(a) > 0 { // dot not care the dot.Creator
+			for i := range a {
+				e := &a[i]
+				if e.AfterCreate != nil {
+					e.AfterCreate(it, c)
+				}
+			}
 		}
 
-		if a := c.dotEventer.TypeEvents(it.TypeId); a != nil && a.AfterCreate != nil { // dot not care the dot.Creator
-			a.AfterCreate(it, c)
+		if a := c.dotEventer.TypeEvents(it.TypeId); len(a) > 0 { // dot not care the dot.Creator
+			for i := range a {
+				e := &a[i]
+				if e.AfterCreate != nil {
+					e.AfterCreate(it, c)
+				}
+			}
 		}
 
 		return nil
@@ -701,12 +721,23 @@ func (c *lineImp) Start(ignore bool) error {
 			afterStarts := make([]dot.AfterAllStarter, 0, 20)
 			for _, it := range tdots {
 
-				if b := c.dotEventer.TypeEvents(it.TypeId); b != nil && b.BeforeStart != nil {
-					b.BeforeStart(it, c)
+				if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
+					for i := range b {
+						e := &b[i]
+						if e.BeforeStart != nil {
+							e.BeforeStart(it, c)
+						}
+					}
+
 				}
 
-				if b := c.dotEventer.LiveEvents(it.LiveId); b != nil && b.BeforeStart != nil {
-					b.BeforeStart(it, c)
+				if b := c.dotEventer.LiveEvents(it.LiveId); len(b) > 0 {
+					for i := range b {
+						e := &b[i]
+						if e.BeforeStart != nil {
+							e.BeforeStart(it, c)
+						}
+					}
 				}
 
 				if d, ok := it.Dot.(dot.Starter); ok {
@@ -722,12 +753,22 @@ func (c *lineImp) Start(ignore bool) error {
 					}
 				}
 
-				if a := c.dotEventer.LiveEvents(it.LiveId); a != nil && a.AfterStart != nil {
-					a.AfterStart(it, c)
+				if a := c.dotEventer.LiveEvents(it.LiveId); len(a) > 0 {
+					for i := range a {
+						e := &a[i]
+						if e.AfterStart != nil {
+							e.AfterStart(it, c)
+						}
+					}
 				}
 
-				if a := c.dotEventer.TypeEvents(it.TypeId); a != nil && a.AfterStart != nil {
-					a.AfterStart(it, c)
+				if a := c.dotEventer.TypeEvents(it.TypeId); len(a) > 0 {
+					for i := range a {
+						e := &a[i]
+						if e.AfterStart != nil {
+							e.AfterStart(it, c)
+						}
+					}
 				}
 
 				if s, ok := it.Dot.(dot.AfterAllStarter); ok {
@@ -774,12 +815,22 @@ func (c *lineImp) Stop(ignore bool) error {
 
 		for _, it := range tdots {
 
-			if b := c.dotEventer.TypeEvents(it.TypeId); b != nil && b.BeforeStop != nil {
-				b.BeforeStop(it, c)
+			if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
+				for i := range b {
+					e := &b[i]
+					if e.BeforeStop != nil {
+						e.BeforeStop(it, c)
+					}
+				}
 			}
 
-			if b := c.dotEventer.LiveEvents(it.LiveId); b != nil && b.BeforeStop != nil {
-				b.BeforeStop(it, c)
+			if b := c.dotEventer.LiveEvents(it.LiveId); len(b) > 0 {
+				for i := range b {
+					e := &b[i]
+					if e.BeforeStop != nil {
+						e.BeforeStop(it, c)
+					}
+				}
 			}
 
 			if d, ok := it.Dot.(dot.Stopper); ok {
@@ -796,12 +847,22 @@ func (c *lineImp) Stop(ignore bool) error {
 				}
 			}
 
-			if a := c.dotEventer.LiveEvents(it.LiveId); a != nil && a.AfterStop != nil {
-				a.AfterStop(it, c)
+			if a := c.dotEventer.LiveEvents(it.LiveId); len(a) > 0 {
+				for i := range a {
+					e := &a[i]
+					if e.AfterStop != nil {
+						e.AfterStop(it, c)
+					}
+				}
 			}
 
-			if a := c.dotEventer.TypeEvents(it.TypeId); a != nil && a.AfterStop != nil {
-				a.AfterStop(it, c)
+			if a := c.dotEventer.TypeEvents(it.TypeId); len(a) > 0 {
+				for i := range a {
+					e := &a[i]
+					if e.AfterStop != nil {
+						e.AfterStop(it, c)
+					}
+				}
 			}
 
 		}
@@ -836,12 +897,22 @@ func (c *lineImp) Destroy(ignore bool) error {
 		c.mutex.Unlock()
 		for _, it := range tdots {
 
-			if b  := c.dotEventer.TypeEvents(it.TypeId); b != nil && b.BeforeDestroy != nil {
-				b.BeforeDestroy(it, c)
+			if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
+				for i := range b {
+					e := &b[i]
+					if e.BeforeDestroy != nil {
+						e.BeforeDestroy(it, c)
+					}
+				}
 			}
 
-			if b  := c.dotEventer.LiveEvents(it.LiveId); b != nil && b.BeforeDestroy != nil {
-				b.BeforeDestroy(it, c)
+			if b := c.dotEventer.LiveEvents(it.LiveId); len(b) > 0 {
+				for i := range b {
+					e := &b[i]
+					if e.BeforeDestroy != nil {
+						e.BeforeDestroy(it, c)
+					}
+				}
 			}
 
 			if d, ok := it.Dot.(dot.Destroyer); ok {
@@ -857,14 +928,23 @@ func (c *lineImp) Destroy(ignore bool) error {
 				}
 			}
 
-			if a := c.dotEventer.LiveEvents(it.LiveId); a != nil && a.AfterDestroy != nil {
-				a.AfterDestroy(it, c)
+			if a := c.dotEventer.LiveEvents(it.LiveId); len(a) > 0 {
+				for i := range a {
+					e := &a[i]
+					if e.AfterDestroy != nil {
+						e.AfterDestroy(it, c)
+					}
+				}
 			}
 
-			if a := c.dotEventer.TypeEvents(it.TypeId); a != nil && a.AfterDestroy != nil {
-				a.AfterDestroy(it, c)
+			if a := c.dotEventer.TypeEvents(it.TypeId); len(a) > 0 {
+				for i := range a {
+					e := &a[i]
+					if e.AfterDestroy != nil {
+						e.AfterDestroy(it, c)
+					}
+				}
 			}
-
 
 		}
 	}
