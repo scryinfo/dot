@@ -32,7 +32,8 @@ func main() {
 func add(l dot.Line) error {
 	err := l.PreAdd(gindot.TypeLiveGinDot())
 	err = l.PreAdd(gindot.TypeLiveRouter())
-	l.ToDotEventer().SetLiveEvents(dot.LiveId("6be39d0b-3f5b-47b4-818c-642c049f3166"), &dot.LiveEvents{AfterStart:func(live *dot.Live, l dot.Line) {
+	//ReSetLiveEvents AddLiveEvents , they are different
+	l.ToDotEventer().ReSetLiveEvents(dot.LiveId("6be39d0b-3f5b-47b4-818c-642c049f3166"), &dot.LiveEvents{AfterStart: func(live *dot.Live, l dot.Line) {
 		//do any init for the router
 		// router.Router().Use()
 		// ....
@@ -40,10 +41,6 @@ func add(l dot.Line) error {
 
 	//add the SampleCtroller
 	err = l.PreAdd(gindot.PreAddControlDot(reflect.TypeOf((*SampleCtroller)(nil)).Elem(), dot.LiveId("6be39d0b-3f5b-47b4-818c-642c049f3166")))
-
-
-
-
 
 	return err
 }

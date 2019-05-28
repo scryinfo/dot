@@ -51,10 +51,18 @@ type LiveEvents = Events
 
 //Eventer
 type Eventer interface {
-	SetLiveEvents(lid LiveId, liveEvents *LiveEvents)
-	LiveEvents(lid LiveId) *LiveEvents
-	SetTypeEvents(lid TypeId, typeEvents *TypeEvents)
-	TypeEvents(lid TypeId) *TypeEvents
+	//
+	ReSetLiveEvents(lid LiveId, liveEvents *LiveEvents)
+	//
+	AddLiveEvents(lid LiveId, liveEvents *LiveEvents)
+	//
+	LiveEvents(lid LiveId) []LiveEvents
+	//
+	ReSetTypeEvents(tid TypeId, typeEvents *TypeEvents)
+	//
+	AddTypeEvents(tid TypeId, typeEvents *TypeEvents)
+	//
+	TypeEvents(tid TypeId) []TypeEvents
 }
 
 //Metadata dot metadata
@@ -71,10 +79,10 @@ type Metadata struct {
 
 //Live live/instance
 type Live struct {
-	TypeId     TypeId
-	LiveId     LiveId
-	RelyLives  map[string]LiveId
-	Dot        Dot
+	TypeId    TypeId
+	LiveId    LiveId
+	RelyLives map[string]LiveId
+	Dot       Dot
 }
 
 //NewMetadata new Metadata
