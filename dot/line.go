@@ -81,32 +81,13 @@ type Line interface {
 	//ToInjecter to injecter
 	ToInjecter() Injecter
 
+	//ToDotEventer to Eventer
+	ToDotEventer() Eventer
+
 	//GetDotConfig get
 	GetDotConfig(liveid LiveId) *LiveConfig
 
 	GetLineBuilder() *Builder
-
-	//dot events start
-	//SetBeforeCreate(lid dot.LiveId, f dot.BeforeCreate)
-	//BeforeCreate(lid dot.LiveId) dot.BeforeCreate
-	//
-	//SetAfterCreate(lid dot.LiveId, f dot.AfterCreate)
-	//
-	//AfterCreate(lid dot.LiveId) dot.AfterCreate
-	//
-	//SetBeforeStart(lid dot.LiveId, f dot.BeforeStart)
-	//BeforeStart(lid dot.LiveId) dot.BeforeStart
-	//SetAfterStart(lid dot.LiveId, f dot.AfterStart)
-	//AfterStart(lid dot.LiveId) dot.AfterStart
-	//SetBeforeStop(lid dot.LiveId, f dot.BeforeStop)
-	//BeforeStop(lid dot.LiveId) dot.BeforeStop
-	//SetAfterStop(lid dot.LiveId, f dot.AfterStop)
-	//AfterStop(lid dot.LiveId)  dot.AfterStop
-	// SetBeforeDestroy(lid dot.LiveId, f dot.BeforeDestroy)
-	//BeforeDestroy(lid dot.LiveId)  dot.BeforeDestroy
-	//SetAfterDestroy(lid dot.LiveId, f dot.AfterDestroy)
-	//AfterDestroy(lid dot.LiveId) dot.AfterDestroy
-	//dot events end
 }
 
 // If component need to know current line, then realize this API, and this API Will be called before component Create
@@ -138,19 +119,19 @@ type TypeLives struct {
 //Add typeid, newer for dot in config file
 //This function is run after line create, also you can add other initialized content
 type BuildNewer func(l Line) error
-type LifeEvent func(l Line)
+type LineEvent func(l Line)
 
 type Builder struct {
 	Add BuildNewer
 
-	BeforeCreate  LifeEvent //Before line create
-	AfterCreate   LifeEvent //after line create
-	BeforeStart   LifeEvent //Before line start
-	AfterStart    LifeEvent //After line start
-	BeforeStop    LifeEvent //Before line stop
-	AfterStop     LifeEvent //After line stop
-	BeforeDestroy LifeEvent //Before line destroy
-	AfterDestroy  LifeEvent //After line destroy
+	BeforeCreate  LineEvent //Before line create
+	AfterCreate   LineEvent //after line create
+	BeforeStart   LineEvent //Before line start
+	AfterStart    LineEvent //After line start
+	BeforeStop    LineEvent //Before line stop
+	AfterStop     LineEvent //After line stop
+	BeforeDestroy LineEvent //Before line destroy
+	AfterDestroy  LineEvent //After line destroy
 
 	LineId string //line unique id， default value is “default”
 }

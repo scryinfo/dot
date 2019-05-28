@@ -31,14 +31,19 @@ func main() {
 
 func add(l dot.Line) error {
 	err := l.PreAdd(gindot.TypeLiveGinDot())
-	err = l.PreAdd(gindot.TypeLiveRouter(func(d *gindot.Router, lid dot.LiveId) {
+	err = l.PreAdd(gindot.TypeLiveRouter())
+	l.ToDotEventer().SetLiveEvents(dot.LiveId("6be39d0b-3f5b-47b4-818c-642c049f3166"), &dot.LiveEvents{AfterStart:func(live *dot.Live, l dot.Line) {
 		//do any init for the router
-		// d.Router().Use()
+		// router.Router().Use()
 		// ....
-	}))
+	}})
 
 	//add the SampleCtroller
 	err = l.PreAdd(gindot.PreAddControlDot(reflect.TypeOf((*SampleCtroller)(nil)).Elem(), dot.LiveId("6be39d0b-3f5b-47b4-818c-642c049f3166")))
+
+
+
+
 
 	return err
 }
