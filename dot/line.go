@@ -100,12 +100,12 @@ type SetterTypeAndLiveId interface {
 	SetTypeId(tid TypeId, lid LiveId)
 }
 
-// After all start, before builder AfterAllStart
+// After all start, before builder AfterStart
 type AfterAllStarter interface {
 	AfterAllStart(l Line)
 }
 
-// Call before all stop, after Builder Beforestop
+// Call before all stop, after Builder BeforeStop
 type BeforeAllStopper interface {
 	BeforeAllStop(l Line)
 }
@@ -119,21 +119,21 @@ type TypeLives struct {
 //Add typeid, newer for dot in config file
 //This function is run after line create, also you can add other initialized content
 type BuildNewer func(l Line) error
-type LineEvent func(l Line)
+type AllEvent func(l Line)
 
 type Builder struct {
 	Add BuildNewer
 
-	BeforeCreate  LineEvent //Before line create
-	AfterCreate   LineEvent //after line create
-	BeforeStart   LineEvent //Before line start
-	AfterStart    LineEvent //After line start
-	BeforeStop    LineEvent //Before line stop
-	AfterStop     LineEvent //After line stop
-	BeforeDestroy LineEvent //Before line destroy
-	AfterDestroy  LineEvent //After line destroy
+	BeforeCreate  AllEvent //Before all dot create
+	AfterCreate   AllEvent //after  all dot create
+	BeforeStart   AllEvent //Before  all dot start
+	AfterStart    AllEvent //After  all dot start
+	BeforeStop    AllEvent //Before  all dot stop
+	AfterStop     AllEvent //After  all dot stop
+	BeforeDestroy AllEvent //Before  all dot destroy
+	AfterDestroy  AllEvent //After  all dot destroy
 
-	LineId string //line unique id， default value is “default”
+	LineLiveId string //line unique id， default value is “default”
 }
 
 //NewTypeLives new living

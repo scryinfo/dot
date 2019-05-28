@@ -11,7 +11,7 @@ import (
 //  add will be called before reply, after create
 func BuildAndStart(add dot.BuildNewer) (l dot.Line, err error) {
 	err = nil
-	builder := &dot.Builder{Add: add, LineId: "default"}
+	builder := &dot.Builder{Add: add, LineLiveId: "default"}
 	l, err = BuildAndStartBy(builder)
 	return
 }
@@ -21,8 +21,8 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 
 	err = nil
 
-	if len(builder.LineId) < 1 {
-		builder.LineId = "default"
+	if len(builder.LineLiveId) < 1 {
+		builder.LineLiveId = "default"
 	}
 
 	l = NewLine(builder)
