@@ -16,7 +16,13 @@ import (
 )
 
 func main() {
-	l, err := line.BuildAndStart(add) //first step create line and dots
+	//l, err := line.BuildAndStart(add) //first step create line and dots
+	l, err := line.BuildAndStartBy(&dot.Builder{
+		AfterCreate: func(l dot.Line) {
+			fmt.Println("AfterCreate")
+		},
+		Add: add,
+	})
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -44,6 +50,24 @@ func add(l dot.Line) error {
 
 	//add the SampleCtroller
 	err = l.PreAdd(gindot.PreAddControlDot(reflect.TypeOf((*SampleCtroller)(nil)).Elem(), dot.LiveId("6be39d0b-3f5b-47b4-818c-642c049f3166")))
+
+	l.ToDotEventer().AddLiveEvents(dot.LiveId(gindot.EngineLiveId), &dot.LiveEvents{
+		AfterCreate: func(live *dot.Live, l dot.Line) {
+			if _, ok := live.Dot.(*gindot.Engine); ok {
+				//d.GinEngine().St
+				dot.Logger().Infoln("sdf")
+			}
+			fmt.Println("BeforeStop")
+		},
+
+		BeforeStop: func(live *dot.Live, l dot.Line) {
+			fmt.Println("BeforeStop")
+		},
+
+		BeforeStart: func(live *dot.Live, l dot.Line) {
+			fmt.Println("BeforeStart")
+		},
+	})
 
 	return err
 }
