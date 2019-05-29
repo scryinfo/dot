@@ -623,7 +623,7 @@ FOR_FUN:
 			if err = s.Create(l); err != nil {
 				createLog(c)
 				break FOR_FUN
-			}else if len(c.sConfig.ConfigFile()) < 1 { //no config file return
+			} else if len(c.sConfig.ConfigFile()) < 1 { //no config file return
 				createLog(c)
 				break FOR_FUN
 			}

@@ -16,7 +16,6 @@ func main() {
 	}
 	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
 
-	dot.Logger().Infoln("dot ok")
 	//second step ....
 
 	ssignal.WatiCtrlC(func(s os.Signal) bool { //third wait for exit
@@ -25,7 +24,7 @@ func main() {
 }
 
 func add(l dot.Line) error {
-logger := dot.Logger()
+	logger := dot.Logger()
 	err := l.PreAdd(&dot.TypeLives{
 		Meta: dot.Metadata{TypeId: "dotId",
 			NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
