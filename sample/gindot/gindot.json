@@ -15,7 +15,7 @@
             "addrs": ":8080",
             "keyFile": "",
             "pemFile": "",
-            "logSkipPaths": []
+            "logSkipPaths": ["/sample/*"]
           }
         }
       ]
