@@ -32,3 +32,7 @@
 /sample/event/before.log
 /sample/event/event.exe
 /sample/event/log.log
+/dots/gindot/go.sum
+/dots/grpc/go.sum
+/sample/gindot/go.sum
+/sample/grpc/go.sum

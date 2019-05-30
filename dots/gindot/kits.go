@@ -4,10 +4,12 @@
 package gindot
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/scryinfo/dot/dot"
 	"reflect"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/scryinfo/dot/dot"
+
 )
 
 //for each funcs that like “gin.HandlerFunc”

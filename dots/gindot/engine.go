@@ -5,7 +5,6 @@ package gindot
 
 import (
 	"fmt"
-	"github.com/scryinfo/scryg/sutils/sfile"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -13,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
 const (

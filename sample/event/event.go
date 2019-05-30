@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/line"
 	"github.com/scryinfo/scryg/sutils/ssignal"
-	"os"
 )
 
 func main() {

@@ -2,3 +2,7 @@
 // license that can be found in the license file.
 
 package main
+
+func main() {
+
+}

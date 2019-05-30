@@ -5,12 +5,14 @@ package gclient
 
 import (
 	"encoding/json"
-	"github.com/scryinfo/dot/dot"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 	"log"
 	"reflect"
 	"time"
+
+	"github.com/scryinfo/dot/dot"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+
 )
 
 const (

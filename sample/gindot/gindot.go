@@ -5,14 +5,15 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	"os"
+	"reflect"
+
 	"github.com/gin-gonic/gin"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/gindot"
 	"github.com/scryinfo/dot/dots/line"
 	"github.com/scryinfo/scryg/sutils/ssignal"
-	"net/http"
-	"os"
-	"reflect"
 )
 
 func main() {
