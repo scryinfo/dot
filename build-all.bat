@@ -8,8 +8,10 @@ set batPath=%cd%
 
 cd %batPath%/dots
 set dotPath=%cd%
+go mod tidy
 cd %dotPath%/certificate & go build
-cd %dotPath%/gindot  & go build
+cd %dotPath%/gindot  & go mod tidy & go build
+cd %dotPath%/grpc & go mod tidy
 cd %dotPath%/grpc/client & go build
 cd %dotPath%/grpc/conns & go build
 cd %dotPath%/grpc/lb & go build
@@ -24,11 +26,11 @@ set samplePath=%cd%
 go build
 cd %samplePath%/certificate & go build
 cd %samplePath%/event & go build
-cd %samplePath%/gindot & go build
+cd %samplePath%/gindot & go mod tidy & go build
 setlocal
 call %samplePath%/grpc/proto/build_go.bat
 endlocal
-
+cd %samplePath%/grpc & go mod tidy
 cd %samplePath%/grpc/conns & go build
 cd %samplePath%/grpc/nobl & go build
 cd %samplePath%/grpc/tls/client & go build
