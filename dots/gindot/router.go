@@ -4,9 +4,11 @@
 package gindot
 
 import (
+	"reflect"
+
 	"github.com/gin-gonic/gin"
 	"github.com/scryinfo/dot/dot"
-	"reflect"
+
 )
 
 const (

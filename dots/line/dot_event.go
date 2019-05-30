@@ -4,8 +4,9 @@
 package line
 
 import (
-	"github.com/scryinfo/dot/dot"
 	"sync"
+
+	"github.com/scryinfo/dot/dot"
 )
 
 var (
