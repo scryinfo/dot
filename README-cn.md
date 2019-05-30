@@ -26,34 +26,42 @@ Create
 2. dot.Newer
 3. dot.SetterLine
 4. dot.SetterTypeAndLiveId
-5. Events.BeforeCreate
-6. dot.Creator
-7. Events.AfterCreate //go to "2. Newer", untill all done  
-8. Inject all dependentes of dots  
-9. Builder.AfterCreate  
+5. Events.BeforeCreate //for type id
+6. Events.BeforeCreate //for live id
+7. dot.Creator
+8. Events.AfterCreate //for live id
+9. Events.AfterCreate //for type id, go to "2. Newer", untill all done  
+10. Inject all dependentes of dots  
+11. Builder.AfterCreate  
 ***
 Start  
 1. Builder.BeforeStart 
 2. Events.BeforeStart
-3. dot.Starter
-4. Events.AfterStart //go to "2. Events.BeforeStart", untill all done
-5. dot.AfterAllStart
-6. Builder.AfterStart  
+3. Events.BeforeStart //for live id
+4. dot.Starter
+5. Events.AfterStart //for live id
+6. Events.AfterStart //go to "2. Events.BeforeStart", untill all done
+7. dot.AfterAllStart
+8. Builder.AfterStart  
 ***
 Stop  
 1. Builder.BeforeStop
 2. dot.BeforeAllStopper
-3. Events.BeforeStop
-4. dot.Stopper
-5. Events.AfterStop //go to "2. Events.BeforeStop", until all done
-6. Builder.AfterStop  
+3. Events.BeforeStop //for type id
+4. Events.BeforeStop //for live id
+5. dot.Stopper
+6. Events.AfterStop //for live id
+7. Events.AfterStop //for type id go to "2. Events.BeforeStop", until all done
+8. Builder.AfterStop  
 ***
 Destroy  
 1. Builder.BeforeDestroy 
-2. Events.BeforeDestroy
-3. dot.Destroyer
-4. Events.AfterStop //go to "2. Events.BeforeDestroy", until all done
-5. Builder.AfterDestroy  
+2. Events.BeforeDestroy //for type id
+3. Events.BeforeDestroy //for live id
+4. dot.Destroyer
+5. Events.AfterStop //for live id
+6. Events.AfterStop //for type id go to "2. Events.BeforeDestroy", until all done
+7. Builder.AfterDestroy  
 
 可以通过配置文件或代码，来说明组件之间的关系， 这时line会计算组件之间的依赖关系，使用者不用管它们的创建顺序  
 
