@@ -72,10 +72,10 @@ type Line interface {
 	//If it is the single sample, don't need to point sample info, sample id is typeid
 	//If config file has config sample, then it will be added automatically, if sample id already existing, then config is prior
 	PreAdd(ac *TypeLives) error
-	//Rely  Check whether dependency existing
-	Rely() error
-	//CreateDots create dots
-	CreateDots() error
+	//RelyOrder  Check whether dependency existing
+	//RelyOrder() error
+	////CreateDots create dots
+	//CreateDots() error
 	//ToLifer to lifer
 	ToLifer() Lifer
 	//ToInjecter to injecter
