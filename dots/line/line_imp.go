@@ -871,14 +871,22 @@ func (c *lineImp) Stop(ignore bool) error {
 	{
 		//recount the order, maybe the "Ceate" change it
 		tdots, _ := c.RelyOrder() //do not care the circle
-		beforeStops := make([]dot.BeforeAllStopper, 0, 20)
+		{
+			beforeStops := make([]dot.BeforeAllStopper, 0, 20)
 
-		for _, it := range beforeStops {
-			it.BeforeAllStop(c)
+			for i := len(tdots) - 1;  i >=0 ; i--{
+				if b, ok := tdots[i].Dot.(dot.BeforeAllStopper); ok{
+					beforeStops = append(beforeStops, b)
+				}
+			}
+
+			for _, it := range beforeStops {
+				it.BeforeAllStop(c)
+			}
 		}
 
-		for _, it := range tdots {
-
+		for idot := len(tdots) -1; idot >=0; idot-- {
+			it := tdots[idot]
 			if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
 				for i := range b {
 					e := &b[i]
@@ -928,7 +936,6 @@ func (c *lineImp) Stop(ignore bool) error {
 					}
 				}
 			}
-
 		}
 	}
 	//stop log
@@ -952,7 +959,8 @@ func (c *lineImp) Destroy(ignore bool) error {
 	{
 		//recount the order, maybe the "Ceate" change it
 		tdots, _ := c.RelyOrder() //do not care the circle
-		for _, it := range tdots {
+		for idot := len(tdots) -1; idot >=0; idot-- {
+			it := tdots[idot]
 
 			if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
 				for i := range b {
