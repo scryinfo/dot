@@ -43,11 +43,13 @@ func newConnName(conf interface{}) (dot.Dot, error) {
 	return d, err
 }
 
-func TypeLiveConnName() *dot.TypeLives {
-	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: ConnNameTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
-			return newConnName(conf)
-		}},
+func TypeLiveConnName() []*dot.TypeLives {
+	return []*dot.TypeLives{&dot.TypeLives{
+			Meta: dot.Metadata{TypeId: ConnNameTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+				return newConnName(conf)
+			}},
+		},
+		TypeLiveConns(),
 	}
 }
 

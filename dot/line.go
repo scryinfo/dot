@@ -71,7 +71,7 @@ type Line interface {
 	//PreAdd Add dot liveid and meta info, here no dot is created, it will be generated after Computing dependence
 	//If it is the single sample, don't need to point sample info, sample id is typeid
 	//If config file has config sample, then it will be added automatically, if sample id already existing, then config is prior
-	PreAdd(ac *TypeLives) error
+	PreAdd(typeLives ...*TypeLives) error
 	//RelyOrder  Check whether dependency existing
 	//RelyOrder() error
 	////CreateDots create dots
