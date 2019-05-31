@@ -104,28 +104,37 @@ func (c *lineImp) RemoveNewerByTypeId(typeid dot.TypeId) {
 }
 
 //PreAdd the dot is nil, do not create it
-func (c *lineImp) PreAdd(livings *dot.TypeLives) error {
+func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	clone := livings
-	err := c.metas.UpdateOrAdd(&clone.Meta)
-	if err == nil {
-		if clone.Lives != nil {
-			for i := range clone.Lives {
-				it := &clone.Lives[i]
-				if len(it.TypeId.String()) < 1 {
-					it.TypeId = clone.Meta.TypeId
-				}
+	var err error
 
-				//live := dot.Live{TypeId: it.TypeId, LiveId: it.LiveId, Dot: nil}
-				//live.RelyLives = CloneRelyLiveId(it.RelyLives)
-				c.lives.UpdateOrAdd(it)
+	for _, clone := range typeLives {
+
+		err2 := c.metas.UpdateOrAdd(&clone.Meta)
+		if err2 == nil {
+			if clone.Lives != nil {
+				for i := range clone.Lives {
+					it := &clone.Lives[i]
+					if len(it.TypeId.String()) < 1 {
+						it.TypeId = clone.Meta.TypeId
+					}
+
+					//live := dot.Live{TypeId: it.TypeId, LiveId: it.LiveId, Dot: nil}
+					//live.RelyLives = CloneRelyLiveId(it.RelyLives)
+					c.lives.UpdateOrAdd(it)
+				}
+			} else {
+				lid := (dot.LiveId)(clone.Meta.TypeId)
+				live := dot.Live{TypeId: clone.Meta.TypeId, LiveId: lid, Dot: nil, RelyLives: nil}
+				c.lives.UpdateOrAdd(&live)
 			}
 		} else {
-			lid := (dot.LiveId)(clone.Meta.TypeId)
-			live := dot.Live{TypeId: clone.Meta.TypeId, LiveId: lid, Dot: nil, RelyLives: nil}
-			c.lives.UpdateOrAdd(&live)
+			if err != nil {
+				dot.Logger().Errorln(err.Error()) //write it into logfile, otherwise it will gone
+				err = err2
+			}
 		}
 	}
 

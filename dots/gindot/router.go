@@ -48,12 +48,14 @@ func newRouter(conf interface{}) (*Router, error) {
 	return d, err
 }
 
-//TypeLiveRouter generate data for structural  dot
-func TypeLiveRouter() *dot.TypeLives {
-	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: RouterTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
-			return newRouter(conf)
-		}},
+//TypeLiveRouter generate data for structural  dot,  include gindot.Engine
+func TypeLiveRouter() []*dot.TypeLives {
+	return []*dot.TypeLives{&dot.TypeLives{
+			Meta: dot.Metadata{TypeId: RouterTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
+				return newRouter(conf)
+			}},
+		},
+		TypeLiveGinDot(),
 	}
 }
 
