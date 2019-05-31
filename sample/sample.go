@@ -59,7 +59,7 @@ func add(l dot.Line) error {
 		t := reflect.TypeOf(((*Dot2)(nil)))
 		t = t.Elem()
 		fmt.Println("  ", t)
-		//If no newer assignment, then use reflect.NewLine to create it
+		//If no newer assignment, then use reflect.newLine to create it
 		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "2", RefType: t}, Lives: []dot.Live{
 				dot.Live{LiveId: "21"}, dot.Live{LiveId: "22"},

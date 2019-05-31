@@ -39,8 +39,8 @@ type lineImp struct {
 	dotEventer dotEventerImp
 }
 
-//NewLine new
-func NewLine(builer *dot.Builder) dot.Line {
+//newLine new
+func newLine(builer *dot.Builder) *lineImp {
 	a := &lineImp{metas: NewMetas(),
 		lives: NewLives(), types: make(map[reflect.Type]dot.Dot),
 		newerLiveid: make(map[dot.LiveId]dot.Newer),
@@ -132,39 +132,120 @@ func (c *lineImp) PreAdd(livings *dot.TypeLives) error {
 	return err
 }
 
-func (c *lineImp) Rely() error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
+func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 
-	var err error
-	var live *dot.Live
-LIVES:
-	for _, it := range c.lives.LiveIdMap {
-		for _, dit := range it.RelyLives {
-			live, err = c.lives.Get(dit)
-			if err != nil || live == nil {
-				break LIVES
-			}
-			//todo check more about for live
-		}
-	}
-
-	return err
-}
-
-//CreateDots create dots
-func (c *lineImp) CreateDots() error {
-	var tdots []*dot.Live
-	{
+	var cloneLives map[dot.LiveId]*dot.Live
+	var cloneMetas map[dot.TypeId]*dot.Metadata
+	{ //clone live and type
 		c.mutex.Lock()
-		tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
-		for _, it := range c.lives.LiveIdMap {
-			if it != nil {
-				tdots = append(tdots, it)
-			}
+		cloneLives = make(map[dot.LiveId]*dot.Live, len(c.lives.LiveIdMap))
+		for k, v := range c.lives.LiveIdMap {
+			cloneLives[k] = v
+		}
+		cloneMetas = make(map[dot.TypeId]*dot.Metadata, len(c.metas.metas))
+		for k, v := range c.metas.metas {
+			cloneMetas[k] = v
 		}
 		c.mutex.Unlock()
 	}
+
+	order := make([]*dot.Live, 0, len(cloneLives))
+	var circle []*dot.Live
+	{
+
+		relyed := make(map[dot.LiveId][]dot.LiveId, len(cloneLives))
+		for _, it := range cloneLives {
+
+			if _, ok := relyed[it.LiveId]; !ok {
+				relyed[it.LiveId] = []dot.LiveId{}
+			}
+
+			for _, lid := range it.RelyLives {
+				r, ok := relyed[lid]
+				if !ok {
+					r = []dot.LiveId{it.LiveId}
+				} else {
+					r = append(r, it.LiveId)
+				}
+				relyed[lid] = r
+			}
+		}
+		done := make(map[dot.LiveId]bool, len(relyed))          //know orderId
+		remain := make(map[dot.LiveId]bool, len(relyed))        //do not know orderId
+		levels := make([]map[dot.LiveId]bool, 0, len(relyed)/3) //
+		{
+			for lid, _ := range relyed {
+				remain[lid] = true
+			}
+			level0 := make(map[dot.LiveId]bool)
+			for lid, lids := range cloneLives { //level 0
+				if len(lids.RelyLives) < 1 {
+					level0[lid] = true
+					delete(remain, lid)
+					done[lid] = true
+				}
+			}
+			levels = append(levels, level0)
+			levelCurrent := level0
+			//todo if level0 is zero
+			for curFor := 0; curFor <= len(relyed); curFor++ { //
+				levelNext := make(map[dot.LiveId]bool, len(remain))
+				for lid, _ := range levelCurrent {
+					des := relyed[lid]
+					if len(des) < 1 {
+						delete(remain, lid)
+						done[lid] = true
+					} else {
+						for _, lid2 := range des {
+							alldone := true
+							for _, lid3 := range cloneLives[lid2].RelyLives { //check all RelyLives
+								if _, ok := done[lid3]; !ok {
+									alldone = false
+									break
+								}
+							}
+							if alldone {
+								levelNext[lid2] = true
+								delete(remain, lid2)
+								done[lid2] = true
+							} else {
+								levelNext[lid] = true //put next level
+							}
+						}
+					}
+				}
+				levels = append(levels, levelNext)
+				if len(remain) < 1 || len(levelNext) < 1 {
+					break
+				}
+				levelCurrent = levelNext
+			}
+		}
+
+		//todo type dependency
+
+		{
+			for _, lev := range levels {
+				for lid, _ := range lev {
+					order = append(order, cloneLives[lid])
+				}
+			}
+			if len(remain) > 0 {
+				circle = make([]*dot.Live, 0, len(remain))
+				for lid, _ := range remain { //append to tail
+					order = append(order, cloneLives[lid])
+					circle = append(circle, cloneLives[lid])
+				}
+			}
+		}
+	}
+
+	return order, circle
+}
+
+//CreateDots create dots
+func (c *lineImp) CreateDots(order []*dot.Live) error {
+	tdots := order
 	creator := func(it *dot.Live) error {
 		{ // Check whether special info needed before Create
 			if nl, ok := it.Dot.(dot.SetterLine); ok {
@@ -319,7 +400,7 @@ LIVES:
 	}
 
 	for _, it := range tdots {
-		if it.Dot != nil {
+		if it.Dot != nil { //todo not success
 			c.injectInLine(it.Dot, it)
 		}
 	}
@@ -711,16 +792,8 @@ func (c *lineImp) Start(ignore bool) error {
 
 		//start other
 		{
-			var tdots []*dot.Live
-			c.mutex.Lock()
-			tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
-			for _, it := range c.lives.LiveIdMap {
-				if it != nil && it.Dot != nil {
-					tdots = append(tdots, it)
-				}
-			}
-			c.mutex.Unlock()
-
+			//recount the order, maybe the "Ceate" change it
+			tdots, _ := c.RelyOrder() //do not care the circle
 			afterStarts := make([]dot.AfterAllStarter, 0, 20)
 			for _, it := range tdots {
 
@@ -796,21 +869,9 @@ func (c *lineImp) Stop(ignore bool) error {
 	logger := dot.Logger()
 	//stop others
 	{
-		var tdots []*dot.Live
+		//recount the order, maybe the "Ceate" change it
+		tdots, _ := c.RelyOrder() //do not care the circle
 		beforeStops := make([]dot.BeforeAllStopper, 0, 20)
-
-		c.mutex.Lock()
-		tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
-		for _, it := range c.lives.LiveIdMap {
-			if it != nil && it.Dot != nil {
-				tdots = append(tdots, it)
-
-				if s, ok := it.Dot.(dot.BeforeAllStopper); ok {
-					beforeStops = append(beforeStops, s)
-				}
-			}
-		}
-		c.mutex.Unlock()
 
 		for _, it := range beforeStops {
 			it.BeforeAllStop(c)
@@ -889,15 +950,8 @@ func (c *lineImp) Destroy(ignore bool) error {
 	logger := dot.Logger()
 	//Destroy others
 	{
-		var tdots []*dot.Live
-		c.mutex.Lock()
-		tdots = make([]*dot.Live, 0, len(c.lives.LiveIdMap))
-		for _, it := range c.lives.LiveIdMap {
-			if it != nil && it.Dot != nil {
-				tdots = append(tdots, it)
-			}
-		}
-		c.mutex.Unlock()
+		//recount the order, maybe the "Ceate" change it
+		tdots, _ := c.RelyOrder() //do not care the circle
 		for _, it := range tdots {
 
 			if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {

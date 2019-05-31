@@ -5,6 +5,7 @@ package line
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"strings"
 )
 
 //  Construct line and call create rely createdots start
@@ -25,47 +26,54 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 		builder.LineLiveId = "default"
 	}
 
-	l = NewLine(builder)
-
+	line := newLine(builder)
+	l = line
 	if builder.BeforeCreate != nil {
-		builder.BeforeCreate(l)
+		builder.BeforeCreate(line)
 	}
 	{
-		err = l.ToLifer().Create(nil)
+		err = line.Create(nil)
 
 		if err != nil {
 			return
 		}
 
 		if builder.Add != nil {
-			err = builder.Add(l)
+			err = builder.Add(line)
 			if err != nil {
 				return
 			}
 		}
 
-		err = l.Rely()
+		dotOrder, circles := line.RelyOrder() //do not care the error, it is circle dependency
+		//circle dependency
+		if len(circles) > 0 {
+			lids := &strings.Builder{}
+			for _, lv := range circles {
+				lids.WriteString(lv.LiveId.String())
+				lids.Write([]byte("; "))
+			}
+			dot.Logger().Errorln(lids.String())
+		}
+
+		err = line.CreateDots(dotOrder)
 		if err != nil {
 			return
 		}
+	}
 
-		err = l.CreateDots()
-	}
-	if err != nil {
-		return
-	}
 	if builder.AfterCreate != nil {
-		builder.AfterCreate(l)
+		builder.AfterCreate(line)
 	}
 
 	dot.Logger().Infoln("dots create")
 
 	if builder.BeforeStart != nil {
-		builder.BeforeStart(l)
+		builder.BeforeStart(line)
 	}
-	err = l.ToLifer().Start(false)
+	err = line.Start(false)
 	if builder.AfterStart != nil {
-		builder.AfterStart(l)
+		builder.AfterStart(line)
 	}
 
 	if err != nil {
