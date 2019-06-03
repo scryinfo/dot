@@ -133,8 +133,8 @@ func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 		} else {
 			if err != nil {
 				dot.Logger().Errorln(err.Error()) //write it into logfile, otherwise it will gone
-				err = err2
 			}
+			err = err2
 		}
 	}
 
