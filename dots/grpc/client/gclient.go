@@ -81,7 +81,7 @@ func (g *Grpc) Create(conf dot.SConfig) error {
 		log.Fatalf("did not connect: %v", err)
 	}
 	//defer conn.Close()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	ctx, cancel := context.WithCancel(context.Background())
 	g.ctx = ctx
 	g.cancel = cancel
 	//defer cancel()
