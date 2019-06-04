@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/golang/protobuf v1.3.1
-	github.com/scryinfo/dot v0.1.3-0.20190603003540-52339bee7613
+	github.com/scryinfo/dot v0.1.3-0.20190604013517-9f3172eea6b1
 	github.com/scryinfo/dot/dots/grpc v0.0.0
 	github.com/scryinfo/scryg v0.1.3-0.20190523074957-3a6377ac45ea
 	google.golang.org/grpc v1.21.0
