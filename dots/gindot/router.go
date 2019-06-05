@@ -63,9 +63,13 @@ func (c *Router) SetTypeId(tid dot.TypeId, lid dot.LiveId) {
 	c.liveId = lid
 }
 
+func (c *Router) AfterAllInject(l dot.Line) {
+	c.router = c.Engine_.GinEngine().Group(c.config.RelativePath)
+}
+
 //Start start the gin
 func (c *Router) Start(ignore bool) error {
-	c.router = c.Engine_.GinEngine().Group(c.config.RelativePath)
+
 	return nil
 }
 

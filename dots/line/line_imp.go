@@ -408,9 +408,18 @@ LIVES:
 		}
 	}
 
-	for _, it := range tdots {
-		if it.Dot != nil { //todo not success
-			c.injectInLine(it.Dot, it)
+	{
+		afterInjects := make([]dot.AfterAllInjecter, 0, 20)
+		for _, it := range tdots {
+			if it.Dot != nil { //todo not success
+				c.injectInLine(it.Dot, it)
+				if s, ok := it.Dot.(dot.AfterAllInjecter); ok {
+					afterInjects = append(afterInjects, s)
+				}
+			}
+		}
+		for _, v := range afterInjects {
+			v.AfterAllInject(c)
 		}
 	}
 
