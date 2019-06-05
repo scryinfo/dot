@@ -105,6 +105,11 @@ type AfterAllStarter interface {
 	AfterAllStart(l Line)
 }
 
+// After all inject, before builder AfterStart
+type AfterAllInjecter interface {
+	AfterAllInject(l Line)
+}
+
 // Call before all stop, after Builder BeforeStop
 type BeforeAllStopper interface {
 	BeforeAllStop(l Line)
