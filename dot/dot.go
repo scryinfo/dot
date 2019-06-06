@@ -93,9 +93,46 @@ func NewMetadata() *Metadata {
 //Clone clone Metadata
 func (m *Metadata) Clone() *Metadata {
 	c := *m
-	c.RelyTypeIds = make([]TypeId, len(m.RelyTypeIds))
-	copy(c.RelyTypeIds, m.RelyTypeIds)
+	c.RelyTypeIds = append(m.RelyTypeIds[:0:0], m.RelyTypeIds...)
 	return &c
+}
+
+func (m *Metadata) Merge(m2 *Metadata) {
+	if len(m2.TypeId) > 0 {
+		m.TypeId = m2.TypeId
+	}
+	if len(m2.Version) > 0 {
+		m.Version = m2.Version
+	}
+	if len(m2.Name) > 0 {
+		m.Name = m2.Name
+	}
+	if len(m2.ShowName) > 0 {
+		m.ShowName = m2.ShowName
+	}
+	m.Single = m2.Single
+	if len(m2.RelyTypeIds) > 0 {
+		t := make([]TypeId, 0, len(m.RelyTypeIds)+len(m2.RelyTypeIds))
+		t = append(t, m.RelyTypeIds...)
+		tmap := make(map[TypeId]bool, cap(t))
+		for i := range m.RelyTypeIds {
+			tmap[m.RelyTypeIds[i]] = true
+		}
+
+		for _, it := range m2.RelyTypeIds {
+			if _, ok := tmap[it]; !ok {
+				tmap[it] = true
+				t = append(t, it)
+			}
+		}
+		m.RelyTypeIds = t[:]
+	}
+	if m2.NewDoter != nil {
+		m.NewDoter = m2.NewDoter
+	}
+	if m2.RefType != nil {
+		m.RefType = m2.RefType
+	}
 }
 
 //NewDot new a dot

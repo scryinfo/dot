@@ -126,6 +126,24 @@ func TestLineImp_Start(t *testing.T) {
 						t := 1
 						return &t, nil
 					},
+					RelyTypeIds: []dot.TypeId{dot.TypeId("circle")},
+				},
+				Lives: []dot.Live{
+					dot.Live{
+						LiveId:    "circle3-1",
+						RelyLives: map[string]dot.LiveId{"_": "circle-1"},
+					},
+				},
+			})
+
+			l.PreAdd(&dot.TypeLives{ //duplication
+				Meta: dot.Metadata{
+					TypeId: "circle3",
+					NewDoter: func(args interface{}) (dot dot.Dot, err error) {
+						t := 1
+						return &t, nil
+					},
+					RelyTypeIds: []dot.TypeId{dot.TypeId("circle")},
 				},
 				Lives: []dot.Live{
 					dot.Live{

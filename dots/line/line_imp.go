@@ -5,6 +5,7 @@ package line
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"reflect"
 	"sync"
 
@@ -254,6 +255,7 @@ func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 
 //CreateDots create dots
 func (c *lineImp) CreateDots(order []*dot.Live) error {
+	logger := dot.Logger()
 	tdots := order
 	creator := func(it *dot.Live) error {
 		{ // Check whether special info needed before Create
@@ -313,6 +315,7 @@ func (c *lineImp) CreateDots(order []*dot.Live) error {
 	var err error
 LIVES:
 	for _, it := range tdots {
+		logger.Debugln("Create dot: ", zap.String("", it.LiveId.String()))
 
 		if skit.IsNil(&it.Dot) == true {
 			var bconfig []byte
@@ -709,10 +712,7 @@ func (c *lineImp) GetParent() dot.Injecter {
 //If liveid is empty， directly assign typeid
 //If liveid repeated，directly return dot.SError.ErrExistedLiveId
 func (c *lineImp) Create(l dot.Line) error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
 	var err error
-
 FOR_FUN:
 	for {
 		//first create config
@@ -742,7 +742,6 @@ FOR_FUN:
 
 		{ //handle config
 			for _, it := range c.config.Dots {
-
 				if len(it.MetaData.TypeId.String()) < 1 {
 					err = dot.SError.Config.AddNewError("typeid is null")
 					break FOR_FUN
@@ -814,7 +813,7 @@ func (c *lineImp) Start(ignore bool) error {
 			tdots, _ := c.RelyOrder() //do not care the circle
 			afterStarts := make([]dot.AfterAllStarter, 0, 20)
 			for _, it := range tdots {
-
+				logger.Debugln("Start dot: ", zap.String("", it.LiveId.String()))
 				if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
 					for i := range b {
 						e := &b[i]
@@ -905,6 +904,7 @@ func (c *lineImp) Stop(ignore bool) error {
 
 		for idot := len(tdots) - 1; idot >= 0; idot-- {
 			it := tdots[idot]
+			logger.Debugln("Stop dot: ", zap.String("", it.LiveId.String()))
 			if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
 				for i := range b {
 					e := &b[i]
@@ -979,7 +979,7 @@ func (c *lineImp) Destroy(ignore bool) error {
 		tdots, _ := c.RelyOrder() //do not care the circle
 		for idot := len(tdots) - 1; idot >= 0; idot-- {
 			it := tdots[idot]
-
+			logger.Debugln("Destroy dot: ", zap.String("", it.LiveId.String()))
 			if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
 				for i := range b {
 					e := &b[i]

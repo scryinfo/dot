@@ -53,8 +53,7 @@ func (ms *Metas) UpdateOrAdd(m *dot.Metadata) error {
 
 	old, ok := ms.metas[m.TypeId]
 	if ok {
-		old.NewDoter = m.NewDoter
-		old.RefType = m.RefType
+		old.Merge(m)
 	} else {
 		ms.metas[m.TypeId] = m.Clone()
 	}
