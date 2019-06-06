@@ -218,7 +218,7 @@ func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 								delete(remain, lid2)
 								done[lid2] = true
 							} else {
-								levelNext[lid] = true //put next level
+								//levelNext[lid2] = true //put next level
 							}
 						}
 					}
