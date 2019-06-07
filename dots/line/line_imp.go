@@ -235,8 +235,10 @@ func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 		//todo type dependency
 
 		{
-			for _, lev := range levels {
+			for i, lev := range levels {
+				dot.Logger().Debugln(fmt.Sprintf("level : %d", i))
 				for lid, _ := range lev {
+					dot.Logger().Debugln(cloneLives[lid].LiveId.String())
 					order = append(order, cloneLives[lid])
 				}
 			}
