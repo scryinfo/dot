@@ -117,9 +117,9 @@ func (c *ServerNoblImp) Create(l dot.Line) error {
 			}
 			err = err2
 		}
-		c.server = grpc.NewServer(grpc.Creds(creds))
+		c.server = grpc.NewServer(grpc.Creds(creds), grpc.StreamInterceptor(StreamServerInterceptor()), grpc.UnaryInterceptor(UnaryServerInterceptor()))
 	} else {
-		c.server = grpc.NewServer()
+		c.server = grpc.NewServer(grpc.StreamInterceptor(StreamServerInterceptor()), grpc.UnaryInterceptor(UnaryServerInterceptor()))
 	}
 
 	return err
@@ -128,6 +128,13 @@ func (c *ServerNoblImp) Create(l dot.Line) error {
 //Run after every component finished start, this can ensure all service has been registered on grpc server
 func (c *ServerNoblImp) AfterAllStart(l dot.Line) {
 	c.startServer()
+}
+
+//Stop stop dot
+func (c *ServerNoblImp) Stop(ignore bool) error {
+	c.server.GracefulStop()
+	c.server = nil
+	return nil
 }
 
 func (c *ServerNoblImp) Server() *grpc.Server {
