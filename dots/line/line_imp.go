@@ -975,6 +975,7 @@ func (c *lineImp) Destroy(ignore bool) error {
 	logger := dot.Logger()
 	//Destroy others
 	{
+		afterAllI := make([]dot.AfterAllIDestroyer, 0, 20)
 		//recount the order, maybe the "Ceate" change it
 		tdots, _ := c.RelyOrder() //do not care the circle
 		for idot := len(tdots) - 1; idot >= 0; idot-- {
@@ -1029,6 +1030,14 @@ func (c *lineImp) Destroy(ignore bool) error {
 				}
 			}
 
+			if all, ok := it.Dot.(dot.AfterAllIDestroyer); ok {
+				afterAllI = append(afterAllI, all)
+			}
+
+		}
+
+		for _, it := range afterAllI {
+			it.AfterAllIDestroy(c)
 		}
 	}
 
