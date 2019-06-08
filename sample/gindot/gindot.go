@@ -33,7 +33,7 @@ func main() {
 	//third step
 	//....
 
-	ssignal.WatiCtrlC(func(s os.Signal) bool { //third wait for exit
+	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
 	})
 	dot.Logger().Infoln("dot will stop")

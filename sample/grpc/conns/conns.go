@@ -27,7 +27,7 @@ func main() {
 	dd, _ := l.ToInjecter().GetByLiveId(dot.LiveId(conns.ConnNameTypeId))
 	fmt.Println(dd)
 
-	ssignal.WatiCtrlC(func(s os.Signal) bool { //third wait for exit
+	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
 	})
 

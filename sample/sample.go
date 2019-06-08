@@ -28,7 +28,7 @@ func main() {
 	l.ToInjecter().Inject(t)                    //second step use the injecter or others
 	dot.GetDefaultLine().ToInjecter().Inject(t) //or second step, use the default line(in the sample, the default line  == l)
 
-	ssignal.WatiCtrlC(func(s os.Signal) bool { //third wait for exit
+	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
 	})
 
