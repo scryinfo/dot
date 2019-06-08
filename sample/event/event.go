@@ -22,7 +22,7 @@ func main() {
 
 	//second step ....
 
-	ssignal.WatiCtrlC(func(s os.Signal) bool { //third wait for exit
+	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
 	})
 }
