@@ -23,7 +23,7 @@ const (
 )
 
 type configEngine struct {
-	Addr         string   `json:"addr"`        // addr smaple:  ":8080"
+	Addr         string   `json:"addr"`         // addr smaple:  ":8080"
 	KeyFile      string   `json:"keyFile"`      //if it is not abs path, preferred to use the executable path
 	PemFile      string   `json:"pemFile"`      //if it is not abs path, preferred to use the executable path
 	LogSkipPaths []string `json:"logSkipPaths"` // not write info log, sample: ["/tt", "/other"]
@@ -137,18 +137,18 @@ func (c *Engine) startServer() {
 			}
 			if !filepath.IsAbs(keyFile) { //preferred to use the executable path
 				t := filepath.Join(ex, keyFile)
-				if sfile.ExitFile(t) {
+				if sfile.ExistFile(t) {
 					keyFile = t
 				}
 			}
 
 			if !filepath.IsAbs(pemFile) { //preferred to use the executable path
 				t := filepath.Join(ex, pemFile)
-				if sfile.ExitFile(t) {
+				if sfile.ExistFile(t) {
 					pemFile = t
 				}
 			}
-			if sfile.ExitFile(pemFile) && sfile.ExitFile(keyFile) {
+			if sfile.ExistFile(pemFile) && sfile.ExistFile(keyFile) {
 				err := c.ginEngine.RunTLS(c.config.Addr, pemFile, keyFile)
 				if err != nil {
 					llog.Errorln(err.Error())
