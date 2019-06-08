@@ -60,15 +60,15 @@ func (c *sConfig) RootPath() {
 		exName := filepath.Base(ex)
 		ext := filepath.Ext(ex)
 		exName = exName[0 : len(exName)-len(ext)]
-		if sfile.ExitFile(dot.GCmd.ConfigPath) {
+		if sfile.ExistFile(dot.GCmd.ConfigPath) {
 			c.confPath = dot.GCmd.ConfigPath
-		} else if configPath := filepath.Join(exPath, exName+separator+conf); sfile.ExitFile(configPath) {
+		} else if configPath := filepath.Join(exPath, exName+separator+conf); sfile.ExistFile(configPath) {
 			c.confPath = configPath
-		} else if configPath := filepath.Join(exPath, conf); sfile.ExitFile(configPath) {
+		} else if configPath := filepath.Join(exPath, conf); sfile.ExistFile(configPath) {
 			c.confPath = configPath
-		} else if configPath := filepath.Join(binPath, exName+separator+conf); sfile.ExitFile(configPath) { //prefer the path
+		} else if configPath := filepath.Join(binPath, exName+separator+conf); sfile.ExistFile(configPath) { //prefer the path
 			c.confPath = configPath
-		} else if configPath := filepath.Join(binPath, conf); sfile.ExitFile(configPath) {
+		} else if configPath := filepath.Join(binPath, conf); sfile.ExistFile(configPath) {
 			c.confPath = configPath
 		}
 
@@ -76,16 +76,16 @@ func (c *sConfig) RootPath() {
 			c.confPath = exPath
 		}
 
-		if file := filepath.Join(c.confPath, dot.GCmd.ConfigFile); len(dot.GCmd.ConfigFile) > 0 && sfile.ExitFile(file) {
+		if file := filepath.Join(c.confPath, dot.GCmd.ConfigFile); len(dot.GCmd.ConfigFile) > 0 && sfile.ExistFile(file) {
 			c.file = dot.GCmd.ConfigFile
-		} else if file := filepath.Join(c.confPath, exName+extensionName); sfile.ExitFile(file) {
+		} else if file := filepath.Join(c.confPath, exName+extensionName); sfile.ExistFile(file) {
 			c.file = exName + extensionName
-		} else if file := filepath.Join(c.confPath, conf+extensionName); sfile.ExitFile(file) {
+		} else if file := filepath.Join(c.confPath, conf+extensionName); sfile.ExistFile(file) {
 			c.file = conf + extensionName
 		}
 	}
 
-	if len(c.confPath) > 0 && !sfile.ExitFile(c.confPath) {
+	if len(c.confPath) > 0 && !sfile.ExistFile(c.confPath) {
 		os.MkdirAll(c.confPath, os.ModePerm)
 	}
 }
@@ -94,7 +94,7 @@ func (c *sConfig) RootPath() {
 func (c *sConfig) Create(l dot.Line) error {
 
 	fname := filepath.Join(c.ConfigPath(), c.ConfigFile())
-	if len(c.ConfigFile()) < 1 || !sfile.ExitFile(fname) {
+	if len(c.ConfigFile()) < 1 || !sfile.ExistFile(fname) {
 		return nil
 	}
 	f, err := os.Open(fname)
@@ -167,7 +167,7 @@ func (c *sConfig) Unmarshal(s interface{}) error {
 	var err error
 	if c.simpleJson != nil {
 		data, err = c.simpleJson.MarshalJSON()
-	} else if sfile.ExitFile(f) {
+	} else if sfile.ExistFile(f) {
 		data, err = ioutil.ReadFile(filepath.Join(c.ConfigPath(), c.ConfigFile()))
 	}
 

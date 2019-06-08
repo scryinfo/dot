@@ -96,12 +96,12 @@ func (c *ServerNoblImp) Create(l dot.Line) error {
 			if ex, err2 := os.Executable(); err2 == nil {
 				exPath := filepath.Dir(ex)
 				pem = filepath.Join(exPath, c.conf.PemPath)
-				if !sfile.ExitFile(pem) && sfile.ExitFile(c.conf.PemPath) {
+				if !sfile.ExistFile(pem) && sfile.ExistFile(c.conf.PemPath) {
 					pem = c.conf.PemPath
 				}
 
 				key = filepath.Join(exPath, c.conf.KeyPath)
-				if !sfile.ExitFile(key) && sfile.ExitFile(c.conf.KeyPath) {
+				if !sfile.ExistFile(key) && sfile.ExistFile(c.conf.KeyPath) {
 					key = c.conf.KeyPath
 				}
 			} else {

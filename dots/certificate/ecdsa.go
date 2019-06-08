@@ -278,7 +278,7 @@ func exPathFileAndMakeDirs(file string) (nfile string, err error) {
 	}
 
 	tdir := filepath.Dir(tfile)
-	if !sfile.ExitFile(tdir) {
+	if !sfile.ExistFile(tdir) {
 		err = os.MkdirAll(tdir, os.ModeDir)
 	}
 	nfile = tfile
@@ -304,8 +304,8 @@ func exPathFile(file string) (tfile string, err error) {
 		tfile = filepath.Join(exPath, file)
 	}
 
-	if !sfile.ExitFile(tfile) {
-		if sfile.ExitFile(file) {
+	if !sfile.ExistFile(tfile) {
+		if sfile.ExistFile(file) {
 			tfile = file
 		} else {
 			tfile = ""
