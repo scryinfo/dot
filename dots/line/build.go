@@ -105,5 +105,5 @@ func StopAndDestroy(l dot.Line, ignore bool) {
 		builder.AfterDestroy(l)
 	}
 
-	dot.Logger().Infoln("dots destroy")
+	//dot.Logger().Infoln("dots destroy") maybe no logger
 }
