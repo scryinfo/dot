@@ -12,10 +12,10 @@ go mod tidy
 cd %dotPath%/certificate & go build
 cd %dotPath%/gindot  & go mod tidy & go build
 cd %dotPath%/grpc & go mod tidy
-cd %dotPath%/grpc/client & go build
+cd %dotPath%/grpc/gclient & go build
 cd %dotPath%/grpc/conns & go build
 cd %dotPath%/grpc/lb & go build
-cd %dotPath%/grpc/server & go build
+cd %dotPath%/grpc/gserver & go build
 cd %dotPath%/line & go build
 cd %dotPath%/sconfig & go build
 cd %dotPath%/slog & go build
@@ -32,7 +32,9 @@ call %samplePath%/grpc/proto/build_go.bat
 endlocal
 cd %samplePath%/grpc & go mod tidy
 cd %samplePath%/grpc/conns & go build
-cd %samplePath%/grpc/nobl & go build
+cd %samplePath%/grpc/nobl/client & go build
+cd %samplePath%/grpc/nobl/server & go build
+cd %samplePath%/grpc/nobl/server2 & go build
 cd %samplePath%/grpc/tls/client & go build
 cd %samplePath%/grpc/tls/server & go build
 
