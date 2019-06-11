@@ -2,74 +2,30 @@ package lb
 
 import (
 	"context"
-	"math/rand"
-	"sync"
-	"time"
-
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/balancer/base"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/resolver"
+	"math/rand"
+	"sync"
+	"time"
 )
 
 // Name is the name of round_robin balancer.
 const Name = Round
 
-type BuilderWraper struct {
-	bbuilder      balancer.Builder
-	builderPicker *rrPickerBuilder
-}
-
-func (c *BuilderWraper) Build(cc balancer.ClientConn, opts balancer.BuildOptions) balancer.Balancer {
-	//bl := &BalancerWraper{
-	//	builderPicker:c.builderPicker,
-	//	Balancer: c.bbuilder.Build(cc, opts),
-	//}
-	return c.bbuilder.Build(cc, opts)
-}
-
-func (c *BuilderWraper) Name() string {
-	return Name
-}
-
 // newBuilder creates a new roundrobin balancer builder.
 func newBuilder() balancer.Builder {
-	b := &BuilderWraper{builderPicker: &rrPickerBuilder{
-		r: rand.New(rand.NewSource(time.Now().UnixNano())),
-	}}
-	b.bbuilder = base.NewBalancerBuilderWithConfig(Name, b.builderPicker, base.Config{HealthCheck: true})
-	return b
+	return base.NewBalancerBuilderWithConfig(Name, &rrPickerBuilder{r: rand.New(rand.NewSource(time.Now().UnixNano()))}, base.Config{HealthCheck: true})
 }
 
 func init() {
 	balancer.Register(newBuilder())
 }
 
-type BalancerWraper struct {
-	balancer.Balancer
-	builderPicker *rrPickerBuilder
-}
-
-func (c *BalancerWraper) UpdateResolverState(s resolver.State) {
-	if v2, ok := c.Balancer.(balancer.V2Balancer); ok {
-		v2.UpdateResolverState(s)
-	}
-}
-
-func (c *BalancerWraper) UpdateSubConnState(sc balancer.SubConn, ss balancer.SubConnState) {
-	if v2, ok := c.Balancer.(balancer.V2Balancer); ok {
-		v2.UpdateSubConnState(sc, ss)
-	}
-}
-
-func (c *BuilderWraper) PickSubConn() []balancer.SubConn {
-	return c.builderPicker.pickSubconn
-}
-
 type rrPickerBuilder struct {
-	pickSubconn []balancer.SubConn
-	r           *rand.Rand
-	randMutex   sync.Mutex
+	r         *rand.Rand
+	randMutex sync.Mutex
 }
 
 // Intn implements rand.Intn on the rrPickerBuilder source.
@@ -89,7 +45,6 @@ func (c *rrPickerBuilder) Build(readySCs map[resolver.Address]balancer.SubConn) 
 	for _, sc := range readySCs {
 		scs = append(scs, sc)
 	}
-	c.pickSubconn = append(scs[:0:0], scs...)
 	return &rrPicker{
 		subConns: scs,
 		// Start at a random index, as the same RR balancer rebuilds a new
