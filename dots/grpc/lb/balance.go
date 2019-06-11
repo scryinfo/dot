@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/balancer/roundrobin"
 )
 
 const (
@@ -30,7 +29,7 @@ func Balance(bname string) grpc.DialOption {
 }
 
 func BalancerRound() grpc.DialOption { //todo grpc realization balance management use global variables, and do not consider multi thread condition, this is a temporary point
-	return grpc.WithBalancerName(roundrobin.Name)
+	return grpc.WithBalancerName(Round)
 }
 
 func BalancerFirst() grpc.DialOption { //todo grpc realization balance management use global variables, and do not consider multi thread condition, this is a temporary point
