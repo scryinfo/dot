@@ -4,6 +4,7 @@
 package gserver
 
 import (
+	"go.uber.org/zap"
 	"net"
 	"os"
 	"path/filepath"
@@ -144,9 +145,11 @@ func (c *ServerNoblImp) Server() *grpc.Server {
 func (c *ServerNoblImp) startServer() {
 	for _, lis := range c.listeners {
 		go func(li net.Listener) {
+			logger := dot.Logger()
+			logger.Infoln("ServerNobl", zap.String("", li.Addr().String()))
 			err := c.server.Serve(li)
 			if err != nil {
-				dot.Logger().Errorln(err.Error())
+				logger.Errorln(err.Error())
 			}
 		}(lis)
 	}

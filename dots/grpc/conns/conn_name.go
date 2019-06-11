@@ -45,16 +45,16 @@ func newConnName(conf interface{}) (dot.Dot, error) {
 
 func TypeLiveConnName() []*dot.TypeLives {
 	return []*dot.TypeLives{&dot.TypeLives{
-			Meta: dot.Metadata{TypeId: ConnNameTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
-				return newConnName(conf)
-			}},
-		},
+		Meta: dot.Metadata{TypeId: ConnNameTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+			return newConnName(conf)
+		}},
+	},
 		TypeLiveConns(),
 	}
 }
 
 func (c *ConnName) Conn() *grpc.ClientConn {
-	if c.Conns_ == nil && c.Conns_ != nil {
+	if c.conn == nil && c.Conns_ != nil {
 		c.conn = c.Conns_.ClientConn(c.serviceName)
 	}
 	return c.conn

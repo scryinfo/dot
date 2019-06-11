@@ -45,6 +45,11 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 			}
 		}
 
+		err = line.makeDotMetaFromConfig() // after the Add
+		if err != nil {
+			return
+		}
+
 		dotOrder, circles := line.RelyOrder() //do not care the error, it is circle dependency
 		//circle dependency
 		if len(circles) > 0 {

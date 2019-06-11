@@ -746,45 +746,54 @@ FOR_FUN:
 		//create log
 		createLog(c)
 
-		{ //handle config
-			for _, it := range c.config.Dots {
-				if len(it.MetaData.TypeId.String()) < 1 {
-					err = dot.SError.Config.AddNewError("typeid is null")
-					break FOR_FUN
-				}
+		break
+	}
 
-				if err = c.metas.Add(&it.MetaData); err != nil {
-					break FOR_FUN
-				}
+	return err
+}
 
-				if len(it.Lives) < 1 { //create the single live
-					live := dot.Live{TypeId: it.MetaData.TypeId, LiveId: dot.LiveId(it.MetaData.TypeId), Dot: nil}
-					if len(it.MetaData.RelyTypeIds) > 0 {
-						live.RelyLives = make(map[string]dot.LiveId, len(it.MetaData.RelyTypeIds))
-						for i := range it.MetaData.RelyTypeIds {
-							li := &it.MetaData.RelyTypeIds[i]
-							live.RelyLives[li.String()] = dot.LiveId(*li)
-						}
+func (c *lineImp) makeDotMetaFromConfig() error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	var err error
+	{ //handle config
+	FOR_FUN:
+		for _, it := range c.config.Dots {
+			if len(it.MetaData.TypeId.String()) < 1 {
+				err = dot.SError.Config.AddNewError("typeid is null")
+				break FOR_FUN
+			}
+
+			if err = c.metas.UpdateOrAdd(&it.MetaData); err != nil {
+				break FOR_FUN
+			}
+
+			if len(it.Lives) < 1 { //create the single live
+				live := dot.Live{TypeId: it.MetaData.TypeId, LiveId: dot.LiveId(it.MetaData.TypeId), Dot: nil}
+				if len(it.MetaData.RelyTypeIds) > 0 {
+					live.RelyLives = make(map[string]dot.LiveId, len(it.MetaData.RelyTypeIds))
+					for i := range it.MetaData.RelyTypeIds {
+						li := &it.MetaData.RelyTypeIds[i]
+						live.RelyLives[li.String()] = dot.LiveId(*li)
 					}
-					if err = c.lives.Add(&live); err != nil {
+				}
+				if err = c.lives.UpdateOrAdd(&live); err != nil {
+					break FOR_FUN
+				}
+			} else {
+				for _, li := range it.Lives {
+					if len(li.LiveId.String()) < 1 {
+						li.LiveId = dot.LiveId(it.MetaData.TypeId)
+					}
+					live := dot.Live{TypeId: it.MetaData.TypeId, LiveId: li.LiveId, RelyLives: li.RelyLives, Dot: nil}
+					if err = c.lives.UpdateOrAdd(&live); err != nil {
 						break FOR_FUN
-					}
-				} else {
-					for _, li := range it.Lives {
-						if len(li.LiveId.String()) < 1 {
-							li.LiveId = dot.LiveId(it.MetaData.TypeId)
-						}
-						live := dot.Live{TypeId: it.MetaData.TypeId, LiveId: li.LiveId, RelyLives: li.RelyLives, Dot: nil}
-						if err = c.lives.Add(&live); err != nil {
-							break FOR_FUN
-						}
 					}
 				}
 			}
 		}
-		break
 	}
-
 	return err
 }
 
