@@ -67,7 +67,7 @@ func HiServerTypeLives() []*dot.TypeLives {
 		},
 	}
 
-	lives := []*dot.TypeLives{gserver.TypeLiveConns(), tl}
+	lives := []*dot.TypeLives{gserver.ConnsTypeLives(), tl}
 
 	return lives
 }
