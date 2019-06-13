@@ -36,7 +36,7 @@ func main() {
 func add(l dot.Line) error {
 	var err error
 	// Point newer for typeid
-	//err = l.PreAdd(conns.TypeLiveConns())
+	//err = l.PreAdd(conns.ConnsTypeLives())
 	err = l.PreAdd(conns.TypeLiveConnName()...)
 	return err
 }

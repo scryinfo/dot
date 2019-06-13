@@ -49,7 +49,7 @@ func TypeLiveConnName() []*dot.TypeLives {
 			return newConnName(conf)
 		}},
 	},
-		TypeLiveConns(),
+		ConnsTypeLives(),
 	}
 }
 
