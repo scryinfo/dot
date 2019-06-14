@@ -38,7 +38,7 @@ func HiClientTypeLives() []*dot.TypeLives {
 	}
 
 	lives := make([]*dot.TypeLives, 0, 3)
-	lives = append(lives, conns.TypeLiveConnName()...)
+	lives = append(lives, conns.ConnNameTypeLives()...)
 	lives = append(lives, tl)
 
 	return lives

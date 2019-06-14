@@ -4,8 +4,8 @@ go 1.12
 
 require (
 	github.com/golang/protobuf v1.3.1
-	github.com/scryinfo/dot v0.1.3-0.20190613020240-69a26545c04b
-	github.com/scryinfo/dot/dots/grpc v0.0.0-20190613020504-324d56dd939d
+	github.com/scryinfo/dot v0.1.3-0.20190614075613-2fa437da8cb8
+	github.com/scryinfo/dot/dots/grpc v0.0.0-20190614075830-92033b1de4c6
 	github.com/scryinfo/scryg v0.1.3-0.20190608053141-a292b801bfd6
 	go.uber.org/zap v1.10.0
 	golang.org/x/net v0.0.0-20190607181551-461777fb6f67 // indirect
