@@ -5,8 +5,8 @@ go 1.12
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.4.0
-	github.com/scryinfo/dot v0.1.3-0.20190614075613-2fa437da8cb8
-	github.com/scryinfo/dot/dots/gindot v0.0.0-20190614075830-92033b1de4c6
+	github.com/scryinfo/dot v0.1.3-0.20190614104924-f9f3bb20f864
+	github.com/scryinfo/dot/dots/gindot v0.0.0-20190614105024-19296872275f
 	github.com/scryinfo/scryg v0.1.3-0.20190608053141-a292b801bfd6
 	golang.org/x/net v0.0.0-20190607181551-461777fb6f67 // indirect
 	golang.org/x/sys v0.0.0-20190608050228-5b15430b70e3 // indirect
