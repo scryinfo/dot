@@ -3,7 +3,7 @@ module github.com/scryinfo/dot/dots/grpc
 go 1.12
 
 require (
-	github.com/scryinfo/dot v0.1.3-0.20190614075613-2fa437da8cb8
+	github.com/scryinfo/dot v0.1.3-0.20190614104924-f9f3bb20f864
 	github.com/scryinfo/scryg v0.1.3-0.20190608053141-a292b801bfd6
 	go.uber.org/zap v1.10.0
 	golang.org/x/net v0.0.0-20190522155817-f3200d17e092
