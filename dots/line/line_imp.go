@@ -115,7 +115,7 @@ func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 
 		err2 := c.metas.UpdateOrAdd(&clone.Meta)
 		if err2 == nil {
-			if clone.Lives != nil {
+			if len(clone.Lives) > 0 {
 				for i := range clone.Lives {
 					it := &clone.Lives[i]
 					if len(it.TypeId.String()) < 1 {
@@ -127,9 +127,7 @@ func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 					c.lives.UpdateOrAdd(it)
 				}
 			} else {
-				lid := (dot.LiveId)(clone.Meta.TypeId)
-				live := dot.Live{TypeId: clone.Meta.TypeId, LiveId: lid, Dot: nil, RelyLives: nil}
-				c.lives.UpdateOrAdd(&live)
+				//do nothing
 			}
 		} else {
 			if err != nil {
@@ -795,6 +793,25 @@ func (c *lineImp) makeDotMetaFromConfig() error {
 		}
 	}
 	return err
+}
+
+//case #17
+func (c *lineImp) autoMakeLiveId() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	hasType := make(map[dot.TypeId]bool, len(c.lives.LiveIdMap))
+	for _, v := range c.lives.LiveIdMap {
+		hasType[v.TypeId] = true
+	}
+
+	for tid := range c.metas.metas {
+		if _, ok := hasType[tid]; !ok {
+			lid := (dot.LiveId)(tid)
+			live := dot.Live{TypeId: tid, LiveId: lid, Dot: nil, RelyLives: nil}
+			c.lives.UpdateOrAdd(&live)
+		}
+	}
+
 }
 
 //todo this method is private and will be realized with component method
