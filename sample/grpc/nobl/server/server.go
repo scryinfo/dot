@@ -6,13 +6,14 @@ import (
 	"github.com/scryinfo/dot/dots/line"
 	"github.com/scryinfo/dot/sample/grpc/nobl"
 	"github.com/scryinfo/scryg/sutils/ssignal"
+	"go.uber.org/zap"
 	"os"
 )
 
 func main() {
 	l, err := line.BuildAndStart(add) //first step create line and dots
 	if err != nil {
-		fmt.Println(err)
+		dot.Logger().Errorln("", zap.Error(err))
 		return
 	}
 	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots

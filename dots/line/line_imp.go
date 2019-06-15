@@ -471,6 +471,7 @@ func (c *lineImp) GetDotConfig(liveid dot.LiveId) *dot.LiveConfig {
 
 //Inject see https://github.com/facebookgo/inject
 func (c *lineImp) Inject(obj interface{}) error {
+	logger := dot.Logger()
 	var err error
 	if skit.IsNil(obj) {
 		return dot.SError.NilParameter
@@ -512,11 +513,11 @@ func (c *lineImp) Inject(obj interface{}) error {
 
 			if errt != nil && err == nil {
 				err = errt
-				fmt.Println("err:", err.Error())
+				logger.Debugln("line", zap.Error(err))
 			}
 
 			if d == nil {
-				fmt.Println("can not find the dot tname:{}", tname)
+				logger.Debugln("line", zap.String("can not find the dot for the field :", tField.Name))
 				continue
 			}
 		}
@@ -536,6 +537,7 @@ func (c *lineImp) Inject(obj interface{}) error {
 }
 
 func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
+	logger := dot.Logger()
 	var err error
 	if skit.IsNil(obj) {
 		return dot.SError.NilParameter
@@ -584,11 +586,11 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 
 			if errt != nil && err == nil {
 				err = errt
-				fmt.Println("err:", err.Error())
+				logger.Debugln("line", zap.Error(err))
 			}
 
 			if d == nil {
-				fmt.Println("can not find the dot tname:{}", tname)
+				logger.Debugln("line", zap.String("can not find the dot for the field: ", tField.Name))
 				continue
 			}
 		}

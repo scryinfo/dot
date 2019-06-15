@@ -17,7 +17,7 @@ import (
 func main() {
 	l, err := line.BuildAndStart(add) //first step create line and dots
 	if err != nil {
-		fmt.Println(err)
+		dot.Logger().Errorln(err.Error())
 		return
 	}
 	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
@@ -36,11 +36,11 @@ func main() {
 
 //how to new the dots of config
 func add(l dot.Line) error {
+	logger := dot.Logger()
 	var err error
 	{
 		t := reflect.TypeOf(((*Dot1)(nil)))
 		t = t.Elem()
-		fmt.Println("  ", t)
 		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "1", RefType: t}, Lives: []dot.Live{
 				dot.Live{LiveId: "12"},
@@ -58,7 +58,6 @@ func add(l dot.Line) error {
 	{
 		t := reflect.TypeOf(((*Dot2)(nil)))
 		t = t.Elem()
-		fmt.Println("  ", t)
 		//If no newer assignment, then use reflect.newLine to create it
 		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "2", RefType: t}, Lives: []dot.Live{
