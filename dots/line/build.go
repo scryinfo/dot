@@ -4,6 +4,7 @@
 package line
 
 import (
+	"flag"
 	"github.com/scryinfo/dot/dot"
 	"strings"
 )
@@ -19,6 +20,10 @@ func BuildAndStart(add dot.BuildNewer) (l dot.Line, err error) {
 
 //  Construct line and call create rely createdots start
 func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
+
+	if !flag.Parsed() {
+		flag.Parse()
+	}
 
 	err = nil
 
