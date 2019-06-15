@@ -4,7 +4,7 @@
 package main
 
 import (
-	"fmt"
+	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"reflect"
@@ -20,12 +20,12 @@ func main() {
 	//l, err := line.BuildAndStart(add) //first step create line and dots
 	l, err := line.BuildAndStartBy(&dot.Builder{
 		AfterCreate: func(l dot.Line) {
-			fmt.Println("AfterCreate")
+			dot.Logger().Infoln("AfterCreate")
 		},
 		Add: add,
 	})
 	if err != nil {
-		fmt.Println(err)
+		dot.Logger().Errorln("", zap.Error(err))
 		return
 	}
 	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
@@ -57,15 +57,15 @@ func add(l dot.Line) error {
 				//d.GinEngine().St
 				dot.Logger().Infoln("sdf")
 			}
-			fmt.Println("BeforeStop")
+			dot.Logger().Infoln("BeforeStop")
 		},
 
 		BeforeStop: func(live *dot.Live, l dot.Line) {
-			fmt.Println("BeforeStop")
+			dot.Logger().Infoln("BeforeStop")
 		},
 
 		BeforeStart: func(live *dot.Live, l dot.Line) {
-			fmt.Println("BeforeStart")
+			dot.Logger().Infoln("BeforeStart")
 		},
 	})
 

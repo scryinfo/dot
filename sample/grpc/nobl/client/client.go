@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/scryinfo/dot/sample/grpc/go_out/hidot"
 	"github.com/scryinfo/dot/sample/grpc/nobl"
+	"go.uber.org/zap"
 	"os"
 	"time"
 
@@ -19,7 +20,7 @@ import (
 func main() {
 	l, err := line.BuildAndStart(add) //first step create line and dots
 	if err != nil {
-		fmt.Println(err)
+		dot.Logger().Errorln("", zap.Error(err))
 		return
 	}
 	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots

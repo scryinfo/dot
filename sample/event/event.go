@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"os"
 
 	"github.com/scryinfo/dot/dot"
@@ -15,7 +16,7 @@ import (
 func main() {
 	l, err := line.BuildAndStart(add) //first step create line and dots
 	if err != nil {
-		fmt.Println(err)
+		dot.Logger().Errorln("", zap.Error(err))
 		return
 	}
 	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
