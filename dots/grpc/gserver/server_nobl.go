@@ -34,7 +34,7 @@ type ConfigNobl struct {
 }
 
 //grpc server component, without bl; one server can monitor in multi address or API at the same time,support tls
-type ServerNoblImp struct {
+type serverNoblImp struct {
 	conf      ConfigNobl
 	server    *grpc.Server
 	listeners []net.Listener
@@ -55,7 +55,7 @@ func newServerNobl(conf interface{}) (dot.Dot, error) {
 		return nil, err
 	}
 
-	d := &ServerNoblImp{
+	d := &serverNoblImp{
 		conf: *dconf,
 	}
 
@@ -71,7 +71,7 @@ func ServerNoblTypeLive() *dot.TypeLives {
 	}
 }
 
-func (c *ServerNoblImp) Create(l dot.Line) error {
+func (c *serverNoblImp) Create(l dot.Line) error {
 	var err error = nil
 	{
 		c.listeners = make([]net.Listener, 0, len(c.conf.Addrs))
@@ -127,22 +127,24 @@ func (c *ServerNoblImp) Create(l dot.Line) error {
 }
 
 //Run after every component finished start, this can ensure all service has been registered on grpc server
-func (c *ServerNoblImp) AfterAllStart(l dot.Line) {
+func (c *serverNoblImp) AfterAllStart(l dot.Line) {
 	c.startServer()
 }
 
 //Stop stop dot
-func (c *ServerNoblImp) Stop(ignore bool) error {
-	c.server.GracefulStop()
-	c.server = nil
+func (c *serverNoblImp) Stop(ignore bool) error {
+	if c.server != nil {
+		c.server.GracefulStop()
+		c.server = nil
+	}
 	return nil
 }
 
-func (c *ServerNoblImp) Server() *grpc.Server {
+func (c *serverNoblImp) Server() *grpc.Server {
 	return c.server
 }
 
-func (c *ServerNoblImp) startServer() {
+func (c *serverNoblImp) startServer() {
 	for _, lis := range c.listeners {
 		go func(li net.Listener) {
 			logger := dot.Logger()
