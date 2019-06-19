@@ -24,10 +24,9 @@ type httpNoblConf struct {
 //support the http and tcp
 type httpNobl struct {
 	conf       httpNoblConf
-	ServerNobl     ServerNobl `dot:""`
+	ServerNobl ServerNobl `dot:""`
 	httpServer *http.Server
 }
-
 
 //Construct component
 func newHttpNobl(conf interface{}) (dot.Dot, error) {
@@ -58,9 +57,9 @@ func HttpNoblTypeLives() []*dot.TypeLives {
 		Meta: dot.Metadata{TypeId: HttpTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
 			return newHttpNobl(conf)
 		}},
-		Lives:[]dot.Live{
+		Lives: []dot.Live{
 			dot.Live{
-				LiveId: HttpTypeId,
+				LiveId:    HttpTypeId,
 				RelyLives: map[string]dot.LiveId{"ServerNobl": ServerNoblTypeId},
 			},
 		},
@@ -73,7 +72,6 @@ func HttpNoblTypeLives() []*dot.TypeLives {
 
 func (c *httpNobl) Create(l dot.Line) error {
 	var err error = nil
-
 
 	return err
 }
@@ -99,13 +97,17 @@ func (c *httpNobl) Server() *grpc.Server {
 func (c *httpNobl) startServer() {
 
 	//options.OptionsPassthrough
-	wrappedGrpc := grpcweb.WrapServer(c.Server(), grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}) )
+	wrappedGrpc := grpcweb.WrapServer(c.Server(), grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}))
 
 	//start http grpc
-	c.httpServer = &http.Server{Addr:c.conf.Addr}
+	c.httpServer = &http.Server{Addr: c.conf.Addr}
 	c.httpServer.Handler = http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 		//if wrappedGrpc.IsGrpcWebRequest(req) {
-			wrappedGrpc.ServeHTTP(resp, req)
+		resp.Header().Set("Access-Control-Allow-Origin", "*")  //
+		resp.Header().Set("Access-Control-Allow-Methods", "*") //
+		resp.Header().Add("Access-Control-Allow-Headers", "content-type,x-grpc-web,x-user-agent")
+		wrappedGrpc.ServeHTTP(resp, req)
+
 		//}
 		//dot.Logger().Infoln("httpNobl", zap.String("", "it is not grpc request from the http"))
 	})
