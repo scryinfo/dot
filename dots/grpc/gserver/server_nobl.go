@@ -4,16 +4,16 @@
 package gserver
 
 import (
-	"go.uber.org/zap"
-	"net"
-	"os"
-	"path/filepath"
-
+	"crypto/tls"
+	"crypto/x509"
+	"github.com/pkg/errors"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/scryg/sutils/sfile"
+	"github.com/scryinfo/dot/dots/grpc/shared"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/testdata"
+	"io/ioutil"
+	"net"
 )
 
 const (
@@ -27,10 +27,8 @@ type ServerNobl interface {
 type ConfigNobl struct {
 	//sample :  1.1.1.1:568
 	Addrs []string `json:"addrs"`
-	//sample:  keys/s1.pem,   Comparing with current exe path
-	PemPath string `json:"pemPath"`
-	//sample:  keys/s1.pem,   Comparing with current exe path
-	KeyPath string `json:"keyPath"`
+
+	Tls shared.TlsConfig `json:"tls"`
 }
 
 //grpc server component, without bl; one server can monitor in multi address or API at the same time,support tls
@@ -72,7 +70,14 @@ func ServerNoblTypeLive() *dot.TypeLives {
 }
 
 func (c *serverNoblImp) Create(l dot.Line) error {
+	logger := dot.Logger()
 	var err error = nil
+	errDo := func(er error) {
+		if err != nil {
+			logger.Errorln("serverNoblImp", zap.Error(err))
+		}
+		err = er
+	}
 	{
 		c.listeners = make([]net.Listener, 0, len(c.conf.Addrs))
 		for i := range c.conf.Addrs {
@@ -85,41 +90,92 @@ func (c *serverNoblImp) Create(l dot.Line) error {
 				}
 				err = err2
 			} else {
-
 				c.listeners = append(c.listeners, lis)
 			}
 		}
 	}
-	if len(c.conf.KeyPath) > 0 && len(c.conf.PemPath) > 0 {
-		pem := ""
-		key := ""
-		{
-			if ex, err2 := os.Executable(); err2 == nil {
-				exPath := filepath.Dir(ex)
-				pem = filepath.Join(exPath, c.conf.PemPath)
-				if !sfile.ExistFile(pem) && sfile.ExistFile(c.conf.PemPath) {
-					pem = c.conf.PemPath
-				}
+	//see https://bbengfort.github.io/programmer/2017/03/03/secure-grpc.html
+	switch {
+	case len(c.conf.Tls.CaPem) > 0 && len(c.conf.Tls.Pem) > 0 && len(c.conf.Tls.Key) > 0:
+		pem := shared.GetFullPathFile(c.conf.Tls.Pem)
+		if len(pem) < 1 {
+			errDo(errors.New("the pem is not empty, and can not find the file: " + c.conf.Tls.Pem))
+			return err
+		}
+		key := shared.GetFullPathFile(c.conf.Tls.Key)
+		if len(key) < 1 {
+			errDo(errors.New("the key is not empty, and can not find the file: " + c.conf.Tls.Key))
+			return err
+		}
+		ca := shared.GetFullPathFile(c.conf.Tls.CaPem)
+		if len(ca) < 1 {
+			errDo(errors.New("the ca pem is not empty, and can not find the file: " + c.conf.Tls.CaPem))
+			return err
+		}
 
-				key = filepath.Join(exPath, c.conf.KeyPath)
-				if !sfile.ExistFile(key) && sfile.ExistFile(c.conf.KeyPath) {
-					key = c.conf.KeyPath
-				}
-			} else {
-				dot.Logger().Errorln(err2.Error()) //just log it,  do not return and set err, the code credentials.NewServerTLSFromFile will make it
-				pem = c.conf.PemPath
-				key = c.conf.KeyPath
+		var tc credentials.TransportCredentials
+		{
+			creds, err2 := tls.LoadX509KeyPair(pem, key)
+			if err2 != nil {
+				errDo(errors.WithStack(err2))
+				return err
 			}
+
+			caCert, err2 := ioutil.ReadFile(ca)
+			if err2 != nil {
+				errDo(errors.WithStack(err2))
+				return err
+			}
+			caCertPool := x509.NewCertPool()
+			if !caCertPool.AppendCertsFromPEM(caCert) {
+				errDo(errors.New("credentials: failed to append certificates"))
+				return err
+			}
+
+			tc = credentials.NewTLS(&tls.Config{
+				Certificates: []tls.Certificate{creds},
+				ClientCAs:    caCertPool, //server, use the ClientCAs
+				ClientAuth:   tls.RequireAndVerifyClientCert,
+			})
 		}
-		creds, err2 := credentials.NewServerTLSFromFile(testdata.Path(pem), testdata.Path(key))
+		logger.Infoln("serverNoblImp", zap.String("", "tls with ca"))
+
+		c.server = grpc.NewServer(grpc.Creds(tc), grpc.StreamInterceptor(StreamServerInterceptor()), grpc.UnaryInterceptor(UnaryServerInterceptor()))
+	case len(c.conf.Tls.Pem) > 0 && len(c.conf.Tls.Key) > 0:
+		pem := shared.GetFullPathFile(c.conf.Tls.Pem)
+		if len(pem) < 1 {
+			errDo(errors.New("the pem is not empty, and can not find the file: " + c.conf.Tls.Pem))
+			return err
+		}
+		key := shared.GetFullPathFile(c.conf.Tls.Key)
+		if len(key) < 1 {
+			errDo(errors.New("the key is not empty, and can not find the file: " + c.conf.Tls.Key))
+			return err
+		}
+
+		//var tc credentials.TransportCredentials
+		//{
+		//	creds, err2 := tls.LoadX509KeyPair(pem, key)
+		//	if err2 != nil {
+		//		errDo(errors.WithStack(err2))
+		//		return err
+		//	}
+		//
+		//	tc = credentials.NewTLS(&tls.Config{
+		//		Certificates: []tls.Certificate{creds},
+		//	})
+		//}
+
+		tc, err2 := credentials.NewServerTLSFromFile(pem, key)
 		if err2 != nil {
-			if err != nil {
-				dot.Logger().Errorln(err.Error())
-			}
-			err = err2
+			errDo(errors.WithStack(err2))
+			return err
 		}
-		c.server = grpc.NewServer(grpc.Creds(creds), grpc.StreamInterceptor(StreamServerInterceptor()), grpc.UnaryInterceptor(UnaryServerInterceptor()))
-	} else {
+		logger.Infoln("serverNoblImp", zap.String("", "tls no ca"))
+		c.server = grpc.NewServer(grpc.Creds(tc), grpc.StreamInterceptor(StreamServerInterceptor()), grpc.UnaryInterceptor(UnaryServerInterceptor()))
+
+	default:
+		logger.Infoln("serverNoblImp", zap.String("", "no tls"))
 		c.server = grpc.NewServer(grpc.StreamInterceptor(StreamServerInterceptor()), grpc.UnaryInterceptor(UnaryServerInterceptor()))
 	}
 

@@ -10,7 +10,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"errors"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"math/big"
 	"os"

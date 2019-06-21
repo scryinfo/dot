@@ -18,6 +18,6 @@ require (
 )
 
 replace (
-	github.com/scryinfo/dot v0.0.0 => ../../
-	github.com/scryinfo/dot/dots/grpc v0.0.0 => ../../dots/grpc
+	github.com/scryinfo/dot v0.1.3-0.20190619075845-a1765ed6f40c => ../../
+	github.com/scryinfo/dot/dots/grpc v0.0.0-20190619080120-397c86d1d25b => ../../dots/grpc
 )
