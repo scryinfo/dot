@@ -5,6 +5,7 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dot/dots/line"
 	"github.com/scryinfo/dot/sample/grpc/nobl"
 	"github.com/scryinfo/scryg/sutils/ssignal"
@@ -30,5 +31,7 @@ func main() {
 }
 
 func add(l dot.Line) error {
-	return l.PreAdd(nobl.HiServerTypeLives()...)
+	lives := nobl.HiServerTypeLives()
+	lives = append(lives, gserver.HttpNoblTypeLives()...)
+	return l.PreAdd(lives...)
 }

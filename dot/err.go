@@ -3,7 +3,7 @@
 
 package dot
 
-import "errors"
+import "github.com/pkg/errors"
 
 var (
 	_ Errorer = (*sError)(nil)

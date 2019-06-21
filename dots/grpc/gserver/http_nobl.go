@@ -1,11 +1,21 @@
+// Scry Info.  All rights reserved.
+// license that can be found in the license file.
+
 package gserver
 
 import (
 	"context"
-	"github.com/improbable-eng/grpc-web/go/grpcweb"
-	"github.com/scryinfo/dot/dot"
-	"google.golang.org/grpc"
+	"crypto/tls"
+	"crypto/x509"
+	"io/ioutil"
 	"net/http"
+
+	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"github.com/pkg/errors"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/grpc/shared"
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 const (
@@ -14,11 +24,8 @@ const (
 
 type httpNoblConf struct {
 	//sample :  1.1.1.1:568
-	Addr string `json:"addr"`
-	//sample:  keys/s1.pem,   Comparing with current exe path
-	PemPath string `json:"pemPath"`
-	//sample:  keys/s1.pem,   Comparing with current exe path
-	KeyPath string `json:"keyPath"`
+	Addr string           `json:"addr"`
+	Tls  shared.TlsConfig `json:"tls"`
 }
 
 //support the http and tcp
@@ -95,13 +102,14 @@ func (c *httpNobl) Server() *grpc.Server {
 }
 
 func (c *httpNobl) startServer() {
-
+	logger := dot.Logger()
 	//options.OptionsPassthrough
 	wrappedGrpc := grpcweb.WrapServer(c.Server(), grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}))
 
 	//start http grpc
 	c.httpServer = &http.Server{Addr: c.conf.Addr}
 	c.httpServer.Handler = http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		logger.Debugln("httpNobl", zap.String("", req.RequestURI))
 		//if wrappedGrpc.IsGrpcWebRequest(req) {
 		resp.Header().Set("Access-Control-Allow-Origin", "*")  //
 		resp.Header().Set("Access-Control-Allow-Methods", "*") //
@@ -111,8 +119,84 @@ func (c *httpNobl) startServer() {
 		//}
 		//dot.Logger().Infoln("httpNobl", zap.String("", "it is not grpc request from the http"))
 	})
+
 	go func() {
-		_ = c.httpServer.ListenAndServe()
+		switch {
+		case len(c.conf.Tls.CaPem) > 0 && len(c.conf.Tls.Key) > 0 && len(c.conf.Tls.Pem) > 0: //both tls
+			caPem := shared.GetFullPathFile(c.conf.Tls.CaPem)
+			if len(caPem) < 1 {
+				logger.Errorln("httpNobl", zap.Error(errors.New("the caPem is not empty, and can not find the file: "+c.conf.Tls.CaPem)))
+				return
+			}
+			key := shared.GetFullPathFile(c.conf.Tls.Key)
+			if len(key) < 1 {
+				logger.Errorln("httpNobl", zap.Error(errors.New("the Key is not empty, and can not find the file: "+c.conf.Tls.Key)))
+				return
+			}
+
+			pem := shared.GetFullPathFile(c.conf.Tls.Pem)
+			if len(pem) < 1 {
+				logger.Errorln("httpNobl", zap.Error(errors.New("the Pem is not empty, and can not find the file: "+c.conf.Tls.Pem)))
+				return
+			}
+
+			pool := x509.NewCertPool()
+			{
+				caCrt, err1 := ioutil.ReadFile(caPem)
+				if err1 != nil {
+					logger.Errorln("httpNobl", zap.Error(errors.WithStack(err1)))
+					return
+				}
+				if !pool.AppendCertsFromPEM(caCrt) {
+					logger.Errorln("httpNobl", zap.Error(errors.New("credentials: failed to append certificates")))
+					return
+				}
+			}
+			cert, err1 := tls.LoadX509KeyPair(pem, key)
+			if err1 != nil {
+				logger.Errorln("httpNobl", zap.Error(errors.WithStack(err1)))
+				return
+			}
+
+			c.httpServer.TLSConfig = &tls.Config{
+				Certificates: []tls.Certificate{cert},
+				ClientCAs:    pool,
+				ClientAuth:   tls.RequireAndVerifyClientCert,
+			}
+			logger.Infoln("httpNobl", zap.String("", "grpc-web server(with ca) will start: "+c.conf.Addr))
+			err := c.httpServer.ListenAndServeTLS("", "")
+			if err != nil {
+				logger.Errorln("httpNobl", zap.Error(errors.WithStack(err)))
+			}
+		case len(c.conf.Tls.Key) > 0 && len(c.conf.Tls.Pem) > 0: //just server
+			pem := shared.GetFullPathFile(c.conf.Tls.Pem)
+			if len(pem) < 1 {
+				logger.Errorln("httpNobl", zap.Error(errors.New("the pem is not empty, and can not find the file: "+c.conf.Tls.Pem)))
+				return
+			}
+			key := shared.GetFullPathFile(c.conf.Tls.Key)
+			if len(key) < 1 {
+				logger.Errorln("httpNobl", zap.Error(errors.New("the key is not empty, and can not find the file: "+c.conf.Tls.Key)))
+				return
+			}
+
+			c.httpServer.TLSConfig = &tls.Config{
+				ClientAuth: tls.NoClientCert,
+			}
+
+			logger.Infoln("httpNobl", zap.String("", "grpc-web server(no ca) will start: "+c.conf.Addr))
+			err := c.httpServer.ListenAndServeTLS(pem, key)
+			if err != nil {
+				logger.Errorln("httpNobl", zap.Error(errors.WithStack(err)))
+			}
+		default: //no tls
+			logger.Infoln("httpNobl", zap.String("", "grpc-web server(no https) will start: "+c.conf.Addr))
+			err := c.httpServer.ListenAndServe()
+			if err != nil {
+				logger.Errorln("httpNobl", zap.Error(errors.WithStack(err)))
+			}
+		}
+
 	}()
 
 }

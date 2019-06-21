@@ -1,0 +1,41 @@
+{
+  "log": {
+    "file": "log.log",
+    "level": "debug"
+  },
+  "dots":[
+    {
+      "metaData":{
+        "name": "ServerNobl",
+        "typeId":"77a766e7-c288-413f-946b-bc9de6df3d70"
+      },
+      "lives":[
+        {
+          "liveId":"77a766e7-c288-413f-946b-bc9de6df3d70",
+          "json":{
+            "addrs":["localhost:5012"],
+            "tls": {
+              "key": "server.key",
+              "pem": "server.pem",
+              "caPem": "ca.pem"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "metaData":{
+        "name": "server 1",
+        "typeId":"hiserver"
+      },
+      "lives":[
+        {
+          "liveId":"hiserver",
+          "json":{
+            "name":"server 1"
+          }
+        }
+      ]
+    }
+  ]
+}

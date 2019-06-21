@@ -4,12 +4,18 @@
 package conns
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
-
+	"github.com/pkg/errors"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/lb"
+	"github.com/scryinfo/dot/dots/grpc/shared"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/resolver"
+	"io/ioutil"
 )
 
 const (
@@ -34,9 +40,10 @@ type connsConfig struct {
 }
 
 type serviceConfig struct {
-	Name    string   `json:"name"`
-	Addrs   []string `json:"addrs"`
-	Balance string   `json:"balance"` // round or first, the default value is round
+	Name    string           `json:"name"`
+	Addrs   []string         `json:"addrs"`
+	Tls     shared.TlsConfig `json:"tls"`
+	Balance string           `json:"balance"` // round or first, the default value is round
 }
 
 type connsImp struct {
@@ -77,6 +84,7 @@ func ConnsTypeLives() *dot.TypeLives {
 }
 
 func (c *connsImp) Create(l dot.Line) error {
+	logger := dot.Logger()
 	var err error = nil
 	sa := make(map[string][]string, len(c.config.Services))
 	{
@@ -88,18 +96,94 @@ func (c *connsImp) Create(l dot.Line) error {
 	resolver.Register(lb.NewClientBuilder(c.config.Scheme, sa))
 	c.conns = make(map[string]*grpc.ClientConn, len(c.config.Services))
 
-	for i := range c.config.Services {
-		var e1 error = nil
-		s := c.config.Services[i]
-		c.conns[s.Name], e1 = grpc.Dial(fmt.Sprintf("%s:///%s", c.config.Scheme, s.Name), lb.Balance(s.Balance), grpc.WithInsecure())
-		if e1 != nil {
-			if err != nil { //log the err
-				dot.Logger().Errorln(err.Error())
-			}
-			err = e1
+	errDo := func(er error) {
+		if err != nil {
+			logger.Errorln("connsImp", zap.Error(err))
 		}
+		err = er
 	}
 
+FOR_SERVICES:
+	for i := range c.config.Services {
+		var e1 error = nil
+		s := &c.config.Services[i]
+		target := fmt.Sprintf("%s:///%s", c.config.Scheme, s.Name)
+
+		var con *grpc.ClientConn
+		{
+			switch {
+			case len(s.Tls.CaPem) > 0 && len(s.Tls.Key) > 0 && len(s.Tls.Pem) > 0: //both tls
+				caPemFile := shared.GetFullPathFile(s.Tls.CaPem)
+				if len(caPemFile) < 1 {
+					errDo(errors.New("the caPem is not empty, and can not find the file: " + s.Tls.CaPem))
+					continue FOR_SERVICES
+				}
+				keyFile := shared.GetFullPathFile(s.Tls.Key)
+				if len(keyFile) < 1 {
+					errDo(errors.New("the Key is not empty, and can not find the file: " + s.Tls.Key))
+					continue FOR_SERVICES
+				}
+
+				pemFile := shared.GetFullPathFile(s.Tls.Pem)
+				if len(pemFile) < 1 {
+					errDo(errors.New("the Pem is not empty, and can not find the file: " + s.Tls.Pem))
+					continue FOR_SERVICES
+				}
+
+				var tc credentials.TransportCredentials
+				{
+					pool := x509.NewCertPool()
+					{
+						caCrt, err1 := ioutil.ReadFile(caPemFile)
+						if err1 != nil {
+							errDo(errors.WithStack(err1))
+							continue FOR_SERVICES
+						}
+						if !pool.AppendCertsFromPEM(caCrt) {
+							errDo(errors.New("credentials: failed to append certificates"))
+							continue FOR_SERVICES
+						}
+					}
+					cert, err1 := tls.LoadX509KeyPair(pemFile, keyFile)
+					if err1 != nil {
+						errDo(errors.WithStack(err1))
+						continue FOR_SERVICES
+					}
+
+					tc = credentials.NewTLS(&tls.Config{
+						ServerName:   s.Tls.ServerNameOverride,
+						Certificates: []tls.Certificate{cert},
+						RootCAs:      pool, //client, use the RootCAs
+					})
+				}
+
+				logger.Infoln("connsImp", zap.String("", "tls with ca"))
+				con, e1 = grpc.Dial(target, lb.Balance(s.Balance), grpc.WithTransportCredentials(tc))
+			case len(s.Tls.Pem) > 0: //just server
+				pemfile := shared.GetFullPathFile(s.Tls.Pem)
+				if len(pemfile) < 1 {
+					errDo(errors.New("the Pem is not empty, and can not find the file: " + s.Tls.Pem))
+					continue FOR_SERVICES
+				}
+
+				creds, err1 := credentials.NewClientTLSFromFile(pemfile, s.Tls.ServerNameOverride)
+				if err1 != nil {
+					errDo(errors.WithStack(err1))
+					continue FOR_SERVICES
+				}
+				logger.Infoln("connsImp", zap.String("", "tls no ca"))
+				con, e1 = grpc.Dial(target, lb.Balance(s.Balance), grpc.WithTransportCredentials(creds))
+			default: //no tls
+				logger.Infoln("connsImp", zap.String("", "no tls"))
+				con, e1 = grpc.Dial(target, lb.Balance(s.Balance), grpc.WithInsecure())
+			}
+		}
+		if e1 != nil {
+			errDo(errors.WithStack(e1))
+		} else {
+			c.conns[s.Name] = con
+		}
+	}
 	return err
 }
 
