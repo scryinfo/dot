@@ -57,7 +57,7 @@ func newHttpNobl(conf interface{}) (dot.Dot, error) {
 	return d, err
 }
 
-//Data structure needed when generating newer component
+//HttpNoblTypeLives Data structure needed when generating newer component
 func HttpNoblTypeLives() []*dot.TypeLives {
 
 	tl := &dot.TypeLives{
