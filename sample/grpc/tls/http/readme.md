@@ -1,5 +1,5 @@
 
-make certificate
+Make Certificate
 
 ```
 openssl ecparam -genkey -name secp384r1 -out openserver.key
