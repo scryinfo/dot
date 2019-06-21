@@ -55,7 +55,7 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 			return
 		}
 
-		line.autoMakeLiveId()
+		line.autoMakeLiveId() //issue #17
 
 		dotOrder, circles := line.RelyOrder() //do not care the error, it is circle dependency
 		//circle dependency
