@@ -77,12 +77,6 @@ func HttpNoblTypeLives() []*dot.TypeLives {
 	}
 }
 
-func (c *httpNobl) Create(l dot.Line) error {
-	var err error = nil
-
-	return err
-}
-
 //Run after every component finished start, this can ensure all service has been registered on grpc server
 func (c *httpNobl) AfterAllStart(l dot.Line) {
 	c.startServer()
