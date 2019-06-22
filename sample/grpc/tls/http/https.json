@@ -29,8 +29,8 @@
           "json": {
             "addr": ":6868",
             "tls": {
-              "key": "openserver.key",
-              "pem": "openserver.crt"
+              "key": "server.key",
+              "pem": "server.pem"
             }
           }
         }
