@@ -30,8 +30,8 @@ Create
 6. Events.BeforeCreate //for live id
 7. dot.Creator
 8. Events.AfterCreate //for live id
-9. Events.AfterCreate //for type id, go to "2. Newer", untill all done  
-10. Inject all dependentes of dots  
+9. Events.AfterCreate //for type id, go to "2. Newer", until all done  
+10. Inject all dependent dots  
 11. AfterAllInjecter  
 12. Builder.AfterCreate  
 ***
@@ -41,7 +41,7 @@ Start
 3. Events.BeforeStart //for live id
 4. dot.Starter
 5. Events.AfterStart //for live id
-6. Events.AfterStart //go to "2. Events.BeforeStart", untill all done
+6. Events.AfterStart //go to "2. Events.BeforeStart", until all done
 7. dot.AfterAllStart
 8. Builder.AfterStart  
 ***
