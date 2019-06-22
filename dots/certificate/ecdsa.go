@@ -56,11 +56,17 @@ func (c *Ecdsa) GenerateCaCertKey(caPri *ecdsa.PrivateKey, keyFile string, pemFi
 	ca = &x509.Certificate{
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
-			Organization: orgName,
+			Country:       []string{"cn"},
+			Locality:      []string{"scry"},
+			Province:      []string{"scry"},
+			Organization:  orgName,
+			StreetAddress: []string{"scry"},
+			PostalCode:    []string{"scry"},
+			CommonName:    "scry",
 		},
 		DNSNames:              dnsName,
 		NotBefore:             time.Now(),
-		NotAfter:              time.Now().AddDate(20, 0, 0),
+		NotAfter:              time.Now().AddDate(100, 0, 0),
 		BasicConstraintsValid: true,
 		IsCA:                  true,
 		SignatureAlgorithm:    x509.ECDSAWithSHA256,
@@ -121,13 +127,20 @@ func (c *Ecdsa) GenerateCertKey(caParent *x509.Certificate, caPri *ecdsa.Private
 	cert := &x509.Certificate{
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
-			Organization: orgName,
+			Country:       []string{"cn"},
+			Locality:      []string{"scry"},
+			Province:      []string{"scry"},
+			Organization:  orgName,
+			StreetAddress: []string{"scry"},
+			PostalCode:    []string{"scry"},
+			CommonName:    "scry",
 		},
-		DNSNames:    dnsName,
-		NotBefore:   time.Now(),
-		NotAfter:    time.Now().AddDate(20, 0, 0),
-		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
-		KeyUsage:    x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
+		DNSNames:           dnsName,
+		NotBefore:          time.Now(),
+		NotAfter:           time.Now().AddDate(100, 0, 0),
+		SignatureAlgorithm: x509.ECDSAWithSHA256,
+		ExtKeyUsage:        []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
+		KeyUsage:           x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
 	}
 
 	priv, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
