@@ -81,8 +81,9 @@ dots/grpc/gserver/http_nobl: 进程内的grpc-web支持，支持https， sample/
 * npm install
 * npm run start
 * 在浏览器中输入 “http://localhost:9000”, 查看控制台的输出，注：如果这里使用了https，是自己签名的证书时需要加入允许证书中或参考网上关于证书的说明  
-dots/grpc/gserver/server_nobl： grpc server组件，支持服务端tls, 双向tls认证， sample/grpc/nobl是使用例子
-提供注：与tls或https相关的例子在 sample/grpc/tls下面  
+
+dots/grpc/gserver/server_nobl： grpc server组件，支持服务端tls, 双向tls认证， sample/grpc/nobl是使用例子  
+提供注：与tls或https相关的例子在 sample/grpc/tls文件夹下面  
 ## 证书生成组件 dots/certificate
 生成根证书及子证书， sample/certificate 是一个使用的例子
 ## gin组件
