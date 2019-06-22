@@ -71,8 +71,18 @@ Destroy
 现在配置支持json格式，以后会支持toml、yaml、命令行及环境变量
 ## 日志 dots/slog
 基于zap的日志
-## grpc的客户端负载均衡 dots/grpc/conns
-提供grpc的客户端负载均衡， sample/grpc_conns是一个使用的例子
+## grpc组件
+dots/grpc/conns： 客户端负载均衡组件， 支持服务端tls, 双向tls认证  
+dots/grpc/gserver/http_nobl: 进程内的grpc-web支持，支持https， sample/grpc/http是使用例子  
+* 运行build_go.bat生成 js及go代码
+* 编译sample/grpc/http/server中的代码
+* 运行编译出来的server.exe (server.exe --configfile="server_http.json"), 注：如果可执行文件名与配置文件同名，可以不指定配置文件 
+* cd 进入 sample/grpc/http/client
+* npm install
+* npm run start
+* 在浏览器中输入 “http://localhost:9000”, 查看控制台的输出，注：如果这里使用了https，是自己签名的证书时需要加入允许证书中或参考网上关于证书的说明  
+dots/grpc/gserver/server_nobl： grpc server组件，支持服务端tls, 双向tls认证， sample/grpc/nobl是使用例子
+提供注：与tls或https相关的例子在 sample/grpc/tls下面  
 ## 证书生成组件 dots/certificate
 生成根证书及子证书， sample/certificate 是一个使用的例子
 ## gin组件
