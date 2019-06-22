@@ -35,8 +35,7 @@ cd %samplePath%/grpc/conns & go build
 cd %samplePath%/grpc/nobl/client & go build
 cd %samplePath%/grpc/nobl/server & go build
 cd %samplePath%/grpc/nobl/server2 & go build
-cd %samplePath%/grpc/tls/client & go build
-cd %samplePath%/grpc/tls/server & go build
+cd %samplePath%/grpc/http/server & go build
 
 cd %samplePath% & go clean ./...
 cd %samplePath%/gindot & go clean ./...
