@@ -3,14 +3,24 @@ module github.com/scryinfo/dot/dots/grpc
 go 1.12
 
 require (
+	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/gin-gonic/gin v1.4.0
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/improbable-eng/grpc-web v0.9.6
 	github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/rs/cors v1.6.0 // indirect
-	github.com/scryinfo/dot v0.1.3-0.20190622070537-0a21bb4f0f53
+	github.com/scryinfo/dot v0.1.3-0.20190622091252-bab0929bd7e7
+	github.com/scryinfo/dot/dots/gindot v0.0.0-20190622091252-bab0929bd7e7
 	github.com/scryinfo/scryg v0.1.3-0.20190608053141-a292b801bfd6
 	go.uber.org/zap v1.10.0
-	golang.org/x/net v0.0.0-20190603091049-60506f45cf65
+	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
+	golang.org/x/sys v0.0.0-20190624142023-c5567b49c5d0 // indirect
+	golang.org/x/text v0.3.2 // indirect
 	google.golang.org/grpc v1.21.1
+)
+
+replace (
+	github.com/scryinfo/dot v0.0.0 => ../../
+	github.com/scryinfo/dot/dots/gindot v0.0.0-20190622091252-bab0929bd7e7 => ../gindot
 )
