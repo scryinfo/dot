@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	GinNoblTypeId = "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0"
+	GinNoblTypeId = "3c9e8119-3d42-45bd-98f9-32939c895c6d"
 )
 
 //support the http and tcp
