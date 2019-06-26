@@ -17,8 +17,8 @@ const (
 
 //support the http and tcp
 type ginNobl struct {
-	ServerNobl ServerNobl `dot:""`
-	GinRouter  *gindot.Router
+	ServerNobl ServerNobl     `dot:""`
+	GinRouter  *gindot.Router `dot:""`
 	wrapserver *grpcweb.WrappedGrpcServer
 }
 
@@ -27,7 +27,7 @@ func GinNoblTypeLives() []*dot.TypeLives {
 
 	tl := &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: GinNoblTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
-			return newHttpNobl(conf)
+			return &ginNobl{}, nil
 		}},
 		Lives: []dot.Live{
 			dot.Live{
