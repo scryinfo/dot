@@ -10,7 +10,7 @@ require (
 	github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/rs/cors v1.6.0 // indirect
-	github.com/scryinfo/dot v0.1.3-0.20190625101940-1336d6ee5a13
+	github.com/scryinfo/dot v0.1.3-0.20190625102047-666d44ee7d72
 	github.com/scryinfo/dot/dots/gindot v0.0.0-20190622091252-bab0929bd7e7
 	github.com/scryinfo/scryg v0.1.3-0.20190608053141-a292b801bfd6
 	go.uber.org/zap v1.10.0
