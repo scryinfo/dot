@@ -62,6 +62,9 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 		if len(circles) > 0 {
 			lids := &strings.Builder{}
 			for _, lv := range circles {
+				if lv == nil {
+					continue
+				}
 				lids.WriteString(lv.LiveId.String())
 				lids.Write([]byte("; "))
 			}
