@@ -53,11 +53,13 @@ func add(l dot.Line) error {
 
 	l.ToDotEventer().AddLiveEvents(dot.LiveId(gindot.EngineLiveId), &dot.LiveEvents{
 		AfterCreate: func(live *dot.Live, l dot.Line) {
-			if _, ok := live.Dot.(*gindot.Engine); ok {
+			if g, ok := live.Dot.(*gindot.Engine); ok {
 				//d.GinEngine().St
+				_ = g
 				dot.Logger().Infoln("sdf")
 			}
 			dot.Logger().Infoln("BeforeStop")
+
 		},
 
 		BeforeStop: func(live *dot.Live, l dot.Line) {
@@ -84,6 +86,9 @@ func (c *SampleCtroller) Start(ignore bool) error {
 	//	post.Call(vs)
 	//})
 	c.GinRouter_.RouterGet(c, "sample")
+	c.GinRouter_.Router().GET("/rpctest/*rpc", func(ctx *gin.Context) {
+		ctx.String(http.StatusOK, "ok")
+	})
 	return nil
 }
 

@@ -16,6 +16,6 @@ require (
 )
 
 replace (
-	github.com/scryinfo/dot v0.1.3-0.20190619075845-a1765ed6f40c => ../../
+	github.com/scryinfo/dot v0.1.3-0.20190625101940-1336d6ee5a13 => ../../
 	github.com/scryinfo/dot/dots/grpc v0.0.0-20190619080120-397c86d1d25b => ../../dots/grpc
 )

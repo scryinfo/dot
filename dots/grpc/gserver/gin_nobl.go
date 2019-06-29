@@ -8,7 +8,10 @@ import (
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/gindot"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"net/http"
+	"strings"
 )
 
 const (
@@ -20,6 +23,7 @@ type ginNobl struct {
 	ServerNobl ServerNobl     `dot:""`
 	GinRouter  *gindot.Router `dot:""`
 	wrapserver *grpcweb.WrappedGrpcServer
+	preUrl     string
 }
 
 //GinNoblTypeLives Data structure needed when generating newer component
@@ -47,6 +51,17 @@ func GinNoblTypeLives() []*dot.TypeLives {
 
 //Run after every component finished start, this can ensure all service has been registered on grpc server
 func (c *ginNobl) AfterAllStart(l dot.Line) {
+	if rp := c.GinRouter.RelativePath(); len(rp) > 0 && rp != "/" {
+		if !strings.HasPrefix(rp, "/") {
+			rp = "/" + rp
+		}
+		if !strings.HasSuffix(rp, "/") {
+			rp += "/"
+		}
+		c.preUrl = rp
+	} else {
+		c.preUrl = ""
+	}
 	c.startServer()
 }
 
@@ -63,21 +78,39 @@ func (c *ginNobl) Server() *grpc.Server {
 }
 
 func (c *ginNobl) startServer() {
-	//options.OptionsPassthrough
+
+	logger := dot.Logger()
 	c.wrapserver = grpcweb.WrapServer(c.Server(), grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}))
 
-	c.GinRouter.Router().Use(func(g *gin.Context) {
+	url := c.preUrl
+	if len(url) > 0 {
+		url = c.preUrl + "*rpc"
+	} else {
+		url = "/*rpc"
+	}
 
-		if c.wrapserver.IsGrpcWebRequest(g.Request) {
+	handle := func(ctx *gin.Context) {
+		logger.Debugln("ginNobl", zap.String("", ctx.Request.RequestURI))
+		if c.wrapserver.IsGrpcWebRequest(ctx.Request) {
 
-			resp := g.Writer
+			if len(c.preUrl) > 0 { // because can not set the "endpointFunc" of WrapServer, do this so so
+				old := ctx.Request.URL.Path
+				if strings.HasPrefix(old, c.preUrl) {
+					index := len(c.preUrl) - 1
+					ctx.Request.URL.Path = old[index:]
+				}
+			}
+
+			resp := ctx.Writer
 			resp.Header().Set("Access-Control-Allow-Origin", "*")  //
 			resp.Header().Set("Access-Control-Allow-Methods", "*") //
 			resp.Header().Add("Access-Control-Allow-Headers", "content-type,x-grpc-web,x-user-agent")
-			c.wrapserver.ServeHTTP(resp, g.Request)
-			return
+			c.wrapserver.ServeHTTP(resp, ctx.Request)
+		} else {
+			ctx.String(http.StatusOK, "no rpc")
 		}
-		g.Next()
+	}
 
-	})
+	c.GinRouter.Router().POST(url, handle)
+	c.GinRouter.Router().OPTIONS(url, handle)
 }
