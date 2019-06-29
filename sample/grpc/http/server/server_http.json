@@ -27,7 +27,8 @@
         {
           "liveId":"afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
           "json": {
-            "addr": ":6868"
+            "addr": ":6868",
+            "preUrl" : "root"
           }
         }
       ]

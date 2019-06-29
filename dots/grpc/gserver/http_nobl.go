@@ -9,6 +9,7 @@ import (
 	"crypto/x509"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/pkg/errors"
@@ -24,8 +25,9 @@ const (
 
 type httpNoblConf struct {
 	//sample :  1.1.1.1:568
-	Addr string           `json:"addr"`
-	Tls  shared.TlsConfig `json:"tls"`
+	PreUrl string           `json:"preUrl"`
+	Addr   string           `json:"addr"`
+	Tls    shared.TlsConfig `json:"tls"`
 }
 
 //support the http and tcp
@@ -48,6 +50,14 @@ func newHttpNobl(conf interface{}) (dot.Dot, error) {
 	err = dot.UnMarshalConfig(bs, dconf)
 	if err != nil {
 		return nil, err
+	}
+	if len(dconf.PreUrl) > 0 {
+		if !strings.HasPrefix(dconf.PreUrl, "/") {
+			dconf.PreUrl = "/" + dconf.PreUrl
+		}
+		if !strings.HasSuffix(dconf.PreUrl, "/") {
+			dconf.PreUrl += "/"
+		}
 	}
 
 	d := &httpNobl{
@@ -108,8 +118,14 @@ func (c *httpNobl) startServer() {
 		resp.Header().Set("Access-Control-Allow-Origin", "*")  //
 		resp.Header().Set("Access-Control-Allow-Methods", "*") //
 		resp.Header().Add("Access-Control-Allow-Headers", "content-type,x-grpc-web,x-user-agent")
+		if len(c.conf.PreUrl) > 0 { // because can not set the "endpointFunc" of WrapServer, do this so so
+			old := req.URL.Path
+			if strings.HasPrefix(old, c.conf.PreUrl) {
+				index := len(c.conf.PreUrl) - 1
+				req.URL.Path = old[index:]
+			}
+		}
 		wrappedGrpc.ServeHTTP(resp, req)
-
 		//}
 		//dot.Logger().Infoln("httpNobl", zap.String("", "it is not grpc request from the http"))
 	})
