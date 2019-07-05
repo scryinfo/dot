@@ -88,6 +88,8 @@ type Line interface {
 	GetDotConfig(liveid LiveId) *LiveConfig
 
 	GetLineBuilder() *Builder
+	//InfoAllTypeAdnLives just for debug, log info all types and lives
+	InfoAllTypeAdnLives()
 }
 
 // If component need to know current line, then realize this API, and this API Will be called before component Create

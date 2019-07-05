@@ -4,6 +4,7 @@
 package conns
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
@@ -22,12 +23,14 @@ const (
 	ConnsTypeId = "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
 )
 
-//grpc connection, support one Scheme, multi services are below, every service can have multi address(client load balancing)
+//grpc connection, support one Scheme, multi services are below, every service can have multi address(ClientConn load balancing)
 type Conns interface {
 	//Return default connection, only one connection
 	DefaultClientConn() *grpc.ClientConn
 	//Return server name corresponding connection
 	ClientConn(serviceName string) *grpc.ClientConn
+	//Return ClientContext
+	ClientContext(serviceName string) *ClientContext
 	//return service name
 	ServiceName() []string
 	//return schemeName,  Scheme is defined at https://github.com/grpc/grpc/blob/master/doc/naming.md
@@ -46,14 +49,19 @@ type serviceConfig struct {
 	Balance string           `json:"balance"` // round or first, the default value is round
 }
 
+type ClientContext struct {
+	ClientConn *grpc.ClientConn
+	Ctx        context.Context
+	Cancel     context.CancelFunc
+}
+
 type connsImp struct {
-	conns map[string]*grpc.ClientConn
-	//ctx context.Context
+	conns  map[string]*ClientContext
 	config connsConfig
 }
 
 //Construction component
-func newDailConns(conf interface{}) (dot.Dot, error) {
+func newConns(conf interface{}) (dot.Dot, error) {
 	var err error = nil
 	var bs []byte = nil
 	if bt, ok := conf.([]byte); ok {
@@ -78,7 +86,7 @@ func newDailConns(conf interface{}) (dot.Dot, error) {
 func ConnsTypeLives() *dot.TypeLives {
 	return &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: ConnsTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
-			return newDailConns(conf)
+			return newConns(conf)
 		}},
 	}
 }
@@ -94,7 +102,7 @@ func (c *connsImp) Create(l dot.Line) error {
 		}
 	}
 	resolver.Register(lb.NewClientBuilder(c.config.Scheme, sa))
-	c.conns = make(map[string]*grpc.ClientConn, len(c.config.Services))
+	c.conns = make(map[string]*ClientContext, len(c.config.Services))
 
 	errDo := func(er error) {
 		if err != nil {
@@ -109,7 +117,13 @@ FOR_SERVICES:
 		s := &c.config.Services[i]
 		target := fmt.Sprintf("%s:///%s", c.config.Scheme, s.Name)
 
-		var con *grpc.ClientConn
+		var rpc ClientContext
+		funRpc := func(rpc *ClientContext, target string, opts ...grpc.DialOption) error {
+			rpc.Ctx, rpc.Cancel = context.WithCancel(context.Background())
+			var e error
+			rpc.ClientConn, e = grpc.DialContext(rpc.Ctx, target, opts...)
+			return e
+		}
 		{
 			switch {
 			case len(s.Tls.CaPem) > 0 && len(s.Tls.Key) > 0 && len(s.Tls.Pem) > 0: //both tls
@@ -153,12 +167,12 @@ FOR_SERVICES:
 					tc = credentials.NewTLS(&tls.Config{
 						ServerName:   s.Tls.ServerNameOverride,
 						Certificates: []tls.Certificate{cert},
-						RootCAs:      pool, //client, use the RootCAs
+						RootCAs:      pool, //ClientConn, use the RootCAs
 					})
 				}
 
 				logger.Infoln("connsImp", zap.String("", "tls with ca"))
-				con, e1 = grpc.Dial(target, lb.Balance(s.Balance), grpc.WithTransportCredentials(tc))
+				e1 = funRpc(&rpc, target, lb.Balance(s.Balance), grpc.WithTransportCredentials(tc))
 			case len(s.Tls.Pem) > 0: //just server
 				pemfile := shared.GetFullPathFile(s.Tls.Pem)
 				if len(pemfile) < 1 {
@@ -172,16 +186,16 @@ FOR_SERVICES:
 					continue FOR_SERVICES
 				}
 				logger.Infoln("connsImp", zap.String("", "tls no ca"))
-				con, e1 = grpc.Dial(target, lb.Balance(s.Balance), grpc.WithTransportCredentials(creds))
+				e1 = funRpc(&rpc, target, lb.Balance(s.Balance), grpc.WithTransportCredentials(creds))
 			default: //no tls
 				logger.Infoln("connsImp", zap.String("", "no tls"))
-				con, e1 = grpc.Dial(target, lb.Balance(s.Balance), grpc.WithInsecure())
+				e1 = funRpc(&rpc, target, lb.Balance(s.Balance), grpc.WithInsecure())
 			}
 		}
 		if e1 != nil {
 			errDo(errors.WithStack(e1))
 		} else {
-			c.conns[s.Name] = con
+			c.conns[s.Name] = &rpc
 		}
 	}
 	return err
@@ -193,9 +207,9 @@ func (c *connsImp) Stop(ignore bool) error {
 		conns := c.conns
 		c.conns = nil
 		for _, conn := range conns {
-			if conn != nil {
-				e1 := conn.Close()
-				if e1 != nil { //do not return , close all connection
+			if conn.ClientConn != nil {
+				e1 := conn.ClientConn.Close() //todo Cancel request?
+				if e1 != nil {                //do not return , close all connection
 					if err != nil { //log the err
 						dot.Logger().Errorln(err.Error())
 					}
@@ -214,8 +228,8 @@ func (c *connsImp) Stop(ignore bool) error {
 func (c *connsImp) DefaultClientConn() *grpc.ClientConn {
 	var conn *grpc.ClientConn = nil
 	if len(c.conns) == 1 {
-		for _, v := range c.conns {
-			conn = v
+		for k := range c.conns {
+			conn = c.conns[k].ClientConn
 		}
 	}
 
@@ -224,6 +238,16 @@ func (c *connsImp) DefaultClientConn() *grpc.ClientConn {
 
 func (c *connsImp) ClientConn(serviceName string) *grpc.ClientConn {
 	var conn *grpc.ClientConn = nil
+	if len(c.conns) > 0 {
+		if c, ok := c.conns[serviceName]; ok {
+			conn = c.ClientConn
+		}
+	}
+	return conn
+}
+
+func (c *connsImp) ClientContext(serviceName string) *ClientContext {
+	var conn *ClientContext = nil
 	if len(c.conns) > 0 {
 		if c, ok := c.conns[serviceName]; ok {
 			conn = c

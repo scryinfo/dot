@@ -53,9 +53,24 @@ func ConnNameTypeLives() []*dot.TypeLives {
 	}
 }
 
-func (c *ConnName) Conn() *grpc.ClientConn {
+func (c *ConnName) AfterAllInject(l dot.Line) {
 	if c.conn == nil && c.Conns_ != nil {
 		c.conn = c.Conns_.ClientConn(c.serviceName)
 	}
+}
+
+func (c *ConnName) Conn() *grpc.ClientConn {
 	return c.conn
+}
+
+func (c *ConnName) ClientContext() *ClientContext {
+	var cc *ClientContext
+	if c.Conns_ != nil {
+		cc = c.Conns_.ClientContext(c.serviceName)
+	}
+	return cc
+}
+
+func (c *ConnName) ServerName() string {
+	return c.serviceName
 }
