@@ -10,15 +10,13 @@ require (
 	github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/rs/cors v1.6.0 // indirect
-	github.com/scryinfo/dot v0.1.3-0.20190629071017-dbfa9f04a27e
+	github.com/scryinfo/dot v0.1.3-0.20190705025127-46f699b1d595
 	github.com/scryinfo/dot/dots/gindot v0.0.0-20190629071805-94fc87d52a6b
 	github.com/scryinfo/scryg v0.1.3-0.20190608053141-a292b801bfd6
 	go.uber.org/zap v1.10.0
-	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5 // indirect
 	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
 	golang.org/x/sys v0.0.0-20190624142023-c5567b49c5d0 // indirect
 	golang.org/x/text v0.3.2 // indirect
-	golang.org/x/tools v0.0.0-20190606050223-4d9ae51c2468 // indirect
 	google.golang.org/grpc v1.21.1
 )
 
