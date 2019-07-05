@@ -33,7 +33,7 @@ func NewSLogger(conf *dot.LogConfig, l dot.Line) *sLogger {
 	re := &sLogger{
 		conf: *conf,
 	}
-	re.Create(l)
+	_ = re.Create(l)
 	return re
 }
 
@@ -183,7 +183,7 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 //ignore When calling other Lifer, if true erred then continue, if false erred then return directly
 func (log *sLogger) Destroy(ignore bool) error {
 	if log.Logger != nil {
-		log.Logger.Sync()
+		_ = log.Logger.Sync() //no log
 		log.Logger = nil
 	}
 	return nil

@@ -111,7 +111,7 @@ func (c *connsImp) Create(l dot.Line) error {
 		err = er
 	}
 
-FOR_SERVICES:
+ForServices:
 	for i := range c.config.Services {
 		var e1 error = nil
 		s := &c.config.Services[i]
@@ -130,18 +130,18 @@ FOR_SERVICES:
 				caPemFile := shared.GetFullPathFile(s.Tls.CaPem)
 				if len(caPemFile) < 1 {
 					errDo(errors.New("the caPem is not empty, and can not find the file: " + s.Tls.CaPem))
-					continue FOR_SERVICES
+					continue ForServices
 				}
 				keyFile := shared.GetFullPathFile(s.Tls.Key)
 				if len(keyFile) < 1 {
 					errDo(errors.New("the Key is not empty, and can not find the file: " + s.Tls.Key))
-					continue FOR_SERVICES
+					continue ForServices
 				}
 
 				pemFile := shared.GetFullPathFile(s.Tls.Pem)
 				if len(pemFile) < 1 {
 					errDo(errors.New("the Pem is not empty, and can not find the file: " + s.Tls.Pem))
-					continue FOR_SERVICES
+					continue ForServices
 				}
 
 				var tc credentials.TransportCredentials
@@ -151,17 +151,17 @@ FOR_SERVICES:
 						caCrt, err1 := ioutil.ReadFile(caPemFile)
 						if err1 != nil {
 							errDo(errors.WithStack(err1))
-							continue FOR_SERVICES
+							continue ForServices
 						}
 						if !pool.AppendCertsFromPEM(caCrt) {
 							errDo(errors.New("credentials: failed to append certificates"))
-							continue FOR_SERVICES
+							continue ForServices
 						}
 					}
 					cert, err1 := tls.LoadX509KeyPair(pemFile, keyFile)
 					if err1 != nil {
 						errDo(errors.WithStack(err1))
-						continue FOR_SERVICES
+						continue ForServices
 					}
 
 					tc = credentials.NewTLS(&tls.Config{
@@ -177,13 +177,13 @@ FOR_SERVICES:
 				pemfile := shared.GetFullPathFile(s.Tls.Pem)
 				if len(pemfile) < 1 {
 					errDo(errors.New("the Pem is not empty, and can not find the file: " + s.Tls.Pem))
-					continue FOR_SERVICES
+					continue ForServices
 				}
 
 				creds, err1 := credentials.NewClientTLSFromFile(pemfile, s.Tls.ServerNameOverride)
 				if err1 != nil {
 					errDo(errors.WithStack(err1))
-					continue FOR_SERVICES
+					continue ForServices
 				}
 				logger.Infoln("connsImp", zap.String("", "tls no ca"))
 				e1 = funRpc(&rpc, target, lb.Balance(s.Balance), grpc.WithTransportCredentials(creds))

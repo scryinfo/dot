@@ -81,7 +81,7 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 		builder.AfterCreate(line)
 	}
 
-	dot.Logger().Infoln("dots create")
+	dot.Logger().Infoln("dots Create")
 
 	if builder.BeforeStart != nil {
 		builder.BeforeStart(line)
@@ -95,7 +95,7 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 		return
 	}
 
-	dot.Logger().Infoln("dots start")
+	dot.Logger().Infoln("dots Start")
 
 	return
 }
@@ -110,7 +110,7 @@ func StopAndDestroy(l dot.Line, ignore bool) {
 	if builder.AfterStop != nil {
 		builder.AfterStop(l)
 	}
-	dot.Logger().Infoln("dots stop")
+	dot.Logger().Infoln("dots Stop")
 
 	if builder.BeforeDestroy != nil {
 		builder.BeforeDestroy(l)
@@ -119,6 +119,7 @@ func StopAndDestroy(l dot.Line, ignore bool) {
 	if builder.AfterDestroy != nil {
 		builder.AfterDestroy(l)
 	}
+	dot.Logger().Infoln("dots Destroy")
 
 	//dot.Logger().Infoln("dots destroy") maybe no logger
 }

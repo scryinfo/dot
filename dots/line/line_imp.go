@@ -195,7 +195,7 @@ func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 		remain := make(map[dot.LiveId]bool, len(relyed))        //do not know orderId
 		levels := make([]map[dot.LiveId]bool, 0, len(relyed)/3) //
 		{
-			for lid, _ := range relyed {
+			for lid := range relyed {
 				remain[lid] = true
 			}
 			level0 := make(map[dot.LiveId]bool)
@@ -252,14 +252,14 @@ func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 		{
 			for i, lev := range levels {
 				dot.Logger().Debugln(fmt.Sprintf("level : %d", i))
-				for lid, _ := range lev {
+				for lid := range lev {
 					dot.Logger().Debugln(cloneLives[lid].LiveId.String())
 					order = append(order, cloneLives[lid])
 				}
 			}
 			if len(remain) > 0 {
 				circle = make([]*dot.Live, 0, len(remain))
-				for lid, _ := range remain { //append to tail
+				for lid := range remain { //append to tail
 					order = append(order, cloneLives[lid])
 					circle = append(circle, cloneLives[lid])
 				}
@@ -333,7 +333,14 @@ func (c *lineImp) CreateDots(order []*dot.Live) error {
 	var outIt *dot.Live //just dor debug
 LIVES:
 	for _, outIt = range tdots {
-		logger.Debugln("Create dot: ", zap.String("", outIt.LiveId.String()))
+		logger.Debug(func() string {
+			m, _ := c.metas.Get(outIt.TypeId)
+			if m != nil {
+				return fmt.Sprintf("Create dot, type id: %s, live id: %s, name: %s", outIt.TypeId, outIt.LiveId, m.Name)
+			} else {
+				return fmt.Sprintf("Create dot, type id: %s, live id: %s", outIt.TypeId, outIt.LiveId)
+			}
+		})
 
 		if skit.IsNil(&outIt.Dot) == true {
 			var bconfig []byte
@@ -402,7 +409,12 @@ LIVES:
 
 	if err != nil {
 		logger.Debug(func() string {
-			return fmt.Sprint(outIt)
+			m, _ := c.metas.Get(outIt.TypeId)
+			if m != nil {
+				return fmt.Sprintf("Create dot, meta: %v\n live: %v", m, outIt)
+			} else {
+				return fmt.Sprintf("Create dot, live: %v", outIt)
+			}
 		})
 		logger.Errorln("lineImp", zap.Error(err))
 		return err
@@ -442,7 +454,12 @@ LIVES:
 					err = ed.Injected(c)
 					if err != nil {
 						logger.Debug(func() string {
-							return fmt.Sprint(it)
+							m, _ := c.metas.Get(it.TypeId)
+							if m != nil {
+								return fmt.Sprintf("Create dot, meta: %v\n live: %v", m, it)
+							} else {
+								return fmt.Sprintf("Create dot, live: %v", it)
+							}
 						})
 						logger.Errorln("lineImp", zap.Error(err))
 						break
@@ -738,7 +755,7 @@ func (c *lineImp) RemoveByLiveId(id dot.LiveId) error {
 	var err error
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.lives.RemoveById(id)
+	err = c.lives.RemoveById(id)
 	return err
 }
 
@@ -759,7 +776,7 @@ func (c *lineImp) GetParent() dot.Injecter {
 //If liveid repeated，directly return dot.SError.ErrExistedLiveId
 func (c *lineImp) Create(l dot.Line) error {
 	var err error
-FOR_FUN:
+ForFun:
 	for {
 		//first create config
 		c.sConfig = sconfig.NewConfiger()
@@ -767,20 +784,20 @@ FOR_FUN:
 		if s, ok := c.sConfig.(dot.Creator); ok {
 			if err = s.Create(l); err != nil {
 				createLog(c)
-				break FOR_FUN
+				break ForFun
 			} else if len(c.sConfig.ConfigFile()) < 1 { //no config file return
 				createLog(c)
-				break FOR_FUN
+				break ForFun
 			}
 		}
 
 		if err = c.sConfig.Unmarshal(&c.config); err != nil {
 			createLog(c)
-			break FOR_FUN
+			break ForFun
 		}
 		if len(c.config.Dots) < 1 { //no config
 			createLog(c)
-			break FOR_FUN
+			break ForFun
 		}
 
 		//create log
@@ -798,16 +815,16 @@ func (c *lineImp) makeDotMetaFromConfig() error {
 
 	var err error
 	var outIt *dot.DotConfig
-FOR_FUN: //handle config
+ForFun: //handle config
 	for i := range c.config.Dots {
 		outIt = &c.config.Dots[i]
 		if len(outIt.MetaData.TypeId.String()) < 1 {
 			err = dot.SError.Config.AddNewError("typeid is null")
-			break FOR_FUN
+			break ForFun
 		}
 
 		if err = c.metas.UpdateOrAdd(&outIt.MetaData); err != nil {
-			break FOR_FUN
+			break ForFun
 		}
 
 		if len(outIt.Lives) < 1 { //create the single live
@@ -820,7 +837,7 @@ FOR_FUN: //handle config
 				}
 			}
 			if err = c.lives.UpdateOrAdd(&live); err != nil {
-				break FOR_FUN
+				break ForFun
 			}
 		} else {
 			for _, li := range outIt.Lives {
@@ -829,7 +846,7 @@ FOR_FUN: //handle config
 				}
 				live := dot.Live{TypeId: outIt.MetaData.TypeId, LiveId: li.LiveId, RelyLives: li.RelyLives, Dot: nil}
 				if err = c.lives.UpdateOrAdd(&live); err != nil {
-					break FOR_FUN
+					break ForFun
 				}
 			}
 		}
@@ -854,7 +871,10 @@ func (c *lineImp) autoMakeLiveId() {
 		if _, ok := hasType[tid]; !ok {
 			lid := (dot.LiveId)(tid)
 			live := dot.Live{TypeId: tid, LiveId: lid, Dot: nil, RelyLives: nil}
-			c.lives.UpdateOrAdd(&live)
+			err2 := c.lives.UpdateOrAdd(&live)
+			if err2 != nil && c.logger != nil {
+				c.logger.Debugln(fmt.Sprintf("err: %v, live: %v", err2, live))
+			}
 		}
 	}
 
@@ -891,7 +911,14 @@ func (c *lineImp) Start(ignore bool) error {
 			tdots, _ := c.RelyOrder() //do not care the circle
 			afterStarts := make([]dot.AfterAllStarter, 0, 20)
 			for _, it := range tdots {
-				logger.Debugln("Start dot: ", zap.String("", it.LiveId.String()))
+				logger.Debug(func() string {
+					m, _ := c.metas.Get(it.TypeId)
+					if m != nil {
+						return fmt.Sprintf("Start dot, type id: %s, live id: %s, name: %s", it.TypeId, it.LiveId, m.Name)
+					} else {
+						return fmt.Sprintf("Start dot, type id: %s, live id: %s", it.TypeId, it.LiveId)
+					}
+				})
 				if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
 					for i := range b {
 						e := &b[i]
@@ -914,7 +941,14 @@ func (c *lineImp) Start(ignore bool) error {
 				if d, ok := it.Dot.(dot.Starter); ok {
 					err2 := d.Start(ignore)
 					if err2 != nil {
-						logger.Debugln(fmt.Sprintf("lineImp, start dot: %v", d))
+						logger.Debug(func() string {
+							m, _ := c.metas.Get(it.TypeId)
+							if m != nil {
+								return fmt.Sprintf("Start dot, meta: %v\n live: %v\n %v", m, it, d)
+							} else {
+								return fmt.Sprintf("Start dot, live: %v\n %v", it, d)
+							}
+						})
 						if err != nil {
 							logger.Errorln("lineImp", zap.Error(err))
 						}
@@ -983,7 +1017,14 @@ func (c *lineImp) Stop(ignore bool) error {
 
 		for idot := len(tdots) - 1; idot >= 0; idot-- {
 			it := tdots[idot]
-			logger.Debugln("Stop dot: ", zap.String("", it.LiveId.String()))
+			logger.Debug(func() string {
+				m, _ := c.metas.Get(it.TypeId)
+				if m != nil {
+					return fmt.Sprintf("Stop dot, type id: %s, live id: %s, name: %s", it.TypeId, it.LiveId, m.Name)
+				} else {
+					return fmt.Sprintf("Stop dot, type id: %s, live id: %s", it.TypeId, it.LiveId)
+				}
+			})
 			if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
 				for i := range b {
 					e := &b[i]
@@ -1074,7 +1115,14 @@ func (c *lineImp) Destroy(ignore bool) error {
 		tdots, _ := c.RelyOrder() //do not care the circle
 		for idot := len(tdots) - 1; idot >= 0; idot-- {
 			it := tdots[idot]
-			logger.Debugln("Destroy dot: ", zap.String("", it.LiveId.String()))
+			logger.Debug(func() string {
+				m, _ := c.metas.Get(it.TypeId)
+				if m != nil {
+					return fmt.Sprintf("Destroy dot, type id: %s, live id: %s, name: %s", it.TypeId, it.LiveId, m.Name)
+				} else {
+					return fmt.Sprintf("Destroy dot, type id: %s, live id: %s", it.TypeId, it.LiveId)
+				}
+			})
 			if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 {
 				for i := range b {
 					e := &b[i]

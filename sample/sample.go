@@ -25,8 +25,8 @@ func main() {
 	t := &SomeUse{}
 
 	l.InfoAllTypeAdnLives()
-	l.ToInjecter().Inject(t)                    //second step use the injecter or others
-	dot.GetDefaultLine().ToInjecter().Inject(t) //or second step, use the default line(in the sample, the default line  == l)
+	_ = l.ToInjecter().Inject(t)                    //second step use the injecter or others
+	_ = dot.GetDefaultLine().ToInjecter().Inject(t) //or second step, use the default line(in the sample, the default line  == l)
 
 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
@@ -38,11 +38,11 @@ func main() {
 func add(l dot.Line) error {
 	var err error
 	{
-		t := reflect.TypeOf(((*Dot1)(nil)))
+		t := reflect.TypeOf((*Dot1)(nil))
 		t = t.Elem()
 		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "1", RefType: t}, Lives: []dot.Live{
-				dot.Live{LiveId: "1"},
+				{LiveId: "1"},
 			},
 		})
 
@@ -55,12 +55,12 @@ func add(l dot.Line) error {
 	}
 
 	{
-		t := reflect.TypeOf(((*Dot2)(nil)))
+		t := reflect.TypeOf((*Dot2)(nil))
 		t = t.Elem()
 		//If no newer assignment, then use reflect.newLine to create it
 		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "2", RefType: t}, Lives: []dot.Live{
-				dot.Live{LiveId: "21"}, dot.Live{LiveId: "22"},
+				{LiveId: "21"}, {LiveId: "22"},
 			},
 		})
 	}
@@ -73,7 +73,7 @@ func add(l dot.Line) error {
 			if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
 				if t.Len() > 0 && t.Index(0).Kind() == reflect.Uint8 {
 					v := t.Slice(0, t.Len())
-					json.Unmarshal(v.Bytes(), d)
+					err = json.Unmarshal(v.Bytes(), d)
 				}
 			} else {
 				err = dot.SError.Parameter
@@ -89,7 +89,7 @@ func add(l dot.Line) error {
 			if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
 				if t.Len() > 0 && t.Index(0).Kind() == reflect.Uint8 {
 					v := t.Slice(0, t.Len())
-					json.Unmarshal(v.Bytes(), d)
+					err = json.Unmarshal(v.Bytes(), d)
 				}
 			} else {
 				err = dot.SError.Parameter
@@ -107,7 +107,7 @@ func add(l dot.Line) error {
 			if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
 				if t.Len() > 0 && t.Index(0).Kind() == reflect.Uint8 {
 					v := t.Slice(0, t.Len())
-					json.Unmarshal(v.Bytes(), d)
+					err = json.Unmarshal(v.Bytes(), d)
 				}
 			} else {
 				err = dot.SError.Parameter
@@ -123,7 +123,7 @@ func add(l dot.Line) error {
 			if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
 				if t.Len() > 0 && t.Index(0).Kind() == reflect.Uint8 {
 					v := t.Slice(0, t.Len())
-					json.Unmarshal(v.Bytes(), d)
+					err = json.Unmarshal(v.Bytes(), d)
 				}
 			} else {
 				err = dot.SError.Parameter
@@ -136,8 +136,8 @@ func add(l dot.Line) error {
 
 //Add assigned type to container directly
 func addDot(l dot.Line) {
-	l.ToInjecter().ReplaceOrAddByType(&Dot1{Name: "null"})
-	l.ToInjecter().ReplaceOrAddByLiveId(&Dot1{Name: "6666"}, dot.LiveId("6666"))
+	_ = l.ToInjecter().ReplaceOrAddByType(&Dot1{Name: "null"})
+	_ = l.ToInjecter().ReplaceOrAddByLiveId(&Dot1{Name: "6666"}, dot.LiveId("6666"))
 }
 
 type Dot1 struct {

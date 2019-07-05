@@ -28,8 +28,8 @@ func TestEcdsa_GenerateCaCertKey(t *testing.T) {
 	_, err = ec.GenerateCaCertKey(caPri, keyFile, pemFile, []string{"scry"}, []string{"scry"})
 
 	defer func() {
-		os.Remove(keyFile)
-		os.Remove(pemFile)
+		_ = os.Remove(keyFile)
+		_ = os.Remove(pemFile)
 	}()
 
 	if err != nil {
@@ -82,8 +82,8 @@ func TestEcdsa_GenerateCertKey(t *testing.T) {
 	ca, err := ec.GenerateCaCertKey(caPri, keyFile, pemFile, []string{"scry"}, []string{"scry"})
 
 	defer func() {
-		os.Remove(keyFile)
-		os.Remove(pemFile)
+		_ = os.Remove(keyFile)
+		_ = os.Remove(pemFile)
 	}()
 
 	if err != nil {
@@ -92,8 +92,8 @@ func TestEcdsa_GenerateCertKey(t *testing.T) {
 
 	err = ec.GenerateCertKey(ca, caPri, keySub, pemSub, []string{"scry"}, []string{"scry"})
 	defer func() {
-		os.Remove(keySub)
-		os.Remove(pemSub)
+		_ = os.Remove(keySub)
+		_ = os.Remove(pemSub)
 	}()
 	if err != nil {
 		t.Error(err)

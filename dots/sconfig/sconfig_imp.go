@@ -5,6 +5,7 @@ package sconfig
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -86,7 +87,13 @@ func (c *sConfig) RootPath() {
 	}
 
 	if len(c.confPath) > 0 && !sfile.ExistFile(c.confPath) {
-		os.MkdirAll(c.confPath, os.ModePerm)
+		err := os.MkdirAll(c.confPath, os.ModePerm)
+		if err != nil {
+			logger := dot.Logger()
+			if logger != nil {
+				logger.Debugln(fmt.Sprint(err))
+			}
+		}
 	}
 }
 

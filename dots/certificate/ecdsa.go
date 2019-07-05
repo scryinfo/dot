@@ -25,15 +25,12 @@ const (
 	EcdsaTypeId = "4b8b1751-4799-4578-af46-d9b339cf582f"
 )
 
-type configEcdsa struct {
-	Name string `json:"name"`
-}
-
 type Ecdsa struct {
 }
 
 func newEcdsa(conf interface{}) (dot.Dot, error) {
 	var err error = nil
+	_ = conf
 	d := &Ecdsa{}
 	return d, err
 }
@@ -280,7 +277,7 @@ func exPathFileAndMakeDirs(file string) (nfile string, err error) {
 		exPath := ""
 		{
 			ex, err3 := os.Executable()
-			if err == nil {
+			if err3 == nil {
 				exPath = filepath.Dir(ex)
 			} else {
 				err = err3
@@ -307,7 +304,7 @@ func exPathFile(file string) (tfile string, err error) {
 		exPath := ""
 		{
 			ex, err3 := os.Executable()
-			if err == nil {
+			if err3 == nil {
 				exPath = filepath.Dir(ex)
 			} else {
 				err = err3
