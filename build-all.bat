@@ -12,7 +12,6 @@ go mod tidy
 cd %dotPath%/certificate & go build
 cd %dotPath%/gindot  & go mod tidy & go build
 cd %dotPath%/grpc & go mod tidy
-cd %dotPath%/grpc/gclient & go build
 cd %dotPath%/grpc/conns & go build
 cd %dotPath%/grpc/lb & go build
 cd %dotPath%/grpc/gserver & go build
