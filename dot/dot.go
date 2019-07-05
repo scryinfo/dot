@@ -171,6 +171,11 @@ type Creator interface {
 	Create(l Line) error
 }
 
+type Injected interface {
+	//Injected call the function after inject
+	Injected(l Line) error
+}
+
 type Starter interface {
 	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
 	Start(ignore bool) error

@@ -24,6 +24,7 @@ func main() {
 	dot.Logger().Infoln("dot ok")
 	t := &SomeUse{}
 
+	l.InfoAllTypeAdnLives()
 	l.ToInjecter().Inject(t)                    //second step use the injecter or others
 	dot.GetDefaultLine().ToInjecter().Inject(t) //or second step, use the default line(in the sample, the default line  == l)
 
@@ -35,14 +36,13 @@ func main() {
 
 //how to new the dots of config
 func add(l dot.Line) error {
-	logger := dot.Logger()
 	var err error
 	{
 		t := reflect.TypeOf(((*Dot1)(nil)))
 		t = t.Elem()
 		err = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{TypeId: "1", RefType: t}, Lives: []dot.Live{
-				dot.Live{LiveId: "12"},
+				dot.Live{LiveId: "1"},
 			},
 		})
 
@@ -146,7 +146,7 @@ type Dot1 struct {
 
 type SomeUse struct {
 	DotLive  *Dot1 `dot:""`
-	DotLive2 *Dot1 `dot:"12"`
+	DotLive2 *Dot1 `dot:"1"`
 
 	DotLive3 *Dot2 `dot:"21"`
 	DotLive4 *Dot2 `dot:"22"`
@@ -173,8 +173,7 @@ type Dot4 struct {
 }
 
 //Create use this method to initialize, run or monitor same content, better realize it in start method
-func (c *Dot3) Create(conf dot.SConfig) error {
-
+func (c *Dot3) Create(l dot.Line) error {
 	return nil
 }
 
