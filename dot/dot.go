@@ -85,11 +85,6 @@ type Live struct {
 	Dot       Dot
 }
 
-//NewMetadata new Metadata
-func NewMetadata() *Metadata {
-	return &Metadata{}
-}
-
 //Clone clone Metadata
 func (m *Metadata) Clone() *Metadata {
 	c := *m

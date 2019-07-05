@@ -75,7 +75,7 @@ func HttpNoblTypeLives() []*dot.TypeLives {
 			return newHttpNobl(conf)
 		}},
 		Lives: []dot.Live{
-			dot.Live{
+			{
 				LiveId:    HttpTypeId,
 				RelyLives: map[string]dot.LiveId{"ServerNobl": ServerNoblTypeId},
 			},

@@ -44,7 +44,7 @@ func Logger() SLogger {
 func SetLogger(log SLogger) {
 	if logger != nil {
 		if d, ok := logger.(Destroyer); ok {
-			d.Destroy(true)
+			_ = d.Destroy(true)
 		}
 		logger = nil
 	}

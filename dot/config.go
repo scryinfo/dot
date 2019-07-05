@@ -33,7 +33,7 @@ type Config struct {
 func (c *Config) FindConfig(tid TypeId, live LiveId) *LiveConfig {
 	var lcon *LiveConfig = nil
 
-OUT_FOR:
+OutFor:
 	for _, it := range c.Dots {
 		if len(tid.String()) > 0 && tid != it.MetaData.TypeId {
 			continue
@@ -42,7 +42,7 @@ OUT_FOR:
 		for _, li := range it.Lives {
 			if li.LiveId == live || (len(li.LiveId.String()) < 1 && live.String() == it.MetaData.TypeId.String()) {
 				lcon = &li
-				break OUT_FOR
+				break OutFor
 			}
 		}
 	}

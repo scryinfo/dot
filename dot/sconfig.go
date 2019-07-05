@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	SconfigLiveId = ""
+	SconfigTypeId = "484ef01d-3c04-4517-a643-2d776a9ae758"
 )
 
 //SConfig config belongs to one component Dot, but it is so basic, every Dot need it, so define it in dot.go file

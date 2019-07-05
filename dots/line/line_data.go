@@ -150,11 +150,3 @@ func (ms *Lives) Get(liveId dot.LiveId) (meta *dot.Live, err error) {
 	}
 	return
 }
-
-func CloneRelyLiveId(old map[string]dot.LiveId) map[string]dot.LiveId {
-	re := make(map[string]dot.LiveId, len(old))
-	for k, v := range old {
-		re[k] = v
-	}
-	return re
-}

@@ -26,7 +26,7 @@ type blog struct {
 
 func (c *blog) Destroy(ignore bool) error {
 	if c.logger != nil {
-		c.logger.Sync()
+		_ = c.logger.Sync()
 		c.logger = nil
 	}
 	return nil
