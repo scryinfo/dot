@@ -13,7 +13,7 @@ require (
 	github.com/kr/pty v1.1.4 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/satori/go.uuid v1.2.0
-	github.com/scryinfo/scryg v0.1.3-0.20190608032618-f4f2c5103cd2
+	github.com/scryinfo/scryg v0.1.3-0.20190706085422-aa48331c24ad // indirect
 	github.com/stretchr/objx v0.2.0 // indirect
 	go.opencensus.io v0.22.0 // indirect
 	go.uber.org/atomic v1.4.0 // indirect
