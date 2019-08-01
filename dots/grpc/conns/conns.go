@@ -91,6 +91,19 @@ func ConnsTypeLives() *dot.TypeLives {
 	}
 }
 
+//jayce edit
+//return config of Conn
+func ConnsConfigTypeLives() *dot.ConfigTypeLives {
+	slice1 := make([]serviceConfig, 0)
+	slice1 = append(slice1, serviceConfig{})
+	return &dot.ConfigTypeLives{
+		TypeIdConfig: ConnsTypeId,
+		ConfigInfo: &connsConfig{
+			Services: slice1,
+		},
+	}
+}
+
 func (c *connsImp) Create(l dot.Line) error {
 	logger := dot.Logger()
 	var err error = nil

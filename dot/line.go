@@ -128,6 +128,13 @@ type TypeLives struct {
 	Lives []Live
 }
 
+//jayce edit
+//config json
+type ConfigTypeLives struct {
+	TypeIdConfig TypeId      `json:"typeId"`
+	ConfigInfo   interface{} `json:"json"`
+}
+
 //Add typeid, newer for dot in config file
 //This function is run after line create, also you can add other initialized content
 type BuildNewer func(l Line) error

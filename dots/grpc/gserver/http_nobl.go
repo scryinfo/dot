@@ -87,6 +87,15 @@ func HttpNoblTypeLives() []*dot.TypeLives {
 	}
 }
 
+//jayce edit
+//return config of HttpNobl
+func HttpNoblConfigTypeLives() *dot.ConfigTypeLives {
+	return &dot.ConfigTypeLives{
+		TypeIdConfig: HttpTypeId,
+		ConfigInfo:   &httpNoblConf{},
+	}
+}
+
 //Run after every component finished start, this can ensure all service has been registered on grpc server
 func (c *httpNobl) AfterAllStart(l dot.Line) {
 	c.startServer()
