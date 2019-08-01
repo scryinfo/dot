@@ -88,6 +88,15 @@ func TypeLiveGinDot() *dot.TypeLives {
 	}
 }
 
+//jayce edit
+//return config of GinDot
+func ConfigTypeLiveGinDot() *dot.ConfigTypeLives {
+	return &dot.ConfigTypeLives{
+		TypeIdConfig: EngineTypeId,
+		ConfigInfo:   &configEngine{},
+	}
+}
+
 //Create create the gin
 func (c *Engine) Create(l dot.Line) error {
 	c.ginEngine = gin.New()

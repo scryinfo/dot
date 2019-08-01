@@ -8,7 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/scryinfo/dot/dot"
-
 )
 
 const (
@@ -51,11 +50,20 @@ func newRouter(conf interface{}) (*Router, error) {
 //TypeLiveRouter generate data for structural  dot,  include gindot.Engine
 func TypeLiveRouter() []*dot.TypeLives {
 	return []*dot.TypeLives{&dot.TypeLives{
-			Meta: dot.Metadata{TypeId: RouterTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
-				return newRouter(conf)
-			}},
-		},
+		Meta: dot.Metadata{TypeId: RouterTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
+			return newRouter(conf)
+		}},
+	},
 		TypeLiveGinDot(),
+	}
+}
+
+//jayce edit
+//return config of Router
+func ConfigTypeLiveRouter() *dot.ConfigTypeLives {
+	return &dot.ConfigTypeLives{
+		TypeIdConfig: RouterTypeId,
+		ConfigInfo:   &configRouter{},
 	}
 }
 

@@ -53,6 +53,15 @@ func ConnNameTypeLives() []*dot.TypeLives {
 	}
 }
 
+//jayce edit
+//return config of ConnName
+func ConnNameConfigTypeLives() *dot.ConfigTypeLives {
+	return &dot.ConfigTypeLives{
+		TypeIdConfig: ConnNameTypeId,
+		ConfigInfo:   &configName{},
+	}
+}
+
 func (c *ConnName) AfterAllInject(l dot.Line) {
 	if c.conn == nil && c.Conns_ != nil {
 		c.conn = c.Conns_.ClientConn(c.serviceName)

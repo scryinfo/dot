@@ -69,6 +69,15 @@ func ServerNoblTypeLive() *dot.TypeLives {
 	}
 }
 
+//jayce edit
+//return config of ServerNobl
+func ServerNoblConfigTypeLive() *dot.ConfigTypeLives {
+	return &dot.ConfigTypeLives{
+		TypeIdConfig: ServerNoblTypeId,
+		ConfigInfo:   &ConfigNobl{},
+	}
+}
+
 func (c *serverNoblImp) Create(l dot.Line) error {
 	logger := dot.Logger()
 	var err error = nil
