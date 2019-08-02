@@ -22,9 +22,9 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
     },
     {
-      path: '/fold',
-      name: 'fold',
-      component: () => import('./components/fold.vue')
+      path: '/Config',
+      name: 'config',
+      component: () => import('./views/Config.vue')
     }
   ],
 });
