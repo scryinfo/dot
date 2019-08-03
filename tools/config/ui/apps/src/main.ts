@@ -4,7 +4,10 @@ import router from './router';
 import store from './store';
 import './registerServiceWorker';
 import './plugins/element.js'
-import setPrototypeOf = Reflect.setPrototypeOf;
+// @ts-ignore
+import JsonEditor from 'vue-json-edit'
+
+Vue.use(JsonEditor)
 
 Vue.config.productionTip = false;
 
