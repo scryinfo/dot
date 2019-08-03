@@ -31,6 +31,14 @@
                                         </el-dropdown-menu>
                                     </el-dropdown></el-col>
                                     <el-col :span="2" style="text-align: center">:</el-col ><el-col :span="8"><el-input v-model="live.RelyLives[liveName]"></el-input></el-col><el-col :span="2"><el-button @click="RemoveRelyLives(live.RelyLives,liveName)">remove</el-button></el-col></el-row>
+                                <el-row><el-col :span="20"><el-collapse-item title="Extend Config for live" v-bind:name="index+','+index2">
+                                    <json-editor :options="{
+                                                 confirmText: 'confirm',
+                                                 cancelText: 'cancel',
+                                                 }"
+                                                 :objData="live.json"
+                                                 v-model="live.json"></json-editor>
+                                </el-collapse-item></el-col><el-col :span="4"><el-button @click="ShowJsonDialog(live.json)">JSON</el-button></el-col></el-row>
                             </el-collapse-item>
                         </el-col>
                         <el-col :span="5"><el-button @click="ShowJsonDialog(live)">JSON</el-button><el-button @click="RemoveObject(config,'Lives',index2)">Remove Live</el-button></el-col>
