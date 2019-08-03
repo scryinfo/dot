@@ -16,8 +16,8 @@
                                 <el-col :span="4"><el-button @click="UuidGenerator(live)">Generate Live Id</el-button></el-col>
                                 </el-row>
 
-                                <el-row><el-col :span="2"><label>relyLives</label></el-col><el-col :span="5"><el-button>add</el-button><el-button>JSON</el-button></el-col></el-row>
-                                <el-row><el-col :span="5" :offset="2"><el-input></el-input></el-col>
+                                <el-row><el-col :span="2"><label>relyLives</label></el-col><el-col :span="5"><el-button @click="AddRelyLives(config.Lives[index2])">add</el-button><el-button @click="ShowJsonDialog(live.RelyLives)">JSON</el-button></el-col></el-row>
+                                <el-row v-for="(relyLiveId, liveName, index3) in live.RelyLives"><el-col :span="5" :offset="2"><el-input v-model="liveName"></el-input></el-col>
                                     <el-col :span="2"><el-dropdown>
                                         <el-button type="primary">
                                             更多菜单<i class="el-icon-arrow-down el-icon--right"></i>
@@ -30,7 +30,7 @@
                                             <el-dropdown-item>蚵仔煎</el-dropdown-item>
                                         </el-dropdown-menu>
                                     </el-dropdown></el-col>
-                                    <el-col :span="2" style="text-align: center"><label >:</label></el-col ><el-col :span="5"><el-input></el-input></el-col></el-row>
+                                    <el-col :span="2" style="text-align: center">:</el-col ><el-col :span="8"><el-input v-model="live.RelyLives[liveName]"></el-input></el-col><el-col :span="2"><el-button @click="RemoveRelyLives(live.RelyLives,liveName)">remove</el-button></el-col></el-row>
                             </el-collapse-item>
                         </el-col>
                         <el-col :span="5"><el-button @click="ShowJsonDialog(live)">JSON</el-button><el-button @click="RemoveObject(config,'Lives',index2)">Remove Live</el-button></el-col>
@@ -68,7 +68,9 @@
                 activeTypes:[],
                 dialog: false,
                 textarea: '',
+                keyarea: '',
                 objc: null,
+                model: '',
             }
         },
         methods: {
@@ -76,7 +78,7 @@
                 for (let dot of this.$root.Dots) {
                     if (dot.Meta.typeId === typeId) {
                         let dotcopy;
-                        eval("dotcopy = shallowCopy(dot."+keyss+"[0])");
+                        eval("dotcopy = this.shallowCopy(dot."+keyss+"[0])");
                         eval("config."+keyss+".push(dotcopy)");
                         break;
                     }
@@ -102,18 +104,36 @@
                     }
                 }
                 done();
+            },
+            AddRelyLives(live:any){
+                if(live.RelyLives===null){
+                    console.log("add rely");
+                    this.$set(live,'RelyLives',{})
+                    console.log(live.RelyLives);
+                }
+                this.$set(live.RelyLives,'default','please change default');
+            },
+            RemoveRelyLives(relyLives:any,name:string){
+                this.$delete(relyLives,name)
+            },
+            KeyInputFocus(){
+
+            },
+            KeyInputChanges(){
+
+            },
+            shallowCopy(src:any):any {
+                let dst:any = {};
+                for (let prop in src) {
+                    if (src.hasOwnProperty(prop)) {
+                     dst[prop] = src[prop];
+                    }
+                }
+                return dst;
             }
         }
     })
-    function shallowCopy(src:any):any {
-        let dst:any = {};
-        for (let prop in src) {
-            if (src.hasOwnProperty(prop)) {
-                dst[prop] = src[prop];
-            }
-        }
-        return dst;
-    }
+
 </script>
 
 <style scoped>
