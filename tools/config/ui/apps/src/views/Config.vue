@@ -10,7 +10,6 @@
                         <el-col :span="2"><el-tag type="info" effect="plain">{{live.name}}</el-tag></el-col>
                         <el-col :span="17">
                             <el-collapse-item v-bind:title="live.LiveId" v-bind:name="index+' '+index2">
-
                                 <el-row><el-col :span="2"><label>name</label></el-col><el-col :span="15"><el-input v-model="live.name" placeholder="Name"></el-input></el-col></el-row>
                                 <el-row><el-col :span="2"><label>liveId</label></el-col><el-col :span="15"><el-input v-model="live.LiveId" placeholder="Liveid"></el-input></el-col>
                                 <el-col :span="4"><el-button @click="UuidGenerator(live)">Generate Live Id</el-button></el-col>
@@ -32,12 +31,12 @@
                                     </el-dropdown></el-col>
                                     <el-col :span="2" style="text-align: center">:</el-col ><el-col :span="8"><el-input v-model="live.RelyLives[liveName]"></el-input></el-col><el-col :span="2"><el-button @click="RemoveRelyLives(live.RelyLives,liveName)">remove</el-button></el-col></el-row>
                                 <el-row><el-col :span="20"><el-collapse-item title="Extend Config for live" v-bind:name="index+','+index2">
-                                    <json-editor :options="{
-                                                 confirmText: 'confirm',
-                                                 cancelText: 'cancel',
-                                                 }"
-                                                 :objData="live.json"
-                                                 v-model="live.json"></json-editor>
+<!--                                    <json-editor :options="{-->
+<!--                                                 confirmText: 'confirm',-->
+<!--                                                 cancelText: 'cancel',-->
+<!--                                                 }"-->
+<!--                                                 :objData="live.json"-->
+<!--                                                 v-model="live.json"></json-editor>-->
                                 </el-collapse-item></el-col><el-col :span="4"><el-button @click="ShowJsonDialog(live.json)">JSON</el-button></el-col></el-row>
                             </el-collapse-item>
                         </el-col>

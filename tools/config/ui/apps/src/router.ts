@@ -1,6 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
+import FindDot from './views/FindDot.vue';
+import DotList from './views/DotList.vue';
+import Import from './views/Import.vue';
+import Export from './views/Export.vue';
 
 Vue.use(Router);
 
@@ -9,17 +13,24 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: Home,
+      path:"/findDot",
+      name:"findDot",
+      component:FindDot
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
+      path:"/dotList",
+      name:"dotList",
+      component:DotList
+    },
+    {
+      path:"/import",
+      name:"import",
+      component:Import
+    },
+    {
+      path:"/export",
+      name:"export",
+      component:Export
     },
     {
       path: '/Config',
