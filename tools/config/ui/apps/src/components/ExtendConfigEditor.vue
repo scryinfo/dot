@@ -20,7 +20,7 @@
         watch: {
             objData: {
                 handler(newValue, oldValue) {
-                    this.parsedData = this.jsonParse(this.objData);
+                    this.parsedData = this.jsonParse(this.objData.json);
                 },
                 immediate: true
             },

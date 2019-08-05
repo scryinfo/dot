@@ -17,10 +17,10 @@
 
                                 <rely-lives-editor
                                         :objData="live"
-                                        v-model="config.Lives[index2]"
+                                        v-model="live.RelyLives"
                                 ></rely-lives-editor>
 
-                                <el-row><el-col :span="20"><el-collapse-item title="Extend Config for live" v-bind:name="index+','+index2">
+                                <el-row v-if="live.json"><el-col :span="20"><el-collapse-item title="Extend Config for live" v-bind:name="index+','+index2">
                                     <extend-config-editor
                                             :objData="live.json"
                                             v-model="live.json"
