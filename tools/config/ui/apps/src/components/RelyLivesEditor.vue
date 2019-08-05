@@ -14,13 +14,13 @@
         data () {
             return {
                 parsedData: [],
-                lastParsedData: {}
+                lastParsedData: {},
             }
         },
         watch: {
             objData: {
                 handler(newValue, oldValue) {
-                    this.parsedData = this.jsonParse(this.objData);
+                    this.parsedData = this.jsonParse(this.objData.RelyLives);
                 },
                 immediate: true
             },
@@ -30,9 +30,35 @@
                         return;
                     }
                     this.lastParsedData = newValue;
-                    this.$emit("input", this.makeJson(this.parsedData));
+                    this.makeJson(this.parsedData);
                 },
                 deep: true
+            }
+        },
+        methods: {
+            jsonParse(Json) {
+                if (Json === null){
+                    Json = {}
+                }
+                let result = [];
+                let keys = Object.keys(Json);
+                keys.forEach((k, index) => {
+                    let val = Json[k];
+                    let newObject = {name: k, remark: val};
+                    result.push(newObject)
+                });
+                return result;
+            },
+            makeJson(ParData) {
+                let Revert = {};
+                for (let i = 0; i < data.length; ++i) {
+                    let el = data[i];
+                    let key, val;
+                    key = el.name;
+                    val = el.remark;
+                    Revert[key] = val;
+                }
+                return Revert;
             }
         }
     }
