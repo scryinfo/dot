@@ -2,12 +2,12 @@
     <div>
     <el-collapse v-model="activeTypes">
         <el-row v-for="(config,index) in this.$root.Configs">
-            <el-col :span="1" ><el-tag type="info" effect="plain">{{index+1}}</el-tag></el-col>
-            <el-col :span="2"><el-tag type="info" effect="plain">{{config.Meta.name}}</el-tag></el-col>
+            <el-col :span="1" ><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{index+1}}</div></el-col>
+            <el-col :span="2"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{config.Meta.name}}</div></el-col>
             <el-col :span="16">
                 <el-collapse-item v-bind:title="config.Meta.typeId" v-bind:name="index">
                     <el-row v-for="(live,index2) in config.Lives">
-                        <el-col :span="2"><el-tag type="info" effect="plain">{{live.name}}</el-tag></el-col>
+                        <el-col :span="2"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{live.name}}</div></el-col>
                         <el-col :span="17">
                             <el-collapse-item v-bind:title="live.LiveId" v-bind:name="index+' '+index2">
                                 <el-row><el-col :span="2"><label>name</label></el-col><el-col :span="15"><el-input v-model="live.name" placeholder="Name"></el-input></el-col></el-row>
@@ -15,28 +15,16 @@
                                 <el-col :span="4"><el-button @click="UuidGenerator(live)">Generate Live Id</el-button></el-col>
                                 </el-row>
 
-                                <el-row><el-col :span="2"><label>relyLives</label></el-col><el-col :span="5"><el-button @click="AddRelyLives(config.Lives[index2])">add</el-button><el-button @click="ShowJsonDialog(live.RelyLives)">JSON</el-button></el-col></el-row>
-                                <el-row v-for="(relyLiveId, liveName, index3) in live.RelyLives"><el-col :span="5" :offset="2"><el-input v-model="liveName"></el-input></el-col>
-                                    <el-col :span="2"><el-dropdown>
-                                        <el-button type="primary">
-                                            更多菜单<i class="el-icon-arrow-down el-icon--right"></i>
-                                        </el-button>
-                                        <el-dropdown-menu slot="dropdown">
-                                            <el-dropdown-item>黄金糕</el-dropdown-item>
-                                            <el-dropdown-item>狮子头</el-dropdown-item>
-                                            <el-dropdown-item>螺蛳粉</el-dropdown-item>
-                                            <el-dropdown-item>双皮奶</el-dropdown-item>
-                                            <el-dropdown-item>蚵仔煎</el-dropdown-item>
-                                        </el-dropdown-menu>
-                                    </el-dropdown></el-col>
-                                    <el-col :span="2" style="text-align: center">:</el-col ><el-col :span="8"><el-input v-model="live.RelyLives[liveName]"></el-input></el-col><el-col :span="2"><el-button @click="RemoveRelyLives(live.RelyLives,liveName)">remove</el-button></el-col></el-row>
+                                <rely-lives-editor
+                                        :objData="live"
+                                        v-model="config.Lives[index2]"
+                                ></rely-lives-editor>
+
                                 <el-row><el-col :span="20"><el-collapse-item title="Extend Config for live" v-bind:name="index+','+index2">
-<!--                                    <json-editor :options="{-->
-<!--                                                 confirmText: 'confirm',-->
-<!--                                                 cancelText: 'cancel',-->
-<!--                                                 }"-->
-<!--                                                 :objData="live.json"-->
-<!--                                                 v-model="live.json"></json-editor>-->
+                                    <extend-config-editor
+                                            :objData="live.json"
+                                            v-model="live.json"
+                                    ></extend-config-editor>
                                 </el-collapse-item></el-col><el-col :span="4"><el-button @click="ShowJsonDialog(live.json)">JSON</el-button></el-col></el-row>
                             </el-collapse-item>
                         </el-col>
@@ -68,6 +56,8 @@
 
 <script lang="ts">
     import Vue from 'vue'
+    import RelyLivesEditor from '../components/RelyLivesEditor.vue'
+    import ExtendConfigEditor from '../components/ExtendConfigEditor.vue'
     const uuidv1 = require('uuid/v1')
     export default Vue.extend({
         data() {
@@ -79,6 +69,10 @@
                 objc: null,
                 model: '',
             }
+        },
+        components: {
+          "rely-lives-editor": RelyLivesEditor,
+          "extend-config-editor": ExtendConfigEditor
         },
         methods: {
             AddObject(config:any,typeId:string,keyss:string) {
@@ -152,5 +146,12 @@
     }
     .el-icon-arrow-down {
         font-size: 12px;
+    }
+    .bg-purple {
+        background: #d3dce6;
+    }
+    .grid-content {
+        border-radius: 4px;
+        min-height: 46px;
     }
 </style>
