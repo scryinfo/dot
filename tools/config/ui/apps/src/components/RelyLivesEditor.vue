@@ -6,7 +6,11 @@
             Select<i class="el-icon-arrow-down el-icon--right"></i>
       </span>
             <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-for="dot in $root.Dots" @click.native="changeItem(ob,dot)">{{dot.Meta.name}}:{{dot.Meta.typeId}}</el-dropdown-item>
+                <div v-for="config in $root.Configs">
+                    <div v-for="live in config.Lives">
+                        <el-dropdown-item @click.native="changeItem(ob,live)">{{live.name}}:{{live.LiveId}}</el-dropdown-item>
+                    </div>
+                </div>
             </el-dropdown-menu>
         </el-dropdown></el-col><el-col :span="10"><el-input v-model="ob.remark"></el-input></el-col><el-col :span="3"><el-button @click="removeObject(index)">remove</el-button></el-col></el-row>
     </div>
@@ -86,12 +90,12 @@
             jsonButton() {
                 this.$emit("JSONDialog",this.objData.RelyLives)
             },
-            changeItem(ob,dot) {
-                if (dot.Meta.name){
-                    ob.name=dot.Meta.name;
+            changeItem(ob,live) {
+                if (live.name){
+                    ob.name=live.name;
                 }
-                if (dot.Meta.typeId){
-                    ob.remark=dot.Meta.typeId;
+                if (live.LiveId){
+                    ob.remark=live.LiveId;
                 }
             }
         }
