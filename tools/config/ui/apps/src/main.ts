@@ -52,7 +52,9 @@ new Vue({
                 "addr": "",
                 "keyFile": "",
                 "pemFile": "",
-                "logSkipPaths": null
+                "logSkipPaths": [
+                  ""
+                ]
               },
               "name": ""
             }
@@ -122,7 +124,9 @@ new Vue({
                 "services": [
                   {
                     "name": "",
-                    "addrs": null,
+                    "addrs": [
+                      ""
+                    ],
                     "tls": {
                       "caPem": "",
                       "pem": "",
@@ -176,7 +180,9 @@ new Vue({
               "RelyLives": null,
               "Dot": null,
               "json": {
-                "addrs": null,
+                "addrs": [
+                  ""
+                ],
                 "tls": {
                   "caPem": "",
                   "pem": "",
@@ -260,7 +266,9 @@ new Vue({
                 "addr": "",
                 "keyFile": "",
                 "pemFile": "",
-                "logSkipPaths": null
+                "logSkipPaths": [
+                  ""
+                ]
               },
               "name": ""
             }
@@ -330,7 +338,9 @@ new Vue({
                 "services": [
                   {
                     "name": "",
-                    "addrs": null,
+                    "addrs": [
+                      ""
+                    ],
                     "tls": {
                       "caPem": "",
                       "pem": "",
@@ -384,7 +394,9 @@ new Vue({
               "RelyLives": null,
               "Dot": null,
               "json": {
-                "addrs": null,
+                "addrs": [
+                  ""
+                ],
                 "tls": {
                   "caPem": "",
                   "pem": "",
