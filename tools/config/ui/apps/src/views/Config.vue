@@ -1,7 +1,7 @@
 <template>
     <div>
     <el-collapse v-model="activeTypes">
-        <el-row v-for="(config,index) in this.$root.Configs">
+        <el-row v-for="(config,index) in $root.Configs">
             <el-col :span="1" ><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{index+1}}</div></el-col>
             <el-col :span="2"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{config.Meta.name}}</div></el-col>
             <el-col :span="16">
@@ -18,6 +18,7 @@
                                 <rely-lives-editor
                                         :objData="live"
                                         v-model="live.RelyLives"
+                                        @JSONDialog="ShowJsonDialog"
                                 ></rely-lives-editor>
 
                                 <el-row v-if="live.json"><el-col :span="20"><el-collapse-item title="Extend Config for live" v-bind:name="index+','+index2">
@@ -76,7 +77,7 @@
         },
         methods: {
             AddObject(config:any,typeId:string,keyss:string) {
-                for (let dot of this.$root.Dots) {
+                for (let dot of (this as any).$root.Dots) {
                     if (dot.Meta.typeId === typeId) {
                         let dotcopy;
                         eval("dotcopy = this.shallowCopy(dot."+keyss+"[0])");
@@ -101,7 +102,7 @@
                 let objct:any = JSON.parse(this.textarea);
                 for (let prop in objct) {
                     if (objct.hasOwnProperty(prop)) {
-                        this.objc[prop] = objct[prop];
+                        (this as any).objc[prop] = objct[prop];
                     }
                 }
                 done();
