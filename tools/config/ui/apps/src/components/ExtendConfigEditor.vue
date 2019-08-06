@@ -1,5 +1,5 @@
 <template>
-    <div></div>
+    <div v-model="parsedData"></div>
 </template>
 
 <script>
@@ -15,21 +15,21 @@
             return {
                 parsedData: [],
                 lastParsedData: {}
-            }
+            };
         },
         watch: {
             objData: {
                 handler(newValue, oldValue) {
-                    this.parsedData = this.jsonParse(this.objData.json);
+                    this.parsedData = this.jsonParse(this.objData);
                 },
                 immediate: true
             },
             parsedData: {
                 handler(newValue, oldValue) {
+                    console.log('in');
                     if (JSON.stringify(newValue) === JSON.stringify(this.lastParsedData)) {
                         return;
                     }
-
                     this.lastParsedData = newValue;
                     this.$emit("input", this.makeJson(this.parsedData));
                 },
