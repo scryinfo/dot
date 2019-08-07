@@ -95,7 +95,10 @@ func ConnsTypeLives() *dot.TypeLives {
 //return config of Conn
 func ConnsConfigTypeLives() *dot.ConfigTypeLives {
 	slice1 := make([]serviceConfig, 0)
-	slice1 = append(slice1, serviceConfig{})
+	slice2 := make([]string, 0)
+	slice2 = append(slice2, "")
+	slice1 = append(slice1, serviceConfig{Addrs: slice2})
+
 	return &dot.ConfigTypeLives{
 		TypeIdConfig: ConnsTypeId,
 		ConfigInfo: &connsConfig{
