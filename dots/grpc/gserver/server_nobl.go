@@ -72,9 +72,13 @@ func ServerNoblTypeLive() *dot.TypeLives {
 //jayce edit
 //return config of ServerNobl
 func ServerNoblConfigTypeLive() *dot.ConfigTypeLives {
+	addrs := make([]string, 0)
+	addrs = append(addrs, "")
 	return &dot.ConfigTypeLives{
 		TypeIdConfig: ServerNoblTypeId,
-		ConfigInfo:   &ConfigNobl{},
+		ConfigInfo: &ConfigNobl{
+			Addrs: addrs,
+		},
 	}
 }
 

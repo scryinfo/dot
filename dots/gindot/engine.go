@@ -91,9 +91,13 @@ func TypeLiveGinDot() *dot.TypeLives {
 //jayce edit
 //return config of GinDot
 func ConfigTypeLiveGinDot() *dot.ConfigTypeLives {
+	paths := make([]string, 0)
+	paths = append(paths, "")
 	return &dot.ConfigTypeLives{
 		TypeIdConfig: EngineTypeId,
-		ConfigInfo:   &configEngine{},
+		ConfigInfo: &configEngine{
+			LogSkipPaths: paths,
+		},
 	}
 }
 
