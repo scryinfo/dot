@@ -1,0 +1,126 @@
+// Scry Info.  All rights reserved.
+// license that can be found in the license file.
+package main
+import (
+    "log"
+    "os"
+    "encoding/json"
+    "github.com/scryinfo/dot/dot"
+    {{range $index, $element := .}}{{$element.Alias}} "{{$element.ImportDir}}"
+    {{end}}
+)
+//TypeLives living
+type DotAndExtendConfig struct {
+	Meta  dot.Metadata    `json:"metaData"`
+	Lives []Live        `json:"lives"`
+}
+type Live struct {
+	TypeId    dot.TypeId      `json:"typeId"`
+	LiveId    dot.LiveId      `json:"liveId"`
+	RelyLives map[string]dot.LiveId  `json:"relyLives"`
+	Dot       dot.Dot
+	Config interface{} 		 `json:"json"`  //扩展配置
+	Name        string       `json:"name"`  //实例别名
+
+}
+func main()  {
+    //获取通用组件信息
+    var result = make([]*dot.TypeLives, 0)
+    {
+	    {{range $index, $element := .}}{{range $index, $func := $element.Funcs}}
+	    {{if $func.IsSlice}}result = append(result,{{$element.Alias}}.{{$func.FuncName}}()...){{else}}result = append(result,{{$element.Alias}}.{{$func.FuncName}}()){{end}}{{end}}
+	{{end}}}
+
+    //初始化lives
+	for i := range result {
+    		if result[i].Lives == nil {
+    			slice := make([]dot.Live, 0)
+    			slice = append(slice, dot.Live{})
+    			result[i].Lives = slice
+    		}
+    	}
+    //对于typeId相同的组件进行合并
+    var resultMerge = make([]*dot.TypeLives, 0)
+	{
+		//保存已经合并的组件
+		merge := make(map[dot.TypeId]byte)
+		leni := len(result)
+		for i := 0; i < leni; i++ {
+			//判断这个组件是否已经合并完毕
+			_, ok := merge[result[i].Meta.TypeId]
+			if ok {
+				//跳过
+			} else {
+				for j := i + 1; j < leni; j++ {
+					//判断是否具备合并条件
+					if result[i].Meta.TypeId.String() == result[j].Meta.TypeId.String() {
+						//合并
+						//Meta部分
+						result[i].Meta.Merge(&result[j].Meta)
+						//lives部分
+						if len(result[i].Lives[0].TypeId) > 0 {
+							result[i].Lives[0].TypeId = result[j].Lives[0].TypeId
+						}
+						if len(result[i].Lives[0].LiveId) > 0 {
+							result[i].Lives[0].LiveId = result[j].Lives[0].LiveId
+						}
+						for k, v := range result[j].Lives[0].RelyLives {
+							if _, ok := result[i].Lives[0].RelyLives[k]; !ok {
+								result[i].Lives[0].RelyLives[k] = v
+							}
+						}
+					}
+				}
+				//将这个id放入merge中
+				merge[result[i].Meta.TypeId] = 1
+				resultMerge = append(resultMerge, result[i])
+			}
+		}
+	}
+    //获取组件特有的配置信息
+	var configInfo = make([]*dot.ConfigTypeLives, 0)
+	{
+	    {{range $index, $element := .}}{{if $element.IsExistConfig}}
+	    {{range $index, $func := $element.ConfigFuncNames}}configInfo = append(configInfo,{{$element.Alias}}.{{$func}}())
+	    {{end}}{{end}}{{end}}
+    }
+    var finalResult = make([]*DotAndExtendConfig, 0)
+
+    //将扩展配置以及组件信息加入最终结果中
+    for i := range resultMerge {
+		finalResult=append(finalResult,&DotAndExtendConfig{})
+    	//组件信息
+    	{
+    		//Meta
+    		finalResult[i].Meta=resultMerge[i].Meta
+    		//Lives
+    		finalResult[i].Lives =make([]Live, len(resultMerge[i].Lives))
+			for key, value := range resultMerge[i].Lives {
+				finalResult[i].Lives[key].TypeId=value.TypeId
+				finalResult[i].Lives[key].LiveId=value.LiveId
+				finalResult[i].Lives[key].RelyLives=value.RelyLives
+				finalResult[i].Lives[key].Dot=value.Dot
+			}
+		}
+    	//扩展配置
+    	for j := range configInfo {
+    		if finalResult[i].Meta.TypeId.String() == configInfo[j].TypeIdConfig.String() {
+				finalResult[i].Lives[0].Config = configInfo[j].ConfigInfo
+    		}
+    	}
+   	}
+    //生成json文件
+    {
+    	_, err := json.Marshal(finalResult)
+    	if err != nil {
+    		log.Fatal("MarShal err:", err)
+    	}
+    	file, _ := os.OpenFile("result.json", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0)
+    	defer file.Close()
+   		enc := json.NewEncoder(file)
+    	err = enc.Encode(finalResult)
+   		if err != nil {
+   			log.Println("Error in encoding json")
+   		}
+   	}
+}

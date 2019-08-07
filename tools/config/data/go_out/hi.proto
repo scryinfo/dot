@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package go_out;
+option go_package = "go_out";
+
+message ReqData {
+    string name = 1;
+}
+message ResData {
+    string test = 1;
+}
+//--------------------------------------------------------------------
+//findDot
+message ReqDirs{
+    repeated string dirs = 1;  //目录集合
+}
+message ResDots{
+    string dotsInfo = 1;   //组件信息（json）
+    repeated string noExistDirs = 2;  //不存在的目录集合
+    string error = 3;   //错误信息
+
+}
+//--------------------------------------------------------------------
+//loadByConfig  根据配置文件查找对应id下的live
+message ReqLoad{
+    string typeId = 1;
+    string data = 2;
+}
+message ResConfig{
+    string configJson = 1;
+}
+//---------------------------------------------------------------------
+//importfile
+message ReqImport{
+    string filepath = 1;  //导入文件的路径
+}
+message ResImport{
+    string json = 1;  //返回导入文件的内容
+    string error = 2;  //导入出错
+}
+//----------------------------------------------------------------------
+//exportfile
+message ReqExport{
+    string configdata = 1; //配置数据信息
+    repeated string filename = 2;  //导出的文件名
+    string dotdata = 3; //组件数据信息
+}
+message ResExport{
+    string error = 1;   //导出是否成功
+}
+//----------------------------------------------------------------------
+service HiDot {
+    rpc Hi(ReqData) returns(ResData);
+    rpc FindDot(ReqDirs) returns(ResDots);  //find dots
+    rpc LoadByConfig(ReqLoad) returns(ResConfig);    //通过typeid来取得所对应的liveids,将某个配置文件中的该typeId的所有实例对象返回。
+    //文件导入
+    rpc ImportByConfig(ReqImport) returns(ResImport);
+    //导出文件
+    rpc ExportConfig(ReqExport) returns(ResExport);
+    rpc ExportDot(ReqExport) returns(ResExport);
+}
