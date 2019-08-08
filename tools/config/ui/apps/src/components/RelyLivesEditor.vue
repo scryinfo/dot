@@ -16,8 +16,9 @@
     </div>
 </template>
 
-<script>
-    export default {
+<script lang="ts">
+    import Vue from 'vue';
+    export default Vue.extend({
         name: "RelyLivesEditor",
         props: {
             objData: {
@@ -34,7 +35,7 @@
         watch: {
             objData: {
                 handler(newValue, oldValue) {
-                    this.parsedData = this.jsonParse(this.objData.RelyLives);
+                    (this as any).parsedData = this.jsonParse(this.objData.RelyLives);
                 },
                 immediate: true
             },
@@ -47,11 +48,11 @@
             }
         },
         methods: {
-            jsonParse(Json) {
+            jsonParse(Json:any) {
                 if (Json === null){
                     Json = {}
                 }
-                let result = [];
+                let result:any = [];
                 let keys = Object.keys(Json);
                 keys.forEach((k, index) => {
                     let val = Json[k];
@@ -60,11 +61,11 @@
                 });
                 return result;
             },
-            makeJson(ParData) {
-                let Revert = {};
+            makeJson(ParData:any) {
+                let Revert:any = {};
                 for (let i = 0; i < ParData.length; ++i) {
                     let el = ParData[i];
-                    let key, val;
+                    let key:string, val:string;
                     key = el.name;
                     val = el.remark;
                     Revert[key] = val;
@@ -73,7 +74,7 @@
             },
             checkKey() {
                 for (let i = 0; i < this.parsedData.length; ++i) {
-                    if (this.parsedData[i].name === 'default'){
+                    if ((this as any).parsedData[i].name === 'default'){
                         this.disable = true;
                         return;
                     }
@@ -81,16 +82,16 @@
                 this.disable = false;
             },
             addObeject() {
-                let obj = {name: 'default', remark: 'please change default'};
-                this.parsedData.push(obj);
+                let obj:object = {name: 'default', remark: 'please change default'};
+                (this as any).parsedData.push(obj);
             },
-            removeObject(index) {
+            removeObject(index:number) {
                 this.parsedData.splice(index,1);
             },
             jsonButton() {
                 this.$emit("JSONDialog",this.objData.RelyLives)
             },
-            changeItem(ob,live) {
+            changeItem(ob:any,live:any) {
                 if (live.name){
                     ob.name=live.name;
                 }
@@ -99,7 +100,7 @@
                 }
             }
         }
-    }
+    })
 </script>
 
 <style scoped>

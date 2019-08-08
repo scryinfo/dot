@@ -69,11 +69,11 @@
                 keyarea: '',
                 objc: null,
                 model: '',
+                schemaObject: {}
             }
         },
         components: {
           "rely-lives-editor": RelyLivesEditor,
-          "extend-config-editor": ExtendConfigEditor
         },
         methods: {
             AddObject(config:any,typeId:string,keyss:string) {
@@ -95,34 +95,42 @@
             ShowJsonDialog(obj:any){
                 this.dialog = true;
                 this.objc = obj;
+                let GenerateSchema = require('generate-schema');
+                this.schemaObject = GenerateSchema.json(obj)
                 this.textarea = JSON.stringify(obj,null,4);
 
             },
             handleClose(done:any){
-                let objct:any = JSON.parse(this.textarea);
-                for (let prop in objct) {
-                    if (objct.hasOwnProperty(prop)) {
-                        (this as any).objc[prop] = objct[prop];
+                try{
+                    if(this.textarea){
+                        let objct:any = JSON.parse(this.textarea);
+                        let tv4 = require('tv4');
+                        if(tv4.validate(objct,this.schemaObject)){
+                            for (let prop in objct) {
+                                if (objct.hasOwnProperty(prop)) {
+                                    (this as any).objc[prop] = objct[prop];
+                                }
+                            }
+                        }else {
+                            (this as any).$message.error('json text input error!');
+                        }
+                    }else{
+                        (this as any).$message.error('json text input error!');
                     }
+                }catch (e) {
+                    (this as any).$message.error('json text input error!');
+                }finally {
+                    done();
                 }
-                done();
             },
             AddRelyLives(live:any){
                 if(live.RelyLives===null){
-                    console.log("add rely");
                     this.$set(live,'RelyLives',{})
-                    console.log(live.RelyLives);
                 }
                 this.$set(live.RelyLives,'default','please change default');
             },
             RemoveRelyLives(relyLives:any,name:string){
                 this.$delete(relyLives,name)
-            },
-            KeyInputFocus(){
-
-            },
-            KeyInputChanges(){
-
             },
             shallowCopy(src:any):any {
                 let dst:any = {};
