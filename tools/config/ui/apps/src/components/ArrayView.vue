@@ -1,42 +1,116 @@
 <template>
-    <json-view v-model="parsedData" :parsedData="parsedData"></json-view>
+    <div>
+        <el-row><el-col :span="24"><el-button @click="addEvent()">add</el-button><el-button @click="ShowJsonDialog(parsedData)">JSON</el-button></el-col></el-row>
+        <el-row v-for="(member,index) in flowData " v-model="flowData">
+            <el-col :span="18">
+                <div v-if="member.type !== 'object' && member.type !== 'array'"  class="grid-content bg-purple-light">
+                <el-input type="text"
+                          v-model="flowData[index].remark"
+                          v-if="member.type == 'string'">
+                </el-input>
+                <el-input
+                        type="number"
+                        v-model.number="flowData[index].remark"
+                        v-if="member.type == 'number'">
+                </el-input>
+                <bool-view
+                        v-model="flowData[index].remark"
+                        :boolValue="flowData[index].remark"
+                        v-if="member.type == 'boolean'"
+                >
+                </bool-view>
+            </div>
+            <div v-else  class="grid-content bg-purple-light">
+                <json-view v-model="flowData[index].childParams" :parsedData="flowData[index].childParams"></json-view>
+            </div>
+            </el-col>
+            <el-col :span="4"><el-button :disabled="cantRemove" @click="removeEvent(index)">remove</el-button></el-col></el-row>
+
+        <el-drawer
+                title="JSON textarea!"
+                :before-close="handleClose"
+                :visible.sync="dialog"
+                direction="ltr"
+                custom-class="demo-drawer"
+                ref="drawer"
+        >
+            <el-input
+                    type="textarea"
+                    :autosize="{ minRows: 10, maxRows: 30}"
+                    placeholder="请输入内容"
+                    v-model="textarea">
+            </el-input>
+        </el-drawer>
+    </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
     export default Vue.extend({
-        name: "ExtendConfigEditor",
-        props:  {
-            objData: {
-                type: Object,
-                required: true
-            },
+        name: "ArrayView",
+        props: {
+            parsedData: {},
         },
         data () {
             return {
-                parsedData: [],
-                lastParsedData: {}
-            };
+                flowData: (this as any).parsedData.childParams,
+                dialog: false,
+                objc: [],
+                textarea: '',
+                cantRemove: true,
+                schemaObject: {}
+            }
         },
         watch: {
-            objData: {
+            parsedData: {
                 handler(newValue, oldValue) {
-                    (this as any).parsedData = this.jsonParse(this.objData);
+                    this.flowData = (this as any).parsedData.childParams;
                 },
                 immediate: true
             },
-            parsedData: {
+            flowData: {
                 handler(newValue, oldValue) {
-                    if (JSON.stringify(newValue) === JSON.stringify(this.lastParsedData)) {
-                        return;
+                    if(newValue.length > 1){
+                        this.cantRemove = false;
                     }
-                    this.lastParsedData = newValue;
-                    this.$emit("input", this.makeJson(this.parsedData));
+                    if (newValue.length === 1){
+                        this.cantRemove = true;
+                    }
+                    this.$emit('input',newValue);
                 },
                 deep: true
             }
         },
         methods: {
+            ShowJsonDialog(obj:any){
+                this.dialog = true;
+                (this as any).objc.push(obj);
+                let GenerateSchema = require('generate-schema');
+                let data = {};
+                eval("data = this.makeJson(this.objc)."+obj.name);
+                this.schemaObject = GenerateSchema.json(data);
+                eval("this.textarea = JSON.stringify(this.makeJson(this.objc)."+obj.name+",null,4)");
+            },
+            handleClose(done:any){
+                try{
+                    if(this.textarea){
+                        let data = JSON.parse(this.textarea);
+                        let tv4 = require('tv4');
+                        if(tv4.validate(data, this.schemaObject)){
+                            let objct:any = this.jsonParse(data);
+                            this.$emit('input',objct);
+                        }else{
+                            (this as any).$message.error('json text input error!');
+                        }
+                    }else{
+                        (this as any).$message.error('json text input error!');
+                    }
+                }catch (e) {
+                    (this as any).$message.error('json text input error!');
+                }finally {
+                    done();
+                }
+            },
             jsonParse: function (jsonStr:any) {
                 let parseJson = (json:any) => {
                     let result:any = [];
@@ -122,7 +196,6 @@
                         break;
                 }
             },
-
             makeJson: function (dataArr:any) {
                 let revertWithObj = function(data:any) {
                     let r:any = {};
@@ -167,11 +240,32 @@
                 };
 
                 return revertMain(dataArr);
+            },
+            addEvent () {
+                this.flowData.push(this.shallowCopy(this.flowData[this.flowData.length-1]));
+            },
+            shallowCopy(src:any):any {
+                let dst:any = {};
+                for (let prop in src) {
+                    if (src.hasOwnProperty(prop)) {
+                        dst[prop] = src[prop];
+                    }
+                }
+                return dst;
+            },
+            removeEvent(index:number) {
+                this.flowData.splice(index,1);
             }
         }
     })
 </script>
 
 <style scoped>
-
+    .bg-purple-light {
+        background: #e5e9f2;
+    }
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
 </style>
