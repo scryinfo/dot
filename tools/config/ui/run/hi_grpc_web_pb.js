@@ -385,6 +385,80 @@ proto.go_out.HiDotPromiseClient.prototype.importByConfig =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.go_out.ReqImport,
+ *   !proto.go_out.ResImport>}
+ */
+const methodDescriptor_HiDot_ImportByDot = new grpc.web.MethodDescriptor(
+  '/go_out.HiDot/ImportByDot',
+  grpc.web.MethodType.UNARY,
+  proto.go_out.ReqImport,
+  proto.go_out.ResImport,
+  /** @param {!proto.go_out.ReqImport} request */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.go_out.ResImport.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.go_out.ReqImport,
+ *   !proto.go_out.ResImport>}
+ */
+const methodInfo_HiDot_ImportByDot = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.go_out.ResImport,
+  /** @param {!proto.go_out.ReqImport} request */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.go_out.ResImport.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.go_out.ReqImport} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.go_out.ResImport)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.go_out.ResImport>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.go_out.HiDotClient.prototype.importByDot =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/go_out.HiDot/ImportByDot',
+      request,
+      metadata || {},
+      methodDescriptor_HiDot_ImportByDot,
+      callback);
+};
+
+
+/**
+ * @param {!proto.go_out.ReqImport} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.go_out.ResImport>}
+ *     A native promise that resolves to the response
+ */
+proto.go_out.HiDotPromiseClient.prototype.importByDot =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/go_out.HiDot/ImportByDot',
+      request,
+      metadata || {},
+      methodDescriptor_HiDot_ImportByDot);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.go_out.ReqExport,
  *   !proto.go_out.ResExport>}
  */

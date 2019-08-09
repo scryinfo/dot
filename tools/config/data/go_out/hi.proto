@@ -23,11 +23,14 @@ message ResDots{
 //--------------------------------------------------------------------
 //loadByConfig  根据配置文件查找对应id下的live
 message ReqLoad{
-    string typeId = 1;
-    string data = 2;
+    string dotInfo = 1;    //该组件的实例详情
+    string typeId = 2;      //typeid
+    string dataCopyPaste = 3;   //粘贴配置文件的文本
+    string dataFilepath = 4;    //配置文件路径     3,4使用时任选其一
 }
 message ResConfig{
-    string configJson = 1;
+    string configJson = 1;   //满足条件的实例信息
+    string  errInfo = 2;          //错误信息
 }
 //---------------------------------------------------------------------
 //importfile
@@ -55,6 +58,7 @@ service HiDot {
     rpc LoadByConfig(ReqLoad) returns(ResConfig);    //通过typeid来取得所对应的liveids,将某个配置文件中的该typeId的所有实例对象返回。
     //文件导入
     rpc ImportByConfig(ReqImport) returns(ResImport);
+    rpc ImportByDot(ReqImport) returns(ResImport);
     //导出文件
     rpc ExportConfig(ReqExport) returns(ResExport);
     rpc ExportDot(ReqExport) returns(ResExport);
