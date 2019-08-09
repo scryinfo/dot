@@ -12,6 +12,7 @@ import (
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dot/tools/config/data/go_out"
 	"github.com/scryinfo/dot/tools/config/data/nobl/tool"
+	"github.com/scryinfo/dot/tools/config/data/nobl/tool/scryconfig"
 	"gopkg.in/yaml.v2"
 	"log"
 	"os"
@@ -119,14 +120,34 @@ func (serv *HiServer) LoadByConfig(ctx context.Context, in *go_out.ReqLoad) (*go
 
 }*/
 //根据配置文件导入信息
-//与loadByConfig区别在于没有筛选typeid的过程，返回所有配置信息
-//且支持三种格式json toml yaml
-func (serv *HiServer) ImportByConfig(context.Context, *go_out.ReqImport) (*go_out.ResImport, error) {
-	panic("please implement me")
-}
+
+
 
 func (serv *HiServer) ImportByDot(context.Context, *go_out.ReqImport) (*go_out.ResImport, error) {
 	panic("implement me")
+}
+//支持三种格式json toml yaml
+func (serv *HiServer) ImportByConfig(con context.Context, im *go_out.ReqImport) (*go_out.ResImport, error) {
+	scry := scryconfig.New()
+	scry.BindFlag()
+	_, err := scry.ConfLoad(scry.ConFlag,im.Filepath)
+	if err != nil {
+		resConfig := go_out.ResImport{
+			Error: err.Error(),
+		}
+		return &resConfig,nil
+	}
+	value, err := scry.GetJsonByte("")
+	if err != nil {
+		resConfig := go_out.ResImport{
+			Error: err.Error(),
+		}
+		return &resConfig,nil
+	}
+	resConfig := go_out.ResImport{
+		Json: string(value),
+	}
+	return &resConfig,nil
 }
 
 //导出配置信息
