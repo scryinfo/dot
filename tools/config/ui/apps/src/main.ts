@@ -16,7 +16,7 @@ new Vue({
     return{
       Dots: [
         {
-          "Meta": {
+          "metaData": {
             "typeId": "4b8b1751-4799-4578-af46-d9b339cf582f",
             "version": "",
             "name": "",
@@ -24,11 +24,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": null,
               "name": ""
@@ -36,7 +36,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "4943e959-7ad7-42c6-84dd-8b24e9ed30bb",
             "version": "",
             "name": "",
@@ -44,11 +44,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": {
                 "addr": "",
@@ -63,7 +63,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "6be39d0b-3f5b-47b4-818c-642c049f3166",
             "version": "",
             "name": "",
@@ -71,11 +71,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": {
                 "relativePath": ""
@@ -85,7 +85,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "2d281e77-3133-4718-a5b7-9eea069591ca",
             "version": "",
             "name": "",
@@ -93,11 +93,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": {
                 "name": ""
@@ -107,7 +107,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "7bf0a017-ef0c-496a-b04c-b1dc262abc8d",
             "version": "",
             "name": "",
@@ -115,11 +115,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": {
                 "scheme": "",
@@ -144,7 +144,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "3c9e8119-3d42-45bd-98f9-32939c895c6d",
             "version": "",
             "name": "",
@@ -152,11 +152,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "3c9e8119-3d42-45bd-98f9-32939c895c6d",
-              "RelyLives": {
+              "typeId": "",
+              "liveId": "3c9e8119-3d42-45bd-98f9-32939c895c6d",
+              "relyLives": {
                 "GinRouter": "6be39d0b-3f5b-47b4-818c-642c049f3166",
                 "ServerNobl": "77a766e7-c288-413f-946b-bc9de6df3d70"
               },
@@ -167,7 +167,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "77a766e7-c288-413f-946b-bc9de6df3d70",
             "version": "",
             "name": "",
@@ -175,11 +175,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": {
                 "addrs": [
@@ -197,7 +197,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
             "version": "",
             "name": "",
@@ -205,11 +205,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
-              "RelyLives": {
+              "typeId": "",
+              "liveId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
+              "relyLives": {
                 "ServerNobl": "77a766e7-c288-413f-946b-bc9de6df3d70"
               },
               "Dot": null,
@@ -230,7 +230,7 @@ new Vue({
       ],
       Configs: [
         {
-          "Meta": {
+          "metaData": {
             "typeId": "4b8b1751-4799-4578-af46-d9b339cf582f",
             "version": "",
             "name": "",
@@ -238,11 +238,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": null,
               "name": ""
@@ -250,7 +250,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "4943e959-7ad7-42c6-84dd-8b24e9ed30bb",
             "version": "",
             "name": "",
@@ -258,11 +258,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": {
                 "addr": "",
@@ -277,7 +277,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "6be39d0b-3f5b-47b4-818c-642c049f3166",
             "version": "",
             "name": "",
@@ -285,11 +285,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": {
                 "relativePath": ""
@@ -299,7 +299,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "2d281e77-3133-4718-a5b7-9eea069591ca",
             "version": "",
             "name": "",
@@ -307,11 +307,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": {
                 "name": ""
@@ -321,7 +321,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "7bf0a017-ef0c-496a-b04c-b1dc262abc8d",
             "version": "",
             "name": "",
@@ -329,11 +329,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": {
                 "scheme": "",
@@ -358,7 +358,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "3c9e8119-3d42-45bd-98f9-32939c895c6d",
             "version": "",
             "name": "",
@@ -366,11 +366,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "3c9e8119-3d42-45bd-98f9-32939c895c6d",
-              "RelyLives": {
+              "typeId": "",
+              "liveId": "3c9e8119-3d42-45bd-98f9-32939c895c6d",
+              "relyLives": {
                 "GinRouter": "6be39d0b-3f5b-47b4-818c-642c049f3166",
                 "ServerNobl": "77a766e7-c288-413f-946b-bc9de6df3d70"
               },
@@ -381,7 +381,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "77a766e7-c288-413f-946b-bc9de6df3d70",
             "version": "",
             "name": "",
@@ -389,11 +389,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "",
-              "RelyLives": null,
+              "typeId": "",
+              "liveId": "",
+              "relyLives": null,
               "Dot": null,
               "json": {
                 "addrs": [
@@ -411,7 +411,7 @@ new Vue({
           ]
         },
         {
-          "Meta": {
+          "metaData": {
             "typeId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
             "version": "",
             "name": "",
@@ -419,11 +419,11 @@ new Vue({
             "single": false,
             "relyTypeIds": null
           },
-          "Lives": [
+          "lives": [
             {
-              "TypeId": "",
-              "LiveId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
-              "RelyLives": {
+              "typeId": "",
+              "liveId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
+              "relyLives": {
                 "ServerNobl": "77a766e7-c288-413f-946b-bc9de6df3d70"
               },
               "Dot": null,
