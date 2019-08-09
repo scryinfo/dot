@@ -3,6 +3,7 @@ module github.com/scryinfo/dot
 go 1.12
 
 require (
+	github.com/BurntSushi/toml v0.3.1
 	github.com/bitly/go-simplejson v0.5.0
 	github.com/golang/protobuf v1.3.2
 	github.com/gookit/config v1.1.0

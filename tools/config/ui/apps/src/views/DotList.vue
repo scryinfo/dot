@@ -1,5 +1,6 @@
 <template>
   <el-collapse>
+    <el-button id="removeAllDot" @click="removeAllDots()" style="margin-bottom: 5px;">Remove All</el-button>
     <el-row v-for="(v,index) in table">
       <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">lives num: {{index+1}}</div></el-col>
       <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{v["Meta"]["name"]}}</div></el-col>
@@ -7,13 +8,13 @@
         <el-collapse-item v-bind:title="v.Meta.typeId" v-bind:name="index" >
           <el-row v-for="(a,b,c) in v.Meta">
             <el-col :span="6"><div >{{b}}</div></el-col>
-<!--            <el-col ;span="2"><div>{{c}}</div></el-col>-->
             <el-col :span="18"><div >{{a}}</div></el-col>
           </el-row>
         </el-collapse-item>
       </el-col>
       <el-col :span="2"><div style="margin-left: 6px"><el-button v-on:click="open(index)">Name</el-button></div></el-col>
       <el-col :span="3"><div ><el-button v-on:click="addConf(index)">Add Config</el-button></div></el-col>
+      <el-col :span="3"> <el-button id="delDot" @click="delDot(index)" style="margin-left: 2%">remove</el-button></el-col>
     </el-row>
   </el-collapse>
 </template>
@@ -21,6 +22,7 @@
   export default {
     data() {
       return {
+
         table: this.$root.Dots,
         activeNames: ['1']
       };
@@ -51,6 +53,16 @@
           message: h('i', {style: 'color: teal'},  'add '+ n +' to config success!')
         });
         this.$root.Configs.push(this.table[index]);
+      },
+      removeAllDots(){
+        // this.table=[];
+        this.$root.Dots[0]['Meta']['name'] = "dots0.meta.name";
+        // alert(this.$root.Dots);
+        // alert(this.$root.Dots[0]['Meta']['name']);
+        alert(this.table[0]['Meta']['name'])
+      },
+      delDot(index) {
+        this.table.splice(index,1)
       },
     }
   }
