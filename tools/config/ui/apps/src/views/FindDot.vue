@@ -1,8 +1,6 @@
 <template>
   <div id="findDot">
     <el-row>
-      <el-button id="altera" @click="ala()">altera</el-button>
-      <el-button id="alter" @click="al()">alter</el-button>
       <el-button id="add" @click="add()">Add</el-button>
       <el-button id="removeAll" @click="removeAll()">Remove All</el-button>
     </el-row>
@@ -16,35 +14,37 @@
 </template>
 
 <script>
+// import {HiDotClient} from '../../../run/hi_grpc_web_pb'
+// import {ReqDirs} from '../../../run/hi_pb'
   export default{
     data() {
       return {
         files: [''],
       }
-  },
-    methods:{
-      add(){
+    },
+    methods: {
+      add() {
         this.files.push('')
       },
-      removeAll(){
-        this.files=['']
+      removeAll() {
+        this.files = ['']
       },
-      al(){
-        alert(this.files)
-      },
-      del(index){
-        this.files.splice(index,1);
-        if (this.files.length==0){
-          this.files=['']
+
+      del(index) {
+        this.files.splice(index, 1);
+        if (this.files.length == 0) {
+          this.files = ['']
         }
       },
-      find(){
-        
-      },
-      ala(){
-        this.$root.FindDotData.push({name:'bbb',age:19});
-        alert(this.$root.FindDotData)
-      }
+      // find() {
+      //   let client = new HiDotClient("http://localhost:6868/root",null,null);
+      //   let request = new ReqDirs();
+      //   request.setDirsList(this.files);
+      //   client.findDot(request,{},(err, response)=>{
+      //     this.$root.Dots = response.ResData.dotsinfo;
+      //     console.log(this.$root.Dots)
+      //   });
+      // },
     }
   }
 </script>
