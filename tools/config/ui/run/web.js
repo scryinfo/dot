@@ -249,4 +249,46 @@ function func7() {
         }
     })
 }
-window.func7 = func7;
+window.func5=func5;
+
+function testImportConfig() {
+    let request = new ReqImport();
+    let filepath = "";
+    request.setFilepath(filepath);
+    rpcweb.importByConfig(request,{},(err,response)=>{
+        console.log('importConfig:::');
+        if (response) {
+            if(response.getError()==''){
+                console.log(response.getJson());
+            }else {
+                console.log(response.getError());
+            }
+        }else {
+            console.log(err);
+        }
+    })
+}
+window.testImportConfig = testImportConfig;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
