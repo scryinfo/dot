@@ -874,8 +874,10 @@ proto.go_out.ReqLoad.prototype.toObject = function(opt_includeInstance) {
  */
 proto.go_out.ReqLoad.toObject = function(includeInstance, msg) {
   var f, obj = {
-    typeid: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    data: jspb.Message.getFieldWithDefault(msg, 2, "")
+    dotinfo: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    typeid: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    datacopypaste: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    datafilepath: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -914,11 +916,19 @@ proto.go_out.ReqLoad.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setTypeid(value);
+      msg.setDotinfo(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setData(value);
+      msg.setTypeid(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setDatacopypaste(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setDatafilepath(value);
       break;
     default:
       reader.skipField();
@@ -949,17 +959,31 @@ proto.go_out.ReqLoad.prototype.serializeBinary = function() {
  */
 proto.go_out.ReqLoad.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTypeid();
+  f = message.getDotinfo();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getData();
+  f = message.getTypeid();
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getDatacopypaste();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getDatafilepath();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
       f
     );
   }
@@ -967,32 +991,62 @@ proto.go_out.ReqLoad.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional string typeId = 1;
+ * optional string dotInfo = 1;
  * @return {string}
  */
-proto.go_out.ReqLoad.prototype.getTypeid = function() {
+proto.go_out.ReqLoad.prototype.getDotinfo = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.go_out.ReqLoad.prototype.setTypeid = function(value) {
+proto.go_out.ReqLoad.prototype.setDotinfo = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional string data = 2;
+ * optional string typeId = 2;
  * @return {string}
  */
-proto.go_out.ReqLoad.prototype.getData = function() {
+proto.go_out.ReqLoad.prototype.getTypeid = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.go_out.ReqLoad.prototype.setData = function(value) {
+proto.go_out.ReqLoad.prototype.setTypeid = function(value) {
   jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string dataCopyPaste = 3;
+ * @return {string}
+ */
+proto.go_out.ReqLoad.prototype.getDatacopypaste = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/** @param {string} value */
+proto.go_out.ReqLoad.prototype.setDatacopypaste = function(value) {
+  jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string dataFilepath = 4;
+ * @return {string}
+ */
+proto.go_out.ReqLoad.prototype.getDatafilepath = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/** @param {string} value */
+proto.go_out.ReqLoad.prototype.setDatafilepath = function(value) {
+  jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -1028,7 +1082,8 @@ proto.go_out.ResConfig.prototype.toObject = function(opt_includeInstance) {
  */
 proto.go_out.ResConfig.toObject = function(includeInstance, msg) {
   var f, obj = {
-    configjson: jspb.Message.getFieldWithDefault(msg, 1, "")
+    configjson: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    errinfo: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -1069,6 +1124,10 @@ proto.go_out.ResConfig.deserializeBinaryFromReader = function(msg, reader) {
       var value = /** @type {string} */ (reader.readString());
       msg.setConfigjson(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setErrinfo(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1105,6 +1164,13 @@ proto.go_out.ResConfig.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getErrinfo();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -1120,6 +1186,21 @@ proto.go_out.ResConfig.prototype.getConfigjson = function() {
 /** @param {string} value */
 proto.go_out.ResConfig.prototype.setConfigjson = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string errInfo = 2;
+ * @return {string}
+ */
+proto.go_out.ResConfig.prototype.getErrinfo = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/** @param {string} value */
+proto.go_out.ResConfig.prototype.setErrinfo = function(value) {
+  jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

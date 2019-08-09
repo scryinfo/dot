@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/BurntSushi/toml"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dot/tools/config/data/go_out"
@@ -75,27 +76,29 @@ func HiServerTypeLives() []*dot.TypeLives {
 	return lives
 }
 
-//rpc implement
-
 func (serv *HiServer) Hi(ctx context.Context, req *go_out.ReqData) (*go_out.ResData, error) {
 	log.Println("hi:", "name:", req.Name)
 	res := &go_out.ResData{Test: "hi, i am serve"}
 	return res, nil
 }
 
+//rpc implement
+
 func (serv *HiServer) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_out.ResDots, error) {
 	dirs := in.Dirs
-	bytes, strings2, e := tool.FindDots(dirs)
-	fmt.Println(string(bytes), strings2, e)
+	bytes, invalidDirectory, e := tool.FindDots(dirs)
 	//删除中间文件
-	/*	del := os.Remove("./callMethod.go")
+	{
+		del := os.Remove("./callMethod.go")
 		del = os.Remove("./result.json")
 		if del != nil {
 			fmt.Println(del)
-		}*/
+		}
+	}
+
 	resDots := go_out.ResDots{
 		DotsInfo:    string(bytes),
-		NoExistDirs: strings2,
+		NoExistDirs: invalidDirectory,
 	}
 	if e != nil {
 		resDots.Error = e.Error()
@@ -103,15 +106,26 @@ func (serv *HiServer) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_out.
 	return &resDots, nil
 }
 
-func (serv *HiServer) LoadByConfig(context.Context, *go_out.ReqLoad) (*go_out.ResConfig, error) {
+//从配置文件中加载某一个typeId对应的实例
+//暂时只支持json格式
+//copyPaste或者文件路径都可
 
-	panic("implement me")
+func (serv *HiServer) LoadByConfig(ctx context.Context, in *go_out.ReqLoad) (*go_out.ResConfig, error) {
+	panic("")
+
 }
 
-//tim
+/*func (m map[string]interface{}) jsonToMap() {
+
+}*/
 //根据配置文件导入信息
-//支持三种格式json toml yaml
+//与loadByConfig区别在于没有筛选typeid的过程，返回所有配置信息
+//且支持三种格式json toml yaml
 func (serv *HiServer) ImportByConfig(context.Context, *go_out.ReqImport) (*go_out.ResImport, error) {
+	panic("please implement me")
+}
+
+func (serv *HiServer) ImportByDot(context.Context, *go_out.ReqImport) (*go_out.ResImport, error) {
 	panic("implement me")
 }
 
@@ -119,7 +133,6 @@ func (serv *HiServer) ImportByConfig(context.Context, *go_out.ReqImport) (*go_ou
 //支持三种格式json toml yaml
 //由文件名来区分不同格式
 func (serv *HiServer) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*go_out.ResExport, error) {
-
 	var data = in.Configdata
 	var target interface{}
 
@@ -131,14 +144,18 @@ func (serv *HiServer) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*
 		}
 	}
 	{
+		//data->map
+		if err := json.Unmarshal([]byte(data), &target); err != nil {
+			log.Panic(err)
+		}
+		//map->file
 		for key, value := range fileFormat {
-
+			file, err := os.OpenFile(value, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0)
+			if err != nil {
+				panic("An error occurred with file opening or creation\n")
+			}
+			defer file.Close()
 			if key == "json" {
-				if err := json.Unmarshal([]byte(data), &target); err != nil {
-					log.Panic(err)
-				}
-				file, _ := os.OpenFile(value, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0)
-				defer file.Close()
 				enc := json.NewEncoder(file)
 				err := enc.Encode(target)
 				if err != nil {
@@ -146,11 +163,6 @@ func (serv *HiServer) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*
 				}
 			}
 			if key == "yaml" {
-				if err := yaml.Unmarshal([]byte(data), &target); err != nil {
-					log.Panic(err)
-				}
-				file, _ := os.OpenFile(value, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0)
-				defer file.Close()
 				enc := yaml.NewEncoder(file)
 				err := enc.Encode(target)
 				if err != nil {
@@ -158,21 +170,11 @@ func (serv *HiServer) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*
 				}
 			}
 			if key == "toml" {
-
-				/*if _, err := toml.DecodeFile(value, &target); err != nil {
-					log.Fatal(err)
-				}*/
-				/*if err := toml.Unmarshal([]byte(data), &target); err != nil {
-					log.Panic(err)
-				}*/
-
-				/*file, _ := os.OpenFile(value, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0)
-				defer file.Close()
-				enc:=toml.NewEncoder(file)
+				enc := toml.NewEncoder(file)
 				err := enc.Encode(target)
 				if err != nil {
 					log.Println("Error in encoding toml")
-				}*/
+				}
 			}
 		}
 	}
@@ -189,7 +191,6 @@ func (serv *HiServer) ExportDot(ctx context.Context, in *go_out.ReqExport) (*go_
 	}
 	file, err := os.OpenFile(in.Filename[0], os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0)
 	if err != nil {
-		fmt.Printf("An error occurred with file opening or creation\n")
 		panic("An error occurred with file opening or creation\n")
 	}
 	defer file.Close()
