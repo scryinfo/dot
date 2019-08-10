@@ -1,7 +1,7 @@
 const {ReqData, ReqDirs, ReqExport, ReqLoad} = require('./hi_pb.js');
 const {HiDotClient} = require('./hi_grpc_web_pb.js');
-
 var rpcweb = new HiDotClient('http://localhost:6868/root');
+
 //hi
 function func1() {
     var request = new ReqData();
@@ -19,9 +19,9 @@ function func1() {
 window.func1 = func1;
 
 //Finddot
-function func2() {
+function rpcFindDot(dirList) {
     var request = new ReqDirs();
-    var dirList = ['C:\\go-work\\src\\github.com\\scryinfo\\dot'];
+    //var dirList = ['C:\\go-work\\src\\github.com\\scryinfo\\dot'];
     request.setDirsList(dirList);
     rpcweb.findDot(request, {}, (err, response) => {
         console.log("finddot:::");
@@ -29,115 +29,44 @@ function func2() {
             console.log(response.getDotsinfo());
             console.log(response.getNoexistdirsList());
             console.log(response.getError());
+            return response
         } else {
             console.log(err);
         }
     })
 }
-window.func2 = func2;
+window.rpcFindDot = rpcFindDot;
 
 
 //loadbyconfig
-function func3() {
+function rpcLoadByConfig(dir,typeId) {
     var request = new ReqLoad();
-    var datacopy = {
-        "log": {
-            "file": "log.log",
-            "level": "debug"
-        },
-        "dots": [
-            {
-                "metaData": {
-                    "name": "ServerNobl",
-                    "typeId": "77a766e7-c288-413f-946b-bc9de6df3d70"
-                },
-                "lives": [
-                    {
-                        "liveId": "77a766e7-c288-413f-946b-bc9de6df3d70",
-                        "json": {
-                            "addrs": ["localhost:5012"]
-                        }
-                    }
-                ]
-            },
-            {
-                "metaData": {
-                    "name": "grpc http server",
-                    "typeId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0"
-                },
-                "lives": [
-                    {
-                        "liveId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
-                        "json": {
-                            "addr": ":6868",
-                            "preUrl": "root"
-                        }
-                    }
-                ]
-            },
-            {
-                "metaData": {
-                    "name": "server 1",
-                    "typeId": "hiserver"
-                },
-                "lives": [
-                    {
-                        "liveId": "hiserver",
-                        "json": {
-                            "name": "server 1"
-                        }
-                    }
-                ]
-            }
-        ]
-    };  //粘贴数据
-    var data2 = 'C:\\go-work\\src\\dot\\sample\\grpc\\http\\server\\server_http.json'; //文件路径
-    var data3 = 'afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0';  //typeId
-    var datatemplate = {
-        "typeId": "",
-        "liveId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
-        "relyLives": {
-            "ServerNobl": "77a766e7-c288-413f-946b-bc9de6df3d70"
-        },
-        "Dot": null,
-        "json": {
-            "preUrl": "",
-            "addr": "",
-            "tls": {
-                "caPem": "",
-                "pem": "",
-                "key": "",
-                "serverNameOverride": ""
-            }
-        },
-        "name": ""
-    };
-    const objToStr = JSON.stringify(datatemplate);
-    request.setDotinfo(objToStr);
-    request.setTypeid(data3);
-    const objToStr2 = JSON.stringify(datacopy);
-    request.setDatacopypaste(objToStr2);
+    //var data2 = 'C:\\go-work\\src\\dot\\sample\\grpc\\http\\server\\server_http.json'; //文件路径
+    //var data3 = 'afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0';  //typeId
+    request.setDatafilepath(dir);
+    request.setTypeid(typeId);
     console.log(request);
     rpcweb.loadByConfig(request, {}, (err, response) => {
         console.log("loadByConfig:::");
         if (response) {
             console.log(response.getConfigjson())
             console.log("err:",response.getErrinfo())
+            return response
         } else {
             console.log(err);
         }
     })
 }
-window.func3 = func3;
+window.rpcLoadByConfig = rpcLoadByConfig;
 
 //importByDot
 
 //importByConfig
 
 //test exportDot
-function func6() {
+function rpcExportDot(data,filename) {
     var request = new ReqExport();
-    var data =
+   /* var data =
         [{
             "Meta": {
                 "typeId": "4b8b1751-4799-4578-af46-d9b339cf582f",
@@ -157,27 +86,26 @@ function func6() {
                     "name": ""
                 }
             ]
-        }];
+        }];*/
     const objToStr = JSON.stringify(data);
-    var filename = ["testdot.json"];
+   // var filename = ["testdot.json"];
     request.setFilenameList(filename);
     request.setDotdata(objToStr);
-    console.log(objToStr);
-    console.log(request);
     rpcweb.exportDot(request, {}, (err, response) => {
         console.log("exportDot:::");
         if (response) {
             console.log(response.getError());
+            return response
         } else {
             console.log(err);
         }
     })
 }
-window.func6 = func6;
+window.rpcExportDot = rpcExportDot;
 
 //test exportConfig
-function func7() {
-    var data = {
+function rpcExportConfig(data,filename) {
+    /*var data = {
         "log": {
             "file": "log.log",
             "level": "debug"
@@ -203,7 +131,7 @@ function func7() {
                             "addr": ":8080",
                             "keyFile": "",
                             "pemFile": "",
-                            "logSkipPaths": ["/sample/*"]
+                            "logSkipPaths": ["/sample/!*"]
                         }
                     }
                 ]
@@ -232,14 +160,12 @@ function func7() {
                 ]
             }
         ]
-    };
+    };*/
     var request = new ReqExport();
     const objToStr = JSON.stringify(data);
-    var filename = ["testconfig.json", "testconfig.toml", "testconfig.yaml"];
+    //var filename = ["testconfig.json", "testconfig.toml", "testconfig.yaml"];
     request.setFilenameList(filename);
     request.setConfigdata(objToStr);
-    console.log(objToStr);
-    console.log(request);
     rpcweb.exportConfig(request, {}, (err, response) => {
         console.log("exportConfig:::");
         if (response) {
@@ -249,46 +175,4 @@ function func7() {
         }
     })
 }
-window.func5=func5;
-
-function testImportConfig() {
-    let request = new ReqImport();
-    let filepath = "";
-    request.setFilepath(filepath);
-    rpcweb.importByConfig(request,{},(err,response)=>{
-        console.log('importConfig:::');
-        if (response) {
-            if(response.getError()==''){
-                console.log(response.getJson());
-            }else {
-                console.log(response.getError());
-            }
-        }else {
-            console.log(err);
-        }
-    })
-}
-window.testImportConfig = testImportConfig;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+window.rpcExportConfig = rpcExportConfig;
