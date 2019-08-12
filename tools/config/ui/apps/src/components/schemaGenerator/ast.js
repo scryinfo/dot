@@ -129,7 +129,7 @@ AST.prototype.buildArrayTree = function(tree, node) {
   if (isObject(first)) {
     var similar = this.isAllSimilarObjects(node);
     if (this.isAllSimilarObjects(node)) {
-      tree.uniqueItems = true;
+      tree.uniqueItems = false;
       tree.minItems = 1;
 
       return this.buildObjectTree(tree, similar.selected);

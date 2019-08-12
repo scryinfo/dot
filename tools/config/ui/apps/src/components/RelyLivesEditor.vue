@@ -8,7 +8,7 @@
             <el-dropdown-menu slot="dropdown">
                 <div v-for="config in $root.Configs">
                     <div v-for="live in config.lives">
-                        <el-dropdown-item @click.native="changeItem(ob,live)">{{live.name}}:{{live.LiveId}}</el-dropdown-item>
+                        <el-dropdown-item @click.native="changeItem(ob,live)">{{live.name}}:{{live.liveId}}</el-dropdown-item>
                     </div>
                 </div>
             </el-dropdown-menu>

@@ -94,7 +94,6 @@
                 this.nameTemp = obj.name;
                 eval("data = this.temp."+this.nameTemp);
                 this.schemaObject = jsonSchemaGenerator.jsonToSchema(this.temp);
-                console.log(JSON.stringify(this.schemaObject,null,4));
                 this.textarea = JSON.stringify(data,null,4);
             },
             handleClose(done:any){

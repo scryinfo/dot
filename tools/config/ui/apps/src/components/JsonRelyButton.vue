@@ -37,9 +37,7 @@
             ShowJsonDialog(obj:any){
                 this.dialog = true;
                 (this as any).objc = obj;
-                let jsonSchemaGenerator = require('./schemaGenerator/index.js');
                 let data = this.makeJson(obj);
-                (this as any).schemaObject = jsonSchemaGenerator.jsonToSchema(data);
                 this.textarea = JSON.stringify(data,null,4);
 
             },
@@ -47,8 +45,7 @@
                 try{
                     if(this.textarea){
                         let objct:any = JSON.parse(this.textarea);
-                        let tv4 = require('tv4');
-                        if(tv4.validate(objct,this.schemaObject)){
+                        if(this.inputCheck(objct)){
                             this.$emit('input',this.jsonParse(objct));
                         }else {
                             (this as any).$message.error('json text input error!');
@@ -61,6 +58,14 @@
                 }finally {
                     done();
                 }
+            },
+            inputCheck(input:any): Boolean{
+                for (let i in input){
+                    if (typeof input[i] !== typeof ''){
+                        return false;
+                    }
+                }
+                return true;
             },
             jsonParse: function (jsonStr:any) {
                 let parseJson = (json:any) => {
