@@ -26,6 +26,9 @@ Generates a JSON schema based on the provided AST tree.
 @return void
 */
 Compiler.prototype.generate = function(tree, schema, parent) {
+  if (tree.type === 'object'){
+    parent.maxProperties = Object.keys(tree.children).length;
+  }
   for (var i in tree.children) {
     var child = tree.children[i];
     if (child.type === 'object') {
@@ -45,7 +48,7 @@ Compiler.prototype.generate = function(tree, schema, parent) {
       schema[i] = {
         type: 'array'
         ,uniqueItems: child.uniqueItems
-        ,minItems: child.minItems
+        ,minItems: 1
         ,items: {
           required:[]
           ,properties: {}
@@ -97,7 +100,7 @@ Compiler.prototype.compile = function(tree) {
       ,'$schema': 'http://json-schema.org/draft-04/schema#'
       ,'description': ''
       ,minItems: 1
-      ,uniqueItems: true
+      ,uniqueItems: false
       ,items: {
         type: 'object'
         ,required: []
