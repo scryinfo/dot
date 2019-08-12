@@ -212,7 +212,7 @@ func (serv *HiServer) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*
 		}
 		//map->file
 		for key, value := range fileFormat {
-			file, err := os.OpenFile(value, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0)
+			file, err := os.OpenFile(value, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 			if err != nil {
 				panic("An error occurred with file opening or creation\n")
 			}
@@ -251,7 +251,7 @@ func (serv *HiServer) ExportDot(ctx context.Context, in *go_out.ReqExport) (*go_
 	if in.Filename == nil {
 		in.Filename[0] = "dots.json"
 	}
-	file, err := os.OpenFile(in.Filename[0], os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0)
+	file, err := os.OpenFile(in.Filename[0], os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 	if err != nil {
 		panic("An error occurred with file opening or creation\n")
 	}

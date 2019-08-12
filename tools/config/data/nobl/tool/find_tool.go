@@ -546,7 +546,7 @@ func getGOROOTBin() string {
 	case "windows":
 		gopath = gopath + "\\bin\\go.exe"
 	case "linux":
-		gopath = gopath + "/bin/"
+		gopath = gopath + "/bin/go"
 	default:
 		log.Fatal("无法识别的操作系统")
 	}
@@ -557,7 +557,8 @@ func getGOROOTBin() string {
 func buildCodeFromTemplate(e []*packageInfo) {
 	buf := bytes.Buffer{}
 	//使用模板
-	var filepaths = getGOPATHsrc() + "github.com\\scryinfo\\dot\\tools\\config\\data\\nobl\\tool\\file1.tmpl"
+	var filepaths = getGOPATHsrc() + "github.com/scryinfo/dot/tools/config/data/nobl/tool/file1.tmpl"
+	filepaths = filepath.FromSlash(filepaths)
 	t, err := template.ParseFiles(filepaths)
 	if err != nil {
 		fmt.Println("parseFileErr err", err)
@@ -571,7 +572,7 @@ func buildCodeFromTemplate(e []*packageInfo) {
 	//file
 	baseName := "callMethod.go"
 	baseName = filepath.Join(".", baseName)
-	err = ioutil.WriteFile(baseName, buf.Bytes(), 0644)
+	err = ioutil.WriteFile(baseName, buf.Bytes(), 0777)
 	if err != nil {
 		fmt.Println("writing callMethod.go err")
 		return
