@@ -43,15 +43,24 @@ func (sc *ScryConfig)LoadConfigFile(configPaths...string)(map[string]interface{}
 				if err != nil {
 					return nil,err
 				}
-				allFiles, err := ioutil.ReadDir(configPath)
+				s, err := os.Stat(configPath);
 				if err != nil {
 					return nil,err
 				}
-				for _,allFile := range allFiles{
-					if !allFile.IsDir(){
-						allFilesAbs = append(allFilesAbs,filepath.Join(configPath,allFile.Name()))
+				if s.IsDir() {
+					allFiles, err := ioutil.ReadDir(configPath)
+					if err != nil {
+						return nil,err
 					}
+					for _,allFile := range allFiles{
+						if !allFile.IsDir(){
+							allFilesAbs = append(allFilesAbs,filepath.Join(configPath,allFile.Name()))
+						}
+					}
+				}else {
+					allFilesAbs = append(allFilesAbs,configPath)
 				}
+
 			}
 		}
 	}
