@@ -1,32 +1,6 @@
 <template>
     <div>
-        <el-row><el-col :span="24"><el-button @click="addEvent()">add</el-button><el-button @click="ShowJsonDialog(parsedData)">JSON</el-button></el-col></el-row>
-        <el-row v-for="(member,index) in flowData " v-model="flowData">
-            <el-col :span="18">
-                <div v-if="member.type !== 'object' && member.type !== 'array'"  class="grid-content bg-purple-light">
-                <el-input type="text"
-                          v-model="flowData[index].remark"
-                          v-if="member.type == 'string'">
-                </el-input>
-                <el-input
-                        type="number"
-                        v-model.number="flowData[index].remark"
-                        v-if="member.type == 'number'">
-                </el-input>
-                <bool-view
-                        v-model="flowData[index].remark"
-                        :boolValue="flowData[index].remark"
-                        v-if="member.type == 'boolean'"
-                >
-                </bool-view>
-            </div>
-            <div v-else  class="grid-content bg-purple-light">
-                <json-view v-model="flowData[index].childParams" :parsedData="flowData[index].childParams"></json-view>
-            </div>
-            </el-col>
-            <el-col :span="4"><el-button :disabled="cantRemove" @click="removeEvent(index)">remove</el-button></el-col></el-row>
-        <el-row></el-row>
-
+        <el-button @click="ShowJsonDialog(objc)">JSON</el-button>
         <el-drawer
                 title="JSON textarea!"
                 :before-close="handleClose"
@@ -46,67 +20,37 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import Vue from 'vue'
     export default Vue.extend({
-        name: "ArrayView",
+        name: "JsonRelyButton",
         props: {
-            parsedData: {},
+            objc: {}
         },
-        data () {
+        data() {
             return {
-                flowData: (this as any).parsedData.childParams,
                 dialog: false,
-                objc: [],
-                textarea: '',
-                cantRemove: true,
                 schemaObject: {},
-                temp: {},
-                nameTemp: ''
-            }
-        },
-        watch: {
-            parsedData: {
-                handler(newValue, oldValue) {
-                    this.flowData = (this as any).parsedData.childParams;
-                },
-                immediate: true
-            },
-            flowData: {
-                handler(newValue, oldValue) {
-                    if(newValue.length > 1){
-                        this.cantRemove = false;
-                    }
-                    if (newValue.length === 1){
-                        this.cantRemove = true;
-                    }
-                    this.$emit('input',newValue);
-                },
-                deep: true
+                textarea: ''
             }
         },
         methods: {
             ShowJsonDialog(obj:any){
                 this.dialog = true;
-                (this as any).objc.push(obj);
+                (this as any).objc = obj;
                 let jsonSchemaGenerator = require('./schemaGenerator/index.js');
-                let data = {};
-                this.temp = this.makeJson(this.objc);
-                this.nameTemp = obj.name;
-                eval("data = this.temp."+this.nameTemp);
-                this.schemaObject = jsonSchemaGenerator.jsonToSchema(this.temp);
-                console.log(JSON.stringify(this.schemaObject,null,4));
+                let data = this.makeJson(obj);
+                (this as any).schemaObject = jsonSchemaGenerator.jsonToSchema(data);
                 this.textarea = JSON.stringify(data,null,4);
+
             },
             handleClose(done:any){
                 try{
                     if(this.textarea){
-                        let data = JSON.parse(this.textarea);
-                        eval("this.temp."+this.nameTemp+"= data");
+                        let objct:any = JSON.parse(this.textarea);
                         let tv4 = require('tv4');
-                        if(tv4.validate(this.temp, this.schemaObject)){
-                            let objct:any = this.jsonParse(data);
-                            this.$emit('input',objct);
-                        }else{
+                        if(tv4.validate(objct,this.schemaObject)){
+                            this.$emit('input',this.jsonParse(objct));
+                        }else {
                             (this as any).$message.error('json text input error!');
                         }
                     }else{
@@ -247,32 +191,11 @@
                 };
 
                 return revertMain(dataArr);
-            },
-            addEvent () {
-                this.flowData.push(this.shallowCopy(this.flowData[this.flowData.length-1]));
-            },
-            shallowCopy(src:any):any {
-                let dst:any = {};
-                for (let prop in src) {
-                    if (src.hasOwnProperty(prop)) {
-                        dst[prop] = src[prop];
-                    }
-                }
-                return dst;
-            },
-            removeEvent(index:number) {
-                this.flowData.splice(index,1);
             }
         }
     })
 </script>
 
 <style scoped>
-    .bg-purple-light {
-        background: #e5e9f2;
-    }
-    .grid-content {
-        border-radius: 4px;
-        min-height: 36px;
-    }
+
 </style>
