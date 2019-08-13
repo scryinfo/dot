@@ -32,9 +32,31 @@
                     </el-row>
                 </el-collapse-item>
             </el-col>
-            <el-col :span="4"><el-button>Load By Config</el-button><el-button @click="AddObject(config,config.metaData.typeId,'lives')">Add Live</el-button></el-col>
+            <el-col :span="4"><el-button @click="showDialog(config.metaData.typeId,config.lives)">Load By Config</el-button><el-button @click="AddObject(config,config.metaData.typeId,'lives')">Add Live</el-button></el-col>
         </el-row>
     </el-collapse>
+        <el-dialog
+        title="load by config"
+        :visible.sync="dialogVisible"
+        width="40%">
+            <span style="text-align: center">
+              <el-upload
+                      action=""
+                      class="upload-demo"
+                      :http-request="uploadSectionFile"
+                      drag
+                      :limit=1
+                      >
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                <div class="el-upload__tip" slot="tip">只能上传json文件</div>
+            </el-upload>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handleConfirm()">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -47,12 +69,15 @@
         data() {
             return {
                 activeTypes:[],
-                dialog: false,
+                dialogVisible: false,
                 textarea: '',
                 keyarea: '',
                 objc: null,
                 model: '',
-                schemaObject: {}
+                schemaObject: {},
+                upLoadFile: '',
+                typeId: '',
+                lives: [],
             }
         },
         components: {
@@ -84,6 +109,65 @@
                     }
                 }
                 return dst;
+            },
+            uploadSectionFile(param:any){
+                let fileObj = param.file;
+                console.log(fileObj);
+                console.log(JSON.stringify(fileObj,null,4));
+                let Blb = fileObj.slice();
+                let reader = new FileReader();
+                reader.readAsText(fileObj,'utf-8');
+                let result:any;
+                reader.onload = this.fileOnload;
+            },
+            fileOnload(e:any){
+                this.upLoadFile = e.target.result;
+                console.log(this.upLoadFile);
+            },
+            showDialog(typeId:string,lives:any){
+                this.typeId = typeId;
+                this.lives = lives;
+                console.log(this.typeId);
+                this.dialogVisible = true;
+            },
+            handleConfirm(){
+                let configLives = this.findConfigLives(this.typeId);
+                let dotLive = this.findDotLive(this.typeId);
+                if (configLives && dotLive){
+                    for(let i = 0, len = configLives.length; i < len; i++){
+                        let target:any = (this as any).assemble(dotLive,configLives[i]);
+                        (this as any).lives.push(target);
+                    }
+                    console.log(this.lives);
+                }
+                this.dialogVisible = false;
+
+            },
+            findConfigLives(typeId:string):any{
+                let config = JSON.parse(this.upLoadFile);
+                for(let i = 0, len = config.dots.length; i < len; i++){
+                    if(config.dots[i].metaData.typeId === typeId){
+                        return config.dots[i].lives;
+                    }
+                }
+                return null;
+            },
+            findDotLive(typeId:string):any{
+                for(let i = 0, len = (this as any).$root.Dots.length; i < len; i++){
+                    if((this as any).$root.Dots[i].metaData.typeId === typeId){
+                        return (this as any).$root.Dots[i].lives[0];
+                    }
+                }
+                return null;
+            },
+            assemble(schema:any,source:any):any{
+                for(let key in schema){
+                    schema[key] = this.isObject(schema[key]) ? this.assemble(schema[key],(source[key] ? source[key] : schema[key])) : (source[key] ? source[key] : schema[key]);
+                }
+                return schema;
+            },
+            isObject(o:any):any {
+                return (typeof o === 'object') && o !==null;
             }
         }
     })
