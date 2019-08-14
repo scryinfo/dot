@@ -9,13 +9,15 @@
       <el-input type="text"  v-model="files[index]" style="width: 78%;margin-left: 2%;"></el-input>
       <el-button id="remove" @click="del(index)" style="margin-left: 2%">remove</el-button>
     </div>
-    <el-button id="find" @click="find" style="margin-right:78%;">FindDot</el-button>
+    <el-button id="find" @click="find()" style="margin-right:78%;">FindDot</el-button>
   </div>
 </template>
 
 <script>
 // import {HiDotClient} from '../../../run/hi_grpc_web_pb'
 // import {ReqDirs} from '../../../run/hi_pb'
+// import ConfigService from '../utils/utils'
+import '../plugins/main'
   export default{
     data() {
       return {
@@ -36,15 +38,11 @@
           this.files = ['']
         }
       },
-      // find() {
-      //   let client = new HiDotClient("http://localhost:6868/root",null,null);
-      //   let request = new ReqDirs();
-      //   request.setDirsList(this.files);
-      //   client.findDot(request,{},(err, response)=>{
-      //     this.$root.Dots = response.ResData.dotsinfo;
-      //     console.log(this.$root.Dots)
-      //   });
-      // },
+      find(){
+        var dir = this.files;
+        rpcFindDot(dir);
+      },
+
     }
   }
 </script>

@@ -3,10 +3,10 @@
     <el-button id="removeAllDot" @click="removeAllDots()" style="margin-bottom: 5px;">Remove All</el-button>
     <el-row v-for="(v,index) in table">
       <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">lives num: {{index+1}}</div></el-col>
-      <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{v["Meta"]["name"]}}</div></el-col>
+      <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{v["metaData"]["name"]}}</div></el-col>
       <el-col :span="10">
-        <el-collapse-item v-bind:title="v.Meta.typeId" v-bind:name="index" >
-          <el-row v-for="(a,b,c) in v.Meta">
+        <el-collapse-item v-bind:title="v.metaData.typeId" v-bind:name="index" >
+          <el-row v-for="(a,b,c) in v.metaData">
             <el-col :span="6"><div >{{b}}</div></el-col>
             <el-col :span="18"><div >{{a}}</div></el-col>
           </el-row>
