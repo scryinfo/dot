@@ -31,7 +31,7 @@
        </router-link>
         </el-menu>
   </el-aside>
-  <el-main>
+  <el-main style="height: 90vh;">
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
