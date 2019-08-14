@@ -29,7 +29,7 @@
     },
     methods: {
       open(index) {
-        this.$prompt('输入组件名', '提示', {
+        this.$prompt('输入组件名', 'name', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(({value}) => {
@@ -37,7 +37,7 @@
             type: 'success',
             message: '该组件名更改为: ' + value,
           });
-          this.table[index].Meta.name = value;
+          this.table[index].metaData.name = value;
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -47,7 +47,7 @@
       },
       addConf(index) {
         const h = this.$createElement;
-        let n = this.table[index].Meta.name;
+        let n = this.table[index].metaData.name;
         this.$notify({
           title: 'success',
           message: h('i', {style: 'color: teal'},  'add '+ n +' to config success!')
@@ -55,11 +55,7 @@
         this.$root.Configs.push(this.table[index]);
       },
       removeAllDots(){
-        // this.table=[];
-        this.$root.Dots[0]['Meta']['name'] = "dots0.meta.name";
-        // alert(this.$root.Dots);
-        // alert(this.$root.Dots[0]['Meta']['name']);
-        alert(this.table[0]['Meta']['name'])
+        this.table=[''];
       },
       delDot(index) {
         this.table.splice(index,1)
