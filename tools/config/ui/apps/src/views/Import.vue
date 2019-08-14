@@ -39,8 +39,8 @@
   export default {
     data() {
       return {
-        dotPath:[''],
-        confPath:[''],
+        dotPath:'',
+        confPath:'',
 
       }
     },
@@ -48,10 +48,10 @@
       importDot(){},
       importConf(){},
       delDotPath(){
-        this.dotPath=[''];
+        this.dotPath='';
       },
       delConfPath(){
-        this.confPath=[''];
+        this.confPath='';
       },
     }
   }
