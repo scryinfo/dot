@@ -77,7 +77,7 @@
                 schemaObject: {},
                 upLoadFile: '',
                 typeId: '',
-                lives: [],
+                lives: []
             }
         },
         components: {
@@ -112,8 +112,6 @@
             },
             uploadSectionFile(param:any){
                 let fileObj = param.file;
-                console.log(fileObj);
-                console.log(JSON.stringify(fileObj,null,4));
                 let Blb = fileObj.slice();
                 let reader = new FileReader();
                 reader.readAsText(fileObj,'utf-8');
@@ -122,12 +120,10 @@
             },
             fileOnload(e:any){
                 this.upLoadFile = e.target.result;
-                console.log(this.upLoadFile);
             },
             showDialog(typeId:string,lives:any){
                 this.typeId = typeId;
                 this.lives = lives;
-                console.log(this.typeId);
                 this.dialogVisible = true;
             },
             handleConfirm(){
@@ -138,7 +134,6 @@
                         let target:any = (this as any).assemble(dotLive,configLives[i]);
                         (this as any).lives.push(target);
                     }
-                    console.log(this.lives);
                 }
                 this.dialogVisible = false;
 
