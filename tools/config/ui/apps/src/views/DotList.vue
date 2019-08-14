@@ -55,7 +55,7 @@
         this.$root.Configs.push(this.table[index]);
       },
       removeAllDots(){
-        this.table=[''];
+        this.table=[]
       },
       delDot(index) {
         this.table.splice(index,1)
