@@ -1,6 +1,6 @@
 'use strict';
 
-import {isObject,isNumber,isArray,isString,isNull,isBoolean,toObject,oneIsNull,isUndefined,isFunction,isEqual,getType } from './utils';
+import {isArray} from './utils';
 
 /**
 Schema generator using a AST
