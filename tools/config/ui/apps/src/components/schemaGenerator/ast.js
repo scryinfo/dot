@@ -6,7 +6,7 @@ used for generating the schema.
 
 @see: https://en.wikipedia.org/wiki/Abstract_syntax_tree
 */
-import {isObject,isNumber,isArray,isString,isNull,isBoolean,toObject,oneIsNull,isUndefined,isFunction,isEqual,getType } from './utils';
+import {isObject,isArray,getType } from './utils';
 var crypto = require('crypto');
 
 /**

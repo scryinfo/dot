@@ -10,8 +10,8 @@
                         <el-col :span="2"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{live.name}}</div></el-col>
                         <el-col :span="17">
                             <el-collapse-item v-bind:title="live.LiveId" v-bind:name="index+' '+index2">
-                                <el-row><el-col :span="2"><label>name</label></el-col><el-col :span="15"><el-input v-model="live.name" placeholder="Name"></el-input></el-col></el-row>
-                                <el-row><el-col :span="2"><label>liveId</label></el-col><el-col :span="15"><el-input v-model="live.liveId" placeholder="Liveid"></el-input></el-col>
+                                <el-row><el-col :span="2"><label>name</label></el-col><el-col :span="15"><el-input type="text" v-model="live.name" placeholder="Name"></el-input></el-col></el-row>
+                                <el-row><el-col :span="2"><label>liveId</label></el-col><el-col :span="15"><el-input type="text" v-model="live.liveId" placeholder="Liveid"></el-input></el-col>
                                 <el-col :span="4"><el-button @click="UuidGenerator(live)">Generate Live Id</el-button></el-col>
                                 </el-row>
 
