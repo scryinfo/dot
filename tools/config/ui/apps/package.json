@@ -18,7 +18,10 @@
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.3",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "google-protobuf": "^3.6.1",
+    "grpc-web": "^1.0.0",
+    "swagger-client": "^3.9.1"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.5.0",

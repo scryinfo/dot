@@ -2,34 +2,22 @@ const { ReqDirs,ReqExport, ReqImport,ReqLoad} = require('./hi_pb.js');
 const {HiDotClient} = require('./hi_grpc_web_pb.js');
 var rpcweb = new HiDotClient('http://localhost:6868/root');
 
-function rpcFindDot(dirList) {
+export function rpcFindDot(dirList,callback) {
     var request = new ReqDirs();
     //var dirList = ['/home/jayce/golangPath/src/dot/dots'];
     request.setDirsList(dirList);
     console.log("finddot:",request);
     rpcweb.findDot(request, {}, (err, response) => {
         if (response) {
-            console.log("dotsinfo:",response.getDotsinfo());
-            console.log("不存在组件的目录：",response.getNoexistdirsList());
-            console.log("error:",response.getError());
-            var res={
-                dotsInfo:null,
-                noExistDirs:null,
-                error:null
-            };
-            res.dotsInfo=response.getDotsinfo();
-            res.noExistDirs=response.getNoexistdirsList();
-            res.error=response.getError();
-            return res;
+            callback(response)
         } else {
-            console.log(err);
+            alert(JSON.stringify(err));
         }
     })
 }
-window.rpcFindDot = rpcFindDot;
 
 //loadbyconfig
-function rpcLoadByConfig(dir,typeId) {
+export function rpcLoadByConfig(dir,typeId,callback) {
     var request = new ReqLoad();
     //var dir = '/home/jayce/golangPath/src/dot/sample/grpc/http/server/server_http.json'; //文件路径
     //var typeId = 'afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0';  //typeId
@@ -38,72 +26,45 @@ function rpcLoadByConfig(dir,typeId) {
     console.log("loadbyconfig",request);
     rpcweb.loadByConfig(request, {}, (err, response) => {
         if (response) {
-            console.log("configjson:",response.getConfigjson());
-            console.log("errinfo:",response.getErrinfo());
-            var res={
-                configJson:null,
-                errorInfo:null
-            };
-            res.configJson=response.getConfigjson();
-            res.errorInfo=response.getError();
-            return res;
+            callback(response)
         } else {
-            console.log(err);
+            alert(JSON.stringify(err));
         }
     })
 }
-window.rpcLoadByConfig = rpcLoadByConfig;
 
 //importByDot
-function rpcimportByDot(filepath){
+export function rpcimportByDot(filepath,callback){
     var request = new ReqImport();
     //var filepath = '/home/jayce/golangPath/src/github.com/scryinfo/dot/tools/config/data/server/testdot.json'; //文件路径
     request.setFilepath(filepath);
     console.log("importbydot",request);
     rpcweb.importByDot(request,{},(err, response)=>{
-        if (response){
-            console.log("json:",response.getJson());
-            console.log("error:",response.getError());
-            var res={
-                Json:null,
-                error:null
-            };
-            res.Json=response.getJson();
-            res.error=response.getError();
-            return res;
-        }else {
-            console.log(err)
+        if (response) {
+            callback(response)
+        } else {
+            alert(JSON.stringify(err));
         }
     })
 }
-window.rpcimportByDot=rpcimportByDot;
 
 //importByConfig
-function rpcimportByConfig(filepath){
+export function rpcimportByConfig(filepath,callback){
     var request = new ReqImport();
     //var filepath = '/home/jayce/golangPath/src/dot/sample/grpc/http/server/server_http.json'; //文件路径
     request.setFilepath(filepath);
     console.log("importbyconfig",request);
     rpcweb.importByConfig(request,{},(err, response)=>{
-        if (response){
-            console.log("json:",response.getJson());
-            console.log("error:",response.getError());
-            var res={
-                Json:null,
-                error:null
-            };
-            res.Json=response.getJson();
-            res.error=response.getError();
-            return res;
-        }else {
-            console.log(err)
+        if (response) {
+            callback(response)
+        } else {
+            alert(JSON.stringify(err));
         }
     })
 }
-window.rpcimportByConfig=rpcimportByConfig;
 
 //test exportDot
-function rpcExportDot(data,filename) {
+export function rpcExportDot(data,filename,callback) {
     var request = new ReqExport();
     /*var data =
         [{
@@ -133,17 +94,15 @@ function rpcExportDot(data,filename) {
     console.log("exportDot:",request);
     rpcweb.exportDot(request, {}, (err, response) => {
         if (response) {
-            console.log("error:",response.getError());
-            return response.getError();
+            callback(response)
         } else {
-            console.log(err);
+            alert(JSON.stringify(err));
         }
     })
 }
-window.rpcExportDot = rpcExportDot;
 
 //test exportConfig
-function rpcExportConfig(data,filename) {
+export function rpcExportConfig(data,filename,callback) {
     /*var data = {
         "log": {
             "file": "log.log",
@@ -208,11 +167,9 @@ function rpcExportConfig(data,filename) {
     console.log("exportConfig:",request);
     rpcweb.exportConfig(request, {}, (err, response) => {
         if (response) {
-            console.log("error:",response.getError());
-            return response.getError();
+            callback(response)
         } else {
-            console.log(err);
-        }s
+            alert(JSON.stringify(err));
+        }
     })
 }
-window.rpcExportConfig = rpcExportConfig;
