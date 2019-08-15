@@ -14,6 +14,7 @@
 </template>
 
 <script>
+
   export default{
     data() {
       return {
@@ -34,15 +35,18 @@
           this.files = ['']
         }
       },
-      find() {
-      var dirList = ['/home/jayce/golangPath/src/dot/dots'];
-      var {rpcFindDot}=require('../plugins/rpcInterface');
-      rpcFindDot(dirList,(response)=>{
-            this.$root.Dots=response.getDotsinfo();
+
+      find(){
+        var dir = this.files;
+        var {rpcFindDot} = require('../plugins/rpcInterface');
+        console.log(this.$root.Dots);
+        rpcFindDot(dir,(response)=>{
+            this.$root.Dots=JSON.parse(response.getDotsinfo());
             console.log(this.$root.Dots)
-      })
+          })
+
       }
-  }
+    }
 }
 </script>
 <style>
