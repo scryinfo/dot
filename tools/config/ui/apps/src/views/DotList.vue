@@ -1,9 +1,9 @@
 <template>
   <el-collapse>
     <el-button id="removeAllDot" @click="removeAllDots()" style="margin-bottom: 5px;">Remove All</el-button>
-    <el-row v-for="(v,index) in table">
+    <el-row v-for="(v,index) in this.$root.Dots">
       <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">lives num: {{index+1}}</div></el-col>
-      <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{v["metaData"]["name"]}}</div></el-col>
+      <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{v.metaData.name}}</div></el-col>
       <el-col :span="10">
         <el-collapse-item v-bind:title="v.metaData.typeId" v-bind:name="index" >
           <el-row v-for="(a,b,c) in v.metaData">
@@ -37,7 +37,7 @@
             type: 'success',
             message: '该组件名更改为: ' + value,
           });
-          this.table[index].metaData.name = value;
+          this.$root.Dots[index].metaData.name = value;
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -47,18 +47,18 @@
       },
       addConf(index) {
         const h = this.$createElement;
-        let n = this.table[index].metaData.name;
+        let n = this.$root.Dots[index].metaData.name;
         this.$notify({
           title: 'success',
           message: h('i', {style: 'color: teal'},  'add '+ n +' to config success!')
         });
-        this.$root.Configs.push(this.table[index]);
+        this.$root.Configs.push(this.$root.Dots[index]);
       },
       removeAllDots(){
-        this.table=[]
+        this.$root.Dots=[]
       },
       delDot(index) {
-        this.table.splice(index,1)
+        this.$root.Dots.splice(index,1)
       },
     }
   }
