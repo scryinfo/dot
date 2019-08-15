@@ -9,15 +9,11 @@
       <el-input type="text"  v-model="files[index]" style="width: 78%;margin-left: 2%;"></el-input>
       <el-button id="remove" @click="del(index)" style="margin-left: 2%">remove</el-button>
     </div>
-    <el-button id="find" @click="find()" style="margin-right:78%;">FindDot</el-button>
+    <el-button id="find" @click="find" style="margin-right:78%;">FindDot</el-button>
   </div>
 </template>
 
 <script>
-// import {HiDotClient} from '../../../run/hi_grpc_web_pb'
-// import {ReqDirs} from '../../../run/hi_pb'
-// import ConfigService from '../utils/utils'
-import '../plugins/main'
   export default{
     data() {
       return {
@@ -38,13 +34,16 @@ import '../plugins/main'
           this.files = ['']
         }
       },
-      find(){
-        var dir = this.files;
-        rpcFindDot(dir);
-      },
-
-    }
+      find() {
+      var dirList = ['/home/jayce/golangPath/src/dot/dots'];
+      var {rpcFindDot}=require('../plugins/rpcInterface');
+      rpcFindDot(dirList,(response)=>{
+            this.$root.Dots=response.getDotsinfo();
+            console.log(this.$root.Dots)
+      })
+      }
   }
+}
 </script>
 <style>
   #findDot {
