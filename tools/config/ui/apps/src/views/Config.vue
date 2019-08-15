@@ -2,16 +2,21 @@
     <div>
     <el-collapse v-model="activeTypes">
         <el-row v-for="(config,index) in $root.Configs">
-            <el-col :span="1" ><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{index+1}}</div></el-col>
+            <div v-if="config.metaData.flag=='not-exist'">
+                <el-col :span="1" ><el-tooltip effect="dark" content="This typeId is not exist in dots!" placement="bottom-start"><div class="grid-content bg-warning" style="text-align: center;line-height: 46px;">{{index+1}}</div></el-tooltip></el-col>
+            </div>
+            <div v-else>
+                <el-col :span="1" ><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{index+1}}</div></el-col>
+            </div>
             <el-col :span="2"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{config.metaData.name}}</div></el-col>
             <el-col :span="16">
                 <el-collapse-item v-bind:title="config.metaData.typeId" v-bind:name="index">
                     <el-row v-for="(live,index2) in config.lives">
                         <el-col :span="2"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{live.name}}</div></el-col>
                         <el-col :span="17">
-                            <el-collapse-item v-bind:title="live.LiveId" v-bind:name="index+' '+index2">
+                            <el-collapse-item v-bind:title="live.liveId" v-bind:name="index+' '+index2">
                                 <el-row><el-col :span="2"><label>name</label></el-col><el-col :span="15"><el-input type="text" v-model="live.name" placeholder="Name"></el-input></el-col></el-row>
-                                <el-row><el-col :span="2"><label>liveId</label></el-col><el-col :span="15"><el-input type="text" v-model="live.liveId" placeholder="Liveid"></el-input></el-col>
+                                <el-row><el-col :span="2"><label>liveId</label></el-col><el-col :span="15"><el-input type="text" v-model="live.liveId" placeholder="LiveId"></el-input></el-col>
                                 <el-col :span="4"><el-button @click="UuidGenerator(live)">Generate Live Id</el-button></el-col>
                                 </el-row>
 
@@ -86,7 +91,7 @@
         },
         methods: {
             AddObject(config:any,typeId:string,keyss:string) {
-                for (let dot of (this as any).$root.Dots) {
+                for (let dot of (this as any).$root.DotsTem) {
                     if (dot.metaData.typeId === typeId) {
                         let dotcopy;
                         eval("dotcopy = this.shallowCopy(dot."+keyss+"[0])");
@@ -131,8 +136,9 @@
                 let dotLive = this.findDotLive(this.typeId);
                 if (configLives && dotLive){
                     for(let i = 0, len = configLives.length; i < len; i++){
-                        let target:any = (this as any).assemble(dotLive,configLives[i]);
-                        (this as any).lives.push(target);
+                        this.assembleByLiveId(dotLive,configLives[i]);
+                        // let target:any = (this as any).assemble(dotLive,configLives[i]);
+                        // (this as any).lives.push(target);
                     }
                 }
                 this.dialogVisible = false;
@@ -148,9 +154,9 @@
                 return null;
             },
             findDotLive(typeId:string):any{
-                for(let i = 0, len = (this as any).$root.Dots.length; i < len; i++){
-                    if((this as any).$root.Dots[i].metaData.typeId === typeId){
-                        return (this as any).$root.Dots[i].lives[0];
+                for(let i = 0, len = (this as any).$root.DotsTem.length; i < len; i++){
+                    if((this as any).$root.DotsTem[i].metaData.typeId === typeId){
+                        return (this as any).$root.DotsTem[i].lives[0];
                     }
                 }
                 return null;
@@ -163,6 +169,20 @@
             },
             isObject(o:any):any {
                 return (typeof o === 'object') && o !==null;
+            },
+            assembleByLiveId(dotLive:any, configLive:any){
+                let flag = false;
+                for(let i = 0, len = this.lives.length; i < len; i++){
+                    if((this as any).lives[i].liveId === configLive.liveId){
+                        (this as any).lives[i] = this.assemble((this as any).lives[i],configLive);
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag){
+                    let target:any = (this as any).assemble(dotLive,configLive);
+                    (this as any).lives.push(target);
+                }
             }
         }
     })
@@ -185,5 +205,8 @@
     .grid-content {
         border-radius: 4px;
         min-height: 46px;
+    }
+    .bg-warning {
+        background: #d6a23c;
     }
 </style>
