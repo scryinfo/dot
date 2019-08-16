@@ -8,7 +8,7 @@
             <div v-else>
                 <el-col :span="1" ><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{index+1}}</div></el-col>
             </div>
-            <el-col :span="2"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{config.metaData.name}}</div></el-col>
+            <check-live-id :metaName="config.metaData.name" :lives="config.lives"></check-live-id>
             <el-col :span="16">
                 <el-collapse-item v-bind:title="config.metaData.typeId" v-bind:name="index">
                     <el-row v-for="(live,index2) in config.lives">
@@ -67,8 +67,9 @@
 
 <script lang="ts">
     import Vue from 'vue'
-    import RelyLivesEditor from '../components/RelyLivesEditor.vue'
-    import JsonButton from '../components/JsonButton.vue'
+    import RelyLivesEditor from '../components/RelyLivesEditor.vue';
+    import JsonButton from '../components/JsonButton.vue';
+    import CheckLiveId from '../components/checkLiveId.vue';
     const uuidv1 = require('uuid/v1')
     export default Vue.extend({
         data() {
@@ -87,7 +88,8 @@
         },
         components: {
           "rely-lives-editor": RelyLivesEditor,
-            "json-button": JsonButton
+            "json-button": JsonButton,
+            "check-live-id": CheckLiveId
         },
         methods: {
             AddObject(config:any,typeId:string,keyss:string) {
@@ -208,5 +210,8 @@
     }
     .bg-warning {
         background: #d6a23c;
+    }
+    .bg-Danger {
+        background: #F56C6C;
     }
 </style>
