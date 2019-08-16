@@ -100,28 +100,32 @@ export default {
           confFileNames.push(this.confFileName + "." + this.checkedCitiesC[i]);
         }
         //判断liveid
-        var conf = this.$root.Configs;
-        var resultDot = [];
-        var liveIds = [];
-        for (var i = 0; i < conf.length; i++) {
-          if (conf[i].lives.length == 0) {
-            continue;
-          }
-          for (var j = 0; j < conf[i].lives.length; j++) {
-            if (conf[i].lives[j].liveId == "") {
-              alert(conf[i].lives[j] + ":liveId is null");
-              return false;
-            } else {
-              for (var z = 0; z < liveIds.length; z++) {
-                if (conf[i].lives[j].liveId == liveIds[z]) {
-                  alert(conf[i].lives[j].liveId + "liveid重复．");
-                  return false;
-                }
-              }
-              liveIds.push(conf[i].lives[j].liveId);
+        var conf = this.$root.Configs; //config页面数据
+        var resultDot = []; //处理掉空配置
+        
+        {
+          var liveIds = [];
+          for (var i = 0; i < conf.length; i++) {
+            if (conf[i].lives.length == 0) {
+              //实例数为０跳过
+              continue;
             }
+            for (var j = 0; j < conf[i].lives.length; j++) {
+              if (conf[i].lives[j].liveId == "") {
+                alert(conf[i].lives[j] + ":liveId is null");
+                return false;
+              } else {
+                for (var z = 0; z < liveIds.length; z++) {
+                  if (conf[i].lives[j].liveId == liveIds[z]) {
+                    alert(conf[i].lives[j].liveId + "liveid重复．");
+                    return false;
+                  }
+                }
+                liveIds.push(conf[i].lives[j].liveId);
+              }
+            }
+            resultDot.push(conf[i]);
           }
-          resultDot.push(conf[i]);
         }
         var result = {
           log: {
@@ -130,7 +134,7 @@ export default {
           },
           dots: null
         };
-        result.dots=resultDot;
+        result.dots = resultDot;
         var { rpcExportConfig } = require("../plugins/rpcInterface");
         rpcExportConfig(result, confFileNames, response => {
           if (response.getError() == "") {

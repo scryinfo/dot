@@ -55,6 +55,37 @@
         },
         methods: {
             importDot() {
+                if (this.dotPath != '') {
+                    var {rpcimportByDot} = require('../plugins/rpcInterface');
+                    rpcimportByDot(this.dotPath, (response) => {
+                        if (response.getError() != '') {
+                            var err = response.getError()
+                            console.log(err)
+                            alert("网络请求错误：" +err)
+                        } else {
+                            var dots=[];
+                            dots= JSON.parse(response.getJson());
+                            console.log(dots);
+                            for(var i=0;i<dots.length;i++){
+                                var bo=true;
+                                for (var j = 0, len = this.$root.Dots.length; j < len; j++) {
+                                    if(dots[i].metaData.typeId == this.$root.Dots[j].metaData.typeId){
+                                        bo=false;
+                                        break
+                                    }
+                                }
+                                if (bo) {
+                                    this.$root.Dots.push(dots[i]);
+                                    this.$root.DotsTem.push(dots[i])
+                                }
+                                console.log(bo)
+                            }
+                            alert("导入组件成功")
+                        }
+                    });
+                } else {
+                    alert("Please input dotPath!");
+                }
             },
             importConf() {
                 if (this.confPath != '') {
