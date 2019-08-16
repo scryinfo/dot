@@ -37,20 +37,6 @@ type FuncOfDot struct {
 	location token.Pos //函数位置
 }
 
-func main() {
-	var dirs []string
-	dirs = append(dirs, "C:\\go-work\\src\\github.com\\scryinfo\\dot")
-
-	//dirs = append(dirs, "C:\\go-work\\pkg\\mod\\github.com\\scryinfo\\dot@v0.1.2")
-	//dirs = append(dirs, "C:\\go-work\\pkg\\mod\\github.com\\scryinfo\\dot@v0.1.3-0.20190705064446-6614e45bf155")
-	//dirs = append(dirs, "C:\\go-work\\pkg\\mod\\github.com\\scryinfo\\scryg@v0.1.3-0.20190608053141-a292b801bfd6")
-
-	//dirs = append(dirs, "C:\\Users\\hebin\\Desktop\\dot@v0.1.2")
-	//dirs = append(dirs, "C:\\Users\\hebin\\Desktop\\dot@v0.1.3-0.20190705064446-6614e45bf155")
-	v1, v2, v3 := FindDots(dirs)
-	fmt.Println(string(v1), v2, v3)
-}
-
 //dirs用户传入的数据
 //返回组件数据、不存在的目录信息包括mod依赖目录、错误信息
 func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
@@ -557,7 +543,7 @@ func getGOROOTBin() string {
 func buildCodeFromTemplate(e []*packageInfo) {
 	buf := bytes.Buffer{}
 	//使用模板
-	var filepaths = getGOPATHsrc() + "github.com/scryinfo/dot/tools/config/data/nobl/tool/file1.tmpl"
+	var filepaths = "../nobl/tool/file1.tmpl"
 	filepaths = filepath.FromSlash(filepaths)
 	t, err := template.ParseFiles(filepaths)
 	if err != nil {
