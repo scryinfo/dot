@@ -130,7 +130,7 @@ export let makeJson = function (dataArr:any) {
     return revertMain(dataArr);
 }
 export function jsonParseRely(Json:any) {
-    if (Json === null){
+    if (Json === null || Json === undefined){
         Json = {}
     }
     let result:any = [];
