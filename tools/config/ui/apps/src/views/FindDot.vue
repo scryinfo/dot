@@ -42,9 +42,8 @@
         console.log(this.$root.Dots);
         rpcFindDot(dir,(response)=>{
             this.$root.Dots=JSON.parse(response.getDotsinfo());
-            console.log(this.$root.Dots)
+            alert("findDot Finish! ")
           })
-
       }
     }
 }
