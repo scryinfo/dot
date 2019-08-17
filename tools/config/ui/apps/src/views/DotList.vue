@@ -1,9 +1,9 @@
 <template>
   <el-collapse>
     <el-button id="removeAllDot" @click="removeAllDots()" style="margin-bottom: 5px;">Remove All</el-button>
-    <el-button id="updateLiveNum" @click="updateLvNum()" style="margin-bottom: 5px;">Update LiveNum</el-button>
+    <el-button id="updateLiveNum" @click="updateLvNum()" style="margin-bottom: 5px;">Live Num</el-button>
     <el-row v-for="(v,index) in this.$root.Dots">
-      <el-col :span="3"><div class="grid-content bg-purple" v-text="livesNum[index]" style="text-align: center;line-height: 46px;"></div></el-col>
+      <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{livesNum[index]}}</div></el-col>
       <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{v.metaData.name}}</div></el-col>
       <el-col :span="10">
         <el-collapse-item v-bind:title="v.metaData.typeId" v-bind:name="index" >
@@ -30,17 +30,27 @@
     },
     methods: {
       updateLvNum(){
-        this.livesNum=[];
         let l = this.$root.Dots.length;
         for (var i=0;i<l;i++){
+          this.livesNum[i]=0;
           let tId = this.$root.Dots[i].metaData.typeId;
           for (var j=0;j<this.$root.Configs.length;j++){
             if (this.$root.Configs[j].metaData.typeId==tId){
-              this.livesNum[i]=this.$root.Configs[j].lives.length;
+              let livesLen =this.$root.Configs[j].lives.length;
+              for (let k=0;k<livesLen;k++){
+                if(this.$root.Configs[j].lives[k].liveId != ''){
+                  this.livesNum[i]++;
+                }
+              }
               break;
             }
           }
         }
+        this.$forceUpdate();
+        this.$message({
+          type:"success",
+          message:"updata LivesNumber Success",
+        });
       },
       open(index) {
         this.$prompt('输入组件名', 'name', {
@@ -64,12 +74,18 @@
         let confNum = this.$root.Configs.length;
         for (var i=0;i<confNum;i++){
           if (this.$root.Configs[i].metaData.typeId == tId){
-           alert(" Existed In Config!");
+           this.$message({
+             type:"warning",
+             message:"Add default,Exist!",
+           });
             return
           }
         }
         this.$root.Configs.push(this.$root.Dots[index]);
-        alert("Add Config Success!")
+        this.$message({
+          type:"success",
+          message:"Add Config success",
+        });
       },
       removeAllDots(){
         this.$root.Dots=[]
@@ -77,8 +93,9 @@
       delDot(index) {
         this.$root.Dots.splice(index,1)
       },
-    }
+    },
   }
+
 </script>
 
 <style>

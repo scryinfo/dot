@@ -8,7 +8,7 @@
                 <div>
                     <span>dotPath :</span>
                     <el-input type="text" v-model="dotPath" style="width: 60%;margin-left: 2%;"></el-input>
-                    <el-button id="removeD" @click="delDotPath()" style="margin-left: 2%">remove</el-button>
+                    <el-button id="removeD" @click="delDotPath()" style="margin-left: 2%">Clear</el-button>
                 </div>
                 <el-row>
                     <el-button id="findD" @click="importDot()" style="margin-right:30%;margin-left: 10%;">Import Dot
@@ -25,7 +25,7 @@
                 <div>
                     <span>confPath:</span>
                     <el-input type="text" v-model="confPath" style="width: 60%;margin-left: 2%;"></el-input>
-                    <el-button id="removeC" @click="delConfPath()" style="margin-left: 2%">remove</el-button>
+                    <el-button id="removeC" @click="delConfPath()" style="margin-left: 2%">Clear</el-button>
                     <!--          <el-button id="removeC" @click="del(index)" style="margin-left: 2%">remove</el-button>-->
 
                 </div>
@@ -59,8 +59,8 @@
                     var {rpcimportByDot} = require('../plugins/rpcInterface');
                     rpcimportByDot(this.dotPath, (response) => {
                         if (response.getError() != '') {
-                            var err = response.getError()
-                            console.log(err)
+                            var err = response.getError();
+                            console.log(err);
                             alert("网络请求错误：" +err)
                         } else {
                             var dots=[];
@@ -76,15 +76,20 @@
                                 }
                                 if (bo) {
                                     this.$root.Dots.push(dots[i]);
-                                    this.$root.DotsTem.push(dots[i])
                                 }
-                                console.log(bo)
                             }
-                            alert("导入组件成功")
+                            this.$root.DotsTem = JSON.parse(JSON.stringify(this.$root.Dots));
+                            this.$message({
+                                type:"success",
+                                message:"Import Dot success!"
+                            });
                         }
                     });
                 } else {
-                    alert("Please input dotPath!");
+                    this.$message({
+                        type:'warning',
+                        message:'Please Imput DotPath!'
+                    })
                 }
             },
             importConf() {
