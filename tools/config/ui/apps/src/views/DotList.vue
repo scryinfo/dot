@@ -88,10 +88,12 @@
         });
       },
       removeAllDots(){
-        this.$root.Dots=[]
+        this.$root.Dots=[];
+        this.$root.DotsTem = []
       },
       delDot(index) {
-        this.$root.Dots.splice(index,1)
+        this.$root.Dots.splice(index,1);
+        this.$root.DotsTem.splice(index,1)
       },
     },
   }

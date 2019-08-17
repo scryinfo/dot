@@ -44,6 +44,7 @@
 <script>
 
     import JsonRelyButton from "../components/JsonRelyButton";
+    import {jsonParse} from "../components/changeDataStructure/chDS";
 
     export default {
         data() {
@@ -76,9 +77,9 @@
                                 }
                                 if (bo) {
                                     this.$root.Dots.push(dots[i]);
+                                    this.$root.DotsTem.push(JSON.parse(JSON.stringify(dots[i])));
                                 }
                             }
-                            this.$root.DotsTem = JSON.parse(JSON.stringify(this.$root.Dots));
                             this.$message({
                                 type:"success",
                                 message:"Import Dot success!"
