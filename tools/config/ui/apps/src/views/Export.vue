@@ -30,7 +30,7 @@
             >全选</el-checkbox>
             <div style="margin: 15px 0;"></div>
             <el-checkbox-group v-model="checkedCitiesC" @change="handleCheckedCitiesChangeC">
-              <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+              <el-checkbox v-for="city in optionsC" :label="city" :key="city">{{city}}</el-checkbox>
             </el-checkbox-group>
           </template>
         </el-row>
@@ -45,28 +45,28 @@
 </template>
 
 <script>
-const cityOptions = ["json", "toml", "yaml"];
+const FormatOptions = ["json", "toml", "yaml"];
 export default {
   data() {
     return {
       dotFileName: "",
       confFileName: "",
       checkAllC: false,
-      checkedCitiesC: ["json"],
-      cities: cityOptions,
+      checkedFormatC: ["json"],
+      optionsC: FormatOptions,
       isIndeterminate: true
     };
   },
   methods: {
     handleCheckAllChangeC(val) {
-      this.checkedCitiesC = val ? cityOptions : [];
+      this.checkedFormatC = val ? cityOptions : [];
       this.isIndeterminate = false;
     },
     handleCheckedCitiesChangeC(value) {
       let checkedCount = value.length;
-      this.checkAllC = checkedCount === this.cities.length;
+      this.checkAllC = checkedCount === this.optionsC.length;
       this.isIndeterminate =
-        checkedCount > 0 && checkedCount < this.cities.length;
+        checkedCount > 0 && checkedCount < this.optionsC.length;
     },
     ExportDot() {
       if (this.dotFileName == "") {
@@ -96,8 +96,8 @@ export default {
       } else {
         var confFileNames = [];
         //要生成的文件名
-        for (var i = 0; i < this.checkedCitiesC.length; i++) {
-          confFileNames.push(this.confFileName + "." + this.checkedCitiesC[i]);
+        for (var i = 0; i < this.checkedFormatC.length; i++) {
+          confFileNames.push(this.confFileName + "." + this.checkedFormatC[i]);
         }
         //判断liveid
         var conf = this.$root.Configs; //config页面数据

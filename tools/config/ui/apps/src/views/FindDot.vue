@@ -59,6 +59,7 @@
                 type: 'error',
                 message: err,
               });
+              this.fullscreenLoading=false;
             } else {
               var res = JSON.parse(response.getDotsinfo());
               var notExitsFile = response.getNoexistdirsList();
@@ -76,16 +77,16 @@
                   this.$root.ExportDots.push(JSON.parse(JSON.stringify(res[i])))
                 }
               }
-              if (notExitsFile!=[]){
+              if (notExitsFile==null){
+                this.$message({
+                  type: 'success',
+                  message: 'Find Dot Finish!'
+                });
+              }else {
                 this.$message({
                   type:'waring',
                   message:'find finish, this not existence Dots:'+notExitsFile
-                })
-              }else {
-                this.$message({
-                type: 'success',
-                message: 'Find Dot success!'
-              })
+                });
               }
               this.fullscreenLoading = false;
             }
