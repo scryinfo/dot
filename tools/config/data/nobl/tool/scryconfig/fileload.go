@@ -79,7 +79,7 @@ func (sc *ScryConfig)LoadConfigFile(configPaths...string)(map[string]interface{}
 			}else if fileExt == ".toml"{
 				tomlfile = append(tomlfile,fi)
 				config_exist = true
-			}else if fileExt == ".yml"{
+			}else if fileExt == ".yml" || fileExt == ".yaml"{
 				yamlfile = append(yamlfile,fi)
 				config_exist = true
 			}else {
