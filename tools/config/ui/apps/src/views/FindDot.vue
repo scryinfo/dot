@@ -14,7 +14,9 @@
 </template>
 
 <script>
-  export default {
+import {checkType} from "../components/changeDataStructure/checkType";
+
+export default {
     data() {
       return {
         files: [''],
@@ -83,6 +85,7 @@
                   message: 'Find Dot Finish!'
                 });
               }else {
+                checkType(this.$root.Dots,this.$root.Configs);
                 this.$message({
                   type:'waring',
                   message:'find finish, this not existence Dots:'+notExitsFile

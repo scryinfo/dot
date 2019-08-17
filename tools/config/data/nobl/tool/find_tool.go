@@ -2,6 +2,7 @@ package tool
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"go/ast"
 	"go/token"
@@ -47,6 +48,10 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 	{
 		//处理掉用户输入的不存在目录
 		yesDir, noDir := splitDir(dirs)
+		if len(yesDir) == 0 {
+			err = errors.New("Please enter a valid directory")
+			return
+		}
 		paths = append(paths, yesDir...)
 		notExistDir = append(notExistDir, noDir...)
 		//获取yesdir中所有mod文件的目录
@@ -150,6 +155,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 		{
 			if len(exitFuncInfos) == 0 {
 				fmt.Println("没有找到符合条件的函数")
+				err = errors.New("没有找到符合条件的组件")
 				return
 			}
 		}

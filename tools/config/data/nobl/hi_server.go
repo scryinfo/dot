@@ -157,7 +157,7 @@ func (serv *HiServer) ImportByDot(ctx context.Context, in *go_out.ReqImport) (*g
 	data, err := ioutil.ReadFile(in.Filepath)
 	if err != nil {
 		errStr = err.Error()
-		log.Panic("File reading error", err)
+		log.Println("File reading error", err)
 	}
 	res := go_out.ResImport{
 		Json:  string(data),
@@ -214,7 +214,7 @@ func (serv *HiServer) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*
 		for key, value := range fileFormat {
 			file, err := os.OpenFile(value, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 			if err != nil {
-				panic("An error occurred with file opening or creation\n")
+				log.Println("An error occurred with file opening or creation\n")
 			}
 			defer file.Close()
 			if key == "json" {

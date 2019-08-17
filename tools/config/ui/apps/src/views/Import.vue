@@ -42,9 +42,7 @@
 </template>
 
 <script>
-
-    import JsonRelyButton from "../components/JsonRelyButton";
-    import {jsonParse} from "../components/changeDataStructure/chDS";
+    import {checkType} from "../components/changeDataStructure/checkType";
 
     export default {
         data() {
@@ -62,7 +60,10 @@
                         if (response.getError() != '') {
                             var err = response.getError();
                             console.log(err);
-                            alert("网络请求错误：" +err)
+                            this.$message({
+                                type:'warning',
+                                 message:err
+                    })
                         } else {
                             var dots=[];
                             dots= JSON.parse(response.getJson());
@@ -81,6 +82,7 @@
                                     this.$root.ExportDots.push(JSON.parse(JSON.stringify(res[i])))
                                 }
                             }
+                            checkType(this.$root.Dots,this.$root.Configs);
                             this.$message({
                                 type:"success",
                                 message:"Import Dot success!"
@@ -139,7 +141,7 @@
             findDot(typeId) {
                 for (let i = 0, len = this.$root.DotsTem.length; i < len; i++) {
                     if (this.$root.DotsTem[i].metaData.typeId === typeId) {
-                        return this.$root.Dots[i];
+                        return this.$root.DotsTem[i];
                     }
                 }
                 return null;
