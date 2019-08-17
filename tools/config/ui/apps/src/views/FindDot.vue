@@ -10,6 +10,7 @@
       <el-button id="remove" @click="del(index)" style="margin-left: 2%">remove</el-button>
     </div>
     <el-button id="find" v-loading="fullscreenLoading" @click="find()" style="margin-right:78%;">FindDot</el-button>
+    <span style="margin-right: 70%">{{notExistT}}</span>
   </div>
 </template>
 
@@ -21,6 +22,7 @@ export default {
       return {
         files: [''],
         fullscreenLoading: false,
+        notExistT:''
       }
     },
     methods: {
@@ -61,10 +63,8 @@ export default {
                 type: 'error',
                 message: err,
               });
-              this.fullscreenLoading=false;
             } else {
               var res = JSON.parse(response.getDotsinfo());
-              var notExitsFile = JSON.parse(response.getNoexistdirsList());
               for (var i = 0; i < res.length; i++) {
                 var bo = true;
                 for (var j = 0, len = this.$root.Dots.length; j < len; j++) {
@@ -79,22 +79,15 @@ export default {
                   this.$root.ExportDots.push(JSON.parse(JSON.stringify(res[i])))
                 }
               }
-              if (notExitsFile==[]){
-                this.$message({
-                  type: 'success',
-                  message: 'Find Dot Finish!'
-                });
-              }else {
                 checkType(this.$root.Dots,this.$root.Configs);
                 this.$message({
-                  type:'waring',
-                  message:'find finish, this not existence Dots:'+notExitsFile
+                  type:'success',
+                  message:'find dot finish!'
                 });
-              }
-              this.fullscreenLoading = false;
             }
-          });
+            this.fullscreenLoading = false;
 
+          });
         }
     }
   }
