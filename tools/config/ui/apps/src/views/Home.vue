@@ -61,8 +61,6 @@
   .el-main {
     background-color: #E9EEF3;
     color: #333;
-    /*text-align: right;*/
-    /*line-height: 50px;*/
   }
 .el-menu-item {
   background: #D3DCE6;
@@ -70,10 +68,5 @@
   body > .el-container {
     margin-bottom: 40px;
   }
-    /*a {*/
-    /*  text-decoraction: none;*/
-    /*}*/
-    /*.router-link-active {*/
-    /*  text-decoration: none;*/
-    /*}*/
+
 </style>

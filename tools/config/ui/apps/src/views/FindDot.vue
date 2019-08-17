@@ -14,9 +14,6 @@
 </template>
 
 <script>
-
-  import {jsonParse} from "../components/changeDataStructure/chDS";
-
   export default {
     data() {
       return {
