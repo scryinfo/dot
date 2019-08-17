@@ -15,6 +15,8 @@
 
 <script>
 
+  import {jsonParse} from "../components/changeDataStructure/chDS";
+
   export default {
     data() {
       return {
@@ -60,9 +62,9 @@
               }
               if (bo) {
                 this.$root.Dots.push(res[i]);
+                this.$root.DotsTem.push( JSON.parse(JSON.stringify(res[i])));
               }
             }
-            this.$root.DotsTem = JSON.parse(JSON.stringify(this.$root.Dots));
             this.fullscreenLoading = false;
             this.$message({
               type:'success',
