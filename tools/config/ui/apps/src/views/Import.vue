@@ -111,15 +111,31 @@
                             let config;
                             {
                                 let ob = JSON.parse(response.getJson());
-                                config = ob.dots;
+                                if(ob.dots){
+                                    config = ob.dots;
+                                }else {
+                                    this.$message({
+                                        message: 'Dots is not exist in config files!',
+                                        type: 'error'
+                                    }) ;
+                                    return;
+                                }
                             }
                             for (let i = 0, len = config.length; i < len; i++) {
-                                let dot = this.findDot(config[i].metaData.typeId);
-                                this.assembleByTypeId(dot, config[i]);
-                                this.$message({
-                                    message: 'Import success!',
-                                    type: 'success'
-                                });
+                                if(config[i].metaData.typeId){
+                                    let dot = this.findDot(config[i].metaData.typeId);
+                                    this.assembleByTypeId(dot, config[i]);
+                                    this.$message({
+                                        message: 'Import success!',
+                                        type: 'success'
+                                    });
+                                }else {
+                                    this.$message({
+                                        message: 'typeId is not exist in config files!',
+                                        type: 'error'
+                                    }) ;
+                                    return;
+                                }
                             }
                         }
                     });
