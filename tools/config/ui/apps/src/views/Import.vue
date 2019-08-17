@@ -78,6 +78,7 @@
                                 if (bo) {
                                     this.$root.Dots.push(dots[i]);
                                     this.$root.DotsTem.push(JSON.parse(JSON.stringify(dots[i])));
+                                    this.$root.ExportDots.push(JSON.parse(JSON.stringify(res[i])))
                                 }
                             }
                             this.$message({

@@ -75,7 +75,7 @@ export default {
         var dotfilename = this.dotFileName + ".json";
         var filename = [dotfilename];
         var { rpcExportDot } = require("../plugins/rpcInterface");
-        rpcExportDot(this.$root.Dots, filename, response => {
+        rpcExportDot(this.$root.ExportDots, filename, response => {
           if (response.getError() == "") {
             alert(
               "导出文件" +
