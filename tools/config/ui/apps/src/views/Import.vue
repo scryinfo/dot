@@ -68,6 +68,11 @@
                             var dots=[];
                             dots= JSON.parse(response.getJson());
                             console.log(dots);
+                            //todo 判断类型是数组而且含有metaData.typeId字段
+                            if  (!(Array.isArray(dots) && dots[0].metaData.typeId!=null)){
+                                alert("请选择正确的组件文件．");
+                                return false
+                            }
                             for(var i=0;i<dots.length;i++){
                                 var bo=true;
                                 for (var j = 0, len = this.$root.Dots.length; j < len; j++) {
@@ -79,8 +84,9 @@
                                 if (bo) {
                                     this.$root.Dots.push(dots[i]);
                                     this.$root.DotsTem.push(JSON.parse(JSON.stringify(dots[i])));
-                                    this.$root.ExportDots.push(JSON.parse(JSON.stringify(res[i])))
+                                    this.$root.ExportDots.push(JSON.parse(JSON.stringify(dots[i])))
                                 }
+                                
                             }
                             checkType(this.$root.Dots,this.$root.Configs);
                             this.$message({
