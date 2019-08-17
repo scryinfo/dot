@@ -123,7 +123,7 @@
                 } else {
                     this.$message({
                         message: 'Please input confPath!',
-                        type: 'error'
+                        type: 'warning'
                     })
                 }
 

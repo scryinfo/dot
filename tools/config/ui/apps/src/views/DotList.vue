@@ -53,7 +53,7 @@
         });
       },
       open(index) {
-        this.$prompt('输入组件名', 'name', {
+        this.$prompt('输入组件名', 'Dot name', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(({value}) => {
