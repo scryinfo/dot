@@ -20,6 +20,7 @@
   </el-collapse>
 </template>
 <script>
+  import {checkType,removeAllType} from "../components/changeDataStructure/checkType";
   export default {
     data() {
       return {
@@ -90,10 +91,12 @@
       removeAllDots(){
         this.$root.Dots=[];
         this.$root.ExportDots = []
+        removeAllType(this.$root.Configs);
       },
       delDot(index) {
         this.$root.Dots.splice(index,1);
         this.$root.ExportDots.splice(index,1)
+        checkType(this.$root.Dots,this.$root.Configs);
       },
     },
   }
