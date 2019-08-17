@@ -64,7 +64,7 @@ export default {
               this.fullscreenLoading=false;
             } else {
               var res = JSON.parse(response.getDotsinfo());
-              var notExitsFile = response.getNoexistdirsList();
+              var notExitsFile = JSON.parse(response.getNoexistdirsList());
               for (var i = 0; i < res.length; i++) {
                 var bo = true;
                 for (var j = 0, len = this.$root.Dots.length; j < len; j++) {
@@ -79,7 +79,7 @@ export default {
                   this.$root.ExportDots.push(JSON.parse(JSON.stringify(res[i])))
                 }
               }
-              if (notExitsFile==null){
+              if (notExitsFile==[]){
                 this.$message({
                   type: 'success',
                   message: 'Find Dot Finish!'
