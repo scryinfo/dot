@@ -33,11 +33,11 @@
                                 </el-collapse-item></el-col><el-col :span="4"><json-button :objc="live.json" v-model="live.json"></json-button></el-col></el-row>
                             </el-collapse-item>
                         </el-col>
-                        <el-col :span="2"><json-button :objc="config.lives[index2]" v-model="config.lives[index2]"></json-button></el-col><el-col :span="3"><el-button @click="RemoveObject(config,'lives',index2)">Remove Live</el-button></el-col>
+                        <el-col :span="2"><json-button :objc="config.lives[index2]" v-model="config.lives[index2]"></json-button></el-col><el-col :span="3"><el-button @click="RemoveObject(config,index2)" :disabled="config.lives.length <= 1">Remove Live</el-button></el-col>
                     </el-row>
                 </el-collapse-item>
             </el-col>
-            <el-col :span="6"><el-button @click="showDialog(config.metaData.typeId,config.lives)">Load By Config</el-button><el-button @click="AddObject(config,config.metaData.typeId,'lives')">Add Live</el-button><el-button @click="removeType(index)">remove</el-button></el-col>
+            <el-col :span="6"><el-button @click="showDialog(config.metaData.typeId,config.lives)">Load By Config</el-button><el-button @click="AddObject(config,config.metaData.typeId)">Add Live</el-button><el-button @click="removeType(index)">remove</el-button></el-col>
         </el-row>
     </el-collapse>
         <el-dialog
@@ -95,30 +95,30 @@
             removeType(index:number){
                 (this as any).$root.Configs.splice(index,1);
             },
-            AddObject(config:any,typeId:string,keyss:string) {
-                for (let dot of (this as any).$root.DotsTem) {
-                    if (dot.metaData.typeId === typeId) {
-                        let dotcopy;
-                        eval("dotcopy = this.shallowCopy(dot."+keyss+"[0])");
-                        eval("config."+keyss+".push(dotcopy)");
-                        break;
+            AddObject(config:any,typeId:string) {
+                if(config.metaData.flag){
+                    let confcopy:any = this.shallowCopy(config.lives[config.lives.length-1]);
+                    config.lives.push(confcopy);
+                }else {
+                    for (let dot of (this as any).$root.ExportDots) {
+                        if (dot.metaData.typeId === typeId) {
+                            let dotcopy:any = this.shallowCopy(dot.lives[0]);
+                            config.lives.push(dotcopy);
+                            break;
+                        }
                     }
                 }
             },
-            RemoveObject(config:any, keyss:string, index:number) {
-                eval("config."+keyss+".splice("+index+","+1+")")
+            RemoveObject(config:any,index:number) {
+                config.lives.splice(index,1);
             },
             UuidGenerator(live:any) {
                 live.liveId=uuidv1()
             },
             shallowCopy(src:any):any {
-                let dst:any = {};
-                for (let prop in src) {
-                    if (src.hasOwnProperty(prop)) {
-                     dst[prop] = src[prop];
-                    }
-                }
-                return dst;
+                let dst:string;
+                dst = JSON.stringify(src);
+                return JSON.parse(dst);
             },
             uploadSectionFile(param:any){
                 let fileObj = param.file;
