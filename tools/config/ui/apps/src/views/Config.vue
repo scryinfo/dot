@@ -9,7 +9,7 @@
                 <el-col :span="1" ><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{index+1}}</div></el-col>
             </div>
             <check-live-id :metaName="config.metaData.name" :lives="config.lives"></check-live-id>
-            <el-col :span="14">
+            <el-col :span="18">
                 <el-collapse-item v-bind:title="config.metaData.typeId" v-bind:name="index">
                     <el-row v-for="(live,index2) in config.lives">
                         <el-col :span="2"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{live.name}}</div></el-col>
@@ -37,7 +37,7 @@
                     </el-row>
                 </el-collapse-item>
             </el-col>
-            <el-col :span="6"><el-button @click="showDialog(config.metaData.typeId,config.lives)">Load By Config</el-button><el-button @click="AddObject(config,config.metaData.typeId)">Add Live</el-button><el-button @click="removeType(index)">remove</el-button></el-col>
+            <el-col :span="3"><el-row><el-button @click="showDialog(config.metaData.typeId,config.lives)" size="mini">Load By Config</el-button></el-row><el-row><span><el-button @click="AddObject(config,config.metaData.typeId)" size="mini">Add Live</el-button></span><span><el-button @click="removeType(index)" size="mini">remove</el-button></span></el-row></el-col>
         </el-row>
     </el-collapse>
         <el-dialog
