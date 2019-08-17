@@ -1,7 +1,7 @@
 <template>
   <el-collapse>
-    <el-button id="removeAllDot" @click="removeAllDots()" style="margin-bottom: 5px;">Remove All</el-button>
     <el-button id="updateLiveNum" @click="updateLvNum()" style="margin-bottom: 5px;">Live Num</el-button>
+    <el-button id="removeAllDot" @click="removeAllDots()" style="margin-bottom: 5px;">Remove All</el-button>
     <el-row v-for="(v,index) in this.$root.Dots">
       <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{livesNum[index]}}</div></el-col>
       <el-col :span="3"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{v.metaData.name}}</div></el-col>

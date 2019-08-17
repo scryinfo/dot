@@ -29,7 +29,7 @@
               @change="handleCheckAllChangeC"
             >全选</el-checkbox>
             <div style="margin: 15px 0;"></div>
-            <el-checkbox-group v-model="checkedCitiesC" @change="handleCheckedCitiesChangeC">
+            <el-checkbox-group v-model="checkedFormatC" @change="handleCheckedCitiesChangeC">
               <el-checkbox v-for="city in optionsC" :label="city" :key="city">{{city}}</el-checkbox>
             </el-checkbox-group>
           </template>
@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     handleCheckAllChangeC(val) {
-      this.checkedFormatC = val ? cityOptions : [];
+      this.checkedFormatC = val ? FormatOptions : [];
       this.isIndeterminate = false;
     },
     handleCheckedCitiesChangeC(value) {
