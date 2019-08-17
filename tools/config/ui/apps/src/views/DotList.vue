@@ -89,11 +89,11 @@
       },
       removeAllDots(){
         this.$root.Dots=[];
-        this.$root.DotsTem = []
+        this.$root.ExportDots = []
       },
       delDot(index) {
         this.$root.Dots.splice(index,1);
-        this.$root.DotsTem.splice(index,1)
+        this.$root.ExportDots.splice(index,1)
       },
     },
   }
