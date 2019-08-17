@@ -60,7 +60,10 @@
                         if (response.getError() != '') {
                             var err = response.getError();
                             console.log(err);
-                            alert("网络请求错误：" +err)
+                            this.$message({
+                                type:'warning',
+                                 message:err
+                    })
                         } else {
                             var dots=[];
                             dots= JSON.parse(response.getJson());
