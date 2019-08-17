@@ -9,7 +9,7 @@
                 <el-col :span="1" ><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{index+1}}</div></el-col>
             </div>
             <check-live-id :metaName="config.metaData.name" :lives="config.lives"></check-live-id>
-            <el-col :span="16">
+            <el-col :span="14">
                 <el-collapse-item v-bind:title="config.metaData.typeId" v-bind:name="index">
                     <el-row v-for="(live,index2) in config.lives">
                         <el-col :span="2"><div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{live.name}}</div></el-col>
@@ -37,7 +37,7 @@
                     </el-row>
                 </el-collapse-item>
             </el-col>
-            <el-col :span="4"><el-button @click="showDialog(config.metaData.typeId,config.lives)">Load By Config</el-button><el-button @click="AddObject(config,config.metaData.typeId,'lives')">Add Live</el-button></el-col>
+            <el-col :span="6"><el-button @click="showDialog(config.metaData.typeId,config.lives)">Load By Config</el-button><el-button @click="AddObject(config,config.metaData.typeId,'lives')">Add Live</el-button><el-button @click="removeType(index)">remove</el-button></el-col>
         </el-row>
     </el-collapse>
         <el-dialog
@@ -92,6 +92,9 @@
             "check-live-id": CheckLiveId
         },
         methods: {
+            removeType(index:number){
+                (this as any).$root.Configs.splice(index,1);
+            },
             AddObject(config:any,typeId:string,keyss:string) {
                 for (let dot of (this as any).$root.DotsTem) {
                     if (dot.metaData.typeId === typeId) {
