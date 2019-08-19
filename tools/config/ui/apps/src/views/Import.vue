@@ -117,7 +117,7 @@
                             let config;
                             {
                                 let ob = JSON.parse(response.getJson());
-                                if(ob.dots && typeof Object.prototype.toString.call(ob) === '[object Array]'){
+                                if(ob.dots && typeof Object.prototype.toString.call(ob.dots) === '[object Array]'){
                                     config = ob.dots;
                                 }else {
                                     this.$message({
