@@ -86,7 +86,7 @@
                                     this.$root.DotsTem.push(JSON.parse(JSON.stringify(dots[i])));
                                     this.$root.ExportDots.push(JSON.parse(JSON.stringify(dots[i])))
                                 }
-                                
+
                             }
                             checkType(this.$root.Dots,this.$root.Configs);
                             this.$message({
@@ -117,7 +117,7 @@
                             let config;
                             {
                                 let ob = JSON.parse(response.getJson());
-                                if(ob.dots){
+                                if(ob.dots && typeof Object.prototype.toString.call(ob) === '[object Array]'){
                                     config = ob.dots;
                                 }else {
                                     this.$message({
