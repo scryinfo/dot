@@ -12,7 +12,7 @@
             <el-input
                     type="textarea"
                     :autosize="{ minRows: 10, maxRows: 30}"
-                    placeholder="请输入内容"
+                    placeholder="Please input json data!"
                     v-model="textarea">
             </el-input>
         </el-drawer>

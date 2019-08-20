@@ -12,7 +12,7 @@
         <el-input
                 type="textarea"
                 :autosize="{ minRows: 10, maxRows: 30}"
-                placeholder="请输入内容"
+                placeholder="Please input json data!"
                 v-model="textarea">
         </el-input>
     </el-drawer>
@@ -39,8 +39,15 @@
                 (this as any).objc = obj;
                 let jsonSchemaGenerator = require('./schemaGenerator/index.js');
                 (this as any).schemaObject = jsonSchemaGenerator.jsonToSchema(obj);
+                for(let key in (this as any).schemaObject.properties){
+                    if (key === 'relyLives'){
+                        (this as any).schemaObject.properties[key].required = [];
+                        this.$delete((this as any).schemaObject.properties[key],'maxProperties');
+                        break;
+                    }
+                }
+                console.log(JSON.stringify((this as any).schemaObject, null, 4));
                 this.textarea = JSON.stringify(obj,null,4);
-
             },
             handleClose(done:any){
                 try{
