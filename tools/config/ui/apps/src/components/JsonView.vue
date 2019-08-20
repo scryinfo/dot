@@ -9,19 +9,21 @@
                               v-if="member.type == 'string'">
                         <template slot="prepend">{{member.name}}</template>
                     </el-input>
-                    <el-input
-                            type="number"
+                    <el-input-number
                             v-model.number="flowData[index].remark"
                             v-if="member.type == 'number'">
                         <template slot="prepend">{{member.name}}</template>
-                    </el-input>
-                    <bool-view
+                    </el-input-number>
+                    <label v-if="member.type == 'boolean'">{{member.name}}</label>
+                    <select
+                            name="value"
                             v-model="flowData[index].remark"
-                            :boolValue="flowData[index].remark"
+                            class="val-input"
                             v-if="member.type == 'boolean'"
-                            :name="member.name"
                     >
-                    </bool-view>
+                        <option :value="true">true</option>
+                        <option :value="false">false</option>
+                    </select>
                 </div>
                 <div v-if="member.type == 'object'">
                     <json-view v-model="flowData[index].childParams" :parsedData="flowData[index].childParams"></json-view>
@@ -59,6 +61,8 @@
                 },
                 deep: true
             }
+        },
+        methods: {
         }
     })
 </script>
