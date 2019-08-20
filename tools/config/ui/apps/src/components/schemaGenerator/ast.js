@@ -6,7 +6,7 @@
 
  @see: https://en.wikipedia.org/wiki/Abstract_syntax_tree
  */
-import {isObject, isArray, getType} from './utils';
+import {isObject, isArray, isNumber, isString, isBoolean,getType} from './utils';
 
 /**
  Abstract Syntax Tree Class
@@ -97,7 +97,19 @@ AST.prototype.buildArrayTree = function (tree, node) {
                 tree.children[i].required = true;
             }
             this.buildArrayTree(tree.children[i], node[i]);
-        } else if (tree.type === 'object') {
+        } else if (isNumber(node[i])) {
+            tree.children[i] = {};
+            tree.children[i].type = 'number';
+        }
+        else if (isString(node[i])) {
+            tree.children[i] = {};
+            tree.children[i].type = 'string';
+        }
+        else if (isBoolean(node[i])) {
+            tree.children[i] = {};
+            tree.children[i].type = 'boolean';
+        }
+        else if (tree.type === 'object') {
             tree.children[i] = {};
             this.buildPrimitive(tree.children[i], node[i]);
         }
