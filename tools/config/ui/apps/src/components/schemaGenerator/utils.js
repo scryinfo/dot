@@ -40,4 +40,4 @@ let getType = function(data) {
   }
 };
 
-export {isObject,isArray,getType }
+export {isObject,isArray,isNumber,isString,isBoolean,getType }

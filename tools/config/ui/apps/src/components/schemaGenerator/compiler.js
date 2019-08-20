@@ -35,41 +35,57 @@ Compiler.prototype.generate = function(tree, schema, parent) {
       if (isArray(parent.required)) {
         parent.required.push(i);
       }
-      schema[i] = {
-        type: 'object'
-        ,properties: {}
-        ,required: []
-      };
-      this.generate(child, schema[i].properties, schema[i]);
+      console.log(tree.type);
+      if(tree.type === 'array'){
+        schema = {
+          type: 'object'
+          ,properties: {}
+          ,required: []
+        };
+        this.generate(child, schema.properties, schema);
+        break;
+      }else {
+        schema[i] = {
+          type: 'object'
+          ,properties: {}
+          ,required: []
+        };
+        this.generate(child, schema[i].properties, schema[i]);
+      }
     } else if (child.type === 'array') {
       if (isArray(parent.required)) {
         parent.required.push(i);
-      }
+      };
       schema[i] = {
         type: 'array'
         ,uniqueItems: child.uniqueItems
         ,minItems: 1
-        ,items: {
-          required:[]
-          ,properties: {}
-        }
+        ,items: {}
       }
-      this.generate(child, schema[i].items.properties, schema[i]);
+      this.generate(child, schema[i].items, schema[i]);
     } else {
-      schema[i] = {};
-      if (child.type) {
-        schema[i].type = child.type;
-      }
+      if(tree.type === 'array'){
+        if (child.type) {
+          schema.type = child.type;
+          console.log(child.type);
+        };
+        break;
+      }else{
+        schema[i] = {};
+        if (child.type) {
+          schema[i].type = child.type;
+        }
 
-      if (child.minLength) {
-        schema[i].minLength = child.minLength;
-      }
+        if (child.minLength) {
+          schema[i].minLength = child.minLength;
+        }
 
-      if (child.required) {
-        if (parent.items && isArray(parent.items.required)) {
-          parent.items.required.push(i);
-        } else {
-          parent.required.push(i);
+        if (child.required) {
+          if (parent.items && isArray(parent.items.required)) {
+            parent.items.required.push(i);
+          } else {
+            parent.required.push(i);
+          }
         }
       }
     }
@@ -101,13 +117,8 @@ Compiler.prototype.compile = function(tree) {
       ,'description': ''
       ,minItems: 1
       ,uniqueItems: false
-      ,items: {
-        type: 'object'
-        ,required: []
-        ,properties: {}
-      }
+      ,items: {}
     };
-
     this.generate(tree, this.schema.items.properties, this.schema.items);
   }
 };
