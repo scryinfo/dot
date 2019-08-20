@@ -1,23 +1,23 @@
-export let jsonParse = function (jsonStr:any) {
-    let parseJson = (json:any) => {
-        let result:any = [];
-        let keys = Object.keys(json);
+export let jsonParse = function(jsonStr: any) {
+    const parseJson = (json: any) => {
+        const result: any = [];
+        const keys = Object.keys(json);
         keys.forEach((k, index) => {
-            let val = json[k];
+            const val = json[k];
             let parsedVal = val;
-            if (getType(val) == "object") {
+            if (getType(val) == 'object') {
                 parsedVal = parseJson(val);
 
-            } else if (getType(val) == "array") {
+            } else if (getType(val) == 'array') {
                 parsedVal = parseArray(val);
             }
 
-            let opt:any = {
+            const opt: any = {
                 name: k,
-                type: getType(val)
+                type: getType(val),
             };
 
-            if (opt.type == "array" || opt.type == "object") {
+            if (opt.type == 'array' || opt.type == 'object') {
                 opt.childParams = parsedVal;
                 opt.remark = null;
             } else {
@@ -31,24 +31,24 @@ export let jsonParse = function (jsonStr:any) {
     };
 
     //
-    let parseArray = (arrayObj:any) => {
-        let result = [];
+    const parseArray = (arrayObj: any) => {
+        const result = [];
         for (let i = 0; i < arrayObj.length; ++i) {
-            let val = arrayObj[i];
+            const val = arrayObj[i];
             let parsedVal = val;
-            if (getType(val) == "object") {
+            if (getType(val) == 'object') {
                 parsedVal = parseJson(val);
 
-            } else if (getType(val) == "array") {
+            } else if (getType(val) == 'array') {
                 parsedVal = parseArray(val);
             }
 
-            let opt:any = {
+            const opt: any = {
                 name: null,
-                type: getType(val)
+                type: getType(val),
             };
 
-            if (opt.type == "array" || opt.type == "object") {
+            if (opt.type == 'array' || opt.type == 'object') {
                 opt.childParams = parsedVal;
                 opt.remark = null;
             } else {
@@ -62,21 +62,21 @@ export let jsonParse = function (jsonStr:any) {
     };
 
     // --
-    let parseBody = (json:any) => {
-        let r = parseJson(json);
+    const parseBody = (json: any) => {
+        const r = parseJson(json);
         return r;
     };
 
     return parseBody(jsonStr);
 };
 
-export let getType = function (obj:any) {
+export let getType = function(obj: any) {
     switch (Object.prototype.toString.call(obj)) {
-        case "[object Array]":
-            return "array";
+        case '[object Array]':
+            return 'array';
             break;
-        case "[object Object]":
-            return "object";
+        case '[object Object]':
+            return 'object';
             break;
         default:
             return typeof obj;
@@ -84,16 +84,16 @@ export let getType = function (obj:any) {
     }
 };
 
-export let makeJson = function (dataArr:any) {
-    let revertWithObj = function(data:any) {
-        let r:any = {};
+export let makeJson = function(dataArr: any) {
+    const revertWithObj = function(data: any) {
+        const r: any = {};
         for (let i = 0; i < data.length; ++i) {
-            let el = data[i];
+            const el = data[i];
             let key, val;
             key = el.name;
-            if (el.type == "array") {
+            if (el.type == 'array') {
                 val = revertWithArray(el.childParams);
-            } else if (el.type == "object") {
+            } else if (el.type == 'object') {
                 val = revertWithObj(el.childParams);
             } else {
                 val = el.remark;
@@ -104,14 +104,14 @@ export let makeJson = function (dataArr:any) {
         return r;
     };
 
-    let revertWithArray:any = function(data:any) {
-        let arr = [];
+    const revertWithArray: any = function(data: any) {
+        const arr = [];
         for (let i = 0; i < data.length; ++i) {
-            let el = data[i];
+            const el = data[i];
             let r;
-            if (el.type == "array") {
+            if (el.type == 'array') {
                 r = revertWithArray(el.childParams);
-            } else if (el.type == "object") {
+            } else if (el.type == 'object') {
                 r = revertWithObj(el.childParams);
             } else {
                 r = el.remark;
@@ -122,31 +122,31 @@ export let makeJson = function (dataArr:any) {
         return arr;
     };
 
-    let revertMain = function(data:any) {
-        let r = revertWithObj(data);
+    const revertMain = function(data: any) {
+        const r = revertWithObj(data);
         return r;
     };
 
     return revertMain(dataArr);
-}
-export function jsonParseRely(Json:any) {
-    if (Json === null || Json === undefined){
-        Json = {}
+};
+export function jsonParseRely(Json: any) {
+    if (Json === null || Json === undefined) {
+        Json = {};
     }
-    let result:any = [];
-    let keys = Object.keys(Json);
+    const result: any = [];
+    const keys = Object.keys(Json);
     keys.forEach((k, index) => {
-        let val = Json[k];
-        let newObject = {name: k, remark: val};
-        result.push(newObject)
+        const val = Json[k];
+        const newObject = {name: k, remark: val};
+        result.push(newObject);
     });
     return result;
-};
-export function makeJsonRely(ParData:any) {
-    let Revert:any = {};
+}
+export function makeJsonRely(ParData: any) {
+    const Revert: any = {};
     for (let i = 0; i < ParData.length; ++i) {
-        let el = ParData[i];
-        let key:string, val:string;
+        const el = ParData[i];
+        let key: string, val: string;
         key = el.name;
         val = el.remark;
         Revert[key] = val;

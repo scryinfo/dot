@@ -57,95 +57,95 @@
 </template>
 
 <script lang="ts">
-    import Vue from "vue";
-    import {jsonParse, makeJson} from "@/components/changeDataStructure/chDS";
-    export default Vue.extend({
-        name: "ArrayView",
-        props: {
-            parsedData: {},
-        },
-        data() {
-            return {
-                flowData: (this as any).parsedData.childParams,
-                dialog: false,
-                objc: [],
-                textarea: "",
-                cantRemove: true,
-                schemaObject: {},
-                temp: {},
-                nameTemp: ""
-            };
-        },
-        watch: {
-            parsedData: {
-                handler(newValue, oldValue) {
-                    this.flowData = (this as any).parsedData.childParams;
-                },
-                immediate: true
+import Vue from 'vue';
+import {jsonParse, makeJson} from '@/components/changeDataStructure/chDS';
+export default Vue.extend({
+    name: 'ArrayView',
+    props: {
+        parsedData: {},
+    },
+    data() {
+        return {
+            flowData: (this as any).parsedData.childParams,
+            dialog: false,
+            objc: [],
+            textarea: '',
+            cantRemove: true,
+            schemaObject: {},
+            temp: {},
+            nameTemp: '',
+        };
+    },
+    watch: {
+        parsedData: {
+            handler(newValue, oldValue) {
+                this.flowData = (this as any).parsedData.childParams;
             },
-            flowData: {
-                handler(newValue, oldValue) {
-                    if (newValue.length > 1) {
-                        this.cantRemove = false;
-                    }
-                    if (newValue.length === 1) {
-                        this.cantRemove = true;
-                    }
-                    this.$emit("input", newValue);
-                },
-                deep: true
-            }
+            immediate: true,
         },
-        methods: {
-            ShowJsonDialog(obj: any) {
-                this.dialog = true;
-                (this as any).objc.push(obj);
-                let jsonSchemaGenerator = require("./schemaGenerator/index.js");
-                let data = {};
-                this.temp = makeJson(this.objc);
-                this.nameTemp = obj.name;
-                eval("data = this.temp." + this.nameTemp);
-                this.schemaObject = jsonSchemaGenerator.jsonToSchema(this.temp);
-                this.textarea = JSON.stringify(data, null, 4);
+        flowData: {
+            handler(newValue, oldValue) {
+                if (newValue.length > 1) {
+                    this.cantRemove = false;
+                }
+                if (newValue.length === 1) {
+                    this.cantRemove = true;
+                }
+                this.$emit('input', newValue);
             },
-            handleClose(done: any) {
-                try {
-                    if (this.textarea) {
-                        let data = JSON.parse(this.textarea);
-                        eval("this.temp." + this.nameTemp + "= data");
-                        let tv4 = require("tv4");
-                        if (tv4.validate(this.temp, this.schemaObject)) {
-                            let objct: any = jsonParse(data);
-                            this.$emit("input", objct);
-                        } else {
-                            (this as any).$message.error("json text input error!");
-                        }
+            deep: true,
+        },
+    },
+    methods: {
+        ShowJsonDialog(obj: any) {
+            this.dialog = true;
+            (this as any).objc.push(obj);
+            const jsonSchemaGenerator = require('./schemaGenerator/index.js');
+            const data = {};
+            this.temp = makeJson(this.objc);
+            this.nameTemp = obj.name;
+            eval('data = this.temp.' + this.nameTemp);
+            this.schemaObject = jsonSchemaGenerator.jsonToSchema(this.temp);
+            this.textarea = JSON.stringify(data, null, 4);
+        },
+        handleClose(done: any) {
+            try {
+                if (this.textarea) {
+                    const data = JSON.parse(this.textarea);
+                    eval('this.temp.' + this.nameTemp + '= data');
+                    const tv4 = require('tv4');
+                    if (tv4.validate(this.temp, this.schemaObject)) {
+                        const objct: any = jsonParse(data);
+                        this.$emit('input', objct);
                     } else {
-                        (this as any).$message.error("json text input error!");
+                        (this as any).$message.error('json text input error!');
                     }
-                } catch (e) {
-                    (this as any).$message.error("json text input error!");
-                } finally {
-                    done();
+                } else {
+                    (this as any).$message.error('json text input error!');
                 }
-            },
-            addEvent() {
-                this.flowData.push(this.shallowCopy(this.flowData[this.flowData.length - 1]));
-            },
-            shallowCopy(src: any): any {
-                let dst: any = {};
-                for (let prop in src) {
-                    if (src.hasOwnProperty(prop)) {
-                        dst[prop] = src[prop];
-                    }
-                }
-                return dst;
-            },
-            removeEvent(index: number) {
-                this.flowData.splice(index, 1);
+            } catch (e) {
+                (this as any).$message.error('json text input error!');
+            } finally {
+                done();
             }
-        }
-    });
+        },
+        addEvent() {
+            this.flowData.push(this.shallowCopy(this.flowData[this.flowData.length - 1]));
+        },
+        shallowCopy(src: any): any {
+            const dst: any = {};
+            for (const prop in src) {
+                if (src.hasOwnProperty(prop)) {
+                    dst[prop] = src[prop];
+                }
+            }
+            return dst;
+        },
+        removeEvent(index: number) {
+            this.flowData.splice(index, 1);
+        },
+    },
+});
 </script>
 
 <style scoped>

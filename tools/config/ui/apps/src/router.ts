@@ -13,29 +13,29 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path:"/findDot",
-      name:"findDot",
-      component:FindDot
+      path: '/findDot',
+      name: 'findDot',
+      component: FindDot,
     },
     {
-      path:"/dotList",
-      name:"dotList",
-      component:DotList
+      path: '/dotList',
+      name: 'dotList',
+      component: DotList,
     },
     {
-      path:"/import",
-      name:"import",
-      component:Import
+      path: '/import',
+      name: 'import',
+      component: Import,
     },
     {
-      path:"/export",
-      name:"export",
-      component:Export
+      path: '/export',
+      name: 'export',
+      component: Export,
     },
     {
       path: '/Config',
       name: 'config',
-      component: () => import('./views/Config.vue')
-    }
+      component: () => import('./views/Config.vue'),
+    },
   ],
 });
