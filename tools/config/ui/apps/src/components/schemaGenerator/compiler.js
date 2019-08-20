@@ -35,7 +35,6 @@ Compiler.prototype.generate = function(tree, schema, parent) {
       if (isArray(parent.required)) {
         parent.required.push(i);
       }
-      console.log(tree.type);
       if(tree.type === 'array'){
         schema = {
           type: 'object'
@@ -67,7 +66,6 @@ Compiler.prototype.generate = function(tree, schema, parent) {
       if(tree.type === 'array'){
         if (child.type) {
           schema.type = child.type;
-          console.log(child.type);
         };
         break;
       }else{
