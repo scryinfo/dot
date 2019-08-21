@@ -37,7 +37,7 @@
                     </el-row>
                 </el-collapse-item>
             </el-col>
-            <el-col :span="3"><el-row><el-button @click="showDialog(config.metaData.typeId,config.lives)" size="mini">Load By Config</el-button></el-row><el-row><span><el-button @click="AddObject(config,config.metaData.typeId)" size="mini">Add Live</el-button></span><span><el-button @click="removeType(index)" size="mini">remove</el-button></span></el-row></el-col>
+            <el-col :span="3"><el-row><el-button @click="showDialog(config.metaData.typeId,config.lives)" size="mini">Load By Config</el-button></el-row><el-row><span><el-button @click="AddObject(config,config.metaData.typeId)" size="mini">Add Live</el-button></span><span><el-button @click="removeType(index)" size="mini">remove type</el-button></span></el-row></el-col>
         </el-row>
     </el-collapse>
         <el-dialog
