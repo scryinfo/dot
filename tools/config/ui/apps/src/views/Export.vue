@@ -75,7 +75,7 @@ export default {
         var dotfilename = this.dotFileName + ".json";
         var filename = [dotfilename];
         var { rpcExportDot } = require("../plugins/rpcInterface");
-        rpcExportDot(this.$root.ExportDots, filename, response => {
+        rpcExportDot(this.$root.Dots, filename, response => {
           if (response.getError() == "") {
             alert(
               "导出文件" +
@@ -102,7 +102,7 @@ export default {
         //判断liveid
         var conf = this.$root.Configs; //config页面数据
         var resultDot = []; //处理掉空配置
-        
+
         {
           var liveIds = [];
           for (var i = 0; i < conf.length; i++) {
