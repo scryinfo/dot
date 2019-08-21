@@ -54,7 +54,7 @@ export default Vue.extend({
                 if (this.textarea) {
                     const objct: any = JSON.parse(this.textarea);
                     const tv4 = require('tv4');
-                    if (tv4.validate(objct, this.schemaObject)) {
+                    if (tv4.validate(objct, this.schemaObject)&&this.relyLivesValidation(objct)) {
                         this.$emit('input', objct);
                     } else {
                         (this as any).$message.error('json text input error!');
@@ -68,6 +68,22 @@ export default Vue.extend({
                 done();
             }
         },
+        relyLivesValidation(obj:any):boolean{
+            for(let key in obj){
+                if(key === 'relyLives'){
+                    return this.isRelyLives(obj[key]);
+                }
+            }
+            return true;
+        },
+        isRelyLives(obj:any):boolean{
+            for(let key in obj){
+                if(typeof obj[key] !== typeof ''){
+                    return false;
+                }
+            }
+            return true;
+        }
     },
 });
 </script>
