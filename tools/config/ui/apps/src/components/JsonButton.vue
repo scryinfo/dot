@@ -43,6 +43,7 @@ export default Vue.extend({
                 if (key === 'relyLives') {
                     (this as any).schemaObject.properties[key].required = [];
                     this.$delete((this as any).schemaObject.properties[key], 'maxProperties');
+                    //todo: highest json button relyLives validation
                     break;
                 }
             }
