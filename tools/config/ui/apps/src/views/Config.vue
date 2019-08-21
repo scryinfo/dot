@@ -100,7 +100,7 @@
                     let confcopy:any = this.shallowCopy(config.lives[config.lives.length-1]);
                     config.lives.push(confcopy);
                 }else {
-                    for (let dot of (this as any).$root.ExportDots) {
+                    for (let dot of (this as any).$root.Dots) {
                         if (dot.metaData.typeId === typeId) {
                             let dotcopy:any = this.shallowCopy(dot.lives[0]);
                             config.lives.push(dotcopy);
@@ -159,9 +159,9 @@
                 return null;
             },
             findDotLive(typeId:string):any{
-                for(let i = 0, len = (this as any).$root.DotsTem.length; i < len; i++){
-                    if((this as any).$root.DotsTem[i].metaData.typeId === typeId){
-                        return (this as any).$root.DotsTem[i].lives[0];
+                for(let i = 0, len = (this as any).$root.Dots.length; i < len; i++){
+                    if((this as any).$root.Dots[i].metaData.typeId === typeId){
+                        return (this as any).$root.Dots[i].lives[0];
                     }
                 }
                 return null;

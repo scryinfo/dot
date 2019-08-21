@@ -63,6 +63,13 @@
             message: '该组件名更改为: ' + value,
           });
           this.$root.Dots[index].metaData.name = value;
+          let id=this.$root.Dots[index].metaData.typeId;
+          for (var i=0;i<this.$root.Configs.length;i++){
+            if (this.$root.Configs[i].metaData.typeId==id){
+              this.$root.Configs[i].metaData.name=value;
+              break;
+            }
+          };
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -82,7 +89,7 @@
             return
           }
         }
-        this.$root.Configs.push(this.$root.Dots[index]);
+        this.$root.Configs.push(JSON.parse(JSON.stringify(this.$root.Dots[index])));
         this.$message({
           type:"success",
           message:"Add Config success",
@@ -90,12 +97,10 @@
       },
       removeAllDots(){
         this.$root.Dots=[];
-        this.$root.ExportDots = []
         removeAllType(this.$root.Configs);
       },
       delDot(index) {
         this.$root.Dots.splice(index,1);
-        this.$root.ExportDots.splice(index,1)
         checkType(this.$root.Dots,this.$root.Configs);
       },
     },

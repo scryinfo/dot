@@ -83,8 +83,6 @@
                                 }
                                 if (bo) {
                                     this.$root.Dots.push(dots[i]);
-                                    this.$root.DotsTem.push(JSON.parse(JSON.stringify(dots[i])));
-                                    this.$root.ExportDots.push(JSON.parse(JSON.stringify(dots[i])))
                                 }
 
                             }
@@ -161,9 +159,9 @@
                 this.confPath = '';
             },
             findDot(typeId) {
-                for (let i = 0, len = this.$root.DotsTem.length; i < len; i++) {
-                    if (this.$root.DotsTem[i].metaData.typeId === typeId) {
-                        return this.$root.DotsTem[i];
+                for (let i = 0, len = this.$root.Dots.length; i < len; i++) {
+                    if (this.$root.Dots[i].metaData.typeId === typeId) {
+                        return this.$root.Dots[i];
                     }
                 }
                 return null;
