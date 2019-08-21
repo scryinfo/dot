@@ -36,11 +36,9 @@ Compiler.prototype.generate = function(tree, schema, parent) {
         parent.required.push(i);
       }
       if(tree.type === 'array'){
-        schema = {
-          type: 'object'
-          ,properties: {}
-          ,required: []
-        };
+        schema.type = 'object';
+        schema.properties = {};
+        schema.required = [];
         this.generate(child, schema.properties, schema);
         break;
       }else {

@@ -46,7 +46,6 @@ export default Vue.extend({
                     break;
                 }
             }
-            console.log(JSON.stringify((this as any).schemaObject, null, 4));
             this.textarea = JSON.stringify(obj, null, 4);
         },
         handleClose(done: any) {
