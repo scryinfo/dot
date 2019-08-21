@@ -391,13 +391,24 @@ func getAllSonDirs(dirpath string) ([]string, error) {
 			if f == nil {
 				return err
 			}
-			if f.IsDir() {
+			if f.IsDir() && isTrueDir(path) {
 				dir_list = append(dir_list, path)
 				return nil
 			}
 			return nil
 		})
 	return dir_list, dir_err
+}
+func isTrueDir(path string) bool {
+	if strings.Index(path, "node_modules") == -1 {
+		if strings.Index(path, ".git") == -1 {
+			return true
+		} else {
+			return false
+		}
+	} else {
+		return false
+	}
 }
 
 //查找满足条件的函数节点
