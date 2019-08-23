@@ -5,14 +5,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/gindot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dot/dots/line"
 	"github.com/scryinfo/dot/tools/config/data/nobl"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 	"go.uber.org/zap"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -20,29 +19,6 @@ import (
 )
 
 func main() {
-	{ //todo 整个代码放到 afterstart中 （程序都还没有启动完，就打开浏览可能会有问题）
-		ch := make(chan byte, 2)
-		go func() {
-			gin.SetMode(gin.ReleaseMode) //todo 使用组件中的gin
-			router := gin.Default()
-			router.StaticFS("/", http.Dir("../../app/dist"))
-			ch <- 1
-			_ = router.Run(":9090")
-
-		}()
-
-		switch runtime.GOOS {
-		case "windows":
-			windowsBrowser(ch)
-		case "linux":
-			linuxBrowser(ch)
-		default:
-			log.Fatal("无法识别的操作系统")
-		}
-		<-ch
-		<-ch
-	}
-
 	{
 		l, err := line.BuildAndStart(add) //first step create line and dots
 		if err != nil {
@@ -62,24 +38,38 @@ func main() {
 
 func add(l dot.Line) error {
 	lives := nobl.HiServerTypeLives()
-	lives = append(lives, gserver.HttpNoblTypeLives()...)
+	lives = append(lives, gserver.GinNoblTypeLives()...)
+	l.ToDotEventer().AddLiveEvents(dot.LiveId(gindot.EngineLiveId), &dot.LiveEvents{
+		AfterCreate: func(live *dot.Live, l dot.Line) {
+			if g, ok := live.Dot.(*gindot.Engine); ok {
+				g.GinEngine().StaticFS("/", http.Dir("../../app/dist"))
+			}
+		},
+		AfterStart: func(live *dot.Live, l dot.Line) {
+			switch runtime.GOOS {
+			case "windows":
+				go windowsBrowser()
+			case "linux":
+				go linuxBrowser()
+			default:
+				dot.Logger().Fatalln("无法识别的操作系统")
+			}
+		},
+	})
+
+	//4943e959-7ad7-42c6-84dd-8b24e9ed30bb
+
 	return l.PreAdd(lives...)
 }
-func linuxBrowser(ch chan byte) {
-	go func() {
-		ch <- 1
-		err := exec.Command("x-www-browser", "http://localhost:9090").Run()
-		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "please click ->   http://localhost:9090\n")
-		}
-	}()
+func linuxBrowser() {
+	err := exec.Command("x-www-browser", "http://localhost:8080").Run()
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "please click ->   http://localhost:8080\n")
+	}
 }
-func windowsBrowser(ch chan byte) {
-	go func() {
-		ch <- 1
-		err := exec.Command("cmd", "/C", "start", "http://localhost:9090").Run()
-		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "please click ->   http://localhost:9090\n")
-		}
-	}()
+func windowsBrowser() {
+	err := exec.Command("cmd", "/C", "start", "http://localhost:8080").Run()
+	if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "please click ->   http://localhost:8080\n")
+	}
 }

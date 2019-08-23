@@ -82,12 +82,7 @@ func (c *ginNobl) startServer() {
 	logger := dot.Logger()
 	c.wrapserver = grpcweb.WrapServer(c.Server(), grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}))
 
-	url := c.preUrl
-	if len(url) > 0 {
-		url = c.preUrl + "*rpc"
-	} else {
-		url = "/*rpc"
-	}
+
 
 	handle := func(ctx *gin.Context) {
 		logger.Debugln("ginNobl", zap.String("", ctx.Request.RequestURI))
@@ -110,6 +105,8 @@ func (c *ginNobl) startServer() {
 			ctx.String(http.StatusOK, "no rpc")
 		}
 	}
+
+	url := "/*rpc"
 
 	c.GinRouter.Router().POST(url, handle)
 	c.GinRouter.Router().OPTIONS(url, handle)
