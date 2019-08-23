@@ -10,8 +10,6 @@ require (
 	github.com/scryinfo/dot v0.1.3-0.20190705064446-6614e45bf155
 	github.com/scryinfo/dot/dots/grpc v0.0.0-20190810083202-f06eea1ae139
 	github.com/scryinfo/scryg v0.1.3-0.20190608053141-a292b801bfd6
-	go.uber.org/atomic v1.4.0 // indirect
-	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.10.0
 	golang.org/x/tools v0.0.0-20190809145639-6d4652c779c4
 	google.golang.org/grpc v1.22.1
