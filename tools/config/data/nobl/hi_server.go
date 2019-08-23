@@ -27,7 +27,7 @@ const (
 type config struct {
 	Name string `json:"name"`
 }
-
+//todo 命名
 type HiServer struct {
 	ServerNobl gserver.ServerNobl `dot:""`
 	conf       config
