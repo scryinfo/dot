@@ -82,8 +82,6 @@ func (c *ginNobl) startServer() {
 	logger := dot.Logger()
 	c.wrapserver = grpcweb.WrapServer(c.Server(), grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}))
 
-
-
 	handle := func(ctx *gin.Context) {
 		logger.Debugln("ginNobl", zap.String("", ctx.Request.RequestURI))
 		if c.wrapserver.IsGrpcWebRequest(ctx.Request) {
