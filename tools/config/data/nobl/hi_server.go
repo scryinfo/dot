@@ -12,7 +12,7 @@ import (
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dot/tools/config/data/go_out"
 	"github.com/scryinfo/dot/tools/config/data/nobl/tool"
-	"github.com/scryinfo/dot/tools/config/data/nobl/tool/scryconfig"
+	"github.com/scryinfo/dot/tools/config/data/nobl/tool/importConfig"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -169,16 +169,15 @@ func (serv *HiServer) ImportByDot(ctx context.Context, in *go_out.ReqImport) (*g
 
 //支持三种格式json toml yaml
 func (serv *HiServer) ImportByConfig(con context.Context, im *go_out.ReqImport) (*go_out.ResImport, error) {
-	scry := scryconfig.New()
-	scry.BindFlag()
-	_, err := scry.ConfLoad(scry.ConFlag, im.Filepath)
+	config := importConfig.New()
+	_, err := config.ConfLoad(im.Filepath)
 	if err != nil {
 		resConfig := go_out.ResImport{
 			Error: err.Error(),
 		}
 		return &resConfig, nil
 	}
-	value, err := scry.GetJsonByte("")
+	value, err := config.GetJsonByte("")
 	if err != nil {
 		resConfig := go_out.ResImport{
 			Error: err.Error(),
