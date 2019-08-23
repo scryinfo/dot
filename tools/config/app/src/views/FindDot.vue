@@ -53,7 +53,7 @@ export default {
             message: 'Please Input FilePath!'
           })
         } else {
-          var {rpcFindDot} = require('../plugins/rpcInterface');
+          var {rpcFindDot} = require('../rpc/rpcInterface');
           this.fullscreenLoading = true;
           rpcFindDot(dir, (response) => {
             if (response.getError() != '') {
