@@ -1,6 +1,6 @@
 const { ReqDirs,ReqExport, ReqImport,ReqLoad} = require('./hi_pb.js');
 const {HiDotClient} = require('./hi_grpc_web_pb.js');
-var rpcweb = new HiDotClient('http://localhost:6868/root');
+var rpcweb = new HiDotClient('http://localhost:8080/server');
 
 export function rpcFindDot(dirList,callback) {
     var request = new ReqDirs();

@@ -63,3 +63,10 @@
 /sample/grpc/tls/server_tls/log.log
 /sample/grpc/tls/server_tls/server_tls.exe
 
+/tools/config/app/node_modules
+/tools/config/data/server/before.log
+/tools/config/data/server/log.log
+/tools/config/data/server/result.json
+/tools/config/data/server/server_http.exe
+/tools/config/go.sum
+/tools/config/data/server/callMethod.go
