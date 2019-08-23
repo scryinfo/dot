@@ -55,7 +55,7 @@
         methods: {
             importDot() {
                 if (this.dotPath != '') {
-                    var {rpcimportByDot} = require('../plugins/rpcInterface');
+                    var {rpcimportByDot} = require('../rpc/rpcInterface');
                     rpcimportByDot(this.dotPath, (response) => {
                         if (response.getError() != '') {
                             var err = response.getError();
@@ -102,7 +102,7 @@
             },
             importConf() {
                 if (this.confPath != '') {
-                    let {rpcimportByConfig} = require('../plugins/rpcInterface');
+                    let {rpcimportByConfig} = require('../rpc/rpcInterface');
                     rpcimportByConfig(this.confPath, (response) => {
                         if (response.getError() != '') {
                             let err = response.getError()
