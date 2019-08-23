@@ -206,6 +206,16 @@ func (c *serverNoblImp) Stop(ignore bool) error {
 		c.server.GracefulStop()
 		c.server = nil
 	}
+
+	if len(c.listeners) > 0 {
+		for _, lis := range c.listeners {
+			if lis != nil {
+				lis.Close()
+			}
+		}
+		c.listeners = nil
+	}
+
 	return nil
 }
 
