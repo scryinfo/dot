@@ -24,84 +24,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type ReqData struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ReqData) Reset()         { *m = ReqData{} }
-func (m *ReqData) String() string { return proto.CompactTextString(m) }
-func (*ReqData) ProtoMessage()    {}
-func (*ReqData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d092a8920edeec73, []int{0}
-}
-
-func (m *ReqData) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ReqData.Unmarshal(m, b)
-}
-func (m *ReqData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ReqData.Marshal(b, m, deterministic)
-}
-func (m *ReqData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReqData.Merge(m, src)
-}
-func (m *ReqData) XXX_Size() int {
-	return xxx_messageInfo_ReqData.Size(m)
-}
-func (m *ReqData) XXX_DiscardUnknown() {
-	xxx_messageInfo_ReqData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ReqData proto.InternalMessageInfo
-
-func (m *ReqData) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-type ResData struct {
-	Test                 string   `protobuf:"bytes,1,opt,name=test,proto3" json:"test,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ResData) Reset()         { *m = ResData{} }
-func (m *ResData) String() string { return proto.CompactTextString(m) }
-func (*ResData) ProtoMessage()    {}
-func (*ResData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d092a8920edeec73, []int{1}
-}
-
-func (m *ResData) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ResData.Unmarshal(m, b)
-}
-func (m *ResData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ResData.Marshal(b, m, deterministic)
-}
-func (m *ResData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResData.Merge(m, src)
-}
-func (m *ResData) XXX_Size() int {
-	return xxx_messageInfo_ResData.Size(m)
-}
-func (m *ResData) XXX_DiscardUnknown() {
-	xxx_messageInfo_ResData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ResData proto.InternalMessageInfo
-
-func (m *ResData) GetTest() string {
-	if m != nil {
-		return m.Test
-	}
-	return ""
-}
-
 //--------------------------------------------------------------------
 //findDot
 type ReqDirs struct {
@@ -115,7 +37,7 @@ func (m *ReqDirs) Reset()         { *m = ReqDirs{} }
 func (m *ReqDirs) String() string { return proto.CompactTextString(m) }
 func (*ReqDirs) ProtoMessage()    {}
 func (*ReqDirs) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d092a8920edeec73, []int{2}
+	return fileDescriptor_d092a8920edeec73, []int{0}
 }
 
 func (m *ReqDirs) XXX_Unmarshal(b []byte) error {
@@ -156,7 +78,7 @@ func (m *ResDots) Reset()         { *m = ResDots{} }
 func (m *ResDots) String() string { return proto.CompactTextString(m) }
 func (*ResDots) ProtoMessage()    {}
 func (*ResDots) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d092a8920edeec73, []int{3}
+	return fileDescriptor_d092a8920edeec73, []int{1}
 }
 
 func (m *ResDots) XXX_Unmarshal(b []byte) error {
@@ -198,118 +120,6 @@ func (m *ResDots) GetError() string {
 	return ""
 }
 
-//--------------------------------------------------------------------
-//loadByConfig  根据配置文件查找对应id下的live
-type ReqLoad struct {
-	DotInfo              string   `protobuf:"bytes,1,opt,name=dotInfo,proto3" json:"dotInfo,omitempty"`
-	TypeId               string   `protobuf:"bytes,2,opt,name=typeId,proto3" json:"typeId,omitempty"`
-	DataCopyPaste        string   `protobuf:"bytes,3,opt,name=dataCopyPaste,proto3" json:"dataCopyPaste,omitempty"`
-	DataFilepath         string   `protobuf:"bytes,4,opt,name=dataFilepath,proto3" json:"dataFilepath,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ReqLoad) Reset()         { *m = ReqLoad{} }
-func (m *ReqLoad) String() string { return proto.CompactTextString(m) }
-func (*ReqLoad) ProtoMessage()    {}
-func (*ReqLoad) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d092a8920edeec73, []int{4}
-}
-
-func (m *ReqLoad) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ReqLoad.Unmarshal(m, b)
-}
-func (m *ReqLoad) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ReqLoad.Marshal(b, m, deterministic)
-}
-func (m *ReqLoad) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReqLoad.Merge(m, src)
-}
-func (m *ReqLoad) XXX_Size() int {
-	return xxx_messageInfo_ReqLoad.Size(m)
-}
-func (m *ReqLoad) XXX_DiscardUnknown() {
-	xxx_messageInfo_ReqLoad.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ReqLoad proto.InternalMessageInfo
-
-func (m *ReqLoad) GetDotInfo() string {
-	if m != nil {
-		return m.DotInfo
-	}
-	return ""
-}
-
-func (m *ReqLoad) GetTypeId() string {
-	if m != nil {
-		return m.TypeId
-	}
-	return ""
-}
-
-func (m *ReqLoad) GetDataCopyPaste() string {
-	if m != nil {
-		return m.DataCopyPaste
-	}
-	return ""
-}
-
-func (m *ReqLoad) GetDataFilepath() string {
-	if m != nil {
-		return m.DataFilepath
-	}
-	return ""
-}
-
-type ResConfig struct {
-	ConfigJson           string   `protobuf:"bytes,1,opt,name=configJson,proto3" json:"configJson,omitempty"`
-	ErrInfo              string   `protobuf:"bytes,2,opt,name=errInfo,proto3" json:"errInfo,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ResConfig) Reset()         { *m = ResConfig{} }
-func (m *ResConfig) String() string { return proto.CompactTextString(m) }
-func (*ResConfig) ProtoMessage()    {}
-func (*ResConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d092a8920edeec73, []int{5}
-}
-
-func (m *ResConfig) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ResConfig.Unmarshal(m, b)
-}
-func (m *ResConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ResConfig.Marshal(b, m, deterministic)
-}
-func (m *ResConfig) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResConfig.Merge(m, src)
-}
-func (m *ResConfig) XXX_Size() int {
-	return xxx_messageInfo_ResConfig.Size(m)
-}
-func (m *ResConfig) XXX_DiscardUnknown() {
-	xxx_messageInfo_ResConfig.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ResConfig proto.InternalMessageInfo
-
-func (m *ResConfig) GetConfigJson() string {
-	if m != nil {
-		return m.ConfigJson
-	}
-	return ""
-}
-
-func (m *ResConfig) GetErrInfo() string {
-	if m != nil {
-		return m.ErrInfo
-	}
-	return ""
-}
-
 //---------------------------------------------------------------------
 //importfile
 type ReqImport struct {
@@ -323,7 +133,7 @@ func (m *ReqImport) Reset()         { *m = ReqImport{} }
 func (m *ReqImport) String() string { return proto.CompactTextString(m) }
 func (*ReqImport) ProtoMessage()    {}
 func (*ReqImport) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d092a8920edeec73, []int{6}
+	return fileDescriptor_d092a8920edeec73, []int{2}
 }
 
 func (m *ReqImport) XXX_Unmarshal(b []byte) error {
@@ -363,7 +173,7 @@ func (m *ResImport) Reset()         { *m = ResImport{} }
 func (m *ResImport) String() string { return proto.CompactTextString(m) }
 func (*ResImport) ProtoMessage()    {}
 func (*ResImport) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d092a8920edeec73, []int{7}
+	return fileDescriptor_d092a8920edeec73, []int{3}
 }
 
 func (m *ResImport) XXX_Unmarshal(b []byte) error {
@@ -413,7 +223,7 @@ func (m *ReqExport) Reset()         { *m = ReqExport{} }
 func (m *ReqExport) String() string { return proto.CompactTextString(m) }
 func (*ReqExport) ProtoMessage()    {}
 func (*ReqExport) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d092a8920edeec73, []int{8}
+	return fileDescriptor_d092a8920edeec73, []int{4}
 }
 
 func (m *ReqExport) XXX_Unmarshal(b []byte) error {
@@ -466,7 +276,7 @@ func (m *ResExport) Reset()         { *m = ResExport{} }
 func (m *ResExport) String() string { return proto.CompactTextString(m) }
 func (*ResExport) ProtoMessage()    {}
 func (*ResExport) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d092a8920edeec73, []int{9}
+	return fileDescriptor_d092a8920edeec73, []int{5}
 }
 
 func (m *ResExport) XXX_Unmarshal(b []byte) error {
@@ -495,12 +305,8 @@ func (m *ResExport) GetError() string {
 }
 
 func init() {
-	proto.RegisterType((*ReqData)(nil), "go_out.ReqData")
-	proto.RegisterType((*ResData)(nil), "go_out.ResData")
 	proto.RegisterType((*ReqDirs)(nil), "go_out.ReqDirs")
 	proto.RegisterType((*ResDots)(nil), "go_out.ResDots")
-	proto.RegisterType((*ReqLoad)(nil), "go_out.ReqLoad")
-	proto.RegisterType((*ResConfig)(nil), "go_out.ResConfig")
 	proto.RegisterType((*ReqImport)(nil), "go_out.ReqImport")
 	proto.RegisterType((*ResImport)(nil), "go_out.ResImport")
 	proto.RegisterType((*ReqExport)(nil), "go_out.ReqExport")
@@ -510,36 +316,28 @@ func init() {
 func init() { proto.RegisterFile("hi.proto", fileDescriptor_d092a8920edeec73) }
 
 var fileDescriptor_d092a8920edeec73 = []byte{
-	// 452 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x53, 0xed, 0x6a, 0x13, 0x41,
-	0x14, 0x65, 0x37, 0x69, 0x3e, 0x6e, 0xa3, 0xe2, 0x20, 0xb2, 0x04, 0x94, 0x38, 0x88, 0x0a, 0x42,
-	0xc0, 0x56, 0x7d, 0x80, 0xb6, 0x29, 0x8d, 0xf8, 0x43, 0xf2, 0x53, 0x10, 0x19, 0xdd, 0x49, 0x3b,
-	0x62, 0xf7, 0x6e, 0x67, 0x46, 0x68, 0x1e, 0xc0, 0x57, 0xf5, 0x39, 0xe4, 0xde, 0x99, 0xd9, 0xcc,
-	0x8a, 0x82, 0xff, 0xee, 0xd7, 0xb9, 0xe7, 0xec, 0x99, 0xbb, 0x30, 0xb9, 0x32, 0xcb, 0xd6, 0xa2,
-	0x47, 0x31, 0xba, 0xc4, 0xcf, 0xf8, 0xc3, 0xcb, 0x47, 0x30, 0xde, 0xe8, 0x9b, 0x33, 0xe5, 0x95,
-	0x10, 0x30, 0x6c, 0xd4, 0xb5, 0xae, 0x8a, 0x45, 0xf1, 0x62, 0xba, 0xe1, 0x38, 0xb4, 0x5d, 0x6a,
-	0x7b, 0xed, 0x7c, 0x6a, 0x53, 0x9c, 0xd0, 0xc6, 0x3a, 0x6a, 0xd7, 0xc6, 0xba, 0xaa, 0x58, 0x0c,
-	0xa8, 0x4d, 0xb1, 0xfc, 0x14, 0xd0, 0xe8, 0x9d, 0x98, 0xc3, 0xa4, 0x46, 0xef, 0xd6, 0xcd, 0x16,
-	0xe3, 0x86, 0x2e, 0x17, 0x0b, 0x38, 0x6c, 0x70, 0x75, 0x6b, 0x9c, 0xa7, 0x4d, 0x55, 0xc9, 0x1b,
-	0xf2, 0x92, 0x78, 0x00, 0x07, 0xda, 0x5a, 0xb4, 0xd5, 0x80, 0xa1, 0x21, 0x91, 0x3f, 0x0b, 0xa6,
-	0x7f, 0x8f, 0xaa, 0x16, 0x15, 0x8c, 0x6b, 0xf4, 0xd9, 0xfa, 0x94, 0x8a, 0x87, 0x30, 0xf2, 0xbb,
-	0x56, 0xaf, 0xeb, 0xaa, 0xe4, 0x46, 0xcc, 0xc4, 0x53, 0xb8, 0x53, 0x2b, 0xaf, 0x4e, 0xb1, 0xdd,
-	0x7d, 0x50, 0xce, 0xeb, 0xb8, 0xbb, 0x5f, 0x14, 0x12, 0x66, 0x54, 0x38, 0x37, 0xdf, 0x75, 0xab,
-	0xfc, 0x55, 0x35, 0xe4, 0xa1, 0x5e, 0x4d, 0xae, 0x60, 0xba, 0xd1, 0xee, 0x14, 0x9b, 0xad, 0xb9,
-	0x14, 0x8f, 0x01, 0xbe, 0x72, 0xf4, 0xce, 0x61, 0x13, 0xb5, 0x64, 0x15, 0x12, 0xaa, 0xad, 0x65,
-	0xa1, 0x41, 0x4f, 0x4a, 0xe5, 0x73, 0x5a, 0x73, 0xb3, 0xbe, 0x6e, 0xd1, 0x7a, 0xf2, 0x6b, 0x9b,
-	0x38, 0xa3, 0x5f, 0x29, 0x97, 0x6f, 0x98, 0x2f, 0x0e, 0x0a, 0x18, 0x7e, 0xdb, 0x33, 0x71, 0xbc,
-	0xb7, 0xab, 0xcc, 0xed, 0x52, 0xbc, 0x7f, 0x75, 0xcb, 0xb0, 0x4e, 0x26, 0x7d, 0x49, 0x5f, 0x26,
-	0x55, 0x12, 0x3f, 0x1f, 0x44, 0x78, 0x90, 0x2e, 0x8f, 0x5e, 0x33, 0x70, 0xd0, 0x79, 0x4d, 0xa9,
-	0x7c, 0xc2, 0xca, 0x22, 0x45, 0xa7, 0xa2, 0xc8, 0x54, 0x1c, 0xfd, 0x2a, 0xe1, 0xe0, 0xc2, 0x9c,
-	0xa1, 0x17, 0xcf, 0xa0, 0xbc, 0x30, 0xe2, 0xde, 0x32, 0x5c, 0xe2, 0x32, 0x9e, 0xe1, 0x3c, 0x2b,
-	0x84, 0xc3, 0x7b, 0x09, 0xe3, 0x73, 0xd3, 0xd4, 0x04, 0xe9, 0x0d, 0x1b, 0xeb, 0xfa, 0xc3, 0x74,
-	0x67, 0x47, 0x30, 0xa3, 0x7b, 0x38, 0xd9, 0xc5, 0xe7, 0xc8, 0x11, 0xd4, 0x98, 0xdf, 0xcf, 0x10,
-	0x71, 0xe6, 0x2d, 0xdc, 0x0d, 0x66, 0x76, 0xa8, 0x6c, 0x28, 0x3e, 0x48, 0x0f, 0x17, 0xad, 0x3f,
-	0x86, 0xc3, 0x84, 0x23, 0x71, 0xff, 0x07, 0x7a, 0x0d, 0xb3, 0xe0, 0xcf, 0x5f, 0xa8, 0x42, 0xa3,
-	0x87, 0x8a, 0x5e, 0xbe, 0x82, 0x69, 0x88, 0xfe, 0x24, 0xfa, 0x27, 0xe4, 0x64, 0xf2, 0x31, 0xfe,
-	0xe3, 0x5f, 0x46, 0xfc, 0xcb, 0x1f, 0xff, 0x0e, 0x00, 0x00, 0xff, 0xff, 0x87, 0x58, 0x7c, 0x0c,
-	0xfe, 0x03, 0x00, 0x00,
+	// 324 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x52, 0xcd, 0x4a, 0xf3, 0x40,
+	0x14, 0x25, 0xfd, 0xcf, 0xed, 0xc7, 0x27, 0x0e, 0x2e, 0x42, 0x41, 0x89, 0xd9, 0x58, 0x10, 0x02,
+	0x5a, 0xf5, 0x01, 0x6a, 0x2a, 0x76, 0x9b, 0xa5, 0x20, 0x12, 0x4d, 0xd2, 0x8e, 0xd8, 0xb9, 0xe9,
+	0xcc, 0x08, 0xf5, 0x15, 0x7c, 0x6a, 0x99, 0xbf, 0x38, 0x8a, 0x82, 0xbb, 0xfb, 0x77, 0xce, 0xb9,
+	0xe7, 0xce, 0xc0, 0x68, 0x4d, 0xd3, 0x86, 0xa3, 0x44, 0x32, 0x58, 0xe1, 0x03, 0xbe, 0xca, 0xe4,
+	0x10, 0x86, 0x79, 0xb5, 0xcd, 0x28, 0x17, 0x84, 0x40, 0xaf, 0xa4, 0x5c, 0x44, 0x41, 0xdc, 0x9d,
+	0x86, 0xb9, 0x8e, 0x93, 0x7b, 0xd5, 0x16, 0x19, 0x4a, 0x41, 0x26, 0x30, 0x2a, 0x51, 0x8a, 0x25,
+	0xab, 0x31, 0x0a, 0xe2, 0x60, 0x1a, 0xe6, 0x6d, 0x4e, 0x62, 0x18, 0x33, 0x5c, 0xec, 0xa8, 0x90,
+	0x8a, 0x29, 0xea, 0x68, 0x06, 0xbf, 0x44, 0x0e, 0xa0, 0x5f, 0x71, 0x8e, 0x3c, 0xea, 0x6a, 0xa8,
+	0x49, 0x92, 0x13, 0x08, 0xf3, 0x6a, 0xbb, 0xdc, 0x34, 0xc8, 0xa5, 0x12, 0xa8, 0xe9, 0x4b, 0xd5,
+	0x14, 0x72, 0xed, 0x04, 0x5c, 0x9e, 0x5c, 0xaa, 0x41, 0x61, 0x07, 0x09, 0xf4, 0x9e, 0x05, 0x32,
+	0x3b, 0xa4, 0xe3, 0x4f, 0xfe, 0x8e, 0xcf, 0x5f, 0x68, 0xfe, 0xc5, 0x4e, 0xc3, 0x8e, 0x00, 0x9e,
+	0x90, 0xd5, 0x74, 0x55, 0x16, 0xb2, 0xb0, 0x60, 0xaf, 0xe2, 0xf4, 0x59, 0xb1, 0xa9, 0xac, 0x83,
+	0x36, 0x27, 0x11, 0x0c, 0x4b, 0x94, 0x1a, 0x68, 0x0c, 0xb8, 0x34, 0x39, 0xd6, 0x9b, 0x59, 0x89,
+	0x76, 0x8b, 0xc0, 0xdb, 0xe2, 0xfc, 0xbd, 0x03, 0xfd, 0x5b, 0x9a, 0xa1, 0x24, 0xa7, 0x30, 0xbc,
+	0xa1, 0xac, 0x54, 0xe1, 0x5e, 0x6a, 0x5e, 0x20, 0xb5, 0xe7, 0x9f, 0x78, 0x05, 0x73, 0xf0, 0x2b,
+	0xf8, 0x6f, 0x0c, 0xcf, 0xdf, 0xae, 0xf5, 0x96, 0x64, 0xdf, 0xc3, 0x98, 0xd6, 0xc4, 0x2b, 0xb9,
+	0xf3, 0xcc, 0x60, 0xec, 0x70, 0x4a, 0xe8, 0x6f, 0xa0, 0x0b, 0xf8, 0x67, 0x3c, 0xfc, 0x20, 0x65,
+	0x1a, 0x5f, 0x50, 0xd6, 0xef, 0x19, 0x84, 0x26, 0xfa, 0x2e, 0xf4, 0x2b, 0x64, 0x3e, 0xba, 0xb3,
+	0x5f, 0xef, 0x71, 0xa0, 0x7f, 0xe2, 0xec, 0x23, 0x00, 0x00, 0xff, 0xff, 0xa8, 0xbd, 0xb1, 0x7d,
+	0x95, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -554,9 +352,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type HiDotClient interface {
-	Hi(ctx context.Context, in *ReqData, opts ...grpc.CallOption) (*ResData, error)
 	FindDot(ctx context.Context, in *ReqDirs, opts ...grpc.CallOption) (*ResDots, error)
-	LoadByConfig(ctx context.Context, in *ReqLoad, opts ...grpc.CallOption) (*ResConfig, error)
 	//文件导入
 	ImportByConfig(ctx context.Context, in *ReqImport, opts ...grpc.CallOption) (*ResImport, error)
 	ImportByDot(ctx context.Context, in *ReqImport, opts ...grpc.CallOption) (*ResImport, error)
@@ -573,27 +369,9 @@ func NewHiDotClient(cc *grpc.ClientConn) HiDotClient {
 	return &hiDotClient{cc}
 }
 
-func (c *hiDotClient) Hi(ctx context.Context, in *ReqData, opts ...grpc.CallOption) (*ResData, error) {
-	out := new(ResData)
-	err := c.cc.Invoke(ctx, "/go_out.HiDot/Hi", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *hiDotClient) FindDot(ctx context.Context, in *ReqDirs, opts ...grpc.CallOption) (*ResDots, error) {
 	out := new(ResDots)
 	err := c.cc.Invoke(ctx, "/go_out.HiDot/FindDot", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hiDotClient) LoadByConfig(ctx context.Context, in *ReqLoad, opts ...grpc.CallOption) (*ResConfig, error) {
-	out := new(ResConfig)
-	err := c.cc.Invoke(ctx, "/go_out.HiDot/LoadByConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -638,9 +416,7 @@ func (c *hiDotClient) ExportDot(ctx context.Context, in *ReqExport, opts ...grpc
 
 // HiDotServer is the server API for HiDot service.
 type HiDotServer interface {
-	Hi(context.Context, *ReqData) (*ResData, error)
 	FindDot(context.Context, *ReqDirs) (*ResDots, error)
-	LoadByConfig(context.Context, *ReqLoad) (*ResConfig, error)
 	//文件导入
 	ImportByConfig(context.Context, *ReqImport) (*ResImport, error)
 	ImportByDot(context.Context, *ReqImport) (*ResImport, error)
@@ -653,14 +429,8 @@ type HiDotServer interface {
 type UnimplementedHiDotServer struct {
 }
 
-func (*UnimplementedHiDotServer) Hi(ctx context.Context, req *ReqData) (*ResData, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Hi not implemented")
-}
 func (*UnimplementedHiDotServer) FindDot(ctx context.Context, req *ReqDirs) (*ResDots, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindDot not implemented")
-}
-func (*UnimplementedHiDotServer) LoadByConfig(ctx context.Context, req *ReqLoad) (*ResConfig, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method LoadByConfig not implemented")
 }
 func (*UnimplementedHiDotServer) ImportByConfig(ctx context.Context, req *ReqImport) (*ResImport, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ImportByConfig not implemented")
@@ -679,24 +449,6 @@ func RegisterHiDotServer(s *grpc.Server, srv HiDotServer) {
 	s.RegisterService(&_HiDot_serviceDesc, srv)
 }
 
-func _HiDot_Hi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReqData)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HiDotServer).Hi(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/go_out.HiDot/Hi",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HiDotServer).Hi(ctx, req.(*ReqData))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _HiDot_FindDot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReqDirs)
 	if err := dec(in); err != nil {
@@ -711,24 +463,6 @@ func _HiDot_FindDot_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HiDotServer).FindDot(ctx, req.(*ReqDirs))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HiDot_LoadByConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReqLoad)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HiDotServer).LoadByConfig(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/go_out.HiDot/LoadByConfig",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HiDotServer).LoadByConfig(ctx, req.(*ReqLoad))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -810,16 +544,8 @@ var _HiDot_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*HiDotServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Hi",
-			Handler:    _HiDot_Hi_Handler,
-		},
-		{
 			MethodName: "FindDot",
 			Handler:    _HiDot_FindDot_Handler,
-		},
-		{
-			MethodName: "LoadByConfig",
-			Handler:    _HiDot_LoadByConfig_Handler,
 		},
 		{
 			MethodName: "ImportByConfig",
