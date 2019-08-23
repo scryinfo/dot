@@ -20,10 +20,10 @@ import (
 )
 
 func main() {
-	{
+	{ //todo 整个代码放到 afterstart中 （程序都还没有启动完，就打开浏览可能会有问题）
 		ch := make(chan byte, 2)
 		go func() {
-			gin.SetMode(gin.ReleaseMode)
+			gin.SetMode(gin.ReleaseMode) //todo 使用组件中的gin
 			router := gin.Default()
 			router.StaticFS("/", http.Dir("../../ui/apps/dist"))
 			ch <- 1
