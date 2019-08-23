@@ -1,4 +1,4 @@
-package scryconfig
+package importConfig
 
 import (
 	"fmt"
@@ -10,6 +10,7 @@ import (
 	"path"
 	"path/filepath"
 )
+
 //By default, the configuration file is loaded from the path
 // where the executable is located.
 //It is also possible to load the configuration
@@ -18,76 +19,57 @@ import (
 // or a path relative to the path of the executable file.
 //Support for incoming multiple paths.
 //The priority of the configuration files loading is json > toml > yaml
-func (sc *ScryConfig)LoadConfigFile(configPaths...string)(map[string]interface{}, error) {
-	allFilesAbs := make([]string,0)
+func (sc *Config) LoadConfigFile(configPaths ...string) (map[string]interface{}, error) {
+	allFilesAbs := make([]string, 0)
 	{
-
-		if len(configPaths) == 0 {
-			ex, err := os.Executable()
+		for _, configPath := range configPaths {
+			configPath, err := pathDeal(configPath)
 			if err != nil {
-				return nil,err
+				return nil, err
 			}
-			exPath := filepath.Dir(ex)
-			allFiles, err := ioutil.ReadDir(exPath)
+			s, err := os.Stat(configPath)
 			if err != nil {
-				return nil,err
+				return nil, err
 			}
-			for _,allFile := range allFiles{
-				if !allFile.IsDir(){
-					allFilesAbs = append(allFilesAbs,filepath.Join(exPath,allFile.Name()))
-				}
-			}
-		}else {
-			for _, configPath := range configPaths {
-				configPath ,err := pathDeal(configPath)
+			if s.IsDir() {
+				allFiles, err := ioutil.ReadDir(configPath)
 				if err != nil {
-					return nil,err
+					return nil, err
 				}
-				s, err := os.Stat(configPath);
-				if err != nil {
-					return nil,err
-				}
-				if s.IsDir() {
-					allFiles, err := ioutil.ReadDir(configPath)
-					if err != nil {
-						return nil,err
+				for _, allFile := range allFiles {
+					if !allFile.IsDir() {
+						allFilesAbs = append(allFilesAbs, filepath.Join(configPath, allFile.Name()))
 					}
-					for _,allFile := range allFiles{
-						if !allFile.IsDir(){
-							allFilesAbs = append(allFilesAbs,filepath.Join(configPath,allFile.Name()))
-						}
-					}
-				}else {
-					allFilesAbs = append(allFilesAbs,configPath)
 				}
-
+			} else {
+				allFilesAbs = append(allFilesAbs, configPath)
 			}
 		}
 	}
 
 	var jsonfile, tomlfile, yamlfile []string
 	{
-		jsonfile = make([]string,0)
-		tomlfile = make([]string,0)
-		yamlfile = make([]string,0)
+		jsonfile = make([]string, 0)
+		tomlfile = make([]string, 0)
+		yamlfile = make([]string, 0)
 		var config_exist bool = false
 		for _, fi := range allFilesAbs {
 			fileExt := path.Ext(fi)
-			if fileExt == ".json"{
-				jsonfile = append(jsonfile,fi)
+			if fileExt == ".json" {
+				jsonfile = append(jsonfile, fi)
 				config_exist = true
-			}else if fileExt == ".toml"{
-				tomlfile = append(tomlfile,fi)
+			} else if fileExt == ".toml" {
+				tomlfile = append(tomlfile, fi)
 				config_exist = true
-			}else if fileExt == ".yml" || fileExt == ".yaml"{
-				yamlfile = append(yamlfile,fi)
+			} else if fileExt == ".yml" || fileExt == ".yaml" {
+				yamlfile = append(yamlfile, fi)
 				config_exist = true
-			}else {
+			} else {
 				continue
 			}
 		}
 		if !config_exist {
-			return nil,fmt.Errorf("%s","configfiles are not exist")
+			return nil, fmt.Errorf("%s", "configfiles are not exist")
 		}
 	}
 
@@ -103,20 +85,20 @@ func (sc *ScryConfig)LoadConfigFile(configPaths...string)(map[string]interface{}
 	}
 	return configdata, nil
 }
+
 //Process the path entered by the user.
 // If it is a relative path,
 // convert it to an absolute path
 // corresponding to the relative path
 // based on the path where the executable file is located.
 func pathDeal(userpath string) (string, error) {
-	if filepath.IsAbs(userpath){
+	if filepath.IsAbs(userpath) {
 		return userpath, nil
 	}
 	ex, err := os.Executable()
 	if err != nil {
-		return "",err
+		return "", err
 	}
 	exPath := filepath.Dir(ex)
-	return filepath.Join(exPath,userpath), nil
+	return filepath.Join(exPath, userpath), nil
 }
-
