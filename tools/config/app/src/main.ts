@@ -15,9 +15,7 @@ new Vue({
   data: () => {
     return{
       Dots: [],
-      ExportDots: [],
       Configs: [],
-      DotsTem: [],
     };
   },
   render: (h) => h(App),

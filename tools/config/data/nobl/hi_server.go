@@ -6,13 +6,12 @@ package nobl
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dot/tools/config/data/go_out"
-	"github.com/scryinfo/dot/tools/config/data/nobl/tool"
-	"github.com/scryinfo/dot/tools/config/data/nobl/tool/scryconfig"
+	"github.com/scryinfo/dot/tools/config/data/nobl/tool/findDot"
+	"github.com/scryinfo/dot/tools/config/data/nobl/tool/importConfig"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -79,23 +78,18 @@ func HiServerTypeLives() []*dot.TypeLives {
 }
 
 //rpc implement
-func (serv *HiServer) Hi(ctx context.Context, req *go_out.ReqData) (*go_out.ResData, error) {
-	log.Println("hi:", "name:", req.Name)
-	res := &go_out.ResData{Test: "hi, i am serve"}
-	return res, nil
-}
 
 func (serv *HiServer) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_out.ResDots, error) {
 	dirs := in.Dirs
-	bytes, invalidDirectory, e := tool.FindDots(dirs)
+	bytes, invalidDirectory, e := findDot.FindDots(dirs)
 	//删除中间文件
-	{
+	/*{
 		del := os.Remove("./callMethod.go")
 		del = os.Remove("./result.json")
 		if del != nil {
 			fmt.Println(del)
 		}
-	}
+	}*/
 	resDots := go_out.ResDots{
 		DotsInfo:    string(bytes),
 		NoExistDirs: invalidDirectory,
@@ -104,52 +98,6 @@ func (serv *HiServer) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_out.
 		resDots.Error = e.Error()
 	}
 	return &resDots, nil
-}
-
-//从配置文件中加载某一个typeId对应的实例
-//暂时只支持json格式
-//copyPaste或者文件路径都可
-type allinfo struct {
-	Dots []dotinfo
-}
-type dotinfo struct {
-	MetaData meta          `json:"metaData"`
-	Lives    []interface{} `json:"lives"`
-}
-type meta struct {
-	TypeId string `json:"typeId"`
-}
-
-func (serv *HiServer) LoadByConfig(ctx context.Context, in *go_out.ReqLoad) (*go_out.ResConfig, error) {
-
-	var result string
-	var err string
-	var configinfo allinfo
-	//读文件
-	{
-		data, err := ioutil.ReadFile(in.DataFilepath)
-		if err != nil {
-			log.Panic("File reading error", err)
-		}
-		if err := json.Unmarshal(data, &configinfo); err != nil {
-			log.Panic("Unmarshal file,", err)
-		}
-	}
-	//筛选
-	for _, value := range configinfo.Dots {
-		if value.MetaData.TypeId == in.TypeId {
-			data, err := json.Marshal(value)
-			if err != nil {
-				log.Panic("Json marshaling failed：%s", err)
-			}
-			result = string(data)
-		}
-	}
-	res := go_out.ResConfig{
-		ConfigJson: result,
-		ErrInfo:    err,
-	}
-	return &res, nil
 }
 
 func (serv *HiServer) ImportByDot(ctx context.Context, in *go_out.ReqImport) (*go_out.ResImport, error) {
@@ -169,16 +117,15 @@ func (serv *HiServer) ImportByDot(ctx context.Context, in *go_out.ReqImport) (*g
 
 //支持三种格式json toml yaml
 func (serv *HiServer) ImportByConfig(con context.Context, im *go_out.ReqImport) (*go_out.ResImport, error) {
-	scry := scryconfig.New()
-	scry.BindFlag()
-	_, err := scry.ConfLoad(scry.ConFlag, im.Filepath)
+	config := importConfig.New()
+	_, err := config.ConfLoad(im.Filepath)
 	if err != nil {
 		resConfig := go_out.ResImport{
 			Error: err.Error(),
 		}
 		return &resConfig, nil
 	}
-	value, err := scry.GetJsonByte("")
+	value, err := config.GetJsonByte("")
 	if err != nil {
 		resConfig := go_out.ResImport{
 			Error: err.Error(),

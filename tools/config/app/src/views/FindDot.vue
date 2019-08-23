@@ -75,8 +75,7 @@ export default {
                 }
                 if (bo) {
                   this.$root.Dots.push(res[i]);
-                  this.$root.DotsTem.push(JSON.parse(JSON.stringify(res[i])));
-                  this.$root.ExportDots.push(JSON.parse(JSON.stringify(res[i])))
+
                 }
               }
                 checkType(this.$root.Dots,this.$root.Configs);

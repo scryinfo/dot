@@ -1,4 +1,4 @@
-package tool
+package findDot
 
 import (
 	"bytes"
@@ -54,12 +54,6 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 		}
 		paths = append(paths, yesDir...)
 		notExistDir = append(notExistDir, noDir...)
-		//获取yesdir中所有mod文件的目录
-		/*moddirs:=getModFileData(yesDir)
-		yesModDir,noModDir:=splitDir(moddirs)
-		//
-		paths=append(paths,yesModDir...)
-		notExistDir=append(notExistDir,noModDir...)*/
 	}
 
 	//得到绝对路径
@@ -266,109 +260,6 @@ func isDirExist(paths string) bool {
 	return err == nil || os.IsExist(err)
 }
 
-//传入用户输入的目录，返回mod文件里面包含的所有内容
-func getModFileData(paths []string) (data []string, err error) {
-
-	var modFiles []string
-	//获取所有mod文件
-	{
-		for i := range paths {
-			//获取用户输入的每一个目录包含的所有mod文件
-			mod, errs := getAllModFiles(paths[i])
-			err = errs
-			if err != nil {
-				fmt.Println("getALlModFiles err", err)
-				return
-			}
-			modFiles = append(modFiles, mod...)
-		}
-	}
-	//读出mod文件的内容
-	{
-		for i := range modFiles {
-			dir, errs := getDirsFromMod(modFiles[i])
-			err = errs
-			if err != nil {
-				return
-			}
-			data = append(data, dir...)
-		}
-	}
-	return
-}
-
-// 读取指定目录下所有mod文件
-func getAllModFiles(path string) (files []string, err error) {
-	var suf = ".mod"
-	var dirs []string
-	{
-		dir, errs := ioutil.ReadDir(path)
-		err = errs
-		if err != nil {
-			return
-		}
-		PthSep := string(os.PathSeparator)
-		for i := range dir {
-			fi := dir[i]
-			if fi.IsDir() { //目录下的目录文件
-				dirs = append(dirs, filepath.Join(path, fi.Name())) //JoinPath, filepath.Join
-			} else {
-				// 过滤指定格式
-				ok := strings.HasSuffix(fi.Name(), suf)
-				if ok {
-					files = append(files, path+PthSep+fi.Name())
-				}
-			}
-		}
-	}
-	// 获取子目录下的mod文件
-	for j := range dirs {
-		xPath := dirs[j]
-		xFiles, _ := getAllModFiles(xPath)
-		files = append(files, xFiles...)
-	}
-	return files, nil
-}
-
-//每次读一个mod文件，获取里面的目录集合
-func getDirsFromMod(path string) (dirs []string, err error) {
-	datas, err := ioutil.ReadFile(path)
-	if err != nil {
-		fmt.Println("read mod file error，please check path or go mod download")
-		return
-	}
-	str := string(datas)
-	start := "require ("
-	end := ")"
-	//获取内容
-	{
-		n := strings.Index(str, start)
-		if n == -1 {
-			n = 0
-		}
-		str = string([]byte(str)[n+len(start)+2:])
-		m := strings.Index(str, end)
-		if m == -1 {
-			m = len(str)
-		}
-		str = string([]byte(str)[:m-1])
-	}
-	//获取内容中的目录
-	{
-		//按行读取
-		var dataline = strings.Split(str, "\n")
-		for i := range dataline {
-			//按空格分割
-			data := strings.Fields(dataline[i])
-			//将导入路径的/替换为当前操作系统的路径分隔符
-			data[0] = filepath.FromSlash(data[0])
-			dir := getGOPATHsrc() + data[0]
-			dirs = append(dirs, dir)
-		}
-	}
-	return
-}
-
 //解决重复目录
 func RemoveRepByMap(slc []string) []string {
 	result := []string{}
@@ -391,13 +282,24 @@ func getAllSonDirs(dirpath string) ([]string, error) {
 			if f == nil {
 				return err
 			}
-			if f.IsDir() {
+			if f.IsDir() && isTrueDir(path) {
 				dir_list = append(dir_list, path)
 				return nil
 			}
 			return nil
 		})
 	return dir_list, dir_err
+}
+func isTrueDir(path string) bool {
+	if strings.Index(path, "node_modules") == -1 {
+		if strings.Index(path, ".git") == -1 {
+			return true
+		} else {
+			return false
+		}
+	} else {
+		return false
+	}
 }
 
 //查找满足条件的函数节点
@@ -549,7 +451,7 @@ func getGOROOTBin() string {
 func buildCodeFromTemplate(e []*packageInfo) {
 	buf := bytes.Buffer{}
 	//使用模板
-	var filepaths = "../nobl/tool/file1.tmpl"
+	var filepaths = "../nobl/tool/findDot/file1.tmpl"
 	filepaths = filepath.FromSlash(filepaths)
 	t, err := template.ParseFiles(filepaths)
 	if err != nil {

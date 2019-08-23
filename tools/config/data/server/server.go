@@ -25,9 +25,9 @@ func main() {
 		go func() {
 			gin.SetMode(gin.ReleaseMode) //todo 使用组件中的gin
 			router := gin.Default()
-			router.StaticFS("/", http.Dir("../../ui/apps/dist"))
+			router.StaticFS("/", http.Dir("../../app/dist"))
 			ch <- 1
-			router.Run(":9090")
+			_ = router.Run(":9090")
 
 		}()
 
