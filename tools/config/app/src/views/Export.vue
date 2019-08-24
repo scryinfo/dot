@@ -171,30 +171,40 @@
                 return true;
             },
             configConfirm(typeId, config, require, index) {
-                for (let key in require) {
-                    if (require[key] === true) {
-                        if (config[key] === null || config[key] === '') {
-                            alert(index + key + " in extend config of the typeID: " + typeId + " is not exist");
-                            return false;
-                        }
-                    } else if (require[key] === false) {
+                if(require === true || require === false){
+                    if(require === true && (config === '' || config === null)){
+                        alert(index.trimEnd('.') + " in extend config of the typeID: " + typeId + " is not exist");
+                        return false;
+                    }else {
+                        return true;
+                    }
+                }else {
+                    for (let key in require) {
+                        if (require[key] === true) {
+                            if (config[key] === null || config[key] === '') {
+                                alert(index + key + " in extend config of the typeID: " + typeId + " is not exist");
+                                return false;
+                            }
+                        } else if (require[key] === false) {
 
-                    } else {
-                        index = index + key + '.';
-                        if(Array.isArray(config[key])){
-                            for(let i in config[key]){
-                                if(!this.configConfirm(typeId, config[key][i], require[key], index)){
+                        } else {
+                            index = index + key + '.';
+                            if(Array.isArray(config[key])){
+                                for(let i in config[key]){
+                                    if(!this.configConfirm(typeId, config[key][i], require[key], index)){
+                                        return false;
+                                    }
+                                }
+                            }else {
+                                if (!this.configConfirm(typeId, config[key], require[key], index)) {
                                     return false;
                                 }
                             }
-                        }else {
-                            if (!this.configConfirm(typeId, config[key], require[key], index)) {
-                                return false;
-                            }
                         }
                     }
+                    return true;
                 }
-                return true;
+
             },
         },
     };
