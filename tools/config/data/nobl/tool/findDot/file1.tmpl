@@ -5,6 +5,7 @@ import (
     "log"
     "os"
     "encoding/json"
+    "reflect"
     "github.com/scryinfo/dot/dot"
     {{range $index, $element := .}}{{$element.Alias}} "{{$element.ImportDir}}"
     {{end}}
@@ -13,6 +14,7 @@ import (
 type DotAndExtendConfig struct {
 	Meta  dot.Metadata    `json:"metaData"`
 	Lives []Live        `json:"lives"`
+	RequiredInfo map[string]interface{}	`json:"requiredInfo"`
 }
 type Live struct {
 	TypeId    dot.TypeId      `json:"typeId"`
@@ -109,6 +111,13 @@ func main()  {
     		}
     	}
    	}
+	//获取必填信息
+	for key, _ := range finalResult {
+		if finalResult[key].Lives[0].Config!=nil {
+        	finalResult[key].RequiredInfo=getTags(reflect.TypeOf(finalResult[key].Lives[0].Config).Elem())
+			//fmt.Println(reflect.TypeOf(finalResult[key].Lives[0].Config).Elem())
+   		}
+	}
     //生成json文件
     {
     	_, err := json.Marshal(finalResult)
@@ -124,3 +133,106 @@ func main()  {
    		}
    	}
 }
+
+func getTags(t reflect.Type) map[string]interface{} {
+
+	num := t.NumField()
+	var tagResult = make(map[string]interface{})
+
+	for i := 0; i < num; i++ {
+		//todo 结构体应该做什么 ok
+		ixField := t.Field(i)
+		if ixField.Type.Kind() == reflect.Struct {
+			if ixField.Tag.Get("json")=="" {
+				tagResult[ixField.Name] = getTags(ixField.Type)
+			}else {
+				tagResult[ixField.Tag.Get("json")] = getTags(ixField.Type)
+			}
+			continue
+		}
+		//todo 指针应该做什么 ok
+		if ixField.Type.Kind() == reflect.Ptr {
+			//getTags(val.Field(i))
+			//value:=reflect.Indirect(t.Field(i))
+			//fmt.Println(t.Field(i).Type.Elem())
+			if ixField.Type.Elem().Kind()==reflect.Struct {
+				if ixField.Tag.Get("json")=="" {
+					tagResult[ixField.Name] = getTags(ixField.Type.Elem())
+				}else {
+					tagResult[ixField.Tag.Get("json")] = getTags(ixField.Type.Elem())
+				}
+				continue
+			}
+
+		}
+		//todo 切片应该做什么 ok
+		if ixField.Type.Kind() == reflect.Slice {
+			if ixField.Type.Elem().Kind()==reflect.Struct {
+				value := reflect.MakeSlice(ixField.Type, 1, 1)
+				//fmt.Println(value.Index(0))
+				if ixField.Tag.Get("json")=="" {
+					tagResult[ixField.Name] = getTags(value.Index(0).Type())
+				}else {
+					tagResult[ixField.Tag.Get("json")] = getTags(value.Index(0).Type())
+				}
+				continue
+			}
+		}
+		//todo 数组应该做什么　ok
+		if ixField.Type.Kind() == reflect.Array {
+			if ixField.Type.Elem().Kind()==reflect.Struct {
+				//fmt.Println(t.Field(i).Type.Kind())
+				if ixField.Tag.Get("json")=="" {
+					tagResult[ixField.Name] = getTags(ixField.Type.Elem())
+				}else {
+					tagResult[ixField.Tag.Get("json")] = getTags(ixField.Type.Elem())
+				}
+				continue
+			}
+		}
+		//todo 映射应该做什么
+		if ixField.Type.Kind() == reflect.Map {
+			if ixField.Type.Elem().Kind()==reflect.Struct {
+				if ixField.Tag.Get("json")=="" {
+					tagResult[ixField.Name] = getTags(ixField.Type.Elem())
+				}else {
+					tagResult[ixField.Tag.Get("json")] = getTags(ixField.Type.Elem())
+				}
+				continue
+			}
+			//fmt.Println(t.Field(i).Type.Key())  //k
+			//fmt.Println(t.Field(i).Type.Elem()) //v
+			//getTags(t.Field(i).Type.Elem()) //?行不通　当ｖ的类型是简单类型时panic
+			/*value:=reflect.MakeMap(t.Field(i).Type)
+			tagResult[t.Field(i).Name]=getTags(value.Type().Elem())*/
+			//continue
+		}
+		//todo 接口应该做什么
+		if ixField.Type.Kind() == reflect.Interface {
+			//在扩展配置内部不会有interface类型的字段，因为无法完成反序列化
+			//使用value能实现类型的判断
+			//func ValueOf(i interface{}) Value
+			continue
+		}
+
+        if ixField.Tag.Get("required") == "yes" {
+            //fmt.Println(ixField.Name + "字段是必填字段")
+            if ixField.Tag.Get("json")=="" {
+                tagResult[ixField.Name] = true
+            }else {
+                tagResult[ixField.Tag.Get("json")] = true
+            }
+        } else {
+            //fmt.Println(ixField.Name + "字段不是必填字段")
+            if ixField.Tag.Get("json")=="" {
+                tagResult[ixField.Name] = false
+            }else {
+                tagResult[ixField.Tag.Get("json")] = false
+            }
+        }
+
+	}
+	return tagResult
+
+}
+
