@@ -214,7 +214,4 @@
     .bg-warning {
         background: #d6a23c;
     }
-    .bg-Danger {
-        background: #F56C6C;
-    }
 </style>

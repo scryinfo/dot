@@ -207,7 +207,7 @@
         },
     };
 </script>
-<style>
+<style scoped>
     #eDotH,
     #eConfH {
         text-align: left;
