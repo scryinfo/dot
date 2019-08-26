@@ -50,7 +50,7 @@
     },
     {
       "metaData":{
-        "name": "server 1",
+        "name": "rpcImplement",
         "typeId":"hiserver"
       },
       "lives":[
