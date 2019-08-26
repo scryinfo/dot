@@ -132,6 +132,10 @@
                     }
                     if (!this.configRequire()) {
                         return
+                    }else {
+                        for(let key in this.$root.Configs){
+                            this.$delete(this.$root.Configs[key],'requiredInfo');
+                        }
                     }
                     var result = {
                         log: {
@@ -156,13 +160,14 @@
                 }
             },
             configRequire() {
+                console.log(JSON.stringify(this.$root.Configs,null,4))
                 for (let key in this.$root.Configs) {
                     let typeId = this.$root.Configs[key].metaData.typeId;
                     let require = this.$root.Configs[key].requiredInfo;
                     for (let i in this.$root.Configs[key].lives) {
                         let config = this.$root.Configs[key].lives[i].json;
                         if (this.configConfirm(typeId, config, require, "lives[" + i + "]")) {
-                            this.$delete(this.$root.Configs[key], 'requiredInfo');
+                            // this.$delete(this.$root.Configs[key], 'requiredInfo');
                         } else {
                             return false;
                         }
