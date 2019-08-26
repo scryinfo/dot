@@ -26,7 +26,10 @@ import {jsonParseRely,makeJsonRely} from '@/components/changeDataStructure/chDS'
 export default Vue.extend({
     name: 'JsonRelyButton',
     props: {
-        objc: {}
+        objc: {
+            type: Array,
+            required: true
+        }
     },
     data() {
         return {

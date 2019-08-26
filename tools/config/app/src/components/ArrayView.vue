@@ -62,7 +62,10 @@ import {jsonParse, makeJson} from '@/components/changeDataStructure/chDS';
 export default Vue.extend({
     name: 'ArrayView',
     props: {
-        parsedData: {},
+        parsedData: {
+            type: Object,
+            required: true
+        },
     },
     data() {
         return {
