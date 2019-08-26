@@ -92,7 +92,7 @@ export default {
   }
   }
 </script>
-<style>
+<style scoped>
   #findDot {
     text-align: right;
     line-height: 50px;

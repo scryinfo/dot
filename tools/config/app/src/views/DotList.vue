@@ -108,7 +108,7 @@
 
 </script>
 
-<style>
+<style scoped>
   .bg-purple {
     background: #d3dce6;
   }
