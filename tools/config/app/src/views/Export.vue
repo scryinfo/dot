@@ -198,11 +198,11 @@
             },
             baseArrayConfirm(arr) {
                 for (let i in arr) {
-                    if (i === '') {
-                        return false;
+                    if (arr[i] === '') {
+                        return true;
                     }
                 }
-                return true;
+                return false;
             }
         },
     };

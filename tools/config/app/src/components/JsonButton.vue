@@ -24,7 +24,10 @@ import Vue from 'vue';
 export default Vue.extend({
     name: 'JsonButton',
     props: {
-        objc: {},
+        objc: {
+            type: Object,
+            required: true
+        },
     },
     data() {
       return {
