@@ -104,10 +104,11 @@ export default Vue.extend({
             this.dialog = true;
             (this as any).objc.push(obj);
             const jsonSchemaGenerator = require('./schemaGenerator/index.js');
-            const data = {};
+            let data = {};
             this.temp = makeJson(this.objc);
             this.nameTemp = obj.name;
-            eval('data = this.temp.' + this.nameTemp);
+            // eval('data = this.temp.' + this.nameTemp);
+            data = (this as any).temp[this.nameTemp];
             this.schemaObject = jsonSchemaGenerator.jsonToSchema(this.temp);
             this.textarea = JSON.stringify(data, null, 4);
         },
@@ -115,7 +116,8 @@ export default Vue.extend({
             try {
                 if (this.textarea) {
                     const data = JSON.parse(this.textarea);
-                    eval('this.temp.' + this.nameTemp + '= data');
+                    // eval('this.temp.' + this.nameTemp + '= data');
+                    (this as any).temp[this.nameTemp] = data;
                     const tv4 = require('tv4');
                     if (tv4.validate(this.temp, this.schemaObject)) {
                         const objct: any = jsonParse(data);
