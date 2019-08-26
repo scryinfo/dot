@@ -94,6 +94,7 @@
                 }
             },
             ExportConf() {
+                console.log(JSON.stringify(this.$root.Configs,null,4));
                 if (this.confFileName == "") {
                     alert("请输入文件名");
                 } else {
@@ -127,15 +128,11 @@
                                     liveIds.push(conf[i].lives[j].liveId);
                                 }
                             }
-                            resultDot.push(conf[i]);
+                            resultDot.push(JSON.parse(JSON.stringify(conf[i])));
                         }
                     }
-                    if (!this.configRequire()) {
+                    if (!this.configRequire(resultDot)) {
                         return
-                    }else {
-                        for(let key in this.$root.Configs){
-                            this.$delete(this.$root.Configs[key],'requiredInfo');
-                        }
                     }
                     var result = {
                         log: {
@@ -159,15 +156,15 @@
                     });
                 }
             },
-            configRequire() {
+            configRequire(configs) {
                 console.log(JSON.stringify(this.$root.Configs,null,4))
-                for (let key in this.$root.Configs) {
-                    let typeId = this.$root.Configs[key].metaData.typeId;
-                    let require = this.$root.Configs[key].requiredInfo;
-                    for (let i in this.$root.Configs[key].lives) {
-                        let config = this.$root.Configs[key].lives[i].json;
+                for (let key in configs) {
+                    let typeId = configs[key].metaData.typeId;
+                    let require = configs[key].requiredInfo;
+                    for (let i in configs[key].lives) {
+                        let config = configs[key].lives[i].json;
                         if (this.configConfirm(typeId, config, require, "lives[" + i + "]")) {
-                            // this.$delete(this.$root.Configs[key], 'requiredInfo');
+                            this.$delete(configs[key], 'requiredInfo');
                         } else {
                             return false;
                         }
