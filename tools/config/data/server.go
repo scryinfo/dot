@@ -54,7 +54,7 @@ func add(l dot.Line) error {
 	l.ToDotEventer().AddLiveEvents(dot.LiveId(gindot.EngineLiveId), &dot.LiveEvents{
 		AfterCreate: func(live *dot.Live, l dot.Line) {
 			if g, ok := live.Dot.(*gindot.Engine); ok {
-				g.GinEngine().StaticFS("/", http.Dir("../../app/dist"))
+				g.GinEngine().StaticFS("/", http.Dir("../app/dist"))
 			}
 		},
 	})

@@ -210,7 +210,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 	{
 		//运行生成的代码文件
 		{
-			cmd := exec.Command(getGOROOTBin(), "run", "callMethod.go")
+			cmd := exec.Command(getGOROOTBin(), "run", "./run_out/callMethod.go")
 			err = cmd.Run()
 			if err != nil {
 				fmt.Printf("Error %v executing command!", err)
@@ -219,7 +219,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 		}
 		//读取组件信息
 		{
-			data, err = ioutil.ReadFile("result.json")
+			data, err = ioutil.ReadFile("./run_out/result.json")
 			if err != nil {
 				fmt.Println("File reading error", err)
 			}
@@ -451,7 +451,7 @@ func getGOROOTBin() string {
 func buildCodeFromTemplate(e []*packageInfo) {
 	buf := bytes.Buffer{}
 	//使用模板
-	var filepaths = "../nobl/tool/findDot/file1.tmpl"
+	var filepaths = "./nobl/tool/findDot/file1.tmpl"
 	filepaths = filepath.FromSlash(filepaths)
 	t, err := template.ParseFiles(filepaths)
 	if err != nil {
@@ -465,7 +465,7 @@ func buildCodeFromTemplate(e []*packageInfo) {
 	}
 	//file
 	baseName := "callMethod.go"
-	baseName = filepath.Join(".", baseName)
+	baseName = filepath.Join("./run_out", baseName)
 	err = ioutil.WriteFile(baseName, buf.Bytes(), 0777)
 	if err != nil {
 		fmt.Println("writing callMethod.go err")

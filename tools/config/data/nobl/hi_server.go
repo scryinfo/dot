@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	ServerTypeId = "hiserver"
+	ServerTypeId = "rpcImplement"
 )
 
 type config struct {
@@ -83,10 +83,10 @@ func RpcImplementTypeLives() []*dot.TypeLives {
 func (serv *RpcImplement) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_out.ResDots, error) {
 	dirs := in.Dirs
 	bytes, invalidDirectory, e := findDot.FindDots(dirs)
-	//删除中间文件
+	//删除运行时产生的中间文件
 	/*{
-		del := os.Remove("./callMethod.go")
-		del = os.Remove("./result.json")
+		del := os.Remove("./run_out/callMethod.go")
+		del = os.Remove("./run_out/result.json")
 		if del != nil {
 			fmt.Println(del)
 		}

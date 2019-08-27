@@ -124,7 +124,7 @@ func main()  {
     	if err != nil {
     		log.Fatal("MarShal err:", err)
     	}
-    	file, _ := os.OpenFile("result.json", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
+    	file, _ := os.OpenFile("./run_out/result.json", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
     	defer file.Close()
    		enc := json.NewEncoder(file)
     	err = enc.Encode(finalResult)
