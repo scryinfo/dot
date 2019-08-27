@@ -67,9 +67,9 @@
 
 <script lang="ts">
     import Vue from 'vue'
-    import RelyLivesEditor from '../components/RelyLivesEditor.vue';
-    import JsonButton from '../components/JsonButton.vue';
-    import CheckLiveId from '../components/checkLiveId.vue';
+    import RelyLivesEditor from '../components/config/RelyLivesEditor.vue';
+    import JsonButton from '../components/config/JsonButton.vue';
+    import CheckLiveId from '../components/config/checkLiveId.vue';
     const uuidv1 = require('uuid/v1')
     export default Vue.extend({
         data() {

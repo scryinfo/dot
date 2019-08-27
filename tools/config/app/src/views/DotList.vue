@@ -20,7 +20,7 @@
   </el-collapse>
 </template>
 <script>
-  import {checkType,removeAllType} from "../components/changeDataStructure/checkType";
+  import {checkType,removeAllType} from "../components/utils/checkType";
   export default {
     data() {
       return {

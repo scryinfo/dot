@@ -77,7 +77,7 @@
                 } else {
                     var dotfilename = this.dotFileName + ".json";
                     var filename = [dotfilename];
-                    var {rpcExportDot} = require("../rpc/rpcInterface");
+                    var {rpcExportDot} = require("../components/utils/rpc/rpcInterface");
                     rpcExportDot(this.$root.Dots, filename, response => {
                         if (response.getError() == "") {
                             alert(
@@ -142,7 +142,7 @@
                         dots: null
                     };
                     result.dots = resultDot;
-                    var {rpcExportConfig} = require("../rpc/rpcInterface");
+                    var {rpcExportConfig} = require("../components/utils/rpc/rpcInterface");
                     rpcExportConfig(result, confFileNames, response => {
                         if (response.getError() == "") {
                             alert(

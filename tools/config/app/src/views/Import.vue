@@ -42,7 +42,7 @@
 </template>
 
 <script>
-    import {checkType} from "../components/changeDataStructure/checkType";
+    import {checkType} from "../components/utils/checkType";
 
     export default {
         data() {
@@ -55,7 +55,7 @@
         methods: {
             importDot() {
                 if (this.dotPath != '') {
-                    var {rpcimportByDot} = require('../rpc/rpcInterface');
+                    var {rpcimportByDot} = require('../components/utils/rpc/rpcInterface');
                     rpcimportByDot(this.dotPath, (response) => {
                         if (response.getError() != '') {
                             var err = response.getError();
@@ -102,7 +102,7 @@
             },
             importConf() {
                 if (this.confPath != '') {
-                    let {rpcimportByConfig} = require('../rpc/rpcInterface');
+                    let {rpcimportByConfig} = require('../components/utils/rpc/rpcInterface');
                     rpcimportByConfig(this.confPath, (response) => {
                         if (response.getError() != '') {
                             let err = response.getError()
