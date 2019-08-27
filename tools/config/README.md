@@ -16,18 +16,16 @@
 ---
 
 ### 使用方式
-
 ```
-cd dot/tools/config/ui/apps
+./config.sh  or   config.bat
+```
+　若修改了vue代码,请按以下方式重新打包
+```
+cd dot/tools/config/app
 
 npm install
 
 npm run build
-
-cd ../../
-
-./config.sh  or   config.bat
-
 ```
-注：若浏览器未成功弹出，请手动打开浏览器并访问http://localhost:9090  
-提示：本工具将会占用5012,6868以及9090端口，关闭终端时释放所有资源
+注：若浏览器未成功弹出，请手动打开浏览器访问http://localhost:8080  
+提示：本工具将会占用5012以及8080端口，关闭终端时释放所有资源
