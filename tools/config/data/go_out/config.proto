@@ -35,7 +35,7 @@ message ResExport{
     string error = 1;   //导出是否成功
 }
 //----------------------------------------------------------------------
-service HiDot {
+service DotConfig {
     rpc FindDot(ReqDirs) returns(ResDots);  //find dots
     //文件导入
     rpc ImportByConfig(ReqImport) returns(ResImport);

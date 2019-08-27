@@ -12,7 +12,7 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 const proto = {};
-proto.go_out = require('./hi_pb.js');
+proto.go_out = require('./config_pb.js');
 
 /**
  * @param {string} hostname
@@ -22,10 +22,10 @@ proto.go_out = require('./hi_pb.js');
  * @struct
  * @final
  */
-proto.go_out.HiDotClient =
+proto.go_out.DotConfigClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
-  options['format'] = 'binary';
+  options['format'] = 'text';
 
   /**
    * @private @const {!grpc.web.GrpcWebClientBase} The client
@@ -58,10 +58,10 @@ proto.go_out.HiDotClient =
  * @struct
  * @final
  */
-proto.go_out.HiDotPromiseClient =
+proto.go_out.DotConfigPromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
-  options['format'] = 'binary';
+  options['format'] = 'text';
 
   /**
    * @private @const {!grpc.web.GrpcWebClientBase} The client
@@ -92,8 +92,8 @@ proto.go_out.HiDotPromiseClient =
  *   !proto.go_out.ReqDirs,
  *   !proto.go_out.ResDots>}
  */
-const methodDescriptor_HiDot_FindDot = new grpc.web.MethodDescriptor(
-  '/go_out.HiDot/FindDot',
+const methodDescriptor_DotConfig_FindDot = new grpc.web.MethodDescriptor(
+  '/go_out.DotConfig/FindDot',
   grpc.web.MethodType.UNARY,
   proto.go_out.ReqDirs,
   proto.go_out.ResDots,
@@ -111,7 +111,7 @@ const methodDescriptor_HiDot_FindDot = new grpc.web.MethodDescriptor(
  *   !proto.go_out.ReqDirs,
  *   !proto.go_out.ResDots>}
  */
-const methodInfo_HiDot_FindDot = new grpc.web.AbstractClientBase.MethodInfo(
+const methodInfo_DotConfig_FindDot = new grpc.web.AbstractClientBase.MethodInfo(
   proto.go_out.ResDots,
   /** @param {!proto.go_out.ReqDirs} request */
   function(request) {
@@ -131,13 +131,13 @@ const methodInfo_HiDot_FindDot = new grpc.web.AbstractClientBase.MethodInfo(
  * @return {!grpc.web.ClientReadableStream<!proto.go_out.ResDots>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.go_out.HiDotClient.prototype.findDot =
+proto.go_out.DotConfigClient.prototype.findDot =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/go_out.HiDot/FindDot',
+      '/go_out.DotConfig/FindDot',
       request,
       metadata || {},
-      methodDescriptor_HiDot_FindDot,
+      methodDescriptor_DotConfig_FindDot,
       callback);
 };
 
@@ -150,13 +150,13 @@ proto.go_out.HiDotClient.prototype.findDot =
  * @return {!Promise<!proto.go_out.ResDots>}
  *     A native promise that resolves to the response
  */
-proto.go_out.HiDotPromiseClient.prototype.findDot =
+proto.go_out.DotConfigPromiseClient.prototype.findDot =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/go_out.HiDot/FindDot',
+      '/go_out.DotConfig/FindDot',
       request,
       metadata || {},
-      methodDescriptor_HiDot_FindDot);
+      methodDescriptor_DotConfig_FindDot);
 };
 
 
@@ -166,8 +166,8 @@ proto.go_out.HiDotPromiseClient.prototype.findDot =
  *   !proto.go_out.ReqImport,
  *   !proto.go_out.ResImport>}
  */
-const methodDescriptor_HiDot_ImportByConfig = new grpc.web.MethodDescriptor(
-  '/go_out.HiDot/ImportByConfig',
+const methodDescriptor_DotConfig_ImportByConfig = new grpc.web.MethodDescriptor(
+  '/go_out.DotConfig/ImportByConfig',
   grpc.web.MethodType.UNARY,
   proto.go_out.ReqImport,
   proto.go_out.ResImport,
@@ -185,7 +185,7 @@ const methodDescriptor_HiDot_ImportByConfig = new grpc.web.MethodDescriptor(
  *   !proto.go_out.ReqImport,
  *   !proto.go_out.ResImport>}
  */
-const methodInfo_HiDot_ImportByConfig = new grpc.web.AbstractClientBase.MethodInfo(
+const methodInfo_DotConfig_ImportByConfig = new grpc.web.AbstractClientBase.MethodInfo(
   proto.go_out.ResImport,
   /** @param {!proto.go_out.ReqImport} request */
   function(request) {
@@ -205,13 +205,13 @@ const methodInfo_HiDot_ImportByConfig = new grpc.web.AbstractClientBase.MethodIn
  * @return {!grpc.web.ClientReadableStream<!proto.go_out.ResImport>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.go_out.HiDotClient.prototype.importByConfig =
+proto.go_out.DotConfigClient.prototype.importByConfig =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/go_out.HiDot/ImportByConfig',
+      '/go_out.DotConfig/ImportByConfig',
       request,
       metadata || {},
-      methodDescriptor_HiDot_ImportByConfig,
+      methodDescriptor_DotConfig_ImportByConfig,
       callback);
 };
 
@@ -224,13 +224,13 @@ proto.go_out.HiDotClient.prototype.importByConfig =
  * @return {!Promise<!proto.go_out.ResImport>}
  *     A native promise that resolves to the response
  */
-proto.go_out.HiDotPromiseClient.prototype.importByConfig =
+proto.go_out.DotConfigPromiseClient.prototype.importByConfig =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/go_out.HiDot/ImportByConfig',
+      '/go_out.DotConfig/ImportByConfig',
       request,
       metadata || {},
-      methodDescriptor_HiDot_ImportByConfig);
+      methodDescriptor_DotConfig_ImportByConfig);
 };
 
 
@@ -240,8 +240,8 @@ proto.go_out.HiDotPromiseClient.prototype.importByConfig =
  *   !proto.go_out.ReqImport,
  *   !proto.go_out.ResImport>}
  */
-const methodDescriptor_HiDot_ImportByDot = new grpc.web.MethodDescriptor(
-  '/go_out.HiDot/ImportByDot',
+const methodDescriptor_DotConfig_ImportByDot = new grpc.web.MethodDescriptor(
+  '/go_out.DotConfig/ImportByDot',
   grpc.web.MethodType.UNARY,
   proto.go_out.ReqImport,
   proto.go_out.ResImport,
@@ -259,7 +259,7 @@ const methodDescriptor_HiDot_ImportByDot = new grpc.web.MethodDescriptor(
  *   !proto.go_out.ReqImport,
  *   !proto.go_out.ResImport>}
  */
-const methodInfo_HiDot_ImportByDot = new grpc.web.AbstractClientBase.MethodInfo(
+const methodInfo_DotConfig_ImportByDot = new grpc.web.AbstractClientBase.MethodInfo(
   proto.go_out.ResImport,
   /** @param {!proto.go_out.ReqImport} request */
   function(request) {
@@ -279,13 +279,13 @@ const methodInfo_HiDot_ImportByDot = new grpc.web.AbstractClientBase.MethodInfo(
  * @return {!grpc.web.ClientReadableStream<!proto.go_out.ResImport>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.go_out.HiDotClient.prototype.importByDot =
+proto.go_out.DotConfigClient.prototype.importByDot =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/go_out.HiDot/ImportByDot',
+      '/go_out.DotConfig/ImportByDot',
       request,
       metadata || {},
-      methodDescriptor_HiDot_ImportByDot,
+      methodDescriptor_DotConfig_ImportByDot,
       callback);
 };
 
@@ -298,13 +298,13 @@ proto.go_out.HiDotClient.prototype.importByDot =
  * @return {!Promise<!proto.go_out.ResImport>}
  *     A native promise that resolves to the response
  */
-proto.go_out.HiDotPromiseClient.prototype.importByDot =
+proto.go_out.DotConfigPromiseClient.prototype.importByDot =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/go_out.HiDot/ImportByDot',
+      '/go_out.DotConfig/ImportByDot',
       request,
       metadata || {},
-      methodDescriptor_HiDot_ImportByDot);
+      methodDescriptor_DotConfig_ImportByDot);
 };
 
 
@@ -314,8 +314,8 @@ proto.go_out.HiDotPromiseClient.prototype.importByDot =
  *   !proto.go_out.ReqExport,
  *   !proto.go_out.ResExport>}
  */
-const methodDescriptor_HiDot_ExportConfig = new grpc.web.MethodDescriptor(
-  '/go_out.HiDot/ExportConfig',
+const methodDescriptor_DotConfig_ExportConfig = new grpc.web.MethodDescriptor(
+  '/go_out.DotConfig/ExportConfig',
   grpc.web.MethodType.UNARY,
   proto.go_out.ReqExport,
   proto.go_out.ResExport,
@@ -333,7 +333,7 @@ const methodDescriptor_HiDot_ExportConfig = new grpc.web.MethodDescriptor(
  *   !proto.go_out.ReqExport,
  *   !proto.go_out.ResExport>}
  */
-const methodInfo_HiDot_ExportConfig = new grpc.web.AbstractClientBase.MethodInfo(
+const methodInfo_DotConfig_ExportConfig = new grpc.web.AbstractClientBase.MethodInfo(
   proto.go_out.ResExport,
   /** @param {!proto.go_out.ReqExport} request */
   function(request) {
@@ -353,13 +353,13 @@ const methodInfo_HiDot_ExportConfig = new grpc.web.AbstractClientBase.MethodInfo
  * @return {!grpc.web.ClientReadableStream<!proto.go_out.ResExport>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.go_out.HiDotClient.prototype.exportConfig =
+proto.go_out.DotConfigClient.prototype.exportConfig =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/go_out.HiDot/ExportConfig',
+      '/go_out.DotConfig/ExportConfig',
       request,
       metadata || {},
-      methodDescriptor_HiDot_ExportConfig,
+      methodDescriptor_DotConfig_ExportConfig,
       callback);
 };
 
@@ -372,13 +372,13 @@ proto.go_out.HiDotClient.prototype.exportConfig =
  * @return {!Promise<!proto.go_out.ResExport>}
  *     A native promise that resolves to the response
  */
-proto.go_out.HiDotPromiseClient.prototype.exportConfig =
+proto.go_out.DotConfigPromiseClient.prototype.exportConfig =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/go_out.HiDot/ExportConfig',
+      '/go_out.DotConfig/ExportConfig',
       request,
       metadata || {},
-      methodDescriptor_HiDot_ExportConfig);
+      methodDescriptor_DotConfig_ExportConfig);
 };
 
 
@@ -388,8 +388,8 @@ proto.go_out.HiDotPromiseClient.prototype.exportConfig =
  *   !proto.go_out.ReqExport,
  *   !proto.go_out.ResExport>}
  */
-const methodDescriptor_HiDot_ExportDot = new grpc.web.MethodDescriptor(
-  '/go_out.HiDot/ExportDot',
+const methodDescriptor_DotConfig_ExportDot = new grpc.web.MethodDescriptor(
+  '/go_out.DotConfig/ExportDot',
   grpc.web.MethodType.UNARY,
   proto.go_out.ReqExport,
   proto.go_out.ResExport,
@@ -407,7 +407,7 @@ const methodDescriptor_HiDot_ExportDot = new grpc.web.MethodDescriptor(
  *   !proto.go_out.ReqExport,
  *   !proto.go_out.ResExport>}
  */
-const methodInfo_HiDot_ExportDot = new grpc.web.AbstractClientBase.MethodInfo(
+const methodInfo_DotConfig_ExportDot = new grpc.web.AbstractClientBase.MethodInfo(
   proto.go_out.ResExport,
   /** @param {!proto.go_out.ReqExport} request */
   function(request) {
@@ -427,13 +427,13 @@ const methodInfo_HiDot_ExportDot = new grpc.web.AbstractClientBase.MethodInfo(
  * @return {!grpc.web.ClientReadableStream<!proto.go_out.ResExport>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.go_out.HiDotClient.prototype.exportDot =
+proto.go_out.DotConfigClient.prototype.exportDot =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/go_out.HiDot/ExportDot',
+      '/go_out.DotConfig/ExportDot',
       request,
       metadata || {},
-      methodDescriptor_HiDot_ExportDot,
+      methodDescriptor_DotConfig_ExportDot,
       callback);
 };
 
@@ -446,13 +446,13 @@ proto.go_out.HiDotClient.prototype.exportDot =
  * @return {!Promise<!proto.go_out.ResExport>}
  *     A native promise that resolves to the response
  */
-proto.go_out.HiDotPromiseClient.prototype.exportDot =
+proto.go_out.DotConfigPromiseClient.prototype.exportDot =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/go_out.HiDot/ExportDot',
+      '/go_out.DotConfig/ExportDot',
       request,
       metadata || {},
-      methodDescriptor_HiDot_ExportDot);
+      methodDescriptor_DotConfig_ExportDot);
 };
 
 

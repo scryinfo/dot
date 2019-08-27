@@ -1,4 +1,4 @@
-// source: hi.proto
+// source: config.proto
 /**
  * @fileoverview
  * @enhanceable

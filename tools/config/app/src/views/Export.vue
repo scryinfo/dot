@@ -83,7 +83,7 @@
                             alert(
                                 "导出文件" +
                                 filename +
-                                "成功，文件位置tools/config/data/server目录下"
+                                "成功，文件位置tools/config/data/run_out目录下"
                             );
                         } else {
                             alert("导出文件" + filenames + "失败" + response.getError());
@@ -148,7 +148,7 @@
                             alert(
                                 "导出文件" +
                                 confFileNames +
-                                "成功，文件位置tools/config/data/server目录下"
+                                "成功，文件位置tools/config/data/run_out目录下"
                             );
                         } else {
                             alert("导出文件" + confFileNames + "失败" + response.getError());

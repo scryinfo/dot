@@ -55,7 +55,7 @@ func newRpcImplement(conf interface{}) (dot.Dot, error) {
 }
 
 func (serv *RpcImplement) Start(ignore bool) error {
-	go_out.RegisterHiDotServer(serv.ServerNobl.Server(), serv)
+	go_out.RegisterDotConfigServer(serv.ServerNobl.Server(), serv)
 	return nil
 }
 
@@ -160,6 +160,7 @@ func (serv *RpcImplement) ExportConfig(ctx context.Context, in *go_out.ReqExport
 		}
 		//map->file
 		for key, value := range fileFormat {
+			value = "./run_out/" + value
 			file, err := os.OpenFile(value, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 			if err != nil {
 				log.Println("An error occurred with file opening or creation\n")
@@ -197,9 +198,10 @@ func (serv *RpcImplement) ExportConfig(ctx context.Context, in *go_out.ReqExport
 func (serv *RpcImplement) ExportDot(ctx context.Context, in *go_out.ReqExport) (*go_out.ResExport, error) {
 	var data = in.Dotdata
 	if in.Filename == nil {
-		in.Filename[0] = "dots.json"
+		in.Filename[0] = "./run_out/dots.json"
 	}
-	file, err := os.OpenFile(in.Filename[0], os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
+	name := "./run_out/" + in.Filename[0]
+	file, err := os.OpenFile(name, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 	if err != nil {
 		panic("An error occurred with file opening or creation\n")
 	}

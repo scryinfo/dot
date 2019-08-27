@@ -81,6 +81,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 		//获取一个项目下所有的子目录
 		for i := range paths {
 			//遍历获取子目录
+			dirs = nil
 			dirs, err = getAllSonDirs(paths[i])
 			if err != nil {
 				fmt.Println("获取一个项目下所有的子目录出错：", err)
@@ -91,8 +92,8 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 				Mode: packages.LoadSyntax, //不包含依赖,尝试下面这个
 				Dir:  paths[i],            //设置当前目录
 			}
-			pkginfos, errs := packages.Load(cfg, dirs...)
-			err = errs
+			var pkginfos []*packages.Package = nil
+			pkginfos, err = packages.Load(cfg, dirs...)
 			if err != nil {
 				fmt.Println("packages.Load err:", err)
 				return
