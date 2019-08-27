@@ -53,13 +53,13 @@
                       :limit=1
                       >
                 <i class="el-icon-upload"></i>
-                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">只能上传json文件</div>
+                <div class="el-upload__text">Drag and drop files here, or <em>click to upload</em></div>
+                <div class="el-upload__tip" slot="tip">Can only upload json files</div>
             </el-upload>
             </span>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="handleConfirm()">确 定</el-button>
+                <el-button @click="dialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="handleConfirm()">Ok</el-button>
             </span>
         </el-dialog>
     </div>
@@ -142,8 +142,6 @@
                 if (configLives && dotLive){
                     for(let i = 0, len = configLives.length; i < len; i++){
                         this.assembleByLiveId(dotLive,configLives[i]);
-                        // let target:any = (this as any).assemble(dotLive,configLives[i]);
-                        // (this as any).lives.push(target);
                     }
                 }
                 this.dialogVisible = false;
@@ -179,14 +177,14 @@
                 let flag = false;
                 for(let i = 0, len = this.lives.length; i < len; i++){
                     if((this as any).lives[i].liveId === configLive.liveId){
-                        (this as any).lives[i] = this.assemble((this as any).lives[i],configLive);
+                        (this as any).lives[i] = JSON.parse(JSON.stringify(this.assemble((this as any).lives[i],configLive)));
                         flag = true;
                         break;
                     }
                 }
                 if (!flag){
                     let target:any = (this as any).assemble(dotLive,configLive);
-                    (this as any).lives.push(target);
+                    (this as any).lives.push(JSON.parse(JSON.stringify(target)));
                 }
             }
         }
