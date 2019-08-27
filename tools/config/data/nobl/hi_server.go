@@ -84,13 +84,13 @@ func (serv *RpcImplement) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_
 	dirs := in.Dirs
 	bytes, invalidDirectory, e := findDot.FindDots(dirs)
 	//删除运行时产生的中间文件
-	/*{
+	{
 		del := os.Remove("./run_out/callMethod.go")
 		del = os.Remove("./run_out/result.json")
 		if del != nil {
-			fmt.Println(del)
+			log.Println(del)
 		}
-	}*/
+	}
 	resDots := go_out.ResDots{
 		DotsInfo:    string(bytes),
 		NoExistDirs: invalidDirectory,
