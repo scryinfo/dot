@@ -157,9 +157,11 @@
                 }
             },
             configRequire(configs) {
-                console.log(JSON.stringify(this.$root.Configs,null,4))
                 for (let key in configs) {
                     let typeId = configs[key].metaData.typeId;
+                    if(!configs[key].requiredInfo){
+                        continue
+                    }
                     let require = configs[key].requiredInfo;
                     for (let i in configs[key].lives) {
                         let config = configs[key].lives[i].json;
