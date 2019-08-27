@@ -19,7 +19,7 @@
 <script lang="ts">
     import Vue from 'vue';
     import JsonRelyButton from './JsonRelyButton.vue';
-    import {jsonParseRely,makeJsonRely} from "@/components/changeDataStructure/chDS";
+    import {jsonParseRely,makeJsonRely} from "@/components/utils/changeDataStruct";
 
     export default Vue.extend({
         name: "RelyLivesEditor",

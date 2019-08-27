@@ -58,7 +58,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {jsonParse, makeJson} from '@/components/changeDataStructure/chDS';
+import {jsonParse, makeJson} from '@/components/utils/changeDataStruct';
 export default Vue.extend({
     name: 'ArrayView',
     props: {
@@ -103,7 +103,7 @@ export default Vue.extend({
         ShowJsonDialog(obj: any) {
             this.dialog = true;
             (this as any).objc.push(obj);
-            const jsonSchemaGenerator = require('./schemaGenerator/index.js');
+            const jsonSchemaGenerator = require('../../utils/schemaGenerator/schema.js');
             let data = {};
             this.temp = makeJson(this.objc);
             this.nameTemp = obj.name;

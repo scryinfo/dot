@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {jsonParse, makeJson} from '@/components/changeDataStructure/chDS';
+import {jsonParse, makeJson} from '@/components/utils/changeDataStruct';
 
 export default Vue.extend({
     name: 'ExtendConfigEditor',
