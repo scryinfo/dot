@@ -1,6 +1,6 @@
 'use strict';
 
-import {isArray} from './utils';
+import {isArray} from './type';
 
 /**
 Schema generator using a AST

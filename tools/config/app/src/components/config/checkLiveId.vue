@@ -14,8 +14,14 @@
     export default Vue.extend({
         name: "checkLiveId",
         props: {
-            metaName: {},
-            lives: {}
+            metaName: {
+                type: String,
+                required: true
+            },
+            lives: {
+                type: Array,
+                required: true
+            }
         },
         watch: {
           lives: {

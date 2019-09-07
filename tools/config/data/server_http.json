@@ -50,14 +50,14 @@
     },
     {
       "metaData":{
-        "name": "server 1",
-        "typeId":"hiserver"
+        "name": "rpcimplement",
+        "typeId":"rpcImplement"
       },
       "lives":[
         {
-          "liveId":"hiserver",
+          "liveId":"rpcImplement",
           "json":{
-            "name":"server 1"
+            "name":"rpcimplement"
           }
         }
       ]

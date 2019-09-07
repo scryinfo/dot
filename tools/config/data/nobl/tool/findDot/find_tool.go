@@ -81,6 +81,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 		//获取一个项目下所有的子目录
 		for i := range paths {
 			//遍历获取子目录
+			dirs = nil
 			dirs, err = getAllSonDirs(paths[i])
 			if err != nil {
 				fmt.Println("获取一个项目下所有的子目录出错：", err)
@@ -91,8 +92,8 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 				Mode: packages.LoadSyntax, //不包含依赖,尝试下面这个
 				Dir:  paths[i],            //设置当前目录
 			}
-			pkginfos, errs := packages.Load(cfg, dirs...)
-			err = errs
+			var pkginfos []*packages.Package = nil
+			pkginfos, err = packages.Load(cfg, dirs...)
 			if err != nil {
 				fmt.Println("packages.Load err:", err)
 				return
@@ -210,7 +211,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 	{
 		//运行生成的代码文件
 		{
-			cmd := exec.Command(getGOROOTBin(), "run", "callMethod.go")
+			cmd := exec.Command(getGOROOTBin(), "run", "./run_out/callMethod.go")
 			err = cmd.Run()
 			if err != nil {
 				fmt.Printf("Error %v executing command!", err)
@@ -219,7 +220,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 		}
 		//读取组件信息
 		{
-			data, err = ioutil.ReadFile("result.json")
+			data, err = ioutil.ReadFile("./run_out/result.json")
 			if err != nil {
 				fmt.Println("File reading error", err)
 			}
@@ -451,7 +452,7 @@ func getGOROOTBin() string {
 func buildCodeFromTemplate(e []*packageInfo) {
 	buf := bytes.Buffer{}
 	//使用模板
-	var filepaths = "../nobl/tool/findDot/file1.tmpl"
+	var filepaths = "./nobl/tool/findDot/file1.tmpl"
 	filepaths = filepath.FromSlash(filepaths)
 	t, err := template.ParseFiles(filepaths)
 	if err != nil {
@@ -465,7 +466,7 @@ func buildCodeFromTemplate(e []*packageInfo) {
 	}
 	//file
 	baseName := "callMethod.go"
-	baseName = filepath.Join(".", baseName)
+	baseName = filepath.Join("./run_out", baseName)
 	err = ioutil.WriteFile(baseName, buf.Bytes(), 0777)
 	if err != nil {
 		fmt.Println("writing callMethod.go err")
