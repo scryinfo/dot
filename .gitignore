@@ -70,3 +70,5 @@
 /tools/config/data/server/server_http.exe
 /tools/config/go.sum
 /tools/config/data/server/callMethod.go
+/dots/db/pgs/go.sum
+/sample/db/pgs/go.sum

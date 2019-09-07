@@ -8,7 +8,6 @@ require (
 	github.com/scryinfo/dot/dots/grpc v0.0.0-20190705064910-5975ec5bbacd
 	github.com/scryinfo/scryg v0.1.3-0.20190608053141-a292b801bfd6
 	go.uber.org/zap v1.10.0
-	google.golang.org/appengine v1.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20190620144150-6af8c5fc6601 // indirect
 	google.golang.org/grpc v1.21.1
 )
