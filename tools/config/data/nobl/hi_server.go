@@ -20,19 +20,20 @@ import (
 )
 
 const (
-	HiServerTypeId = "hiserver"
+	ServerTypeId = "rpcImplement"
 )
 
 type config struct {
 	Name string `json:"name"`
 }
+
 //todo 命名
-type HiServer struct {
+type RpcImplement struct {
 	ServerNobl gserver.ServerNobl `dot:""`
 	conf       config
 }
 
-func newHiServer(conf interface{}) (dot.Dot, error) {
+func newRpcImplement(conf interface{}) (dot.Dot, error) {
 	var err error = nil
 	var bs []byte = nil
 	if bt, ok := conf.([]byte); ok {
@@ -46,27 +47,27 @@ func newHiServer(conf interface{}) (dot.Dot, error) {
 		return nil, err
 	}
 
-	d := &HiServer{
+	d := &RpcImplement{
 		conf: *dconf,
 	}
 
 	return d, err
 }
 
-func (serv *HiServer) Start(ignore bool) error {
-	go_out.RegisterHiDotServer(serv.ServerNobl.Server(), serv)
+func (serv *RpcImplement) Start(ignore bool) error {
+	go_out.RegisterDotConfigServer(serv.ServerNobl.Server(), serv)
 	return nil
 }
 
-//HiServerTypeLives make all type lives
-func HiServerTypeLives() []*dot.TypeLives {
+//RpcImplementTypeLives make all type lives
+func RpcImplementTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: HiServerTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
-			return newHiServer(conf)
+		Meta: dot.Metadata{TypeId: ServerTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
+			return newRpcImplement(conf)
 		}},
 		Lives: []dot.Live{
 			dot.Live{
-				LiveId:    HiServerTypeId,
+				LiveId:    ServerTypeId,
 				RelyLives: map[string]dot.LiveId{"ServerNobl": gserver.ServerNoblTypeId},
 			},
 		},
@@ -79,17 +80,17 @@ func HiServerTypeLives() []*dot.TypeLives {
 
 //rpc implement
 
-func (serv *HiServer) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_out.ResDots, error) {
+func (serv *RpcImplement) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_out.ResDots, error) {
 	dirs := in.Dirs
 	bytes, invalidDirectory, e := findDot.FindDots(dirs)
-	//删除中间文件
-	/*{
-		del := os.Remove("./callMethod.go")
-		del = os.Remove("./result.json")
+	//删除运行时产生的中间文件
+	{
+		del := os.Remove("./run_out/callMethod.go")
+		del = os.Remove("./run_out/result.json")
 		if del != nil {
-			fmt.Println(del)
+			log.Println(del)
 		}
-	}*/
+	}
 	resDots := go_out.ResDots{
 		DotsInfo:    string(bytes),
 		NoExistDirs: invalidDirectory,
@@ -100,7 +101,7 @@ func (serv *HiServer) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_out.
 	return &resDots, nil
 }
 
-func (serv *HiServer) ImportByDot(ctx context.Context, in *go_out.ReqImport) (*go_out.ResImport, error) {
+func (serv *RpcImplement) ImportByDot(ctx context.Context, in *go_out.ReqImport) (*go_out.ResImport, error) {
 	var errStr string
 	data, err := ioutil.ReadFile(in.Filepath)
 	if err != nil {
@@ -116,7 +117,7 @@ func (serv *HiServer) ImportByDot(ctx context.Context, in *go_out.ReqImport) (*g
 }
 
 //支持三种格式json toml yaml
-func (serv *HiServer) ImportByConfig(con context.Context, im *go_out.ReqImport) (*go_out.ResImport, error) {
+func (serv *RpcImplement) ImportByConfig(con context.Context, im *go_out.ReqImport) (*go_out.ResImport, error) {
 	config := importConfig.New()
 	_, err := config.ConfLoad(im.Filepath)
 	if err != nil {
@@ -141,7 +142,7 @@ func (serv *HiServer) ImportByConfig(con context.Context, im *go_out.ReqImport) 
 //导出配置信息
 //支持三种格式json toml yaml
 //由文件名来区分不同格式
-func (serv *HiServer) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*go_out.ResExport, error) {
+func (serv *RpcImplement) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*go_out.ResExport, error) {
 	var data = in.Configdata
 	var target interface{}
 
@@ -159,6 +160,7 @@ func (serv *HiServer) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*
 		}
 		//map->file
 		for key, value := range fileFormat {
+			value = "./run_out/" + value
 			file, err := os.OpenFile(value, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 			if err != nil {
 				log.Println("An error occurred with file opening or creation\n")
@@ -193,12 +195,13 @@ func (serv *HiServer) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*
 
 //导出组件信息
 //json
-func (serv *HiServer) ExportDot(ctx context.Context, in *go_out.ReqExport) (*go_out.ResExport, error) {
+func (serv *RpcImplement) ExportDot(ctx context.Context, in *go_out.ReqExport) (*go_out.ResExport, error) {
 	var data = in.Dotdata
 	if in.Filename == nil {
-		in.Filename[0] = "dots.json"
+		in.Filename[0] = "./run_out/dots.json"
 	}
-	file, err := os.OpenFile(in.Filename[0], os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
+	name := "./run_out/" + in.Filename[0]
+	file, err := os.OpenFile(name, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 	if err != nil {
 		panic("An error occurred with file opening or creation\n")
 	}

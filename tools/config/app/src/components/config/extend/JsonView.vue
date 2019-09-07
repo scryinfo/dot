@@ -41,7 +41,10 @@
     export default Vue.extend({
         name: 'JsonView',
         props: {
-            parsedData: {},
+            parsedData: {
+                type: Array,
+                required: true
+            },
         },
         data () {
             return {

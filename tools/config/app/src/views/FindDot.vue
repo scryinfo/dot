@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {checkType} from "../components/changeDataStructure/checkType";
+import {checkType} from "../components/utils/checkType";
 
 export default {
     data() {
@@ -53,7 +53,7 @@ export default {
             message: 'Please Input FilePath!'
           })
         } else {
-          var {rpcFindDot} = require('../plugins/rpcInterface');
+          var {rpcFindDot} = require('../components/utils/rpc/rpcInterface');
           this.fullscreenLoading = true;
           rpcFindDot(dir, (response) => {
             if (response.getError() != '') {
@@ -92,7 +92,7 @@ export default {
   }
   }
 </script>
-<style>
+<style scoped>
   #findDot {
     text-align: right;
     line-height: 50px;

@@ -24,7 +24,10 @@ import Vue from 'vue';
 export default Vue.extend({
     name: 'JsonButton',
     props: {
-        objc: {},
+        objc: {
+            type: Object,
+            required: true
+        },
     },
     data() {
       return {
@@ -37,7 +40,7 @@ export default Vue.extend({
         ShowJsonDialog(obj: any) {
             this.dialog = true;
             (this as any).objc = obj;
-            const jsonSchemaGenerator = require('./schemaGenerator/index.js');
+            const jsonSchemaGenerator = require('../utils/schemaGenerator/schema.js');
             (this as any).schemaObject = jsonSchemaGenerator.jsonToSchema(obj);
             for (const key in (this as any).schemaObject.properties) {
                 if (key === 'relyLives') {

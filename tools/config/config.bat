@@ -1,7 +1,7 @@
 # start grpc server
 export GO111MODULE=on
 
-cd data/server
+cd data/
 
 go build server.go
 

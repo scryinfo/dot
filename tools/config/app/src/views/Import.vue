@@ -42,7 +42,7 @@
 </template>
 
 <script>
-    import {checkType} from "../components/changeDataStructure/checkType";
+    import {checkType} from "../components/utils/checkType";
 
     export default {
         data() {
@@ -55,7 +55,7 @@
         methods: {
             importDot() {
                 if (this.dotPath != '') {
-                    var {rpcimportByDot} = require('../plugins/rpcInterface');
+                    var {rpcimportByDot} = require('../components/utils/rpc/rpcInterface');
                     rpcimportByDot(this.dotPath, (response) => {
                         if (response.getError() != '') {
                             var err = response.getError();
@@ -102,7 +102,7 @@
             },
             importConf() {
                 if (this.confPath != '') {
-                    let {rpcimportByConfig} = require('../plugins/rpcInterface');
+                    let {rpcimportByConfig} = require('../components/utils/rpc/rpcInterface');
                     rpcimportByConfig(this.confPath, (response) => {
                         if (response.getError() != '') {
                             let err = response.getError()
@@ -161,7 +161,7 @@
             findDot(typeId) {
                 for (let i = 0, len = this.$root.Dots.length; i < len; i++) {
                     if (this.$root.Dots[i].metaData.typeId === typeId) {
-                        return this.$root.Dots[i];
+                        return JSON.parse(JSON.stringify(this.$root.Dots[i]));
                     }
                 }
                 return null;
@@ -179,22 +179,47 @@
                 let flag = false;
                 for (let i = 0, len = this.$root.Configs.length; i < len; i++) {
                     if (this.$root.Configs[i].metaData.typeId === config.metaData.typeId) {
-                        this.$root.Configs[i] = this.assemble(this.$root.Configs[i], config);
+                        for(let key in config.lives){
+                            if(this.equalLiveId(this.$root.Configs[i].lives,config.lives[key])){
+
+                            }else{
+                                this.$root.Configs[i].lives.push(config.lives[key]);
+                            }
+                        }
+                        for(let j = 0,l = this.$root.Configs[i].lives.length; j < l; j++){
+                            if(this.$root.Configs[i].lives[j].liveId === ""){
+                                this.$root.Configs[i].lives.splice(j,1);
+                            }
+                        }
                         flag = true;
                     }
                 }
                 if (!flag) {
                     if (dot) {
-                        this.$root.Configs.push(this.assemble(dot, config));
+                        let dotCopy = JSON.parse(JSON.stringify(dot));
+                        dotCopy.lives.length = 0;
+                        for(let key in config.lives){
+                            dotCopy.lives.push(this.assemble(JSON.parse(JSON.stringify(dot.lives[0])), config.lives[key]));
+                        }
+                        this.$root.Configs.push(dotCopy);
                     } else {
                         config.metaData.flag = 'not-exist';
                         this.$root.Configs.push(config);
                     }
                 }
+            },
+            equalLiveId(confLives, live){
+                for(let key in confLives){
+                    if(confLives[key].liveId === live.liveId){
+                        this.assemble(confLives,live);
+                        return true;
+                    }
+                }
+                return false;
             }
         }
     }
 </script>
-<style>
+<style scoped>
 
 </style>

@@ -6,7 +6,7 @@
 
  @see: https://en.wikipedia.org/wiki/Abstract_syntax_tree
  */
-import {isObject, isArray, isNumber, isString, isBoolean,getType} from './utils';
+import {isObject, isArray, isNumber, isString, isBoolean,getType} from './type';
 
 /**
  Abstract Syntax Tree Class

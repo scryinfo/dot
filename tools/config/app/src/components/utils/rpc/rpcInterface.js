@@ -1,6 +1,6 @@
-const { ReqDirs,ReqExport, ReqImport,ReqLoad} = require('./hi_pb.js');
-const {HiDotClient} = require('./hi_grpc_web_pb.js');
-var rpcweb = new HiDotClient('http://localhost:8080/server');
+const { ReqDirs,ReqExport, ReqImport} = require('./config_pb.js');
+const {DotConfigClient} = require('./config_grpc_web_pb.js');
+var rpcweb = new DotConfigClient('http://localhost:8080/server');
 
 export function rpcFindDot(dirList,callback) {
     var request = new ReqDirs();
@@ -8,23 +8,6 @@ export function rpcFindDot(dirList,callback) {
     request.setDirsList(dirList);
     console.log("finddot:",request);
     rpcweb.findDot(request, {}, (err, response) => {
-        if (response) {
-            callback(response)
-        } else {
-            alert(JSON.stringify(err));
-        }
-    })
-}
-
-//loadbyconfig
-export function rpcLoadByConfig(dir,typeId,callback) {
-    var request = new ReqLoad();
-    //var dir = '/home/jayce/golangPath/src/dot/sample/grpc/http/server/server_http.json'; //文件路径
-    //var typeId = 'afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0';  //typeId
-    request.setDatafilepath(dir);
-    request.setTypeid(typeId);
-    console.log("loadbyconfig",request);
-    rpcweb.loadByConfig(request, {}, (err, response) => {
         if (response) {
             callback(response)
         } else {
