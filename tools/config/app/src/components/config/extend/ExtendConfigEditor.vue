@@ -3,42 +3,42 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import {jsonParse, makeJson} from '@/components/utils/changeDataStruct';
+    import Vue from 'vue';
+    import {jsonParse, makeJson} from '@/components/utils/changeDataStruct';
 
-export default Vue.extend({
-    name: 'ExtendConfigEditor',
-    props:  {
-        objData: {
-            type: Object,
-            required: true,
-        },
-    },
-    data() {
-        return {
-            parsedData: [],
-            lastParsedData: {},
-        };
-    },
-    watch: {
-        objData: {
-            handler(newValue, oldValue) {
-                (this as any).parsedData = jsonParse(this.objData);
+    export default Vue.extend({
+        name: 'ExtendConfigEditor',
+        props: {
+            objData: {
+                type: Object,
+                required: true,
             },
-            immediate: true,
         },
-        parsedData: {
-            handler(newValue, oldValue) {
-                if (JSON.stringify(newValue) === JSON.stringify(this.lastParsedData)) {
-                    return;
-                }
-                this.lastParsedData = newValue;
-                this.$emit('input', makeJson(this.parsedData));
+        data() {
+            return {
+                parsedData: [],
+                lastParsedData: {},
+            };
+        },
+        watch: {
+            objData: {
+                handler(newValue, oldValue) {
+                    (this as any).parsedData = jsonParse(this.objData);
+                },
+                immediate: true,
             },
-            deep: true,
+            parsedData: {
+                handler(newValue, oldValue) {
+                    if (JSON.stringify(newValue) === JSON.stringify(this.lastParsedData)) {
+                        return;
+                    }
+                    this.lastParsedData = newValue;
+                    this.$emit('input', makeJson(this.parsedData));
+                },
+                deep: true,
+            },
         },
-    },
-});
+    });
 </script>
 
 <style scoped>

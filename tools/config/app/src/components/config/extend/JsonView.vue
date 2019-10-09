@@ -1,7 +1,8 @@
 <template>
     <div>
         <el-row v-for="(member,index) in flowData">
-            <el-col :span="3" v-if="member.type == 'object' || member.type == 'array'"><span  style="text-align: center;line-height: 46px;">{{member.name}}</span></el-col>
+            <el-col :span="3" v-if="member.type == 'object' || member.type == 'array'"><span
+                    style="text-align: center;line-height: 46px;">{{member.name}}</span></el-col>
             <el-col :span="21">
                 <div v-if="member.type !== 'object' && member.type !== 'array'">
                     <el-input type="text"
@@ -26,7 +27,8 @@
                     </select>
                 </div>
                 <div v-if="member.type == 'object'">
-                    <json-view v-model="flowData[index].childParams" :parsedData="flowData[index].childParams"></json-view>
+                    <json-view v-model="flowData[index].childParams"
+                               :parsedData="flowData[index].childParams"></json-view>
                 </div>
                 <div v-if="member.type == 'array'">
                     <array-view v-model="flowData[index].childParams" :parsedData="flowData[index]"></array-view>
@@ -38,6 +40,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
+
     export default Vue.extend({
         name: 'JsonView',
         props: {
@@ -46,7 +49,7 @@
                 required: true
             },
         },
-        data () {
+        data() {
             return {
                 flowData: this.parsedData,
             };
@@ -65,8 +68,7 @@
                 deep: true
             }
         },
-        methods: {
-        }
+        methods: {}
     })
 </script>
 

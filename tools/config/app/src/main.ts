@@ -11,13 +11,13 @@ Vue.config.productionTip = false;
 Vue.use(ExtendConfigEditor);
 
 new Vue({
-  router,
+    router,
 
-  data: () => {
-    return{
-      Dots: [],
-      Configs: [],
-    };
-  },
-  render: (h) => h(App),
+    data: () => {
+        return {
+            Dots: [],
+            Configs: [],
+        };
+    },
+    render: (h) => h(App),
 }).$mount('#app');

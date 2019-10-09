@@ -1,4 +1,5 @@
 import Vue from 'vue';
+
 export function checkType(dots: any, configs: any) {
     for (let i = 0, len = configs.length; i < len; i++) {
         if (compare(dots, configs[i])) {

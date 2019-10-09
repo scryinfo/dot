@@ -20,60 +20,60 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import {jsonParseRely,makeJsonRely} from '@/components/utils/changeDataStruct';
+    import Vue from 'vue'
+    import {jsonParseRely, makeJsonRely} from '@/components/utils/changeDataStruct';
 
-export default Vue.extend({
-    name: 'JsonRelyButton',
-    props: {
-        objc: {
-            type: Array,
-            required: true
-        }
-    },
-    data() {
-        return {
-            dialog: false,
-            schemaObject: {},
-            textarea: ''
-        }
-    },
-    methods: {
-        ShowJsonDialog(obj:any) {
-            this.dialog = true;
-            (this as any).objc = obj;
-            const data = makeJsonRely(obj);
-            this.textarea = JSON.stringify(data,null,4);
-
+    export default Vue.extend({
+        name: 'JsonRelyButton',
+        props: {
+            objc: {
+                type: Array,
+                required: true
+            }
         },
-        handleClose(done:any) {
-            try {
-                if(this.textarea) {
-                    const objct:any = JSON.parse(this.textarea);
-                    if(this.inputCheck(objct)) {
-                        this.$emit('input',jsonParseRely(objct));
+        data() {
+            return {
+                dialog: false,
+                schemaObject: {},
+                textarea: ''
+            }
+        },
+        methods: {
+            ShowJsonDialog(obj: any) {
+                this.dialog = true;
+                (this as any).objc = obj;
+                const data = makeJsonRely(obj);
+                this.textarea = JSON.stringify(data, null, 4);
+
+            },
+            handleClose(done: any) {
+                try {
+                    if (this.textarea) {
+                        const objct: any = JSON.parse(this.textarea);
+                        if (this.inputCheck(objct)) {
+                            this.$emit('input', jsonParseRely(objct));
+                        } else {
+                            (this as any).$message.error('json text input error!');
+                        }
                     } else {
                         (this as any).$message.error('json text input error!');
                     }
-                } else {
+                } catch (e) {
                     (this as any).$message.error('json text input error!');
+                } finally {
+                    done();
                 }
-            } catch (e) {
-                (this as any).$message.error('json text input error!');
-            } finally {
-                done();
-            }
-        },
-        inputCheck(input:any): Boolean {
-            for (const i in input) {
-                if (typeof input[i] !== typeof '') {
-                    return false;
+            },
+            inputCheck(input: any): Boolean {
+                for (const i in input) {
+                    if (typeof input[i] !== typeof '') {
+                        return false;
+                    }
                 }
+                return true;
             }
-            return true;
         }
-    }
-})
+    })
 </script>
 
 <style scoped>
