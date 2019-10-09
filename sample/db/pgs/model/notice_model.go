@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-	"github.com/scryinfo/cashbox-backend/kits"
 )
 
 const (

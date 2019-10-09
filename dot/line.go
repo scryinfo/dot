@@ -45,7 +45,6 @@ type Injecter interface {
 
 //Line line
 type Line interface {
-
 	//Return unique Line name
 	Id() string
 	//Line API

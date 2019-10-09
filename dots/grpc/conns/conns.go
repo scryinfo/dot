@@ -225,7 +225,7 @@ func (c *connsImp) Stop(ignore bool) error {
 		for _, conn := range conns {
 			if conn.ClientConn != nil {
 				e1 := conn.ClientConn.Close() //todo Cancel request?
-				if e1 != nil {                //do not return , close all connection
+				if e1 != nil { //do not return , close all connection
 					if err != nil { //log the err
 						dot.Logger().Errorln(err.Error())
 					}

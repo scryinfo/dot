@@ -1,12 +1,12 @@
-const { ReqDirs,ReqExport, ReqImport} = require('./config_pb.js');
+const {ReqDirs, ReqExport, ReqImport} = require('./config_pb.js');
 const {DotConfigClient} = require('./config_grpc_web_pb.js');
 var rpcweb = new DotConfigClient('http://localhost:8080/server');
 
-export function rpcFindDot(dirList,callback) {
+export function rpcFindDot(dirList, callback) {
     var request = new ReqDirs();
     //var dirList = ['/home/jayce/golangPath/src/dot/dots'];
     request.setDirsList(dirList);
-    console.log("finddot:",request);
+    console.log("finddot:", request);
     rpcweb.findDot(request, {}, (err, response) => {
         if (response) {
             callback(response)
@@ -17,12 +17,12 @@ export function rpcFindDot(dirList,callback) {
 }
 
 //importByDot
-export function rpcimportByDot(filepath,callback){
+export function rpcimportByDot(filepath, callback) {
     var request = new ReqImport();
     //var filepath = '/home/jayce/golangPath/src/github.com/scryinfo/dot/tools/config/data/server/testdot.json'; //文件路径
     request.setFilepath(filepath);
-    console.log("importbydot",request);
-    rpcweb.importByDot(request,{},(err, response)=>{
+    console.log("importbydot", request);
+    rpcweb.importByDot(request, {}, (err, response) => {
         if (response) {
             callback(response)
         } else {
@@ -32,12 +32,12 @@ export function rpcimportByDot(filepath,callback){
 }
 
 //importByConfig
-export function rpcimportByConfig(filepath,callback){
+export function rpcimportByConfig(filepath, callback) {
     var request = new ReqImport();
     //var filepath = '/home/jayce/golangPath/src/dot/sample/grpc/http/server/server_http.json'; //文件路径
     request.setFilepath(filepath);
-    console.log("importbyconfig",request);
-    rpcweb.importByConfig(request,{},(err, response)=>{
+    console.log("importbyconfig", request);
+    rpcweb.importByConfig(request, {}, (err, response) => {
         if (response) {
             callback(response)
         } else {
@@ -47,7 +47,7 @@ export function rpcimportByConfig(filepath,callback){
 }
 
 //test exportDot
-export function rpcExportDot(data,filename,callback) {
+export function rpcExportDot(data, filename, callback) {
     var request = new ReqExport();
     /*var data =
         [{
@@ -74,7 +74,7 @@ export function rpcExportDot(data,filename,callback) {
     //var filename = ["testdot.json"];
     request.setFilenameList(filename);
     request.setDotdata(objToStr);
-    console.log("exportDot:",request);
+    console.log("exportDot:", request);
     rpcweb.exportDot(request, {}, (err, response) => {
         if (response) {
             callback(response)
@@ -85,7 +85,7 @@ export function rpcExportDot(data,filename,callback) {
 }
 
 //test exportConfig
-export function rpcExportConfig(data,filename,callback) {
+export function rpcExportConfig(data, filename, callback) {
     /*var data = {
         "log": {
             "file": "log.log",
@@ -147,7 +147,7 @@ export function rpcExportConfig(data,filename,callback) {
     //var filename = ["testconfig.json", "testconfig.toml", "testconfig.yaml"];
     request.setFilenameList(filename);
     request.setConfigdata(objToStr);
-    console.log("exportConfig:",request);
+    console.log("exportConfig:", request);
     rpcweb.exportConfig(request, {}, (err, response) => {
         if (response) {
             callback(response)
