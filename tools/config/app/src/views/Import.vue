@@ -61,23 +61,23 @@
                             var err = response.getError();
                             console.log(err);
                             this.$message({
-                                type:'warning',
-                                 message:err
-                    })
+                                type: 'warning',
+                                message: err
+                            })
                         } else {
-                            var dots=[];
-                            dots= JSON.parse(response.getJson());
+                            var dots = [];
+                            dots = JSON.parse(response.getJson());
                             console.log(dots);
                             //todo 判断类型是数组而且含有metaData.typeId字段
-                            if  (!(Array.isArray(dots) && dots[0].metaData.typeId!=null)){
+                            if (!(Array.isArray(dots) && dots[0].metaData.typeId != null)) {
                                 alert("请选择正确的组件文件．");
                                 return false
                             }
-                            for(var i=0;i<dots.length;i++){
-                                var bo=true;
+                            for (var i = 0; i < dots.length; i++) {
+                                var bo = true;
                                 for (var j = 0, len = this.$root.Dots.length; j < len; j++) {
-                                    if(dots[i].metaData.typeId == this.$root.Dots[j].metaData.typeId){
-                                        bo=false;
+                                    if (dots[i].metaData.typeId == this.$root.Dots[j].metaData.typeId) {
+                                        bo = false;
                                         break
                                     }
                                 }
@@ -86,17 +86,17 @@
                                 }
 
                             }
-                            checkType(this.$root.Dots,this.$root.Configs);
+                            checkType(this.$root.Dots, this.$root.Configs);
                             this.$message({
-                                type:"success",
-                                message:"Import Dot success!"
+                                type: "success",
+                                message: "Import Dot success!"
                             });
                         }
                     });
                 } else {
                     this.$message({
-                        type:'warning',
-                        message:'Please Imput DotPath!'
+                        type: 'warning',
+                        message: 'Please Imput DotPath!'
                     })
                 }
             },
@@ -115,29 +115,29 @@
                             let config;
                             {
                                 let ob = JSON.parse(response.getJson());
-                                if(ob.dots && Object.prototype.toString.call(ob.dots) === '[object Array]'){
+                                if (ob.dots && Object.prototype.toString.call(ob.dots) === '[object Array]') {
                                     config = ob.dots;
-                                }else {
+                                } else {
                                     this.$message({
                                         message: 'Dots is not exist in config files!',
                                         type: 'error'
-                                    }) ;
+                                    });
                                     return;
                                 }
                             }
                             for (let i = 0, len = config.length; i < len; i++) {
-                                if(config[i].metaData.typeId){
+                                if (config[i].metaData.typeId) {
                                     let dot = this.findDot(config[i].metaData.typeId);
                                     this.assembleByTypeId(dot, config[i]);
                                     this.$message({
                                         message: 'Import success!',
                                         type: 'success'
                                     });
-                                }else {
+                                } else {
                                     this.$message({
                                         message: 'typeId is not exist in config files!',
                                         type: 'error'
-                                    }) ;
+                                    });
                                     return;
                                 }
                             }
@@ -179,16 +179,16 @@
                 let flag = false;
                 for (let i = 0, len = this.$root.Configs.length; i < len; i++) {
                     if (this.$root.Configs[i].metaData.typeId === config.metaData.typeId) {
-                        for(let key in config.lives){
-                            if(this.equalLiveId(this.$root.Configs[i].lives,config.lives[key])){
+                        for (let key in config.lives) {
+                            if (this.equalLiveId(this.$root.Configs[i].lives, config.lives[key])) {
 
-                            }else{
+                            } else {
                                 this.$root.Configs[i].lives.push(config.lives[key]);
                             }
                         }
-                        for(let j = 0,l = this.$root.Configs[i].lives.length; j < l; j++){
-                            if(this.$root.Configs[i].lives[j].liveId === ""){
-                                this.$root.Configs[i].lives.splice(j,1);
+                        for (let j = 0, l = this.$root.Configs[i].lives.length; j < l; j++) {
+                            if (this.$root.Configs[i].lives[j].liveId === "") {
+                                this.$root.Configs[i].lives.splice(j, 1);
                             }
                         }
                         flag = true;
@@ -198,7 +198,7 @@
                     if (dot) {
                         let dotCopy = JSON.parse(JSON.stringify(dot));
                         dotCopy.lives.length = 0;
-                        for(let key in config.lives){
+                        for (let key in config.lives) {
                             dotCopy.lives.push(this.assemble(JSON.parse(JSON.stringify(dot.lives[0])), config.lives[key]));
                         }
                         this.$root.Configs.push(dotCopy);
@@ -208,10 +208,10 @@
                     }
                 }
             },
-            equalLiveId(confLives, live){
-                for(let key in confLives){
-                    if(confLives[key].liveId === live.liveId){
-                        this.assemble(confLives,live);
+            equalLiveId(confLives, live) {
+                for (let key in confLives) {
+                    if (confLives[key].liveId === live.liveId) {
+                        this.assemble(confLives, live);
                         return true;
                     }
                 }

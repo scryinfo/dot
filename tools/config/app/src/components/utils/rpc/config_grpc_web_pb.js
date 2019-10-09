@@ -7,7 +7,6 @@
 // GENERATED CODE -- DO NOT EDIT!
 
 
-
 const grpc = {};
 grpc.web = require('grpc-web');
 
@@ -23,31 +22,31 @@ proto.go_out = require('./config_pb.js');
  * @final
  */
 proto.go_out.DotConfigClient =
-    function(hostname, credentials, options) {
-  if (!options) options = {};
-  options['format'] = 'text';
+    function (hostname, credentials, options) {
+        if (!options) options = {};
+        options['format'] = 'text';
 
-  /**
-   * @private @const {!grpc.web.GrpcWebClientBase} The client
-   */
-  this.client_ = new grpc.web.GrpcWebClientBase(options);
+        /**
+         * @private @const {!grpc.web.GrpcWebClientBase} The client
+         */
+        this.client_ = new grpc.web.GrpcWebClientBase(options);
 
-  /**
-   * @private @const {string} The hostname
-   */
-  this.hostname_ = hostname;
+        /**
+         * @private @const {string} The hostname
+         */
+        this.hostname_ = hostname;
 
-  /**
-   * @private @const {?Object} The credentials to be used to connect
-   *    to the server
-   */
-  this.credentials_ = credentials;
+        /**
+         * @private @const {?Object} The credentials to be used to connect
+         *    to the server
+         */
+        this.credentials_ = credentials;
 
-  /**
-   * @private @const {?Object} Options for the client
-   */
-  this.options_ = options;
-};
+        /**
+         * @private @const {?Object} Options for the client
+         */
+        this.options_ = options;
+    };
 
 
 /**
@@ -59,31 +58,31 @@ proto.go_out.DotConfigClient =
  * @final
  */
 proto.go_out.DotConfigPromiseClient =
-    function(hostname, credentials, options) {
-  if (!options) options = {};
-  options['format'] = 'text';
+    function (hostname, credentials, options) {
+        if (!options) options = {};
+        options['format'] = 'text';
 
-  /**
-   * @private @const {!grpc.web.GrpcWebClientBase} The client
-   */
-  this.client_ = new grpc.web.GrpcWebClientBase(options);
+        /**
+         * @private @const {!grpc.web.GrpcWebClientBase} The client
+         */
+        this.client_ = new grpc.web.GrpcWebClientBase(options);
 
-  /**
-   * @private @const {string} The hostname
-   */
-  this.hostname_ = hostname;
+        /**
+         * @private @const {string} The hostname
+         */
+        this.hostname_ = hostname;
 
-  /**
-   * @private @const {?Object} The credentials to be used to connect
-   *    to the server
-   */
-  this.credentials_ = credentials;
+        /**
+         * @private @const {?Object} The credentials to be used to connect
+         *    to the server
+         */
+        this.credentials_ = credentials;
 
-  /**
-   * @private @const {?Object} Options for the client
-   */
-  this.options_ = options;
-};
+        /**
+         * @private @const {?Object} Options for the client
+         */
+        this.options_ = options;
+    };
 
 
 /**
@@ -93,15 +92,15 @@ proto.go_out.DotConfigPromiseClient =
  *   !proto.go_out.ResDots>}
  */
 const methodDescriptor_DotConfig_FindDot = new grpc.web.MethodDescriptor(
-  '/go_out.DotConfig/FindDot',
-  grpc.web.MethodType.UNARY,
-  proto.go_out.ReqDirs,
-  proto.go_out.ResDots,
-  /** @param {!proto.go_out.ReqDirs} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.go_out.ResDots.deserializeBinary
+    '/go_out.DotConfig/FindDot',
+    grpc.web.MethodType.UNARY,
+    proto.go_out.ReqDirs,
+    proto.go_out.ResDots,
+    /** @param {!proto.go_out.ReqDirs} request */
+    function (request) {
+        return request.serializeBinary();
+    },
+    proto.go_out.ResDots.deserializeBinary
 );
 
 
@@ -112,12 +111,12 @@ const methodDescriptor_DotConfig_FindDot = new grpc.web.MethodDescriptor(
  *   !proto.go_out.ResDots>}
  */
 const methodInfo_DotConfig_FindDot = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.go_out.ResDots,
-  /** @param {!proto.go_out.ReqDirs} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.go_out.ResDots.deserializeBinary
+    proto.go_out.ResDots,
+    /** @param {!proto.go_out.ReqDirs} request */
+    function (request) {
+        return request.serializeBinary();
+    },
+    proto.go_out.ResDots.deserializeBinary
 );
 
 
@@ -132,14 +131,14 @@ const methodInfo_DotConfig_FindDot = new grpc.web.AbstractClientBase.MethodInfo(
  *     The XHR Node Readable Stream
  */
 proto.go_out.DotConfigClient.prototype.findDot =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/go_out.DotConfig/FindDot',
-      request,
-      metadata || {},
-      methodDescriptor_DotConfig_FindDot,
-      callback);
-};
+    function (request, metadata, callback) {
+        return this.client_.rpcCall(this.hostname_ +
+            '/go_out.DotConfig/FindDot',
+            request,
+            metadata || {},
+            methodDescriptor_DotConfig_FindDot,
+            callback);
+    };
 
 
 /**
@@ -151,13 +150,13 @@ proto.go_out.DotConfigClient.prototype.findDot =
  *     A native promise that resolves to the response
  */
 proto.go_out.DotConfigPromiseClient.prototype.findDot =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/go_out.DotConfig/FindDot',
-      request,
-      metadata || {},
-      methodDescriptor_DotConfig_FindDot);
-};
+    function (request, metadata) {
+        return this.client_.unaryCall(this.hostname_ +
+            '/go_out.DotConfig/FindDot',
+            request,
+            metadata || {},
+            methodDescriptor_DotConfig_FindDot);
+    };
 
 
 /**
@@ -167,15 +166,15 @@ proto.go_out.DotConfigPromiseClient.prototype.findDot =
  *   !proto.go_out.ResImport>}
  */
 const methodDescriptor_DotConfig_ImportByConfig = new grpc.web.MethodDescriptor(
-  '/go_out.DotConfig/ImportByConfig',
-  grpc.web.MethodType.UNARY,
-  proto.go_out.ReqImport,
-  proto.go_out.ResImport,
-  /** @param {!proto.go_out.ReqImport} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.go_out.ResImport.deserializeBinary
+    '/go_out.DotConfig/ImportByConfig',
+    grpc.web.MethodType.UNARY,
+    proto.go_out.ReqImport,
+    proto.go_out.ResImport,
+    /** @param {!proto.go_out.ReqImport} request */
+    function (request) {
+        return request.serializeBinary();
+    },
+    proto.go_out.ResImport.deserializeBinary
 );
 
 
@@ -186,12 +185,12 @@ const methodDescriptor_DotConfig_ImportByConfig = new grpc.web.MethodDescriptor(
  *   !proto.go_out.ResImport>}
  */
 const methodInfo_DotConfig_ImportByConfig = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.go_out.ResImport,
-  /** @param {!proto.go_out.ReqImport} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.go_out.ResImport.deserializeBinary
+    proto.go_out.ResImport,
+    /** @param {!proto.go_out.ReqImport} request */
+    function (request) {
+        return request.serializeBinary();
+    },
+    proto.go_out.ResImport.deserializeBinary
 );
 
 
@@ -206,14 +205,14 @@ const methodInfo_DotConfig_ImportByConfig = new grpc.web.AbstractClientBase.Meth
  *     The XHR Node Readable Stream
  */
 proto.go_out.DotConfigClient.prototype.importByConfig =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/go_out.DotConfig/ImportByConfig',
-      request,
-      metadata || {},
-      methodDescriptor_DotConfig_ImportByConfig,
-      callback);
-};
+    function (request, metadata, callback) {
+        return this.client_.rpcCall(this.hostname_ +
+            '/go_out.DotConfig/ImportByConfig',
+            request,
+            metadata || {},
+            methodDescriptor_DotConfig_ImportByConfig,
+            callback);
+    };
 
 
 /**
@@ -225,13 +224,13 @@ proto.go_out.DotConfigClient.prototype.importByConfig =
  *     A native promise that resolves to the response
  */
 proto.go_out.DotConfigPromiseClient.prototype.importByConfig =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/go_out.DotConfig/ImportByConfig',
-      request,
-      metadata || {},
-      methodDescriptor_DotConfig_ImportByConfig);
-};
+    function (request, metadata) {
+        return this.client_.unaryCall(this.hostname_ +
+            '/go_out.DotConfig/ImportByConfig',
+            request,
+            metadata || {},
+            methodDescriptor_DotConfig_ImportByConfig);
+    };
 
 
 /**
@@ -241,15 +240,15 @@ proto.go_out.DotConfigPromiseClient.prototype.importByConfig =
  *   !proto.go_out.ResImport>}
  */
 const methodDescriptor_DotConfig_ImportByDot = new grpc.web.MethodDescriptor(
-  '/go_out.DotConfig/ImportByDot',
-  grpc.web.MethodType.UNARY,
-  proto.go_out.ReqImport,
-  proto.go_out.ResImport,
-  /** @param {!proto.go_out.ReqImport} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.go_out.ResImport.deserializeBinary
+    '/go_out.DotConfig/ImportByDot',
+    grpc.web.MethodType.UNARY,
+    proto.go_out.ReqImport,
+    proto.go_out.ResImport,
+    /** @param {!proto.go_out.ReqImport} request */
+    function (request) {
+        return request.serializeBinary();
+    },
+    proto.go_out.ResImport.deserializeBinary
 );
 
 
@@ -260,12 +259,12 @@ const methodDescriptor_DotConfig_ImportByDot = new grpc.web.MethodDescriptor(
  *   !proto.go_out.ResImport>}
  */
 const methodInfo_DotConfig_ImportByDot = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.go_out.ResImport,
-  /** @param {!proto.go_out.ReqImport} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.go_out.ResImport.deserializeBinary
+    proto.go_out.ResImport,
+    /** @param {!proto.go_out.ReqImport} request */
+    function (request) {
+        return request.serializeBinary();
+    },
+    proto.go_out.ResImport.deserializeBinary
 );
 
 
@@ -280,14 +279,14 @@ const methodInfo_DotConfig_ImportByDot = new grpc.web.AbstractClientBase.MethodI
  *     The XHR Node Readable Stream
  */
 proto.go_out.DotConfigClient.prototype.importByDot =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/go_out.DotConfig/ImportByDot',
-      request,
-      metadata || {},
-      methodDescriptor_DotConfig_ImportByDot,
-      callback);
-};
+    function (request, metadata, callback) {
+        return this.client_.rpcCall(this.hostname_ +
+            '/go_out.DotConfig/ImportByDot',
+            request,
+            metadata || {},
+            methodDescriptor_DotConfig_ImportByDot,
+            callback);
+    };
 
 
 /**
@@ -299,13 +298,13 @@ proto.go_out.DotConfigClient.prototype.importByDot =
  *     A native promise that resolves to the response
  */
 proto.go_out.DotConfigPromiseClient.prototype.importByDot =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/go_out.DotConfig/ImportByDot',
-      request,
-      metadata || {},
-      methodDescriptor_DotConfig_ImportByDot);
-};
+    function (request, metadata) {
+        return this.client_.unaryCall(this.hostname_ +
+            '/go_out.DotConfig/ImportByDot',
+            request,
+            metadata || {},
+            methodDescriptor_DotConfig_ImportByDot);
+    };
 
 
 /**
@@ -315,15 +314,15 @@ proto.go_out.DotConfigPromiseClient.prototype.importByDot =
  *   !proto.go_out.ResExport>}
  */
 const methodDescriptor_DotConfig_ExportConfig = new grpc.web.MethodDescriptor(
-  '/go_out.DotConfig/ExportConfig',
-  grpc.web.MethodType.UNARY,
-  proto.go_out.ReqExport,
-  proto.go_out.ResExport,
-  /** @param {!proto.go_out.ReqExport} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.go_out.ResExport.deserializeBinary
+    '/go_out.DotConfig/ExportConfig',
+    grpc.web.MethodType.UNARY,
+    proto.go_out.ReqExport,
+    proto.go_out.ResExport,
+    /** @param {!proto.go_out.ReqExport} request */
+    function (request) {
+        return request.serializeBinary();
+    },
+    proto.go_out.ResExport.deserializeBinary
 );
 
 
@@ -334,12 +333,12 @@ const methodDescriptor_DotConfig_ExportConfig = new grpc.web.MethodDescriptor(
  *   !proto.go_out.ResExport>}
  */
 const methodInfo_DotConfig_ExportConfig = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.go_out.ResExport,
-  /** @param {!proto.go_out.ReqExport} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.go_out.ResExport.deserializeBinary
+    proto.go_out.ResExport,
+    /** @param {!proto.go_out.ReqExport} request */
+    function (request) {
+        return request.serializeBinary();
+    },
+    proto.go_out.ResExport.deserializeBinary
 );
 
 
@@ -354,14 +353,14 @@ const methodInfo_DotConfig_ExportConfig = new grpc.web.AbstractClientBase.Method
  *     The XHR Node Readable Stream
  */
 proto.go_out.DotConfigClient.prototype.exportConfig =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/go_out.DotConfig/ExportConfig',
-      request,
-      metadata || {},
-      methodDescriptor_DotConfig_ExportConfig,
-      callback);
-};
+    function (request, metadata, callback) {
+        return this.client_.rpcCall(this.hostname_ +
+            '/go_out.DotConfig/ExportConfig',
+            request,
+            metadata || {},
+            methodDescriptor_DotConfig_ExportConfig,
+            callback);
+    };
 
 
 /**
@@ -373,13 +372,13 @@ proto.go_out.DotConfigClient.prototype.exportConfig =
  *     A native promise that resolves to the response
  */
 proto.go_out.DotConfigPromiseClient.prototype.exportConfig =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/go_out.DotConfig/ExportConfig',
-      request,
-      metadata || {},
-      methodDescriptor_DotConfig_ExportConfig);
-};
+    function (request, metadata) {
+        return this.client_.unaryCall(this.hostname_ +
+            '/go_out.DotConfig/ExportConfig',
+            request,
+            metadata || {},
+            methodDescriptor_DotConfig_ExportConfig);
+    };
 
 
 /**
@@ -389,15 +388,15 @@ proto.go_out.DotConfigPromiseClient.prototype.exportConfig =
  *   !proto.go_out.ResExport>}
  */
 const methodDescriptor_DotConfig_ExportDot = new grpc.web.MethodDescriptor(
-  '/go_out.DotConfig/ExportDot',
-  grpc.web.MethodType.UNARY,
-  proto.go_out.ReqExport,
-  proto.go_out.ResExport,
-  /** @param {!proto.go_out.ReqExport} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.go_out.ResExport.deserializeBinary
+    '/go_out.DotConfig/ExportDot',
+    grpc.web.MethodType.UNARY,
+    proto.go_out.ReqExport,
+    proto.go_out.ResExport,
+    /** @param {!proto.go_out.ReqExport} request */
+    function (request) {
+        return request.serializeBinary();
+    },
+    proto.go_out.ResExport.deserializeBinary
 );
 
 
@@ -408,12 +407,12 @@ const methodDescriptor_DotConfig_ExportDot = new grpc.web.MethodDescriptor(
  *   !proto.go_out.ResExport>}
  */
 const methodInfo_DotConfig_ExportDot = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.go_out.ResExport,
-  /** @param {!proto.go_out.ReqExport} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.go_out.ResExport.deserializeBinary
+    proto.go_out.ResExport,
+    /** @param {!proto.go_out.ReqExport} request */
+    function (request) {
+        return request.serializeBinary();
+    },
+    proto.go_out.ResExport.deserializeBinary
 );
 
 
@@ -428,14 +427,14 @@ const methodInfo_DotConfig_ExportDot = new grpc.web.AbstractClientBase.MethodInf
  *     The XHR Node Readable Stream
  */
 proto.go_out.DotConfigClient.prototype.exportDot =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/go_out.DotConfig/ExportDot',
-      request,
-      metadata || {},
-      methodDescriptor_DotConfig_ExportDot,
-      callback);
-};
+    function (request, metadata, callback) {
+        return this.client_.rpcCall(this.hostname_ +
+            '/go_out.DotConfig/ExportDot',
+            request,
+            metadata || {},
+            methodDescriptor_DotConfig_ExportDot,
+            callback);
+    };
 
 
 /**
@@ -447,13 +446,13 @@ proto.go_out.DotConfigClient.prototype.exportDot =
  *     A native promise that resolves to the response
  */
 proto.go_out.DotConfigPromiseClient.prototype.exportDot =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/go_out.DotConfig/ExportDot',
-      request,
-      metadata || {},
-      methodDescriptor_DotConfig_ExportDot);
-};
+    function (request, metadata) {
+        return this.client_.unaryCall(this.hostname_ +
+            '/go_out.DotConfig/ExportDot',
+            request,
+            metadata || {},
+            methodDescriptor_DotConfig_ExportDot);
+    };
 
 
 module.exports = proto.go_out;

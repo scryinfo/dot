@@ -58,7 +58,6 @@ type MakeStringer func() string
 //All log calling should not call function in parameters, function run priorly than log, if must call function, you should use callback(must run normally)
 //S represents scryinfo, log name used frequently so add s to distinguish it
 type SLogger interface {
-
 	//GetLevel get level
 	GetLevel() Level
 	//SetLevel set level
