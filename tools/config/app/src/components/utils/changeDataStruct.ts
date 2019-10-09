@@ -1,4 +1,4 @@
-export let jsonParse = function(jsonStr: any) {
+export let jsonParse = function (jsonStr: any) {
     const parseJson = (json: any) => {
         const result: any = [];
         const keys = Object.keys(json);
@@ -70,7 +70,7 @@ export let jsonParse = function(jsonStr: any) {
     return parseBody(jsonStr);
 };
 
-export let getType = function(obj: any) {
+export let getType = function (obj: any) {
     switch (Object.prototype.toString.call(obj)) {
         case '[object Array]':
             return 'array';
@@ -84,8 +84,8 @@ export let getType = function(obj: any) {
     }
 };
 
-export let makeJson = function(dataArr: any) {
-    const revertWithObj = function(data: any) {
+export let makeJson = function (dataArr: any) {
+    const revertWithObj = function (data: any) {
         const r: any = {};
         for (let i = 0; i < data.length; ++i) {
             const el = data[i];
@@ -104,7 +104,7 @@ export let makeJson = function(dataArr: any) {
         return r;
     };
 
-    const revertWithArray: any = function(data: any) {
+    const revertWithArray: any = function (data: any) {
         const arr = [];
         for (let i = 0; i < data.length; ++i) {
             const el = data[i];
@@ -122,13 +122,14 @@ export let makeJson = function(dataArr: any) {
         return arr;
     };
 
-    const revertMain = function(data: any) {
+    const revertMain = function (data: any) {
         const r = revertWithObj(data);
         return r;
     };
 
     return revertMain(dataArr);
 };
+
 export function jsonParseRely(Json: any) {
     if (Json === null || Json === undefined) {
         Json = {};
@@ -142,6 +143,7 @@ export function jsonParseRely(Json: any) {
     });
     return result;
 }
+
 export function makeJsonRely(ParData: any) {
     const Revert: any = {};
     for (let i = 0; i < ParData.length; ++i) {

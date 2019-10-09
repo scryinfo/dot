@@ -94,7 +94,7 @@
                 }
             },
             ExportConf() {
-                console.log(JSON.stringify(this.$root.Configs,null,4));
+                console.log(JSON.stringify(this.$root.Configs, null, 4));
                 if (this.confFileName == "") {
                     alert("请输入文件名");
                 } else {
@@ -159,7 +159,7 @@
             configRequire(configs) {
                 for (let key in configs) {
                     let typeId = configs[key].metaData.typeId;
-                    if(!configs[key].requiredInfo){
+                    if (!configs[key].requiredInfo) {
                         continue
                     }
                     let require = configs[key].requiredInfo;
