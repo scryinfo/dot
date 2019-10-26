@@ -8,7 +8,7 @@ import (
 	"crypto/x509"
 	"github.com/pkg/errors"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/grpc/shared"
+	"github.com/scryinfo/dot/utils"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -28,7 +28,7 @@ type ConfigNobl struct {
 	//sample :  1.1.1.1:568
 	Addrs []string `json:"addrs"`
 
-	Tls shared.TlsConfig `json:"tls"`
+	Tls utils.TlsConfig `json:"tls"`
 }
 
 //grpc server component, without bl; one server can monitor in multi address or API at the same time,support tls
@@ -110,17 +110,17 @@ func (c *serverNoblImp) Create(l dot.Line) error {
 	//see https://bbengfort.github.io/programmer/2017/03/03/secure-grpc.html
 	switch {
 	case len(c.conf.Tls.CaPem) > 0 && len(c.conf.Tls.Pem) > 0 && len(c.conf.Tls.Key) > 0:
-		pem := shared.GetFullPathFile(c.conf.Tls.Pem)
+		pem := utils.GetFullPathFile(c.conf.Tls.Pem)
 		if len(pem) < 1 {
 			errDo(errors.New("the pem is not empty, and can not find the file: " + c.conf.Tls.Pem))
 			return err
 		}
-		key := shared.GetFullPathFile(c.conf.Tls.Key)
+		key := utils.GetFullPathFile(c.conf.Tls.Key)
 		if len(key) < 1 {
 			errDo(errors.New("the key is not empty, and can not find the file: " + c.conf.Tls.Key))
 			return err
 		}
-		ca := shared.GetFullPathFile(c.conf.Tls.CaPem)
+		ca := utils.GetFullPathFile(c.conf.Tls.CaPem)
 		if len(ca) < 1 {
 			errDo(errors.New("the ca pem is not empty, and can not find the file: " + c.conf.Tls.CaPem))
 			return err
@@ -155,12 +155,12 @@ func (c *serverNoblImp) Create(l dot.Line) error {
 
 		c.server = grpc.NewServer(grpc.Creds(tc), grpc.StreamInterceptor(StreamServerInterceptor()), grpc.UnaryInterceptor(UnaryServerInterceptor()))
 	case len(c.conf.Tls.Pem) > 0 && len(c.conf.Tls.Key) > 0:
-		pem := shared.GetFullPathFile(c.conf.Tls.Pem)
+		pem := utils.GetFullPathFile(c.conf.Tls.Pem)
 		if len(pem) < 1 {
 			errDo(errors.New("the pem is not empty, and can not find the file: " + c.conf.Tls.Pem))
 			return err
 		}
-		key := shared.GetFullPathFile(c.conf.Tls.Key)
+		key := utils.GetFullPathFile(c.conf.Tls.Key)
 		if len(key) < 1 {
 			errDo(errors.New("the key is not empty, and can not find the file: " + c.conf.Tls.Key))
 			return err

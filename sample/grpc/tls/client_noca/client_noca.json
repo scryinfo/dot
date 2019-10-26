@@ -3,40 +3,46 @@
     "file": "log.log",
     "level": "debug"
   },
-  "dots":[
+  "dots": [
     {
-      "":"grpc connections",
-      "metaData":{
-        "typeId":"7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
+      "": "grpc connections",
+      "metaData": {
+        "typeId": "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
       },
-      "lives":[
+      "lives": [
         {
-          "liveId":"7bf0a017-ef0c-496a-b04c-b1dc262abc8d",
-          "json":{
-            "scheme":"grpcconns",
-            "services": [{
-              "name": "serviceName",
-              "balance": "",
-              "addrs": ["localhost:5012"],
-              "tls": {
-                "pem": "server.pem",
-                "ServerNameOverride": "scry"
+          "liveId": "7bf0a017-ef0c-496a-b04c-b1dc262abc8d",
+          "json": {
+            "scheme": "grpcconns",
+            "services": [
+              {
+                "name": "serviceName",
+                "balance": "",
+                "addrs": [
+                  "localhost:5012"
+                ],
+                "tls": {
+                  "pem": "server.pem",
+                  "ServerNameOverride": "scry"
+                }
               }
-            }]
+            ]
           }
         }
       ]
     },
     {
-      "metaData":{
-        "typeId":"2d281e77-3133-4718-a5b7-9eea069591ca"
+      "metaData": {
+        "typeId": "2d281e77-3133-4718-a5b7-9eea069591ca"
       },
-      "lives":[
+      "lives": [
         {
-          "liveId":"2d281e77-3133-4718-a5b7-9eea069591ca",
-          "relyLives": {"Conns_" : "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"},
-          "json":{
-            "name":"serviceName"
+          "liveId": "2d281e77-3133-4718-a5b7-9eea069591ca",
+          "relyLives": {
+            "Conns_": "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
+          },
+          "json": {
+            "name": "serviceName"
           }
         }
       ]
