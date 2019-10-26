@@ -11,7 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/lb"
-	"github.com/scryinfo/dot/dots/grpc/shared"
+	"github.com/scryinfo/dot/utils"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -43,10 +43,10 @@ type connsConfig struct {
 }
 
 type serviceConfig struct {
-	Name    string           `json:"name"`
-	Addrs   []string         `json:"addrs"`
-	Tls     shared.TlsConfig `json:"tls"`
-	Balance string           `json:"balance"` // round or first, the default value is round
+	Name    string          `json:"name"`
+	Addrs   []string        `json:"addrs"`
+	Tls     utils.TlsConfig `json:"tls"`
+	Balance string          `json:"balance"` // round or first, the default value is round
 }
 
 type ClientContext struct {
@@ -143,18 +143,18 @@ ForServices:
 		{
 			switch {
 			case len(s.Tls.CaPem) > 0 && len(s.Tls.Key) > 0 && len(s.Tls.Pem) > 0: //both tls
-				caPemFile := shared.GetFullPathFile(s.Tls.CaPem)
+				caPemFile := utils.GetFullPathFile(s.Tls.CaPem)
 				if len(caPemFile) < 1 {
 					errDo(errors.New("the caPem is not empty, and can not find the file: " + s.Tls.CaPem))
 					continue ForServices
 				}
-				keyFile := shared.GetFullPathFile(s.Tls.Key)
+				keyFile := utils.GetFullPathFile(s.Tls.Key)
 				if len(keyFile) < 1 {
 					errDo(errors.New("the Key is not empty, and can not find the file: " + s.Tls.Key))
 					continue ForServices
 				}
 
-				pemFile := shared.GetFullPathFile(s.Tls.Pem)
+				pemFile := utils.GetFullPathFile(s.Tls.Pem)
 				if len(pemFile) < 1 {
 					errDo(errors.New("the Pem is not empty, and can not find the file: " + s.Tls.Pem))
 					continue ForServices
@@ -190,7 +190,7 @@ ForServices:
 				logger.Infoln("connsImp", zap.String("", "tls with ca"))
 				e1 = funRpc(&rpc, target, lb.Balance(s.Balance), grpc.WithTransportCredentials(tc))
 			case len(s.Tls.Pem) > 0: //just server
-				pemfile := shared.GetFullPathFile(s.Tls.Pem)
+				pemfile := utils.GetFullPathFile(s.Tls.Pem)
 				if len(pemfile) < 1 {
 					errDo(errors.New("the Pem is not empty, and can not find the file: " + s.Tls.Pem))
 					continue ForServices
@@ -225,7 +225,7 @@ func (c *connsImp) Stop(ignore bool) error {
 		for _, conn := range conns {
 			if conn.ClientConn != nil {
 				e1 := conn.ClientConn.Close() //todo Cancel request?
-				if e1 != nil { //do not return , close all connection
+				if e1 != nil {                //do not return , close all connection
 					if err != nil { //log the err
 						dot.Logger().Errorln(err.Error())
 					}

@@ -1,4 +1,3 @@
-
 const {ReqData, ResData} = require('../hi_pb.js');
 const {HiDotClient} = require('../hi_grpc_web_pb.js');
 
@@ -12,7 +11,7 @@ rpcweb.hi(request, {}, (err, response) => {
     console.log("http");
     if (response) {
         console.log(response.getName());
-    }else{
+    } else {
         console.log(err);
     }
 });
@@ -22,7 +21,7 @@ rpcwebs.hi(request, {}, (err, response) => {
     console.log("http");
     if (response) {
         console.log(response.getName());
-    }else{
+    } else {
         console.log(err);
     }
 });

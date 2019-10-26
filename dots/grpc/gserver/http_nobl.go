@@ -14,7 +14,7 @@ import (
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/pkg/errors"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/grpc/shared"
+	"github.com/scryinfo/dot/utils"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -25,9 +25,9 @@ const (
 
 type httpNoblConf struct {
 	//sample :  1.1.1.1:568
-	PreUrl string           `json:"preUrl"`
-	Addr   string           `json:"addr"`
-	Tls    shared.TlsConfig `json:"tls"`
+	PreUrl string          `json:"preUrl"`
+	Addr   string          `json:"addr"`
+	Tls    utils.TlsConfig `json:"tls"`
 }
 
 //support the http and tcp
@@ -142,18 +142,18 @@ func (c *httpNobl) startServer() {
 	go func() {
 		switch {
 		case len(c.conf.Tls.CaPem) > 0 && len(c.conf.Tls.Key) > 0 && len(c.conf.Tls.Pem) > 0: //both tls
-			caPem := shared.GetFullPathFile(c.conf.Tls.CaPem)
+			caPem := utils.GetFullPathFile(c.conf.Tls.CaPem)
 			if len(caPem) < 1 {
 				logger.Errorln("httpNobl", zap.Error(errors.New("the caPem is not empty, and can not find the file: "+c.conf.Tls.CaPem)))
 				return
 			}
-			key := shared.GetFullPathFile(c.conf.Tls.Key)
+			key := utils.GetFullPathFile(c.conf.Tls.Key)
 			if len(key) < 1 {
 				logger.Errorln("httpNobl", zap.Error(errors.New("the Key is not empty, and can not find the file: "+c.conf.Tls.Key)))
 				return
 			}
 
-			pem := shared.GetFullPathFile(c.conf.Tls.Pem)
+			pem := utils.GetFullPathFile(c.conf.Tls.Pem)
 			if len(pem) < 1 {
 				logger.Errorln("httpNobl", zap.Error(errors.New("the Pem is not empty, and can not find the file: "+c.conf.Tls.Pem)))
 				return
@@ -188,12 +188,12 @@ func (c *httpNobl) startServer() {
 				logger.Errorln("httpNobl", zap.Error(errors.WithStack(err)))
 			}
 		case len(c.conf.Tls.Key) > 0 && len(c.conf.Tls.Pem) > 0: //just server
-			pem := shared.GetFullPathFile(c.conf.Tls.Pem)
+			pem := utils.GetFullPathFile(c.conf.Tls.Pem)
 			if len(pem) < 1 {
 				logger.Errorln("httpNobl", zap.Error(errors.New("the pem is not empty, and can not find the file: "+c.conf.Tls.Pem)))
 				return
 			}
-			key := shared.GetFullPathFile(c.conf.Tls.Key)
+			key := utils.GetFullPathFile(c.conf.Tls.Key)
 			if len(key) < 1 {
 				logger.Errorln("httpNobl", zap.Error(errors.New("the key is not empty, and can not find the file: "+c.conf.Tls.Key)))
 				return

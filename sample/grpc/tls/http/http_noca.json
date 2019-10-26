@@ -3,17 +3,19 @@
     "file": "log.log",
     "level": "debug"
   },
-  "dots":[
+  "dots": [
     {
-      "metaData":{
+      "metaData": {
         "name": "ServerNobl",
-        "typeId":"77a766e7-c288-413f-946b-bc9de6df3d70"
+        "typeId": "77a766e7-c288-413f-946b-bc9de6df3d70"
       },
-      "lives":[
+      "lives": [
         {
-          "liveId":"77a766e7-c288-413f-946b-bc9de6df3d70",
-          "json":{
-            "addrs":["localhost:5012"],
+          "liveId": "77a766e7-c288-413f-946b-bc9de6df3d70",
+          "json": {
+            "addrs": [
+              "localhost:5012"
+            ],
             "tls": {
               "key": "server.key",
               "pem": "server.pem"
@@ -23,13 +25,13 @@
       ]
     },
     {
-      "metaData":{
+      "metaData": {
         "name": "grpc http server",
-        "typeId":"afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0"
+        "typeId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0"
       },
-      "lives":[
+      "lives": [
         {
-          "liveId":"afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
+          "liveId": "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0",
           "json": {
             "addr": ":6868"
           }
@@ -37,15 +39,15 @@
       ]
     },
     {
-      "metaData":{
+      "metaData": {
         "name": "server 1",
-        "typeId":"hiserver"
+        "typeId": "hiserver"
       },
-      "lives":[
+      "lives": [
         {
-          "liveId":"hiserver",
-          "json":{
-            "name":"server 1"
+          "liveId": "hiserver",
+          "json": {
+            "name": "server 1"
           }
         }
       ]

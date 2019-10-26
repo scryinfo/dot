@@ -3,14 +3,14 @@
     "file": "log.log",
     "level": "debug"
   },
-  "dots":[
+  "dots": [
     {
-      "metaData":{
-        "typeId":"4b8b1751-4799-4578-af46-d9b339cf582f"
+      "metaData": {
+        "typeId": "4b8b1751-4799-4578-af46-d9b339cf582f"
       },
-      "lives":[
+      "lives": [
         {
-          "liveId":"4b8b1751-4799-4578-af46-d9b339cf582f"
+          "liveId": "4b8b1751-4799-4578-af46-d9b339cf582f"
         }
       ]
     }
