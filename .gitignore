@@ -76,3 +76,7 @@
 /dots/db/gorms/go.sum
 /tools/config/data/log.log
 /tools/config/data/server_http.exe
+/sample/grpc/conns/conns.exe
+/dots/http/go.sum
+/dots/jsonrpc2/go.sum
+/sample/grpc/http/server/server.exe
