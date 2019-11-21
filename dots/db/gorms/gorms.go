@@ -63,21 +63,14 @@ func (c *Gorms) Create(l dot.Line) (err error) {
 	return err
 }
 
-func newGorms(conf interface{}) (d dot.Dot, err error) {
-	var bs []byte
-	if bt, ok := conf.([]byte); ok {
-		bs = bt
-	} else {
-		return nil, dot.SError.Parameter
-	}
+func newGorms(conf []byte) (d dot.Dot, err error) {
 	dconf := &config{}
-	err = dot.UnMarshalConfig(bs, dconf)
+	err = dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
 	}
 
 	d = &Gorms{conf: *dconf}
-
 	return d, err
 }
 
@@ -85,7 +78,7 @@ func newGorms(conf interface{}) (d dot.Dot, err error) {
 func TypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{
 		{
-			Meta: dot.Metadata{TypeId: TypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+			Meta: dot.Metadata{TypeId: TypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 				return newGorms(conf)
 			}},
 		},

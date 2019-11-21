@@ -22,16 +22,9 @@ type configName struct {
 	Name string `json:"name"`
 }
 
-func newConnName(conf interface{}) (dot.Dot, error) {
-	var err error = nil
-	var bs []byte = nil
-	if bt, ok := conf.([]byte); ok {
-		bs = bt
-	} else {
-		return nil, dot.SError.Parameter
-	}
+func newConnName(conf []byte) (dot.Dot, error) {
 	dconf := &configName{}
-	err = dot.UnMarshalConfig(bs, dconf)
+	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +38,7 @@ func newConnName(conf interface{}) (dot.Dot, error) {
 
 func ConnNameTypeLives() []*dot.TypeLives {
 	return []*dot.TypeLives{{
-		Meta: dot.Metadata{TypeId: ConnNameTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeId: ConnNameTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newConnName(conf)
 		}},
 	},

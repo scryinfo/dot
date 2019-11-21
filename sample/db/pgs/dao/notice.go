@@ -18,7 +18,7 @@ type Notice struct {
 //NoticeTypeLives make all type lives
 func NoticeTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: NoticeTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeId: NoticeTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return &Notice{}, nil
 		}},
 		Lives: []dot.Live{

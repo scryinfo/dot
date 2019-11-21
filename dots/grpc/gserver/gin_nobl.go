@@ -30,7 +30,7 @@ type ginNobl struct {
 func GinNoblTypeLives() []*dot.TypeLives {
 
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: GinNoblTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeId: GinNoblTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return &ginNobl{}, nil
 		}},
 		Lives: []dot.Live{

@@ -61,16 +61,9 @@ type connsImp struct {
 }
 
 //Construction component
-func newConns(conf interface{}) (dot.Dot, error) {
-	var err error = nil
-	var bs []byte = nil
-	if bt, ok := conf.([]byte); ok {
-		bs = bt
-	} else {
-		return nil, dot.SError.Parameter
-	}
+func newConns(conf []byte) (dot.Dot, error) {
 	dconf := &connsConfig{}
-	err = dot.UnMarshalConfig(bs, dconf)
+	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +78,7 @@ func newConns(conf interface{}) (dot.Dot, error) {
 //Data structure needed when generating newer component
 func ConnsTypeLives() *dot.TypeLives {
 	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: ConnsTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeId: ConnsTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newConns(conf)
 		}},
 	}

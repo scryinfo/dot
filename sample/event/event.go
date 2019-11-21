@@ -32,7 +32,7 @@ func add(l dot.Line) error {
 	logger := dot.Logger()
 	err := l.PreAdd(&dot.TypeLives{
 		Meta: dot.Metadata{TypeId: "dotId",
-			NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+			NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 				d := 1
 				return &d, nil
 			},

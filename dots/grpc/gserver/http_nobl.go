@@ -38,16 +38,9 @@ type httpNobl struct {
 }
 
 //Construct component
-func newHttpNobl(conf interface{}) (dot.Dot, error) {
-	var err error = nil
-	var bs []byte = nil
-	if bt, ok := conf.([]byte); ok {
-		bs = bt
-	} else {
-		return nil, dot.SError.Parameter
-	}
+func newHttpNobl(conf []byte) (dot.Dot, error) {
 	dconf := &httpNoblConf{}
-	err = dot.UnMarshalConfig(bs, dconf)
+	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +64,7 @@ func newHttpNobl(conf interface{}) (dot.Dot, error) {
 func HttpNoblTypeLives() []*dot.TypeLives {
 
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: HttpTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeId: HttpTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newHttpNobl(conf)
 		}},
 		Lives: []dot.Live{

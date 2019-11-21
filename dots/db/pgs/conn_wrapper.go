@@ -51,16 +51,9 @@ func (c *ConnWrapper) TestConn() bool {
 }
 
 //construct dot
-func newConnWrapper(conf interface{}) (dot.Dot, error) {
-	var err error
-	var bs []byte
-	if bt, ok := conf.([]byte); ok {
-		bs = bt
-	} else {
-		return nil, dot.SError.Parameter
-	}
+func newConnWrapper(conf []byte) (dot.Dot, error) {
 	dconf := &config{}
-	err = dot.UnMarshalConfig(bs, dconf)
+	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +66,7 @@ func newConnWrapper(conf interface{}) (dot.Dot, error) {
 //ConnWrapperTypeLives make all type lives
 func ConnWrapperTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: ConnWrapperTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeId: ConnWrapperTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newConnWrapper(conf)
 		}},
 	}

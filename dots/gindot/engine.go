@@ -60,16 +60,9 @@ func DefaultGinEngine() *gin.Engine {
 }
 
 //construct dot
-func newGinDot(conf interface{}) (dot.Dot, error) {
-	var err error
-	var bs []byte
-	if bt, ok := conf.([]byte); ok {
-		bs = bt
-	} else {
-		return nil, dot.SError.Parameter
-	}
+func newGinDot(conf []byte) (dot.Dot, error) {
 	dconf := &configEngine{}
-	err = dot.UnMarshalConfig(bs, dconf)
+	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +75,7 @@ func newGinDot(conf interface{}) (dot.Dot, error) {
 //TypeLiveGinDot generate data for structural  dot
 func TypeLiveGinDot() *dot.TypeLives {
 	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: EngineTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeId: EngineTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newGinDot(conf)
 		}},
 	}
