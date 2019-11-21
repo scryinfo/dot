@@ -20,7 +20,6 @@ type config struct {
 	Tls  utils.TlsConfig `json:"tls"`
 }
 
-//GinEngine  gin dot
 type Server struct {
 	conf          config
 	httpServer    *http.Server
@@ -62,8 +61,6 @@ func TypeLives() []*dot.TypeLives {
 	return lives
 }
 
-//jayce edit
-//return config of GinDot
 func ConfigTypeLive() *dot.ConfigTypeLives {
 	paths := make([]string, 0)
 	paths = append(paths, "")
@@ -102,9 +99,6 @@ func (c *Server) AfterAllStart(l dot.Line) {
 func (c *Server) startServer() error {
 	logger := dot.Logger()
 
-	//{
-	//	handler := jsonrpc.NewServer(c.makeJsonrpc(server.Game2ChainName), jsonrpc.ServerErrorLogger(&rpcLogger{})) //todo logger
-	//}
 	c.httpServer = &http.Server{Handler: &c.defaultHandle}
 	conn, err := net.Listen("tcp", c.conf.Addr)
 	if err != nil {
