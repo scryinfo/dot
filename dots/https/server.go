@@ -73,6 +73,17 @@ func ConfigTypeLive() *dot.ConfigTypeLives {
 	}
 }
 
+func Test(addr string, tls *utils.TlsConfig) *Server {
+	s := &Server{conf: config{
+		Addr: addr,
+		Tls:  *tls,
+	}}
+
+	s.AfterAllStart(nil)
+
+	return s
+}
+
 func (c *Server) RegisterHandle(pattern string, handle http.Handler) error {
 	if handle == nil {
 		return errors.New("service is nil")
