@@ -1,4 +1,4 @@
-package gorm_db
+package gorms
 
 import (
 	"encoding/json"

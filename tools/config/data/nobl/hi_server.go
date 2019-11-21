@@ -33,16 +33,9 @@ type RpcImplement struct {
 	conf       config
 }
 
-func newRpcImplement(conf interface{}) (dot.Dot, error) {
-	var err error = nil
-	var bs []byte = nil
-	if bt, ok := conf.([]byte); ok {
-		bs = bt
-	} else {
-		return nil, dot.SError.Parameter
-	}
+func newRpcImplement(conf []byte) (dot.Dot, error) {
 	dconf := &config{}
-	err = dot.UnMarshalConfig(bs, dconf)
+	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +55,7 @@ func (serv *RpcImplement) Start(ignore bool) error {
 //RpcImplementTypeLives make all type lives
 func RpcImplementTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: ServerTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeId: ServerTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newRpcImplement(conf)
 		}},
 		Lives: []dot.Live{
