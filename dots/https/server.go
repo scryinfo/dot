@@ -76,8 +76,10 @@ func ConfigTypeLive() *dot.ConfigTypeLives {
 func Test(addr string, tls *utils.TlsConfig) *Server {
 	s := &Server{conf: config{
 		Addr: addr,
-		Tls:  *tls,
 	}}
+	if tls != nil {
+		s.conf.Tls = *tls
+	}
 
 	s.AfterAllStart(nil)
 
