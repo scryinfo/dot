@@ -5,8 +5,9 @@ package line
 
 import (
 	"flag"
+	"fmt"
 	"github.com/scryinfo/dot/dot"
-	"strings"
+	"go.uber.org/zap"
 )
 
 //  Construct line and call create rely createdots start
@@ -60,15 +61,7 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 		dotOrder, circles := line.RelyOrder() //do not care the error, it is circle dependency
 		//circle dependency
 		if len(circles) > 0 {
-			lids := &strings.Builder{}
-			for _, lv := range circles {
-				if lv == nil {
-					continue
-				}
-				lids.WriteString(lv.LiveId.String())
-				lids.Write([]byte("; "))
-			}
-			dot.Logger().Errorln(lids.String())
+			dot.Logger().Warnln("build", zap.String("", fmt.Sprintf("circle dots:  %v", circles)))
 		}
 
 		err = line.CreateDots(dotOrder)
