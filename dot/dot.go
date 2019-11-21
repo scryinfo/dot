@@ -79,10 +79,10 @@ type Metadata struct {
 
 //Live live/instance
 type Live struct {
-	TypeId    TypeId
-	LiveId    LiveId
-	RelyLives map[string]LiveId
-	Dot       Dot
+	TypeId    TypeId            `json:"typeId"`
+	LiveId    LiveId            `json:"liveId"`
+	RelyLives map[string]LiveId `json:"relyLives"`
+	Dot       Dot               `json:"-"`
 }
 
 //Clone clone Metadata

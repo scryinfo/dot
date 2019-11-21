@@ -157,6 +157,7 @@ func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 
 	var cloneLives map[dot.LiveId]*dot.Live
 	var cloneMetas map[dot.TypeId]*dot.Metadata
+	logger := dot.Logger()
 	{ //clone live and type
 		c.mutex.Lock()
 		cloneLives = make(map[dot.LiveId]*dot.Live, len(c.lives.LiveIdMap))
@@ -248,20 +249,29 @@ func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 		}
 
 		//todo type dependency
-
 		{
 			for i, lev := range levels {
-				dot.Logger().Debugln(fmt.Sprintf("level : %d", i))
+				logger.Debugln(fmt.Sprintf("level : %d", i))
 				for lid := range lev {
-					dot.Logger().Debugln(cloneLives[lid].LiveId.String())
-					order = append(order, cloneLives[lid])
+					logger.Debugln(cloneLives[lid].LiveId.String())
+					cid, ok := cloneLives[lid]
+					if ok {
+						order = append(order, cid)
+					} else {
+						logger.Warnln("", zap.String("", "dot not find the dot live id: "+lid.String()))
+					}
 				}
 			}
 			if len(remain) > 0 {
 				circle = make([]*dot.Live, 0, len(remain))
 				for lid := range remain { //append to tail
-					order = append(order, cloneLives[lid])
-					circle = append(circle, cloneLives[lid])
+					cid, ok := cloneLives[lid]
+					if ok {
+						order = append(order, cid)
+						circle = append(circle, cid)
+					} else {
+						logger.Warnln("", zap.String("", "dot not find the dot live id: "+lid.String()))
+					}
 				}
 			}
 		}
