@@ -50,7 +50,7 @@ func (c *DaoBase) WithNoTx(tast func(conn *pg.Conn) error) error {
 //DaoBaseTypeLives make all type lives
 func DaoBaseTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: DaoBaseTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeId: DaoBaseTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return &DaoBase{}, nil
 		}},
 		Lives: []dot.Live{

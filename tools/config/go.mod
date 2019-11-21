@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/golang/protobuf v1.3.2
 	github.com/gookit/config v1.1.0
-	github.com/scryinfo/dot v0.1.3-0.20190907084536-c60f8a67fccd
+	github.com/scryinfo/dot v0.1.3
 	github.com/scryinfo/dot/dots/gindot v0.0.0-20191009030926-bad04115e571
 	github.com/scryinfo/dot/dots/grpc v0.0.0-20191009074937-5ffd45aae70a
 	github.com/scryinfo/scryg v0.1.3-0.20190823013604-8ed5018fe7fd

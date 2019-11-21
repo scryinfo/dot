@@ -28,16 +28,9 @@ type Router struct {
 }
 
 //construct dot
-func newRouter(conf interface{}) (*Router, error) {
-	var err error
-	var bs []byte
-	if bt, ok := conf.([]byte); ok {
-		bs = bt
-	} else {
-		return nil, dot.SError.Parameter
-	}
+func newRouter(conf []byte) (*Router, error) {
 	dconf := &configRouter{}
-	err = dot.UnMarshalConfig(bs, dconf)
+	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +43,7 @@ func newRouter(conf interface{}) (*Router, error) {
 //TypeLiveRouter generate data for structural  dot,  include gindot.Engine
 func TypeLiveRouter() []*dot.TypeLives {
 	return []*dot.TypeLives{&dot.TypeLives{
-		Meta: dot.Metadata{TypeId: RouterTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeId: RouterTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newRouter(conf)
 		}},
 	},

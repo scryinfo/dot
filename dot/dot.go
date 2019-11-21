@@ -131,7 +131,7 @@ func (m *Metadata) Merge(m2 *Metadata) {
 }
 
 //NewDot new a dot
-func (m *Metadata) NewDot(args interface{}) (dot Dot, err error) {
+func (m *Metadata) NewDot(args []byte) (dot Dot, err error) {
 	dot = nil
 	err = nil
 	if m.NewDoter != nil {
@@ -144,7 +144,7 @@ func (m *Metadata) NewDot(args interface{}) (dot Dot, err error) {
 }
 
 //Newer instace for new dot
-type Newer = func(args interface{}) (dot Dot, err error)
+type Newer = func(args []byte) (dot Dot, err error)
 
 //Dot componet
 type Dot interface{}

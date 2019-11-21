@@ -59,7 +59,7 @@ func (serv *HiServer) Start(ignore bool) error {
 //HiServerTypeLives make all type lives
 func HiServerTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: HiServerTypeId, NewDoter: func(conf interface{}) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeId: HiServerTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newHiServer(conf)
 		}},
 		Lives: []dot.Live{

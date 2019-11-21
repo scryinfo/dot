@@ -39,16 +39,9 @@ type serverNoblImp struct {
 }
 
 //Construct component
-func newServerNobl(conf interface{}) (dot.Dot, error) {
-	var err error = nil
-	var bs []byte = nil
-	if bt, ok := conf.([]byte); ok {
-		bs = bt
-	} else {
-		return nil, dot.SError.Parameter
-	}
+func newServerNobl(conf []byte) (dot.Dot, error) {
 	dconf := &ConfigNobl{}
-	err = dot.UnMarshalConfig(bs, dconf)
+	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +56,7 @@ func newServerNobl(conf interface{}) (dot.Dot, error) {
 //Data structure needed when generating newer component
 func ServerNoblTypeLive() *dot.TypeLives {
 	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: ServerNoblTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeId: ServerNoblTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newServerNobl(conf)
 		}},
 	}

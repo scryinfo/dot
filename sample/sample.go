@@ -48,7 +48,7 @@ func add(l dot.Line) error {
 
 		// Point newer for typeid
 		err = l.PreAdd(&dot.TypeLives{
-			Meta: dot.Metadata{TypeId: "1", NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+			Meta: dot.Metadata{TypeId: "1", NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 				return &Dot1{Name: "Create by type 1"}, nil
 			}},
 		})
@@ -66,7 +66,7 @@ func add(l dot.Line) error {
 	}
 
 	{ // The following is Newer using LiveId，
-		err = l.AddNewerByLiveId(dot.LiveId("31"), func(conf interface{}) (d dot.Dot, err error) {
+		err = l.AddNewerByLiveId(dot.LiveId("31"), func(conf []byte) (d dot.Dot, err error) {
 			d = &Dot3{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -82,7 +82,7 @@ func add(l dot.Line) error {
 			return
 		})
 
-		err = l.AddNewerByLiveId(dot.LiveId("32"), func(conf interface{}) (d dot.Dot, err error) {
+		err = l.AddNewerByLiveId(dot.LiveId("32"), func(conf []byte) (d dot.Dot, err error) {
 			d = &Dot3{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -100,7 +100,7 @@ func add(l dot.Line) error {
 	}
 
 	{ // The following is Newer using typeid and LiveId，if both are provided, then use Liveid priorly
-		err = l.AddNewerByLiveId(dot.LiveId("41"), func(conf interface{}) (d dot.Dot, err error) {
+		err = l.AddNewerByLiveId(dot.LiveId("41"), func(conf []byte) (d dot.Dot, err error) {
 			d = &Dot4{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -116,7 +116,7 @@ func add(l dot.Line) error {
 			return
 		})
 
-		err = l.AddNewerByTypeId(dot.TypeId("type_live"), func(conf interface{}) (d dot.Dot, err error) {
+		err = l.AddNewerByTypeId(dot.TypeId("type_live"), func(conf []byte) (d dot.Dot, err error) {
 			d = &Dot4{}
 			err = nil
 			t := reflect.ValueOf(conf)

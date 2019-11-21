@@ -28,7 +28,7 @@ const (
 type Ecdsa struct {
 }
 
-func newEcdsa(conf interface{}) (dot.Dot, error) {
+func newEcdsa(conf []byte) (dot.Dot, error) {
 	var err error = nil
 	_ = conf
 	d := &Ecdsa{}
@@ -37,7 +37,7 @@ func newEcdsa(conf interface{}) (dot.Dot, error) {
 
 func TypeLiveEcdsa() *dot.TypeLives {
 	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: EcdsaTypeId, NewDoter: func(conf interface{}) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeId: EcdsaTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newEcdsa(conf)
 		}},
 	}
