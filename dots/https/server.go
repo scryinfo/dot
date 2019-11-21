@@ -1,4 +1,4 @@
-package jsonrpc2
+package https
 
 import (
 	"crypto/tls"
