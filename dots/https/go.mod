@@ -1,4 +1,4 @@
-module github.com/scryinfo/dot/dots/http
+module github.com/scryinfo/dot/dots/https
 
 go 1.13
 
