@@ -15,9 +15,12 @@ const (
 )
 
 type configUi struct {
-	UrlRelativePath string            `json:"urlRelativePath"` //url 的相对路径
-	ResRelativePath string            `json:"resRelativePath"` //资源的相对路径， 查找的先后为： 绝对路路, 相对路径，执行路径，当前路径，当前用户所在路径，当都没有找到时认为文件没有找到
-	Paths           map[string]string `json:"paths"`           //静态资源的路径，可以是文件或目录, key: pre, value: folder or file path
+	UrlRelativePath string `json:"urlRelativePath"` //url 的相对路径
+	ResRelativePath string `json:"resRelativePath"` //资源的相对路径， 查找的先后为： 绝对路路, 相对路径，执行路径，当前路径，当前用户所在路径，当都没有找到时认为文件没有找到
+	Paths           []struct {
+		RelativePath string `json:"relativePath"`
+		Value        string `json:"value"`
+	} `json:"paths"` //静态资源的路径，可以是文件或目录, RelativePath: pre, Value: folder or file path
 }
 
 //Ui  用于静态资源的组件
@@ -39,18 +42,18 @@ func (c *Ui) AfterAllInject(l dot.Line) {
 //Start start the gin
 func (c *Ui) Start(ignore bool) error {
 	logger := dot.Logger()
-	for k, v := range c.config.Paths {
-		res := c.ResAbsolutePath(v)
+	for _, it := range c.config.Paths {
+		res := c.ResAbsolutePath(it.Value)
 		if len(res) > 0 {
 			if sfile.IsDir(res) {
-				c.router.Static(k, res)
+				c.router.Static(it.RelativePath, res)
 			} else if sfile.IsFile(res) {
-				c.router.StaticFile(k, res)
+				c.router.StaticFile(it.RelativePath, res)
 			} else {
-				logger.Errorln("", zap.String("", "can not: "+v+" realy: "+res))
+				logger.Errorln("", zap.String("", "can not: "+it.Value+" realy: "+res))
 			}
 		} else {
-			logger.Errorln("", zap.String("", fmt.Sprintf("can not find : %s  under (%s, %s, %s, %s)", v, c.relativePath, c.executePath, c.currentPath, c.userPath)))
+			logger.Errorln("", zap.String("", fmt.Sprintf("can not find : %s  under (%s, %s, %s, %s)", it.RelativePath, c.relativePath, c.executePath, c.currentPath, c.userPath)))
 		}
 	}
 	return nil
