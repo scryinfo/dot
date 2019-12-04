@@ -1,8 +1,8 @@
 package pgs
 
 import (
-	"github.com/go-pg/pg"
-	"github.com/go-pg/pg/orm"
+	"github.com/go-pg/pg/v9"
+	"github.com/go-pg/pg/v9/orm"
 )
 
 func CreateSchema(db *pg.DB, ms []interface{}) error {
