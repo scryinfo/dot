@@ -10,31 +10,30 @@ import (
 	"path/filepath"
 )
 
-const (
-	UiTypeId = "d9972be7-cef9-464c-9bbb-d1f11abea803"
-)
+const UiTypeId = "d9972be7-cef9-464c-9bbb-d1f11abea803" //type id of dot
 
 type configUi struct {
-	UrlRelativePath string `json:"urlRelativePath"` //url 的相对路径
-	ResRelativePath string `json:"resRelativePath"` //资源的相对路径， 查找的先后为： 绝对路路, 相对路径，执行路径，当前路径，当前用户所在路径，当都没有找到时认为文件没有找到
+	UrlRelativePath string `json:"urlRelativePath"` //relative path of url
+	ResRelativePath string `json:"resRelativePath"` //relative path of resource， The order of locating files is: absolute path, relative path，executable path，current path，user path
 	Paths           []struct {
 		RelativePath string `json:"relativePath"`
-		Value        string `json:"value"`
-	} `json:"paths"` //静态资源的路径，可以是文件或目录, RelativePath: pre, Value: folder or file path
+		Value        string `json:"value"` // the static resource of path, it is file or folder
+	} `json:"paths"`
 }
 
-//Ui  用于静态资源的组件
+//Ui  add static resource into gin
 type Ui struct {
 	Engine_ *Engine `dot:""`
 
 	router       *gin.RouterGroup
 	config       configUi
-	executePath  string //执行文件所在路径
-	currentPath  string //当前路或工作路径
-	userPath     string //当前用户所在路径
-	relativePath string //相对路径，当来自于配置文件
+	executePath  string //executable path
+	currentPath  string //current path
+	userPath     string //user path
+	relativePath string //relative path
 }
 
+//AfterAllInject after all inject, run it
 func (c *Ui) AfterAllInject(l dot.Line) {
 	c.router = c.Engine_.GinEngine().Group(c.config.UrlRelativePath)
 }
@@ -45,6 +44,7 @@ func (c *Ui) Start(ignore bool) error {
 	for _, it := range c.config.Paths {
 		res := c.ResAbsolutePath(it.Value)
 		if len(res) > 0 {
+			logger.Debugln("Ui", zap.String("", res))
 			if sfile.IsDir(res) {
 				c.router.Static(it.RelativePath, res)
 			} else if sfile.IsFile(res) {
@@ -76,8 +76,8 @@ func (c *Ui) SetResRelativePath(relativePath string) {
 	c.relativePath = c.ResAbsolutePath(relativePath)
 }
 
-//查找的先后为： 绝对路路, 相对路径，执行路径，当前路径，当前用户所在路径，当都没有找到时认为文件没有找到
-//没有找到文件时，返回""
+//ResAbsolutePath the order of locating files is: absolute path, relative path，executable path，current path，user path
+//if do not find, then return ""
 func (c *Ui) ResAbsolutePath(res string) string {
 	if filepath.IsAbs(res) {
 		if sfile.ExistFile(res) {
