@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"github.com/scryinfo/dot/dots/db/pgs"
+	"github.com/scryinfo/dot/dots/db/tools"
 	"go/ast"
 	"go/build"
 	"go/format"
@@ -15,8 +17,6 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
-
-	"github.com/scryinfo/dot/dots/db/tools"
 )
 
 //do not use the map, we need the order
@@ -50,7 +50,7 @@ func parms(data *tData) {
 		exes := strings.Split(params_.mapExcludes, ",")
 		data.MapExcludes = make(map[string]bool, len(exes))
 		for i, _ := range exes {
-			it := tools.CamelCased(exes[i])
+			it := pgs.CamelCased(exes[i])
 			data.MapExcludes[it] = true
 		}
 	} else {
@@ -58,7 +58,7 @@ func parms(data *tData) {
 	}
 
 	if len(params_.tableName) < 1 {
-		params_.tableName = tools.Underscore(params_.typeName)
+		params_.tableName = pgs.Underscore(params_.typeName)
 	}
 
 	data.TypeName = params_.typeName
@@ -178,10 +178,10 @@ import (
 		return str
 	}
 
-	//func (m *{{$.TypeName}}) ToMap() map[string]string {
-	//	res := kits.ToMap(m, map[string]bool{ {{range $k,$v := $.MapExcludes}}"{{$k}}":{{$v}} {{end}} })
-	//	return res
-	//}
+	func (m *{{$.TypeName}}) ToMap() map[string]string {
+		res := pgs.ToMap(m, map[string]bool{ {{range $k,$v := $.MapExcludes}}"{{$k}}":{{$v}} {{end}} })
+		return res
+	}
 
 	func (m *{{$.TypeName}}) ToUpsertSet() []string {
 		res := []string{

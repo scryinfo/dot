@@ -3,7 +3,6 @@ package pgs
 import (
 	"encoding/json"
 
-	"github.com/go-pg/pg/v9"
 	"github.com/scryinfo/dot/dot"
 )
 

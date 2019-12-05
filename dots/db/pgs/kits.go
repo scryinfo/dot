@@ -1,7 +1,6 @@
 package pgs
 
 import (
-	"github.com/go-pg/pg/v9"
 	"github.com/go-pg/pg/v9/orm"
 	"reflect"
 	"strconv"
