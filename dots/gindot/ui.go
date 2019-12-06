@@ -33,9 +33,9 @@ type Ui struct {
 	relativePath string //relative path
 }
 
-//AfterAllInject after all inject, run it
-func (c *Ui) AfterAllInject(l dot.Line) {
+func (c *Ui) Injected(l dot.Line) error {
 	c.router = c.Engine_.GinEngine().Group(c.config.UrlRelativePath)
+	return nil
 }
 
 //Start start the gin
