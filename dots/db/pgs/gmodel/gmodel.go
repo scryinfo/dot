@@ -5,9 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/scryinfo/dot/dots/db/pgs"
-	"github.com/scryinfo/dot/dots/db/tools"
 	"go/ast"
-	"go/build"
 	"go/format"
 	"go/parser"
 	"go/token"
@@ -66,6 +64,7 @@ func parms(data *tData) {
 }
 
 func main() {
+	log.Println("run gmodel")
 	data := &tData{}
 	parms(data)
 	if len(params_.typeName) < 1 {
@@ -80,7 +79,6 @@ func main() {
 	{
 		makeData(data)
 		src = gmodel(data)
-		//fmt.Println(string(src))
 	}
 
 	outputName := ""
@@ -96,60 +94,46 @@ func main() {
 			log.Fatalf("writing output: %s", err)
 		}
 	} else {
-		fmt.Println("exist the file: " + outputName)
+		log.Println("exist the file: " + outputName)
 	}
-
+	log.Println("finished gmodel")
 }
 
 func makeData(data *tData) {
 	data.PkgName = os.Getenv("GOPACKAGE")
+	file := os.Getenv("GOFILE")
 	fields := make([]DbField, 0)
 	{
-		var pkgInfo *build.Package = nil
-		var err error
-		{
-			pkgInfo, err = build.ImportDir(".", 0)
-			if err != nil {
-				log.Fatal(err)
-			}
+		f, err := parser.ParseFile(token.NewFileSet(), file, nil, 0)
+		if err != nil {
+			log.Fatal(err)
 		}
-		if data.PkgName == "" {
-			data.PkgName = pkgInfo.Name
-		}
-
-		fset := token.NewFileSet()
-		for _, file := range pkgInfo.GoFiles {
-			f, err := parser.ParseFile(fset, file, nil, 0)
-			if err != nil {
-				log.Fatal(err)
-			}
-			//typ := ""
-			ast.Inspect(f, func(n ast.Node) bool {
-				if n != nil {
-					decl, ok := n.(*ast.GenDecl)
-					// just STRUCT
-					if !ok || decl.Tok != token.TYPE {
-						return true
-					}
-					for _, spec := range decl.Specs {
-						typeS, ok := spec.(*ast.TypeSpec)
-						if ok && typeS.Name.Name == data.TypeName {
-							structT := typeS.Type.(*ast.StructType)
-							for _, f := range structT.Fields.List {
-								n := f.Names[0].Name
-								fields = append(fields, DbField{Name: n, DbName: tools.Underscore(n)})
-								ftype, ok := f.Type.(*ast.Ident)
-								if ok && ftype.Name == "string" {
-									data.StringFields = append(data.StringFields, DbField{Name: n, DbName: tools.Underscore(n)})
-								}
+		//typ := ""
+		ast.Inspect(f, func(n ast.Node) bool {
+			if n != nil {
+				decl, ok := n.(*ast.GenDecl)
+				// just STRUCT
+				if !ok || decl.Tok != token.TYPE {
+					return true
+				}
+				for _, spec := range decl.Specs {
+					typeS, ok := spec.(*ast.TypeSpec)
+					if ok && typeS.Name.Name == data.TypeName {
+						structT := typeS.Type.(*ast.StructType)
+						for _, f := range structT.Fields.List {
+							n := f.Names[0].Name
+							fields = append(fields, DbField{Name: n, DbName: pgs.Underscore(n)})
+							ftype, ok := f.Type.(*ast.Ident)
+							if ok && ftype.Name == "string" {
+								data.StringFields = append(data.StringFields, DbField{Name: n, DbName: pgs.Underscore(n)})
 							}
 						}
 					}
 				}
+			}
 
-				return true
-			})
-		}
+			return true
+		})
 
 	}
 	data.Fields = fields
@@ -161,7 +145,7 @@ func gmodel(data *tData) []byte {
 package {{.PkgName}}
 import (
 	"fmt"
-	"github.com/scryinfo/cashbox-backend/kits"
+	"github.com/scryinfo/dot/dots/db/pgs"
 )
 	const (
 		{{$.TypeName}}_Table       = "{{$.TableName}}"
@@ -203,9 +187,6 @@ import (
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		//test
-		//fmt.Println(string(buff.Bytes()))
 
 		src, err = format.Source(buff.Bytes())
 		if err != nil {
