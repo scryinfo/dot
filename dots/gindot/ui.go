@@ -161,6 +161,13 @@ func UiTypeLives() []*dot.TypeLives {
 		Meta: dot.Metadata{TypeId: UiTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newUi(conf)
 		}},
+
+		Lives: []dot.Live{
+			{
+				LiveId:    UiTypeId,
+				RelyLives: map[string]dot.LiveId{"Engine_": EngineLiveId},
+			},
+		},
 	},
 		TypeLiveGinDot(),
 	}

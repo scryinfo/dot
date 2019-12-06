@@ -46,6 +46,12 @@ func TypeLiveRouter() []*dot.TypeLives {
 		Meta: dot.Metadata{TypeId: RouterTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newRouter(conf)
 		}},
+		Lives: []dot.Live{
+			{
+				LiveId:    UiTypeId,
+				RelyLives: map[string]dot.LiveId{"Engine_": EngineLiveId},
+			},
+		},
 	},
 		TypeLiveGinDot(),
 	}
