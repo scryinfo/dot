@@ -11,7 +11,7 @@ const (
 	ConnWrapperTypeId = "ffc08507-dd5f-456c-84ea-cdae00b220bf"
 )
 
-type config struct {
+type config struct { //todo 连接池等配置
 	Addr     string `json:"addr"`
 	User     string `json:"user"`
 	Password string `json:"password"`
