@@ -174,9 +174,21 @@ type {{$.DaoName}} struct {
 //{{$.DaoName}}TypeLives
 func {{$.DaoName}}TypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: {{$.DaoName}}TypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
-			return &{{$.DaoName}}{}, nil
-		}},
+		Meta: dot.Metadata{
+			Name: "{{$.DaoName}}",
+			TypeId: {{$.DaoName}}TypeId, 
+			NewDoter: func(conf []byte) (dot.Dot, error) {
+				return &{{$.DaoName}}{}, nil
+			},
+		},
+		Lives: []dot.Live{
+			{
+				LiveId: {{$.DaoName}}TypeId,
+				RelyLives: map[string]dot.LiveId{
+					"DaoBase": pgs.DaoBaseTypeId,
+				},
+			},
+		},
 	}
 
 	lives := pgs.DaoBaseTypeLives()
@@ -188,6 +200,11 @@ func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interfa
 	return
 }
 
+func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, limit int, offset int, condition string, params ...interface{}) (ms []model.{{$.TypeName}}, err error) {
+	err = conn.Model(&ms).Where(condition, params...).Limit(limit).Offset(offset).Select()
+	return
+}
+
 func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *model.{{$.TypeName}}, err error) {
 	m = &model.{{$.TypeName}}{}
 	err = conn.Model(m).Where(condition, params...).First()
@@ -195,17 +212,33 @@ func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...inte
 }
 
 func (c *{{$.DaoName}}) Insert(conn *pg.Conn, m *model.{{$.TypeName}}) (err error) {
+	//if len(m.Id) < 1 {
+	//	m.Id = uuid.GetUuid()
+	//}
+	//m.CreateTime = time.Now().Unix()
+	//m.UpdateTime = time.Now().Unix()
 	err = conn.Insert(m)
 	return
 }
 
 func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *model.{{$.TypeName}}) (err error) {
+	//if len(m.Id) < 1 {
+	//	m.Id = uuid.GetUuid()
+	//}
+	//m.CreateTime = time.Now().Unix()
+	//m.UpdateTime = time.Now().Unix()
 	om := conn.Model(m).OnConflict("(id) DO UPDATE")
 	for _, it := range m.ToUpsertSet() {
 		om.Set(it)
 	}
 	_, err = om.Insert()
 	return err
+}
+
+func (c *{{$.DaoName}}) Update(conn *pg.Conn, m *model.{{$.TypeName}}) (err error) {
+	//m.UpdateTime = time.Now().Unix()
+	err = conn.Update(m)
+	return
 }
 
 func (c *{{$.DaoName}}) Delete(conn *pg.Conn, m *model.{{$.TypeName}}) (err error) {

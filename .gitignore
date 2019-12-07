@@ -81,3 +81,4 @@
 /dots/jsonrpc2/go.sum
 /sample/grpc/http/server/server.exe
 /dots/https/go.sum
+/tools/dotcli/before.log
