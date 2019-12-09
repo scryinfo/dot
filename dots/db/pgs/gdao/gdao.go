@@ -114,20 +114,20 @@ func makeData(data *tData) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		{ //todo
-			dir, err := filepath.Abs(file)
-			if err != nil {
-				log.Fatal(err)
-			}
-			dir = filepath.Dir(dir)
-			dir = strings.Replace(dir, "\\", "/", -1)
-			index := strings.Index(dir, "github.com/scryinfo")
-			if index >= 0 {
-				data.ModelPkgName = dir[index:]
-			} else {
-				log.Println("not find the model")
-			}
-		}
+		//{
+		//	dir, err := filepath.Abs(file)
+		//	if err != nil {
+		//		log.Fatal(err)
+		//	}
+		//	dir = filepath.Dir(dir)
+		//	dir = strings.Replace(dir, "\\", "/", -1)
+		//	index := strings.Index(dir, "github.com/scryinfo")
+		//	if index >= 0 {
+		//		data.ModelPkgName = dir[index:]
+		//	} else {
+		//		log.Println("not find the model")
+		//	}
+		//}
 		find := false
 		ast.Inspect(f, func(n ast.Node) bool {
 			if n != nil {
@@ -195,23 +195,56 @@ func {{$.DaoName}}TypeLives() []*dot.TypeLives {
 	lives = append(lives, tl)
 	return lives
 }
-func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interface{}) (ms []model.{{$.TypeName}}, err error) {
-	err = conn.Model(&ms).Where(condition, params...).Select()
+
+func (c *{{$.DaoName}}) Get(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
+	err = conn.Model(m).WherePK().Select(id)
 	return
 }
 
-func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, limit int, offset int, condition string, params ...interface{}) (ms []model.{{$.TypeName}}, err error) {
-	err = conn.Model(&ms).Where(condition, params...).Limit(limit).Offset(offset).Select()
+func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	if len(condition) < 1 {
+		err = conn.Model(&ms).Select()
+	}else {
+		err = conn.Model(&ms).Where(condition, params...).Select()
+	}
 	return
 }
 
-func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *model.{{$.TypeName}}, err error) {
-	m = &model.{{$.TypeName}}{}
-	err = conn.Model(m).Where(condition, params...).First()
+func (c *{{$.DaoName}}) List(conn *pg.Conn) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	err = conn.Model(&ms).Select()
 	return
 }
 
-func (c *{{$.DaoName}}) Insert(conn *pg.Conn, m *model.{{$.TypeName}}) (err error) {
+func (c *{{$.DaoName}}) Count(conn *pg.Conn, condition string, params ...interface{}) (count int, err error) {
+	if len(condition) < 1 {
+		count, err = conn.Model(&{{$.ModelPkgName}}.{{$.TypeName}}{}).Count()
+	}else {
+		count, err = conn.Model(&{{$.ModelPkgName}}.{{$.TypeName}}{}).Where(condition, params...).Count()
+	}
+	return
+}
+
+func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, limit int, offset int, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	if len(condition) < 1 {
+		err = conn.Model(&ms).Limit(limit).Offset(offset).Select()
+	}else {
+		err = conn.Model(&ms).Where(condition, params...).Limit(limit).Offset(offset).Select()
+	}
+	return
+}
+
+func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
+	if len(condition) < 1 {
+		err = conn.Model(m).First()
+	}else {
+		err = conn.Model(m).Where(condition, params...).First()
+	}
+	return
+}
+
+func (c *{{$.DaoName}}) Insert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	//if len(m.Id) < 1 {
 	//	m.Id = uuid.GetUuid()
 	//}
@@ -221,7 +254,7 @@ func (c *{{$.DaoName}}) Insert(conn *pg.Conn, m *model.{{$.TypeName}}) (err erro
 	return
 }
 
-func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *model.{{$.TypeName}}) (err error) {
+func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	//if len(m.Id) < 1 {
 	//	m.Id = uuid.GetUuid()
 	//}
@@ -235,13 +268,13 @@ func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *model.{{$.TypeName}}) (err erro
 	return err
 }
 
-func (c *{{$.DaoName}}) Update(conn *pg.Conn, m *model.{{$.TypeName}}) (err error) {
+func (c *{{$.DaoName}}) Update(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	//m.UpdateTime = time.Now().Unix()
 	err = conn.Update(m)
 	return
 }
 
-func (c *{{$.DaoName}}) Delete(conn *pg.Conn, m *model.{{$.TypeName}}) (err error) {
+func (c *{{$.DaoName}}) Delete(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	err = conn.Delete(m)
 	return
 }
