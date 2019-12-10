@@ -82,17 +82,9 @@ func (c *ginNobl) startServer() {
 	logger := dot.Logger()
 	c.wrapserver = grpcweb.WrapServer(c.Server(), grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}))
 
-	c.GinRouter.Router().Use(func(ctx *gin.Context) {
-		if ctx.Request.Method == "OPTIONS" {
-			ctx.Header("Access-Control-Allow-Origin", "*")  //
-			ctx.Header("Access-Control-Allow-Methods", "*") //
-			ctx.Header("Access-Control-Allow-Headers", "content-type,x-grpc-web,x-user-agent")
-			ctx.Abort()
-		}
-	})
-
 	handle := func(ctx *gin.Context) {
 		logger.Debugln("ginNobl", zap.String("", ctx.Request.RequestURI))
+
 		if c.wrapserver.IsGrpcWebRequest(ctx.Request) {
 			if len(c.preUrl) > 0 { // because can not set the "endpointFunc" of WrapServer, do this so so
 				old := ctx.Request.URL.Path
@@ -115,5 +107,10 @@ func (c *ginNobl) startServer() {
 	url := "/*rpc"
 
 	c.GinRouter.Router().POST(url, handle)
-	c.GinRouter.Router().OPTIONS(url, handle)
+	c.GinRouter.Router().OPTIONS(url, func(ctx *gin.Context) {
+		ctx.Header("Access-Control-Allow-Origin", "*")  //
+		ctx.Header("Access-Control-Allow-Methods", "*") //
+		ctx.Header("Access-Control-Allow-Headers", "content-type,x-grpc-web,x-user-agent")
+		ctx.String(http.StatusOK, "ok")
+	})
 }
