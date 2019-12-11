@@ -25,13 +25,14 @@ type DbField struct {
 }
 
 type tData struct {
-	DaoName      string
-	TypeName     string
-	TableName    string
-	ModelPkgName string
-	DaoPkgName   string
-	BackQuote    string
-	Id           string
+	DaoName            string
+	TypeName           string
+	TableName          string
+	ModelPkgName       string
+	ImportModelPkgName string
+	DaoPkgName         string
+	BackQuote          string
+	Id                 string
 	//Fields       []DbField
 	//StringFields []DbField
 }
@@ -114,20 +115,20 @@ func makeData(data *tData) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		//{
-		//	dir, err := filepath.Abs(file)
-		//	if err != nil {
-		//		log.Fatal(err)
-		//	}
-		//	dir = filepath.Dir(dir)
-		//	dir = strings.Replace(dir, "\\", "/", -1)
-		//	index := strings.Index(dir, "github.com/scryinfo")
-		//	if index >= 0 {
-		//		data.ModelPkgName = dir[index:]
-		//	} else {
-		//		log.Println("not find the model")
-		//	}
-		//}
+		{
+			dir, err := filepath.Abs(file)
+			if err != nil {
+				log.Fatal(err)
+			}
+			dir = filepath.Dir(dir)
+			dir = strings.Replace(dir, "\\", "/", -1)
+			index := strings.Index(dir, "github.com/scryinfo")
+			if index >= 0 {
+				data.ImportModelPkgName = dir[index:]
+			} else {
+				log.Println("not find the model")
+			}
+		}
 		find := false
 		ast.Inspect(f, func(n ast.Node) bool {
 			if n != nil {
@@ -159,10 +160,14 @@ func gmodel(data *tData) []byte {
 	temp := `
 package {{$.DaoPkgName}}
 import (
+	"time"
+	
 	"github.com/go-pg/pg/v9"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/db/pgs"
-	"{{$.ModelPkgName}}"
+	"github.com/scryinfo/scryg/sutils/uuid"
+	"{{$.ImportModelPkgName}}"
+	"go.uber.org/zap"
 )
 
 const {{$.DaoName}}TypeId = "{{$.Id}}"
@@ -196,23 +201,47 @@ func {{$.DaoName}}TypeLives() []*dot.TypeLives {
 	return lives
 }
 
-func (c *{{$.DaoName}}) Get(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
-	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
-	err = conn.Model(m).WherePK().Select(id)
-	return
-}
-
-func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
-	if len(condition) < 1 {
-		err = conn.Model(&ms).Select()
-	}else {
-		err = conn.Model(&ms).Where(condition, params...).Select()
+// if find nothing, return nil
+func (c *{{$.DaoName}}) GetById(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	m = &{{$.ModelPkgName}}.{{$.TypeName}}{Id: id,}
+	err = conn.Model(m).WherePK().Select()
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+		m = nil
+	}else if err != nil {
+		m = nil
 	}
 	return
 }
 
+// if find nothing, return nil
+func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	if len(condition) < 1 {
+		err = conn.Model(&ms).Select()
+	} else {
+		err = conn.Model(&ms).Where(condition, params...).Select()
+	}
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+		ms = nil
+	}else if err != nil { //be sure
+		ms = nil
+	}
+	return
+}
+
+// if find nothing, return nil
 func (c *{{$.DaoName}}) List(conn *pg.Conn) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	err = conn.Model(&ms).Select()
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+		ms = nil
+	}else if err != nil {//be sure
+		ms = nil
+	}
 	return
 }
 
@@ -225,57 +254,170 @@ func (c *{{$.DaoName}}) Count(conn *pg.Conn, condition string, params ...interfa
 	return
 }
 
+// if find nothing, return nil
 func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, limit int, offset int, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).Limit(limit).Offset(offset).Select()
 	}else {
 		err = conn.Model(&ms).Where(condition, params...).Limit(limit).Offset(offset).Select()
 	}
-	return
-}
-
-func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
-	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
-	if len(condition) < 1 {
-		err = conn.Model(m).First()
-	}else {
-		err = conn.Model(m).Where(condition, params...).First()
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+		ms = nil
+	}else if err != nil { //be sure
+		ms = nil
 	}
 	return
 }
 
-func (c *{{$.DaoName}}) Insert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
-	//if len(m.Id) < 1 {
-	//	m.Id = uuid.GetUuid()
-	//}
-	//m.CreateTime = time.Now().Unix()
-	//m.UpdateTime = time.Now().Unix()
-	err = conn.Insert(m)
+// if find nothing, return nil
+func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
+	if len(condition) < 1 {
+		err = conn.Model(m).First()
+	} else {
+		err = conn.Model(m).Where(condition, params...).First()
+	}
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+		m = nil
+	}else if err != nil {
+		m = nil
+	}
 	return
 }
 
+//if insert nothing, then return nil
+func (c *{{$.DaoName}}) Insert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
+	if len(m.Id) < 1 {
+		m.Id = uuid.GetUuid()
+	}
+	m.CreateTime = time.Now().Unix()
+	m.UpdateTime = m.CreateTime
+	err = conn.Insert(m)
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+	}
+	return
+}
+//if insert nothing, then return nil
+func (c *{{$.DaoName}}) InsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) ( mnew *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	if len(m.Id) < 1 {
+		m.Id = uuid.GetUuid()
+	}
+	m.CreateTime = time.Now().Unix()
+	m.UpdateTime = m.CreateTime
+
+
+	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
+	_, err = conn.Model(m).Returning("*").Insert(mnew)
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		mnew = nil
+		err = nil
+	}else if err != nil{
+		mnew = nil
+	}
+	return
+}
+
+
+//if update nothing, then return nil
 func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
-	//if len(m.Id) < 1 {
-	//	m.Id = uuid.GetUuid()
-	//}
-	//m.CreateTime = time.Now().Unix()
-	//m.UpdateTime = time.Now().Unix()
+    m.UpdateTime = time.Now().Unix()
+	if len(m.Id) < 1 {
+		m.Id = uuid.GetUuid()
+		m.CreateTime = m.UpdateTime
+	} else if m.CreateTime == 0 {
+		m.CreateTime = m.UpdateTime
+	}
 	om := conn.Model(m).OnConflict("(id) DO UPDATE")
 	for _, it := range m.ToUpsertSet() {
 		om.Set(it)
 	}
 	_, err = om.Insert()
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+	}
 	return err
 }
 
+//if update nothing, then return nil
+func (c *{{$.DaoName}}) UpsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) ( mnew *{{$.ModelPkgName}}.{{$.TypeName}},err error) {
+	m.UpdateTime = time.Now().Unix()
+	if len(m.Id) < 1 {
+		m.Id = uuid.GetUuid()
+		m.CreateTime = m.UpdateTime
+	} else if m.CreateTime == 0 {
+		m.CreateTime = m.UpdateTime
+	}
+
+	om := conn.Model(m).OnConflict("(id) DO UPDATE")
+	for _, it := range m.ToUpsertSet() {
+		om.Set(it)
+	}
+	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
+	_, err = om.Returning("*").Insert(mnew)
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		mnew = nil
+		err = nil
+	}else if err != nil {
+		mnew = nil
+	}
+	return
+}
+//if update nothing, then return nil
 func (c *{{$.DaoName}}) Update(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
-	//m.UpdateTime = time.Now().Unix()
+	m.UpdateTime = time.Now().Unix()
 	err = conn.Update(m)
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+	}
 	return
 }
 
+//if update nothing, then return nil
+func (c *{{$.DaoName}}) UpdateReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (mnew *{{$.ModelPkgName}}.{{$.TypeName}},  err error) {
+	m.UpdateTime = time.Now().Unix()
+	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
+	_, err = conn.Model(m).WherePK().Returning("*").Update(mnew)
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+		mnew = nil
+	}else if err != nil {
+		mnew = nil
+	}
+	return
+}
+
+//if delete nothing, then return nil
 func (c *{{$.DaoName}}) Delete(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	err = conn.Delete(m)
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+	}
+	return
+}
+
+//if delete nothing, then return nil
+func (c *{{$.DaoName}}) DeleteReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (mnew *{{$.ModelPkgName}}.{{$.TypeName}},err error) {
+	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
+	_, err = conn.Model(m).WherePK().Returning("*").Delete(mnew)
+	if err == pg.ErrNoRows {
+		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
+		err = nil
+		mnew = nil
+	}else if err != nil {
+		mnew = nil
+	}
 	return
 }
 `
