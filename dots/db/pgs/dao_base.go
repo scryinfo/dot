@@ -18,6 +18,7 @@ func (c *DaoBase) getConn() *pg.Conn {
 	return conn
 }
 
+//在函数中有数据库操作失败，即使返回nil， 数也不会提交 //todo
 func (c *DaoBase) WithTx(tast func(conn *pg.Conn) error) error {
 	var err error
 	if tast != nil {
