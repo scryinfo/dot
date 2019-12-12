@@ -24,103 +24,185 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type ReqData struct {
+type HiReq struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ReqData) Reset()         { *m = ReqData{} }
-func (m *ReqData) String() string { return proto.CompactTextString(m) }
-func (*ReqData) ProtoMessage()    {}
-func (*ReqData) Descriptor() ([]byte, []int) {
+func (m *HiReq) Reset()         { *m = HiReq{} }
+func (m *HiReq) String() string { return proto.CompactTextString(m) }
+func (*HiReq) ProtoMessage()    {}
+func (*HiReq) Descriptor() ([]byte, []int) {
 	return fileDescriptor_d092a8920edeec73, []int{0}
 }
 
-func (m *ReqData) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ReqData.Unmarshal(m, b)
+func (m *HiReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_HiReq.Unmarshal(m, b)
 }
-func (m *ReqData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ReqData.Marshal(b, m, deterministic)
+func (m *HiReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_HiReq.Marshal(b, m, deterministic)
 }
-func (m *ReqData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReqData.Merge(m, src)
+func (m *HiReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HiReq.Merge(m, src)
 }
-func (m *ReqData) XXX_Size() int {
-	return xxx_messageInfo_ReqData.Size(m)
+func (m *HiReq) XXX_Size() int {
+	return xxx_messageInfo_HiReq.Size(m)
 }
-func (m *ReqData) XXX_DiscardUnknown() {
-	xxx_messageInfo_ReqData.DiscardUnknown(m)
+func (m *HiReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_HiReq.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ReqData proto.InternalMessageInfo
+var xxx_messageInfo_HiReq proto.InternalMessageInfo
 
-func (m *ReqData) GetName() string {
+func (m *HiReq) GetName() string {
 	if m != nil {
 		return m.Name
 	}
 	return ""
 }
 
-type ResData struct {
+type HiRes struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ResData) Reset()         { *m = ResData{} }
-func (m *ResData) String() string { return proto.CompactTextString(m) }
-func (*ResData) ProtoMessage()    {}
-func (*ResData) Descriptor() ([]byte, []int) {
+func (m *HiRes) Reset()         { *m = HiRes{} }
+func (m *HiRes) String() string { return proto.CompactTextString(m) }
+func (*HiRes) ProtoMessage()    {}
+func (*HiRes) Descriptor() ([]byte, []int) {
 	return fileDescriptor_d092a8920edeec73, []int{1}
 }
 
-func (m *ResData) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ResData.Unmarshal(m, b)
+func (m *HiRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_HiRes.Unmarshal(m, b)
 }
-func (m *ResData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ResData.Marshal(b, m, deterministic)
+func (m *HiRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_HiRes.Marshal(b, m, deterministic)
 }
-func (m *ResData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResData.Merge(m, src)
+func (m *HiRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HiRes.Merge(m, src)
 }
-func (m *ResData) XXX_Size() int {
-	return xxx_messageInfo_ResData.Size(m)
+func (m *HiRes) XXX_Size() int {
+	return xxx_messageInfo_HiRes.Size(m)
 }
-func (m *ResData) XXX_DiscardUnknown() {
-	xxx_messageInfo_ResData.DiscardUnknown(m)
+func (m *HiRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_HiRes.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ResData proto.InternalMessageInfo
+var xxx_messageInfo_HiRes proto.InternalMessageInfo
 
-func (m *ResData) GetName() string {
+func (m *HiRes) GetName() string {
 	if m != nil {
 		return m.Name
+	}
+	return ""
+}
+
+type WriteReq struct {
+	Data                 string   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *WriteReq) Reset()         { *m = WriteReq{} }
+func (m *WriteReq) String() string { return proto.CompactTextString(m) }
+func (*WriteReq) ProtoMessage()    {}
+func (*WriteReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d092a8920edeec73, []int{2}
+}
+
+func (m *WriteReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_WriteReq.Unmarshal(m, b)
+}
+func (m *WriteReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_WriteReq.Marshal(b, m, deterministic)
+}
+func (m *WriteReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WriteReq.Merge(m, src)
+}
+func (m *WriteReq) XXX_Size() int {
+	return xxx_messageInfo_WriteReq.Size(m)
+}
+func (m *WriteReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_WriteReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_WriteReq proto.InternalMessageInfo
+
+func (m *WriteReq) GetData() string {
+	if m != nil {
+		return m.Data
+	}
+	return ""
+}
+
+type WriteRes struct {
+	Data                 string   `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *WriteRes) Reset()         { *m = WriteRes{} }
+func (m *WriteRes) String() string { return proto.CompactTextString(m) }
+func (*WriteRes) ProtoMessage()    {}
+func (*WriteRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d092a8920edeec73, []int{3}
+}
+
+func (m *WriteRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_WriteRes.Unmarshal(m, b)
+}
+func (m *WriteRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_WriteRes.Marshal(b, m, deterministic)
+}
+func (m *WriteRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_WriteRes.Merge(m, src)
+}
+func (m *WriteRes) XXX_Size() int {
+	return xxx_messageInfo_WriteRes.Size(m)
+}
+func (m *WriteRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_WriteRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_WriteRes proto.InternalMessageInfo
+
+func (m *WriteRes) GetData() string {
+	if m != nil {
+		return m.Data
 	}
 	return ""
 }
 
 func init() {
-	proto.RegisterType((*ReqData)(nil), "hidot.ReqData")
-	proto.RegisterType((*ResData)(nil), "hidot.ResData")
+	proto.RegisterType((*HiReq)(nil), "hidot.HiReq")
+	proto.RegisterType((*HiRes)(nil), "hidot.HiRes")
+	proto.RegisterType((*WriteReq)(nil), "hidot.WriteReq")
+	proto.RegisterType((*WriteRes)(nil), "hidot.WriteRes")
 }
 
 func init() { proto.RegisterFile("hi.proto", fileDescriptor_d092a8920edeec73) }
 
 var fileDescriptor_d092a8920edeec73 = []byte{
-	// 156 bytes of a gzipped FileDescriptorProto
+	// 191 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xc8, 0xc8, 0xd4, 0x2b,
-	0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0xcd, 0xc8, 0x4c, 0xc9, 0x2f, 0x51, 0x92, 0xe5, 0x62, 0x0f,
-	0x4a, 0x2d, 0x74, 0x49, 0x2c, 0x49, 0x14, 0x12, 0xe2, 0x62, 0xc9, 0x4b, 0xcc, 0x4d, 0x95, 0x60,
-	0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x02, 0xb3, 0x21, 0xd2, 0xc5, 0xb8, 0xa4, 0x8d, 0x74, 0xb9, 0x58,
-	0x3d, 0x32, 0x5d, 0xf2, 0x4b, 0x84, 0x54, 0xb8, 0x98, 0x3c, 0x32, 0x85, 0xf8, 0xf4, 0xc0, 0x86,
-	0xea, 0x41, 0x4d, 0x94, 0x42, 0xf0, 0xc1, 0x46, 0x38, 0x19, 0x45, 0x19, 0xa4, 0x67, 0x96, 0x64,
-	0x94, 0x26, 0xe9, 0x25, 0xe7, 0xe7, 0xea, 0x17, 0x27, 0x17, 0x55, 0x66, 0xe6, 0xa5, 0xe5, 0xeb,
-	0xa7, 0xe4, 0x97, 0xe8, 0x17, 0x27, 0xe6, 0x16, 0xe4, 0xa4, 0xea, 0xa7, 0x17, 0x15, 0x24, 0xeb,
-	0xa7, 0xe7, 0xc7, 0xe7, 0x97, 0x96, 0xe8, 0x83, 0xf5, 0x26, 0xb1, 0x81, 0x9d, 0x6b, 0x0c, 0x08,
-	0x00, 0x00, 0xff, 0xff, 0x34, 0xed, 0x81, 0xfe, 0xba, 0x00, 0x00, 0x00,
+	0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0xcd, 0xc8, 0x4c, 0xc9, 0x2f, 0x51, 0x92, 0xe6, 0x62, 0xf5,
+	0xc8, 0x0c, 0x4a, 0x2d, 0x14, 0x12, 0xe2, 0x62, 0xc9, 0x4b, 0xcc, 0x4d, 0x95, 0x60, 0x54, 0x60,
+	0xd4, 0xe0, 0x0c, 0x02, 0xb3, 0x61, 0x92, 0xc5, 0x58, 0x25, 0xe5, 0xb8, 0x38, 0xc2, 0x8b, 0x32,
+	0x4b, 0x52, 0xa1, 0x9a, 0x53, 0x12, 0x4b, 0x12, 0x61, 0xf2, 0x20, 0x36, 0x92, 0x7c, 0x31, 0x36,
+	0x79, 0xa3, 0x10, 0x90, 0xe1, 0x2e, 0xf9, 0x25, 0x42, 0x0a, 0x5c, 0x4c, 0x1e, 0x99, 0x42, 0x3c,
+	0x7a, 0x60, 0x07, 0xe9, 0x81, 0x5d, 0x23, 0x85, 0xcc, 0x2b, 0x16, 0xd2, 0xe4, 0x62, 0x05, 0x1b,
+	0x25, 0xc4, 0x0f, 0x15, 0x86, 0x59, 0x2c, 0x85, 0x26, 0x50, 0xec, 0x64, 0x14, 0x65, 0x90, 0x9e,
+	0x59, 0x92, 0x51, 0x9a, 0xa4, 0x97, 0x9c, 0x9f, 0xab, 0x5f, 0x9c, 0x5c, 0x54, 0x99, 0x99, 0x97,
+	0x96, 0xaf, 0x9f, 0x92, 0x5f, 0xa2, 0x5f, 0x9c, 0x98, 0x5b, 0x90, 0x93, 0xaa, 0x9f, 0x5e, 0x54,
+	0x90, 0xac, 0x9f, 0x9e, 0x1f, 0x9f, 0x5f, 0x5a, 0xa2, 0x0f, 0xd6, 0x9c, 0xc4, 0x06, 0x0e, 0x11,
+	0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff, 0x21, 0xca, 0x64, 0xed, 0x1d, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -135,7 +217,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type HiDotClient interface {
-	Hi(ctx context.Context, in *ReqData, opts ...grpc.CallOption) (*ResData, error)
+	Hi(ctx context.Context, in *HiReq, opts ...grpc.CallOption) (*HiRes, error)
+	Write(ctx context.Context, in *WriteReq, opts ...grpc.CallOption) (*WriteRes, error)
 }
 
 type hiDotClient struct {
@@ -146,9 +229,18 @@ func NewHiDotClient(cc *grpc.ClientConn) HiDotClient {
 	return &hiDotClient{cc}
 }
 
-func (c *hiDotClient) Hi(ctx context.Context, in *ReqData, opts ...grpc.CallOption) (*ResData, error) {
-	out := new(ResData)
+func (c *hiDotClient) Hi(ctx context.Context, in *HiReq, opts ...grpc.CallOption) (*HiRes, error) {
+	out := new(HiRes)
 	err := c.cc.Invoke(ctx, "/hidot.HiDot/Hi", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hiDotClient) Write(ctx context.Context, in *WriteReq, opts ...grpc.CallOption) (*WriteRes, error) {
+	out := new(WriteRes)
+	err := c.cc.Invoke(ctx, "/hidot.HiDot/Write", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -157,15 +249,19 @@ func (c *hiDotClient) Hi(ctx context.Context, in *ReqData, opts ...grpc.CallOpti
 
 // HiDotServer is the server API for HiDot service.
 type HiDotServer interface {
-	Hi(context.Context, *ReqData) (*ResData, error)
+	Hi(context.Context, *HiReq) (*HiRes, error)
+	Write(context.Context, *WriteReq) (*WriteRes, error)
 }
 
 // UnimplementedHiDotServer can be embedded to have forward compatible implementations.
 type UnimplementedHiDotServer struct {
 }
 
-func (*UnimplementedHiDotServer) Hi(ctx context.Context, req *ReqData) (*ResData, error) {
+func (*UnimplementedHiDotServer) Hi(ctx context.Context, req *HiReq) (*HiRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Hi not implemented")
+}
+func (*UnimplementedHiDotServer) Write(ctx context.Context, req *WriteReq) (*WriteRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Write not implemented")
 }
 
 func RegisterHiDotServer(s *grpc.Server, srv HiDotServer) {
@@ -173,7 +269,7 @@ func RegisterHiDotServer(s *grpc.Server, srv HiDotServer) {
 }
 
 func _HiDot_Hi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReqData)
+	in := new(HiReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -185,7 +281,25 @@ func _HiDot_Hi_Handler(srv interface{}, ctx context.Context, dec func(interface{
 		FullMethod: "/hidot.HiDot/Hi",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HiDotServer).Hi(ctx, req.(*ReqData))
+		return srv.(HiDotServer).Hi(ctx, req.(*HiReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HiDot_Write_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WriteReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HiDotServer).Write(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/hidot.HiDot/Write",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HiDotServer).Write(ctx, req.(*WriteReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -197,6 +311,10 @@ var _HiDot_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Hi",
 			Handler:    _HiDot_Hi_Handler,
+		},
+		{
+			MethodName: "Write",
+			Handler:    _HiDot_Write_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

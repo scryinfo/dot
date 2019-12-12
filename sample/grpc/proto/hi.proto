@@ -3,14 +3,24 @@ syntax = "proto3";
 package hidot;
 option go_package = "github.com/scryinfo/dot/sample/grpc/go_out/hidot";
 
-message ReqData {
+message HiReq {
     string name = 1;
 }
 
-message ResData {
+message HiRes {
     string name = 1;
 }
+
+message WriteReq {
+    string data = 1;
+}
+
+message WriteRes {
+    string data = 1;
+}
+
 
 service HiDot {
-    rpc Hi(ReqData) returns(ResData);
+    rpc Hi (HiReq) returns (HiRes);
+    rpc Write (WriteReq) returns (WriteRes);
 }
