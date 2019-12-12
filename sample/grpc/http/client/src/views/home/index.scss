@@ -1,0 +1,28 @@
+
+.can-click {
+  transition: all 100ms ease;
+
+  &:hover {
+    filter: drop-shadow(0.3125rem 0.3125rem 0.625rem #387ad3);
+    transform: scale(1.4);
+  }
+
+  &:active, &:focus {
+    filter: drop-shadow(0.3125rem 0.3125rem 0.625rem #387ad3);
+    transform: scale(1.2);
+  }
+}
+
+.can-click-s {
+  transition: all 100ms ease;
+
+  &:hover {
+    filter: drop-shadow(0.3125rem 0.3125rem 0.625rem #387ad3);
+    transform: scale(1.2);
+  }
+
+  &:active, &:focus {
+    filter: drop-shadow(0.3125rem 0.3125rem 0.625rem #387ad3);
+    transform: scale(1.1);
+  }
+}

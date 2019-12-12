@@ -45,9 +45,15 @@ func newHiServer(conf interface{}) (dot.Dot, error) {
 	return d, err
 }
 
-func (serv *HiServer) Hi(ctx context.Context, req *hidot.ReqData) (*hidot.ResData, error) {
+func (serv *HiServer) Hi(ctx context.Context, req *hidot.HiReq) (*hidot.HiRes, error) {
 	dot.Logger().Infoln("HiServer", zap.String(serv.conf.Name, req.Name))
-	res := &hidot.ResData{Name: serv.conf.Name}
+	res := &hidot.HiRes{Name: serv.conf.Name}
+	return res, nil
+}
+
+func (serv *HiServer) Write(ctx context.Context, req *hidot.WriteReq) (*hidot.WriteRes, error) {
+	dot.Logger().Infoln("HiServer", zap.String(serv.conf.Name, req.Data))
+	res := &hidot.WriteRes{Data: "Return : " + req.Data}
 	return res, nil
 }
 

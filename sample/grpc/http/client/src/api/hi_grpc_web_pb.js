@@ -89,27 +89,27 @@ proto.hidot.HiDotPromiseClient =
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.hidot.ReqData,
- *   !proto.hidot.ResData>}
+ *   !proto.hidot.HiReq,
+ *   !proto.hidot.HiRes>}
  */
 const methodInfo_HiDot_Hi = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.hidot.ResData,
-  /** @param {!proto.hidot.ReqData} request */
+  proto.hidot.HiRes,
+  /** @param {!proto.hidot.HiReq} request */
   function(request) {
     return request.serializeBinary();
   },
-  proto.hidot.ResData.deserializeBinary
+  proto.hidot.HiRes.deserializeBinary
 );
 
 
 /**
- * @param {!proto.hidot.ReqData} request The
+ * @param {!proto.hidot.HiReq} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.hidot.ResData)}
+ * @param {function(?grpc.web.Error, ?proto.hidot.HiRes)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.hidot.ResData>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.hidot.HiRes>|undefined}
  *     The XHR Node Readable Stream
  */
 proto.hidot.HiDotClient.prototype.hi =
@@ -124,11 +124,11 @@ proto.hidot.HiDotClient.prototype.hi =
 
 
 /**
- * @param {!proto.hidot.ReqData} request The
+ * @param {!proto.hidot.HiReq} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.hidot.ResData>}
+ * @return {!Promise<!proto.hidot.HiRes>}
  *     A native promise that resolves to the response
  */
 proto.hidot.HiDotPromiseClient.prototype.hi =
@@ -138,6 +138,61 @@ proto.hidot.HiDotPromiseClient.prototype.hi =
       request,
       metadata || {},
       methodInfo_HiDot_Hi);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.hidot.WriteReq,
+ *   !proto.hidot.WriteRes>}
+ */
+const methodInfo_HiDot_Write = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.hidot.WriteRes,
+  /** @param {!proto.hidot.WriteReq} request */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.hidot.WriteRes.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.hidot.WriteReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.hidot.WriteRes)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.hidot.WriteRes>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.hidot.HiDotClient.prototype.write =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/hidot.HiDot/Write',
+      request,
+      metadata || {},
+      methodInfo_HiDot_Write,
+      callback);
+};
+
+
+/**
+ * @param {!proto.hidot.WriteReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.hidot.WriteRes>}
+ *     A native promise that resolves to the response
+ */
+proto.hidot.HiDotPromiseClient.prototype.write =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/hidot.HiDot/Write',
+      request,
+      metadata || {},
+      methodInfo_HiDot_Write);
 };
 
 
