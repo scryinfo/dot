@@ -95,19 +95,22 @@ func {{$.Name}}ConfigTypeLive() *dot.ConfigTypeLives {
 `
 
 type tData struct {
-	Name    string
-	Id      string
-	Config  bool //default true
-	Package string
-
+	Name      string
+	Id        string
+	Config    bool //default true
+	Package   string
 	BackQuote string
 }
 
+var help bool = false
+
 func parms(data *tData) {
-	flag.StringVar(&data.Name, "name", "AnyName", "")
-	flag.StringVar(&data.Id, "id", "", "")
-	flag.BoolVar(&data.Config, "config", true, "")
-	flag.StringVar(&data.Package, "package", "dot", "")
+	flag.StringVar(&data.Name, "name", "AnyName", "struct name")
+	flag.StringVar(&data.Id, "id", "", "dot id, if not set, will make a new")
+	//flag.BoolVar(&data.Config, "config", true, "")
+	flag.StringVar(&data.Package, "package", "dot", "package name")
+
+	flag.BoolVar(&help, "h", false, "")
 
 	flag.Parse()
 	if len(data.Id) < 1 {
@@ -119,6 +122,11 @@ func main() {
 	log.Println("run dotcli")
 	data := &tData{BackQuote: "`"}
 	parms(data)
+
+	if help {
+		flag.PrintDefaults()
+		return
+	}
 
 	src := gmodel(data)
 
