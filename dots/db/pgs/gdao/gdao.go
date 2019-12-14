@@ -167,7 +167,6 @@ import (
 	"github.com/scryinfo/dot/dots/db/pgs"
 	"github.com/scryinfo/scryg/sutils/uuid"
 	"{{$.ImportModelPkgName}}"
-	"go.uber.org/zap"
 )
 
 const {{$.DaoName}}TypeId = "{{$.Id}}"
@@ -201,7 +200,7 @@ func {{$.DaoName}}TypeLives() []*dot.TypeLives {
 	return lives
 }
 
-// if find nothing, return nil
+// if find nothing, return pg.ErrNoRows
 func (c *{{$.DaoName}}) GetById(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	m = &{{$.ModelPkgName}}.{{$.TypeName}}{Id: id,}
 	err = conn.Model(m).WherePK().Select()
@@ -211,7 +210,7 @@ func (c *{{$.DaoName}}) GetById(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}
 	return
 }
 
-// if find nothing, return nil
+// if find nothing, return pg.ErrNoRows
 func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).Select()
@@ -224,7 +223,7 @@ func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interfa
 	return
 }
 
-// if find nothing, return nil
+// if find nothing, return pg.ErrNoRows
 func (c *{{$.DaoName}}) List(conn *pg.Conn) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	err = conn.Model(&ms).Select()
 	if err != nil {//be sure
@@ -242,12 +241,12 @@ func (c *{{$.DaoName}}) Count(conn *pg.Conn, condition string, params ...interfa
 	return
 }
 
-// if find nothing, return nil
-func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, limit int, offset int, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+// if find nothing, return pg.ErrNoRows
+func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, pageSize int, page int, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	if len(condition) < 1 {
-		err = conn.Model(&ms).Limit(limit).Offset(offset).Select()
+		err = conn.Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).Select()
 	}else {
-		err = conn.Model(&ms).Where(condition, params...).Limit(limit).Offset(offset).Select()
+		err = conn.Model(&ms).Where(condition, params...).Limit(pageSize).Offset((page - 1) * pageSize).Select()
 	}
 	if err != nil { //be sure
 		ms = nil
@@ -255,7 +254,7 @@ func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, limit int, offset int, conditio
 	return
 }
 
-// if find nothing, return nil
+// if find nothing, return pg.ErrNoRows
 func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
 	if len(condition) < 1 {
@@ -263,13 +262,13 @@ func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...inte
 	} else {
 		err = conn.Model(m).Where(condition, params...).First()
 	}
-	if err != nil {
+	if err != nil {//be sure
 		m = nil
 	}
 	return
 }
 
-//if insert nothing, then return nil
+//if insert nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) Insert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	if len(m.Id) < 1 {
 		m.Id = uuid.GetUuid()
@@ -279,14 +278,13 @@ func (c *{{$.DaoName}}) Insert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName
 	err = conn.Insert(m)
 	return
 }
-//if insert nothing, then return nil
+//if insert nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) InsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) ( mnew *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	if len(m.Id) < 1 {
 		m.Id = uuid.GetUuid()
 	}
 	m.CreateTime = time.Now().Unix()
 	m.UpdateTime = m.CreateTime
-
 
 	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
 	_, err = conn.Model(m).Returning("*").Insert(mnew)
@@ -297,7 +295,7 @@ func (c *{{$.DaoName}}) InsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 }
 
 
-//if update nothing, then return nil
+//if update nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
     m.UpdateTime = time.Now().Unix()
 	if len(m.Id) < 1 {
@@ -314,7 +312,7 @@ func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName
 	return err
 }
 
-//if update nothing, then return nil
+//if update nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) UpsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) ( mnew *{{$.ModelPkgName}}.{{$.TypeName}},err error) {
 	m.UpdateTime = time.Now().Unix()
 	if len(m.Id) < 1 {
@@ -335,14 +333,14 @@ func (c *{{$.DaoName}}) UpsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 	}
 	return
 }
-//if update nothing, then return nil
+//if update nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) Update(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	m.UpdateTime = time.Now().Unix()
 	err = conn.Update(m)
 	return
 }
 
-//if update nothing, then return nil
+//if update nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) UpdateReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (mnew *{{$.ModelPkgName}}.{{$.TypeName}},  err error) {
 	m.UpdateTime = time.Now().Unix()
 	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
@@ -353,13 +351,39 @@ func (c *{{$.DaoName}}) UpdateReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 	return
 }
 
-//if delete nothing, then return nil
+//if delete nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) Delete(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	err = conn.Delete(m)
 	return
 }
 
-//if delete nothing, then return nil
+//if delete nothing, then return pg.ErrNoRows
+func (c *{{$.DaoName}}) DeleteById(conn *pg.Conn, id string) (err error) {
+	_, err = conn.Model((*{{$.ModelPkgName}}.{{$.TypeName}})(nil)).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" = ?", id).Delete()
+	return
+}
+
+//if delete nothing, then return pg.ErrNoRows
+func (c *{{$.DaoName}}) DeleteByIds(conn *pg.Conn, ids []string, oneMax int) (err error) {
+	m := (*{{$.ModelPkgName}}.{{$.TypeName}})(nil)
+	max := oneMax
+	times := len(ids)/max;
+	for i := 1; i < times; i++ {
+		oneIds := ids[(i-1) * max:i * max -1]
+		_, err = conn.Model(m).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" in (?)", pg.In(oneIds)).Delete()
+		if err != nil {
+			return
+		}
+	}
+
+	if max * times < len(ids) {
+		oneIds := ids[max * times:]
+		_, err = conn.Model(m).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" in (?)", pg.In(oneIds)).Delete()
+	}
+	return 
+}
+
+//if delete nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) DeleteReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (mnew *{{$.ModelPkgName}}.{{$.TypeName}},err error) {
 	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
 	_, err = conn.Model(m).WherePK().Returning("*").Delete(mnew)
