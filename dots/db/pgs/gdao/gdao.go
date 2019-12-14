@@ -205,11 +205,7 @@ func {{$.DaoName}}TypeLives() []*dot.TypeLives {
 func (c *{{$.DaoName}}) GetById(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	m = &{{$.ModelPkgName}}.{{$.TypeName}}{Id: id,}
 	err = conn.Model(m).WherePK().Select()
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-		m = nil
-	}else if err != nil {
+	if err != nil {
 		m = nil
 	}
 	return
@@ -222,11 +218,7 @@ func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interfa
 	} else {
 		err = conn.Model(&ms).Where(condition, params...).Select()
 	}
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-		ms = nil
-	}else if err != nil { //be sure
+	if err != nil { //be sure
 		ms = nil
 	}
 	return
@@ -235,11 +227,7 @@ func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interfa
 // if find nothing, return nil
 func (c *{{$.DaoName}}) List(conn *pg.Conn) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	err = conn.Model(&ms).Select()
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-		ms = nil
-	}else if err != nil {//be sure
+	if err != nil {//be sure
 		ms = nil
 	}
 	return
@@ -261,11 +249,7 @@ func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, limit int, offset int, conditio
 	}else {
 		err = conn.Model(&ms).Where(condition, params...).Limit(limit).Offset(offset).Select()
 	}
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-		ms = nil
-	}else if err != nil { //be sure
+	if err != nil { //be sure
 		ms = nil
 	}
 	return
@@ -279,11 +263,7 @@ func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...inte
 	} else {
 		err = conn.Model(m).Where(condition, params...).First()
 	}
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-		m = nil
-	}else if err != nil {
+	if err != nil {
 		m = nil
 	}
 	return
@@ -297,10 +277,6 @@ func (c *{{$.DaoName}}) Insert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName
 	m.CreateTime = time.Now().Unix()
 	m.UpdateTime = m.CreateTime
 	err = conn.Insert(m)
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-	}
 	return
 }
 //if insert nothing, then return nil
@@ -314,11 +290,7 @@ func (c *{{$.DaoName}}) InsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 
 	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
 	_, err = conn.Model(m).Returning("*").Insert(mnew)
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		mnew = nil
-		err = nil
-	}else if err != nil{
+	if err != nil{
 		mnew = nil
 	}
 	return
@@ -339,10 +311,6 @@ func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName
 		om.Set(it)
 	}
 	_, err = om.Insert()
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-	}
 	return err
 }
 
@@ -362,11 +330,7 @@ func (c *{{$.DaoName}}) UpsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 	}
 	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
 	_, err = om.Returning("*").Insert(mnew)
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		mnew = nil
-		err = nil
-	}else if err != nil {
+	if err != nil {
 		mnew = nil
 	}
 	return
@@ -375,10 +339,6 @@ func (c *{{$.DaoName}}) UpsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 func (c *{{$.DaoName}}) Update(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	m.UpdateTime = time.Now().Unix()
 	err = conn.Update(m)
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-	}
 	return
 }
 
@@ -387,11 +347,7 @@ func (c *{{$.DaoName}}) UpdateReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 	m.UpdateTime = time.Now().Unix()
 	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
 	_, err = conn.Model(m).WherePK().Returning("*").Update(mnew)
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-		mnew = nil
-	}else if err != nil {
+	if err != nil {
 		mnew = nil
 	}
 	return
@@ -400,10 +356,6 @@ func (c *{{$.DaoName}}) UpdateReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 //if delete nothing, then return nil
 func (c *{{$.DaoName}}) Delete(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	err = conn.Delete(m)
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-	}
 	return
 }
 
@@ -411,11 +363,7 @@ func (c *{{$.DaoName}}) Delete(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName
 func (c *{{$.DaoName}}) DeleteReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (mnew *{{$.ModelPkgName}}.{{$.TypeName}},err error) {
 	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
 	_, err = conn.Model(m).WherePK().Returning("*").Delete(mnew)
-	if err == pg.ErrNoRows {
-		dot.Logger().Debugln("{{$.DaoName}}", zap.Error(err))
-		err = nil
-		mnew = nil
-	}else if err != nil {
+	if err != nil {
 		mnew = nil
 	}
 	return
