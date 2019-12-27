@@ -3,7 +3,7 @@ module github.com/scryinfo/dot/dots/grpc
 go 1.12
 
 require (
-	github.com/gin-gonic/gin v1.4.0
+	github.com/gin-gonic/gin v1.5.0
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/improbable-eng/grpc-web v0.9.6
 	github.com/pkg/errors v0.8.1
