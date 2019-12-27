@@ -48,7 +48,7 @@ func TypeLiveRouter() []*dot.TypeLives {
 		}},
 		Lives: []dot.Live{
 			{
-				LiveId:    UiTypeId,
+				LiveId:    RouterTypeId,
 				RelyLives: map[string]dot.LiveId{"Engine_": EngineLiveId},
 			},
 		},
