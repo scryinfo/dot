@@ -34,7 +34,7 @@ func main() {
 			logger := dot.Logger()
 			for i := 0; i < 1000; i++ {
 				name := fmt.Sprintf("client: %d", i)
-				req, err := hiclient.HiClient().Hi(context.Background(), &hidot.ReqData{Name: name})
+				req, err := hiclient.HiClient().Hi(context.Background(), &hidot.HiReq{Name: name})
 				if err != nil {
 					logger.Infoln(err.Error())
 				} else {
