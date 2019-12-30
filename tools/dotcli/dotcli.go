@@ -108,13 +108,23 @@ func parms(data *tData) {
 	flag.StringVar(&data.Name, "name", "AnyName", "struct name")
 	flag.StringVar(&data.Id, "id", "", "dot id, if not set, will make a new")
 	//flag.BoolVar(&data.Config, "config", true, "")
-	flag.StringVar(&data.Package, "package", "dot", "package name")
+	flag.StringVar(&data.Package, "package", "", "package name")
 
 	flag.BoolVar(&help, "h", false, "")
 
 	flag.Parse()
 	if len(data.Id) < 1 {
 		data.Id = uuid.GetUuid()
+	}
+	if len(data.Package) < 1 {
+		curPath, err := os.Getwd()
+		if err == nil {
+			data.Package = filepath.Base(curPath)
+		}
+	}
+
+	if len(data.Package) < 1 {
+		data.Package = "dot"
 	}
 }
 
@@ -128,7 +138,7 @@ func main() {
 		return
 	}
 
-	src := gmodel(data)
+	src := gdao(data)
 
 	outputName := ""
 	{
@@ -149,7 +159,7 @@ func main() {
 	log.Println("finished dotcli")
 }
 
-func gmodel(data *tData) []byte {
+func gdao(data *tData) []byte {
 
 	temp := templateStr
 	var src []byte = nil
