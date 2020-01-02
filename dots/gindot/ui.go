@@ -7,6 +7,7 @@ import (
 	"github.com/scryinfo/scryg/sutils/sfile"
 	"go.uber.org/zap"
 	"os"
+	"path"
 	"path/filepath"
 )
 
@@ -35,6 +36,9 @@ type Ui struct {
 
 func (c *Ui) Injected(l dot.Line) error {
 	c.router = c.Engine_.GinEngine().Group(c.config.UrlRelativePath)
+	c.router.Use(func(ctx *gin.Context) {
+		ctx.Handler()
+	})
 	return nil
 }
 
@@ -46,7 +50,14 @@ func (c *Ui) Start(ignore bool) error {
 		if len(res) > 0 {
 			logger.Debugln("Ui", zap.String("", res))
 			if sfile.IsDir(res) {
-				c.router.Static(it.RelativePath, res)
+				//urlPrePath := path.Join(c.router.BasePath(), it.RelativePath)
+				//if it.RelativePath[len(it.RelativePath) -1] == '/' && urlPrePath[len(urlPrePath) -1] != '/' {
+				//	urlPrePath += "/"
+				//}
+				handler := NewFileServer(res, "filepath")
+				urlPattern := path.Join(it.RelativePath, "/*filepath")
+				c.router.GET(urlPattern, handler.Handler)
+				c.router.HEAD(urlPattern, handler.Handler)
 			} else if sfile.IsFile(res) {
 				c.router.StaticFile(it.RelativePath, res)
 			} else {
