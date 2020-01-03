@@ -5,6 +5,7 @@ package gindot
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -130,7 +131,10 @@ func (c *Engine) RouterGet(h interface{}, pre string) {
 }
 
 func (c *Engine) startServer() {
-	llog := dot.Logger() //do not use the c.loggerOnlyGin, it only for gin
+	logger := dot.Logger() //do not use the c.loggerOnlyGin, it only for gin
+	if logger.GetLevel() != zap.DebugLevel {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	if len(c.config.KeyFile) > 0 && len(c.config.PemFile) > 0 {
 		keyFile := c.config.KeyFile
 		pemFile := c.config.PemFile
@@ -157,17 +161,17 @@ func (c *Engine) startServer() {
 			if sfile.ExistFile(pemFile) && sfile.ExistFile(keyFile) {
 				err := c.ginEngine.RunTLS(c.config.Addr, pemFile, keyFile)
 				if err != nil {
-					llog.Errorln(err.Error())
+					logger.Errorln(err.Error())
 				}
 			} else {
-				llog.Errorln("the keyfile or pemfile do not exist")
+				logger.Errorln("the keyfile or pemfile do not exist")
 				return
 			}
 		}
 	} else {
 		err := c.ginEngine.Run(c.config.Addr)
 		if err != nil {
-			llog.Errorln(err.Error())
+			logger.Errorln(err.Error())
 		}
 	}
 }
