@@ -20,6 +20,8 @@ type configUi struct {
 		RelativePath string `json:"relativePath"`
 		Value        string `json:"value"` // the static resource of path, it is file or folder
 	} `json:"paths"`
+	NoCompress bool       `json:"noCompress"`
+	Encodings  []Encoding `json:"encodings"` //default are br-->gzip
 }
 
 //Ui  add static resource into gin
@@ -50,14 +52,21 @@ func (c *Ui) Start(ignore bool) error {
 		if len(res) > 0 {
 			logger.Debugln("Ui", zap.String("", res))
 			if sfile.IsDir(res) {
-				//urlPrePath := path.Join(c.router.BasePath(), it.RelativePath)
-				//if it.RelativePath[len(it.RelativePath) -1] == '/' && urlPrePath[len(urlPrePath) -1] != '/' {
-				//	urlPrePath += "/"
-				//}
-				handler := NewFileServer(res, "filepath")
-				urlPattern := path.Join(it.RelativePath, "/*filepath")
-				c.router.GET(urlPattern, handler.Handler)
-				c.router.HEAD(urlPattern, handler.Handler)
+				if c.config.NoCompress {
+					c.router.Static(it.RelativePath, res)
+				} else {
+					//urlPrePath := path.Join(c.router.BasePath(), it.RelativePath)
+					//if it.RelativePath[len(it.RelativePath) -1] == '/' && urlPrePath[len(urlPrePath) -1] != '/' {
+					//	urlPrePath += "/"
+					//}
+					if len(c.config.Encodings) < 1 {
+						c.config.Encodings = supportedEncodings[:]
+					}
+					handler := NewFileServer(res, "filepath", c.config.Encodings)
+					urlPattern := path.Join(it.RelativePath, "/*filepath")
+					c.router.GET(urlPattern, handler.Handler)
+					c.router.HEAD(urlPattern, handler.Handler)
+				}
 			} else if sfile.IsFile(res) {
 				c.router.StaticFile(it.RelativePath, res)
 			} else {

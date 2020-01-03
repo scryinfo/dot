@@ -39,14 +39,19 @@ type FileServer struct {
 	fs        http.FileSystem
 	resPath   string
 	paramName string
+	encodings encodingByPreference
 }
 
-func NewFileServer(resPath string, paramName string) *FileServer {
+func NewFileServer(resPath string, paramName string, encodings []Encoding) *FileServer {
 	fs := http.Dir(resPath)
+	if len(encodings) < 1 {
+		encodings = supportedEncodings[:]
+	}
 	return &FileServer{
 		fs:        fs,
 		resPath:   resPath,
 		paramName: paramName,
+		encodings: encodings,
 	}
 }
 
@@ -73,42 +78,42 @@ func (c *FileServer) Handler(ctx *gin.Context) {
 }
 
 // Encoding represents an Accept-Encoding. All of these fields are pre-populated
-// in the supportedEncodings variable, except the clientPreference which is updated
+// in the supportedEncodings variable, except the ClientPreference which is updated
 // (by copying a value from supportedEncodings) when examining client headers.
-type encoding struct {
-	name             string  // the encoding name
-	extension        string  // the file extension (including a leading dot)
-	clientPreference float64 // the client's preference
-	serverPreference int     // the server's preference
+type Encoding struct {
+	Name             string  `json:"name"`             // the Encoding Name
+	Extension        string  `json:"extension"`        // the file Extension (including a leading dot)
+	ClientPreference float64 `json:"clientPreference"` // the client's preference
+	ServerPreference int     `json:"serverPreference"` // the server's preference
 }
 
-// Helper type to sort encodings, using clientPreference first, and then
-// serverPreference as a tie breaker. This sorts in *DESCENDING* order, rather
+// Helper type to sort encodings, using ClientPreference first, and then
+// ServerPreference as a tie breaker. This sorts in *DESCENDING* order, rather
 // than the usual ascending order.
-type encodingByPreference []encoding
+type encodingByPreference []Encoding
 
 // Implement the sort.Interface interface
 func (e encodingByPreference) Len() int { return len(e) }
 func (e encodingByPreference) Less(i, j int) bool {
-	if e[i].clientPreference == e[j].clientPreference {
-		return e[i].serverPreference > e[j].serverPreference
+	if e[i].ClientPreference == e[j].ClientPreference {
+		return e[i].ServerPreference > e[j].ServerPreference
 	}
-	return e[i].clientPreference > e[j].clientPreference
+	return e[i].ClientPreference > e[j].ClientPreference
 }
 func (e encodingByPreference) Swap(i, j int) { e[i], e[j] = e[j], e[i] }
 
-// Supported encodings. Higher server preference means the encoding will be when
+// Supported encodings. Higher server preference means the Encoding will be when
 // the client doesn't have an explicit preference.
-var supportedEncodings = [...]encoding{
+var supportedEncodings = [...]Encoding{
 	{
-		name:             "gzip",
-		extension:        ".gz",
-		serverPreference: 1,
+		Name:             "gzip",
+		Extension:        ".gz",
+		ServerPreference: 1,
 	},
 	{
-		name:             "br",
-		extension:        ".br",
-		serverPreference: 2,
+		Name:             "br",
+		Extension:        ".br",
+		ServerPreference: 2,
 	},
 }
 
@@ -130,14 +135,14 @@ func (c *FileServer) openAndStat(path string) (http.File, os.FileInfo, error) {
 	return file, info, nil
 }
 
-// Build a []encoding based on the Accept-Encoding header supplied by the
+// Build a []Encoding based on the Accept-Encoding header supplied by the
 // client. The returned list will be sorted from most-preferred to
 // least-preferred.
-func acceptable(r *http.Request) []encoding {
+func (c *FileServer) acceptable(r *http.Request) []Encoding {
 	// list of acceptable encodings, as provided by the client
-	acceptEncodings := make([]encoding, 0, len(supportedEncodings))
+	acceptEncodings := make([]Encoding, 0, len(c.encodings))
 
-	// the quality of the * encoding; this will be -1 if not sent by client
+	// the quality of the * Encoding; this will be -1 if not sent by client
 	starQuality := -1.
 
 	// encodings we've already seen (used to handle duplicates and *)
@@ -153,10 +158,10 @@ func acceptable(r *http.Request) []encoding {
 			starQuality = aspec.Q
 			continue
 		}
-		for _, known := range supportedEncodings {
-			if aspec.Value == known.name && aspec.Q != 0 {
+		for _, known := range c.encodings {
+			if aspec.Value == known.Name && aspec.Q != 0 {
 				enc := known
-				enc.clientPreference = aspec.Q
+				enc.ClientPreference = aspec.Q
 				acceptEncodings = append(acceptEncodings, enc)
 				break
 			}
@@ -164,18 +169,18 @@ func acceptable(r *http.Request) []encoding {
 	}
 
 	// If the client sent Accept: *, add all our extra known encodings. Use
-	// the quality of * as the client quality for the encoding.
+	// the quality of * as the client quality for the Encoding.
 	if starQuality != -1. {
-		for _, known := range supportedEncodings {
-			if _, seen := seenEncodings[known.name]; !seen {
+		for _, known := range c.encodings {
+			if _, seen := seenEncodings[known.Name]; !seen {
 				enc := known
-				enc.clientPreference = starQuality
+				enc.ClientPreference = starQuality
 				acceptEncodings = append(acceptEncodings, enc)
 			}
 		}
 	}
 
-	// sort the encoding based on client/server preference
+	// sort the Encoding based on client/server preference
 	sort.Sort(encodingByPreference(acceptEncodings))
 	return acceptEncodings
 }
@@ -193,10 +198,10 @@ const (
 // the request, the error field will be non-nil.
 func (c *FileServer) findBestFile(w http.ResponseWriter, r *http.Request, fpath string) (http.File, os.FileInfo, error) {
 	// find the best matching file
-	for _, enc := range acceptable(r) {
-		if file, info, err := c.openAndStat(fpath + enc.extension); err == nil {
+	for _, enc := range c.acceptable(r) {
+		if file, info, err := c.openAndStat(fpath + enc.Extension); err == nil {
 			wHeader := w.Header()
-			wHeader[contentEncodingHeader] = []string{enc.name}
+			wHeader[contentEncodingHeader] = []string{enc.Name}
 			wHeader.Add(varyHeader, acceptEncodingHeader)
 
 			if len(r.Header[rangeHeader]) == 0 {
@@ -208,7 +213,7 @@ func (c *FileServer) findBestFile(w http.ResponseWriter, r *http.Request, fpath 
 		}
 	}
 
-	// if nothing found, try the base file with no content-encoding
+	// if nothing found, try the base file with no content-Encoding
 	return c.openAndStat(fpath)
 }
 
