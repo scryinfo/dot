@@ -90,7 +90,7 @@ func (s *WebSocket) GET(relativePath string, grpcServer *grpc.Server) {
 			return
 		}
 
-		ctx.String(http.StatusForbidden, "Not valid gRPC-WebSocket request!")
+		ctx.String(http.StatusForbidden, "Not a valid gRPC-WebSocket request!")
 	}
 
 	// registers the new request handle (without any middleware) with the given path and GET method with gin.Engine.
