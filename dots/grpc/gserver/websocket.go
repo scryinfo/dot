@@ -34,14 +34,14 @@ func WebSocketTypeLives() []*dot.TypeLives {
 			Meta: dot.Metadata{TypeId: WebSocketTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
 				return &WebSocket{}, nil
 			}},
-			Lives: []dot.Live{
-				{
-					TypeId: WebSocketTypeId,
-					RelyLives: map[string]dot.LiveId{
-						"GinEngine": gindot.EngineTypeId,
-					},
-				},
-			},
+			//Lives: []dot.Live{
+			//	{
+			//		TypeId: WebSocketTypeId,
+			//		RelyLives: map[string]dot.LiveId{
+			//			"GinEngine": gindot.EngineTypeId,
+			//		},
+			//	},
+			//},
 		}
 	}
 	return []*dot.TypeLives{websocktTypeLive(), gindot.TypeLiveGinDot()}
