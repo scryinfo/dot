@@ -67,7 +67,7 @@ type rrPicker struct {
 	next int
 }
 
-func (c *rrPicker) Pick(ctx context.Context, opts balancer.PickOptions) (balancer.SubConn, func(balancer.DoneInfo), error) {
+func (c *rrPicker) Pick(ctx context.Context, opts balancer.PickInfo) (balancer.SubConn, func(balancer.DoneInfo), error) {
 	c.mu.Lock()
 	sc := c.subConns[c.next]
 	c.next = (c.next + 1) % len(c.subConns)

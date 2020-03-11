@@ -82,3 +82,5 @@
 /sample/grpc/http/server/server.exe
 /dots/https/go.sum
 /tools/dotcli/before.log
+/tools/dotcli/go.sum
+/tools/dotcli/dotcli.exe

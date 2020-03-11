@@ -1,3 +1,3 @@
 module github.com/scryinfo/dot/dots/db/tools
 
-go 1.13
+go 1.14
