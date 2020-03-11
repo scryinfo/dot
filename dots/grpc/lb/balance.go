@@ -4,6 +4,7 @@
 package lb
 
 import (
+	"google.golang.org/grpc/balancer/roundrobin"
 	"strings"
 
 	"google.golang.org/grpc"
@@ -29,9 +30,9 @@ func Balance(bname string) grpc.DialOption {
 }
 
 func BalancerRound() grpc.DialOption { //todo grpc realization balance management use global variables, and do not consider multi thread condition, this is a temporary point
-	return grpc.WithBalancerName(Round)
+	return grpc.WithDefaultServiceConfig(roundrobin.Name)
 }
 
 func BalancerFirst() grpc.DialOption { //todo grpc realization balance management use global variables, and do not consider multi thread condition, this is a temporary point
-	return grpc.WithBalancerName(grpc.PickFirstBalancerName)
+	return grpc.WithDefaultServiceConfig(grpc.PickFirstBalancerName)
 }

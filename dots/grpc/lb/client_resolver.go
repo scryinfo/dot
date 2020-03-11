@@ -20,7 +20,7 @@ func NewClientBuilder(schema string, serviceAddrs map[string][]string) resolver.
 	}
 }
 
-func (c *clientBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error) {
+func (c *clientBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 	r := &clientResolver{
 		target:     target,
 		conn:       cc,
@@ -37,7 +37,7 @@ type clientResolver struct {
 	addrsStore map[string][]string
 }
 
-func (c clientResolver) ResolveNow(resolver.ResolveNowOption) {
+func (c clientResolver) ResolveNow(resolver.ResolveNowOptions) {
 }
 
 func (c clientResolver) Close() {

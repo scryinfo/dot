@@ -1,19 +1,19 @@
 module github.com/scryinfo/dot/dots/grpc
 
-go 1.12
+go 1.14
 
 require (
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
 	github.com/gin-gonic/gin v1.5.0
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/improbable-eng/grpc-web v0.12.0
-	github.com/pkg/errors v0.8.1
+	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/scryinfo/dot v0.1.3
 	github.com/scryinfo/dot/dots/gindot v0.0.0-20200103003315-800d69a0a8b6
-	go.uber.org/zap v1.13.0
-	golang.org/x/net v0.0.0-20190923162816-aa69164e4478
-	google.golang.org/grpc v1.26.0
+	go.uber.org/zap v1.14.0
+	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
+	google.golang.org/grpc v1.28.0
 )
 
 replace (
