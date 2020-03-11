@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/go-pg/pg/v9 v9.1.3
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/scryinfo/dot v0.1.3
+	github.com/scryinfo/dot v0.1.4
 	github.com/scryinfo/scryg v0.1.3
 	github.com/vmihailenco/msgpack/v4 v4.3.9 // indirect
 	go.uber.org/multierr v1.5.0 // indirect

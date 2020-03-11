@@ -9,9 +9,9 @@ require (
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/pkg/errors v0.9.1
-	github.com/scryinfo/dot v0.1.3
+	github.com/scryinfo/dot v0.1.4
 	go.uber.org/zap v1.14.0
 	google.golang.org/appengine v1.6.5 // indirect
 )
 
-replace github.com/scryinfo/dot v0.1.3 => ../../../
+replace github.com/scryinfo/dot v0.1.4 => ../../../
