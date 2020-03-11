@@ -7,9 +7,10 @@ require (
 	github.com/gin-gonic/gin v1.5.0
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/improbable-eng/grpc-web v0.12.0
+	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0 // indirect
-	github.com/scryinfo/dot v0.1.3
+	github.com/scryinfo/dot v0.1.4
 	github.com/scryinfo/dot/dots/gindot v0.0.0-20200103003315-800d69a0a8b6
 	go.uber.org/zap v1.14.0
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
@@ -17,6 +18,6 @@ require (
 )
 
 replace (
-	github.com/scryinfo/dot v0.1.3 => ../../
+	github.com/scryinfo/dot v0.1.4 => ../../
 	github.com/scryinfo/dot/dots/gindot v0.0.0-20191121022614-959828ad21d4 => ../gindot
 )
