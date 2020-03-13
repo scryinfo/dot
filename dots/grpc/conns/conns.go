@@ -37,7 +37,7 @@ type Conns interface {
 	SchemeName() string
 }
 
-type connsConfig struct {
+type ConnsConfig struct {
 	Scheme   string          `json:"scheme"`
 	Services []serviceConfig `json:"services"`
 }
@@ -57,12 +57,12 @@ type ClientContext struct {
 
 type connsImp struct {
 	conns  map[string]*ClientContext
-	config connsConfig
+	config ConnsConfig
 }
 
 //Construction component
 func newConns(conf []byte) (dot.Dot, error) {
-	dconf := &connsConfig{}
+	dconf := &ConnsConfig{}
 	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func ConnsConfigTypeLives() *dot.ConfigTypeLives {
 
 	return &dot.ConfigTypeLives{
 		TypeIdConfig: ConnsTypeId,
-		ConfigInfo: &connsConfig{
+		ConfigInfo: &ConnsConfig{
 			Services: slice1,
 		},
 	}
@@ -278,4 +278,11 @@ func (c *connsImp) ServiceName() []string {
 
 func (c *connsImp) SchemeName() string {
 	return c.config.Scheme
+}
+
+func NewTestConns(conf *ConnsConfig) Conns {
+	re := &connsImp{}
+	re.config = *conf
+	re.Create(nil)
+	return re
 }
