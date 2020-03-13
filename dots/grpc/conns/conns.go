@@ -39,10 +39,10 @@ type Conns interface {
 
 type ConnsConfig struct {
 	Scheme   string          `json:"scheme"`
-	Services []serviceConfig `json:"services"`
+	Services []ServiceConfig `json:"services"`
 }
 
-type serviceConfig struct {
+type ServiceConfig struct {
 	Name    string          `json:"name"`
 	Addrs   []string        `json:"addrs"`
 	Tls     utils.TlsConfig `json:"tls"`
@@ -87,10 +87,10 @@ func ConnsTypeLives() *dot.TypeLives {
 //jayce edit
 //return config of Conn
 func ConnsConfigTypeLives() *dot.ConfigTypeLives {
-	slice1 := make([]serviceConfig, 0)
+	slice1 := make([]ServiceConfig, 0)
 	slice2 := make([]string, 0)
 	slice2 = append(slice2, "")
-	slice1 = append(slice1, serviceConfig{Addrs: slice2})
+	slice1 = append(slice1, ServiceConfig{Addrs: slice2})
 
 	return &dot.ConfigTypeLives{
 		TypeIdConfig: ConnsTypeId,
