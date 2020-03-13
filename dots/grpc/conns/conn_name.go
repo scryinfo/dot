@@ -76,3 +76,15 @@ func (c *ConnName) ClientContext() *ClientContext {
 func (c *ConnName) ServerName() string {
 	return c.serviceName
 }
+
+func NewTestConnName(conn Conns, name string) *ConnName {
+	re := &ConnName{
+		serviceName: name,
+		conn:        nil,
+		Conns_:      conn,
+	}
+
+	re.AfterAllInject(nil)
+
+	return re
+}
