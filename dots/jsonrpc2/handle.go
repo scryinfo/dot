@@ -30,6 +30,18 @@ func NewHandle(preName string, service interface{}) http.Handler {
 	return h
 }
 
+func NewHandles(servives map[string]interface{}) http.Handler {
+	methods := jsonrpc.EndpointCodecMap{}
+	for k, v := range servives {
+		temp := makeJsonrpc(k, v)
+		for tk, tv := range temp {
+			methods[tk] = tv
+		}
+	}
+	h := jsonrpc.NewServer(methods, jsonrpc.ServerErrorLogger(&rpcLogger{}))
+	return h
+}
+
 //json rpc的解码函数
 func nopDecoder(ctx context.Context, j json.RawMessage) (interface{}, error) {
 	return j, nil
