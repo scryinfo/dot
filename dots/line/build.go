@@ -4,8 +4,8 @@
 package line
 
 import (
+	"encoding/json"
 	"flag"
-	"fmt"
 	"github.com/scryinfo/dot/dot"
 	"go.uber.org/zap"
 )
@@ -61,7 +61,8 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 		dotOrder, circles := line.RelyOrder() //do not care the error, it is circle dependency
 		//circle dependency
 		if len(circles) > 0 {
-			dot.Logger().Warnln("build", zap.String("", fmt.Sprintf("circle dots:  %v", circles)))
+			bs, _ := json.Marshal(circles) //the %v just print the address of memory
+			dot.Logger().Warnln("build", zap.String("", string(bs)))
 		}
 
 		err = line.CreateDots(dotOrder)

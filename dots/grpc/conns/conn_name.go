@@ -41,6 +41,12 @@ func ConnNameTypeLives() []*dot.TypeLives {
 		Meta: dot.Metadata{TypeId: ConnNameTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newConnName(conf)
 		}},
+		Lives: []dot.Live{
+			{
+				LiveId:    ConnNameTypeId,
+				RelyLives: map[string]dot.LiveId{"Conns_": ConnsTypeId},
+			},
+		},
 	},
 		ConnsTypeLives(),
 	}
