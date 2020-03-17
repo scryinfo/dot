@@ -54,18 +54,18 @@ func (s *WebSocket) Stop(ignore bool) error {
 	return nil
 }
 
-// GET wraps the given grpcServer to allow for handling grpc-web requests of websockets - enabling bidirectional requests.
+// Wrap wraps the given grpcServer to allow for handling grpc-web requests of websockets - enabling bidirectional requests.
 //
-// Under the hood, GET takes a HTTP request from gin.Context and if it is a gRPC-WebSocket request wraps it with a compatibility layer
+// Under the hood, Wrap takes a HTTP request from gin.Context and if it is a gRPC-WebSocket request wraps it with a compatibility layer
 // to transform it to a standard gRPC request for the wrapped gRPC server and transforms the request to comply with
 // the gRPC-Web protocol.
 //
 // Through this mechanism, client (e.g. browser) is able to fully take advantage of WebSocket communication with remote
 // gRPC service server, initially routed by the HTTP GET method and the URLs of resources that are registered on gRPC server
 //
-// Note: this GET method can only be called before the underlying gin.Engine starts running, besides the caller must insure that
+// Note: this Wrap method can only be called before the underlying gin.Engine starts running, besides the caller must insure that
 // all the grpc service servers get appropriately registered with the standard gRPC server.
-func (s *WebSocket) GET(grpcServer *grpc.Server) {
+func (s *WebSocket) Wrap(grpcServer *grpc.Server) {
 	// Control the behaviour of the gRPC-WebSocket wrapper (e.g. modifying CORS behaviour) using `With*` options.
 	options := []grpcweb.Option{
 		// Allows for handling grpc-web requests of websockets - enabling bidirectional requests.
