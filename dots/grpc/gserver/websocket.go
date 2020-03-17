@@ -66,16 +66,22 @@ func (s *WebSocket) Stop(ignore bool) error {
 // Note: this GET method can only be called before the underlying gin.Engine starts running, besides the caller must insure that
 // all the grpc service servers get appropriately registered with the standard gRPC server.
 func (s *WebSocket) GET(relativePath string, grpcServer *grpc.Server) {
-	// wrap grpcServer to allow for handling grpc-web requests of websockets - enabling bidirectional requests.
+	// Control the behaviour of the gRPC-WebSocket wrapper (e.g. modifying CORS behaviour) using `With*` options.
 	options := []grpcweb.Option{
+		// Allows for handling grpc-web requests of websockets - enabling bidirectional requests.
 		grpcweb.WithWebsockets(true),
+		// Accept all requests from remote origins,
+		// don't check whether the origin of the request matches the host of the request.
 		grpcweb.WithWebsocketOriginFunc(func(req *http.Request) bool {
 			return true
 		}),
-		grpcweb.WithOriginFunc(func(origin string) bool {
-			return true
-		}),
-		grpcweb.WithCorsForRegisteredEndpointsOnly(false),
+		// Not allow requests incoming with a path prefix added to the URL,
+		// exposing the endpoint as the root resource, to avoid
+		// the performance cost of path processing for every request.
+		grpcweb.WithAllowNonRootResource(false),
+		// Only allow CORS requests for registered endpoints,
+		// not allow handling gRPC requests for unknown endpoints (e.g. for proxying).
+		grpcweb.WithCorsForRegisteredEndpointsOnly(true),
 	}
 	s.wrappedServer = grpcweb.WrapServer(grpcServer, options...)
 
