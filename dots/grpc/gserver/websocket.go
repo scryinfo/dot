@@ -5,6 +5,7 @@ package gserver
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"google.golang.org/grpc"
@@ -66,6 +67,16 @@ func (s *WebSocket) Stop(ignore bool) error {
 // Note: this Wrap method can only be called before the underlying gin.Engine starts running, besides the caller must insure that
 // all the grpc service servers get appropriately registered with the standard gRPC server.
 func (s *WebSocket) Wrap(grpcServer *grpc.Server) {
+	// Argument validation of the passed grpcServer
+	if grpcServer == nil {
+		dot.Logger().Errorln("nil argument of grpcServer not allowed")
+		os.Exit(1)
+	}
+	if len(grpcServer.GetServiceInfo()) == 0 {
+		dot.Logger().Errorln("no service registered with grpcServer")
+		os.Exit(1)
+	}
+
 	// Control the behaviour of the gRPC-WebSocket wrapper (e.g. modifying CORS behaviour) using `With*` options.
 	options := []grpcweb.Option{
 		// Allows for handling grpc-web requests of websockets - enabling bidirectional requests.
