@@ -83,3 +83,9 @@ func GenarateConnWrapper(conf string) *ConnWrapper {
 	_ = conn.Create(nil)
 	return conn
 }
+
+//GenarateConnWrapper this func is for test
+func GenarateConnWrapperByDb(db *pg.DB) *ConnWrapper {
+	conn := &ConnWrapper{db, config{}}
+	return conn
+}
