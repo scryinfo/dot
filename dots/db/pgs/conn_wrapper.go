@@ -1,9 +1,9 @@
 package pgs
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/go-pg/pg/v9"
-
 	"github.com/scryinfo/dot/dot"
 )
 
@@ -16,6 +16,7 @@ type config struct { //todo 连接池等配置
 	User     string `json:"user"`
 	Password string `json:"password"`
 	Database string `json:"database"`
+	ShowSql  bool   `json:"showSql"`
 }
 
 type ConnWrapper struct {
@@ -30,6 +31,9 @@ func (c *ConnWrapper) Create(l dot.Line) error {
 		Password: c.conf.Password,
 		Database: c.conf.Database,
 	})
+	if c.conf.ShowSql {
+		c.db.AddQueryHook(pgLogger{})
+	}
 	return nil
 }
 
@@ -88,4 +92,18 @@ func GenarateConnWrapper(conf string) *ConnWrapper {
 func GenarateConnWrapperByDb(db *pg.DB) *ConnWrapper {
 	conn := &ConnWrapper{db, config{}}
 	return conn
+}
+
+type pgLogger struct{}
+
+func (d pgLogger) BeforeQuery(c context.Context, q *pg.QueryEvent) (context.Context, error) {
+	return c, nil
+}
+
+func (d pgLogger) AfterQuery(c context.Context, q *pg.QueryEvent) error {
+	dot.Logger().Debug(func() string {
+		temp, _ := q.FormattedQuery()
+		return temp
+	})
+	return nil
 }
