@@ -167,6 +167,8 @@ import (
 		return res
 	}
 
+	//todo Please modify with lock
+	//fmt.Sprintf("%s = EXCLUDED.%s+1", {{$.TypeName}}_Version, {{$.TypeName}}_Version),
 	func (m *{{$.TypeName}}) ToUpsertSet() []string {
 		res := []string{
 		{{range $.Fields}}
