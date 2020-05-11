@@ -74,3 +74,10 @@ func GenerateDaoBase(conf string) *DaoBase {
 	base := &DaoBase{wrapper}
 	return base
 }
+
+//GenerateDaoBase this func is for test
+func GenerateDaoBaseByDb(db *pg.DB) *DaoBase {
+	wrapper := GenarateConnWrapperByDb(db)
+	base := &DaoBase{wrapper}
+	return base
+}
