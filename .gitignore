@@ -84,3 +84,4 @@
 /tools/dotcli/before.log
 /tools/dotcli/go.sum
 /tools/dotcli/dotcli.exe
+/dots/db/pgs/before.log

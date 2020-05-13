@@ -63,6 +63,7 @@ func parms(data *tData) {
 	data.TableName = params_.tableName
 }
 
+//env:   GOPACKAGE=model;GOFILE=D:\peace\gopath\src\github.com\scryinfo\cashbox_site\shared\db\model\model_api.go
 func main() {
 	log.Println("run gmodel")
 	data := &tData{}
@@ -120,14 +121,7 @@ func makeData(data *tData) {
 					typeS, ok := spec.(*ast.TypeSpec)
 					if ok && typeS.Name.Name == data.TypeName {
 						structT := typeS.Type.(*ast.StructType)
-						for _, f := range structT.Fields.List {
-							n := f.Names[0].Name
-							fields = append(fields, DbField{Name: n, DbName: pgs.Underscore(n)})
-							ftype, ok := f.Type.(*ast.Ident)
-							if ok && ftype.Name == "string" {
-								data.StringFields = append(data.StringFields, DbField{Name: n, DbName: pgs.Underscore(n)})
-							}
-						}
+						fields, _ = listFields(data, structT, fields)
 					}
 				}
 			}
@@ -137,6 +131,29 @@ func makeData(data *tData) {
 
 	}
 	data.Fields = fields
+}
+func listFields(data *tData, st *ast.StructType, fields []DbField) ([]DbField, error) {
+	for _, f := range st.Fields.List {
+		if f.Names == nil { //这个字段直接是类型，或者是组合
+			if ident, ok := f.Type.(*ast.Ident); ok {
+				if decl, ok := ident.Obj.Decl.(*ast.TypeSpec); ok {
+					if subT, ok := decl.Type.(*ast.StructType); ok {
+						fields, _ = listFields(data, subT, fields)
+					}
+				}
+			} else { //todo 内部错误
+
+			}
+		} else {
+			n := f.Names[0].Name
+			fields = append(fields, DbField{Name: n, DbName: pgs.Underscore(n)})
+			ftype, ok := f.Type.(*ast.Ident)
+			if ok && ftype.Name == "string" {
+				data.StringFields = append(data.StringFields, DbField{Name: n, DbName: pgs.Underscore(n)})
+			}
+		}
+	}
+	return fields, nil
 }
 
 func gmodel(data *tData) []byte {
