@@ -204,12 +204,10 @@ import (
 		return res
 	}
 
-	//todo Please modify with lock
-	//fmt.Sprintf("%s = EXCLUDED.%s+1", {{$.TypeName}}_Version, {{$.TypeName}}_Version),
 	func (m *{{$.TypeName}}) ToUpsertSet() []string {
 		res := []string{
 		{{range $.Fields}}
-			fmt.Sprintf("%s = EXCLUDED.%s", {{$.TypeName}}_{{.Name}}, {{$.TypeName}}_{{.Name}}), {{end}}
+			{{if ne .Name "OptimisticLockVersion"}}fmt.Sprintf("%s = EXCLUDED.%s", {{$.TypeName}}_{{.Name}}, {{$.TypeName}}_{{.Name}}),{{else}}fmt.Sprintf("%s = EXCLUDED.%s+1", {{$.TypeName}}_OptimisticLockVersion, {{$.TypeName}}_OptimisticLockVersion),{{end}}{{end}}
 		}
 		return res
 	}

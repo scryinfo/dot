@@ -10,7 +10,7 @@ import (
 	"github.com/scryinfo/scryg/sutils/uuid"
 )
 
-const NoticeDaoTypeId = "72c713a6-7bd1-4594-a17e-8e4d55794a40"
+const NoticeDaoTypeId = "c414bf81-1541-41c6-8f98-c7ab4b4f8179"
 
 type NoticeDao struct {
 	*pgs.DaoBase `dot:""`
@@ -42,7 +42,7 @@ func NoticeDaoTypeLives() []*dot.TypeLives {
 }
 
 // if find nothing, return pg.ErrNoRows
-func (c *NoticeDao) GetById(conn *pg.Conn, id string) (m *model.Notice, err error) {
+func (c *NoticeDao) GetByIdWithLock(conn *pg.Conn, id string) (m *model.Notice, err error) {
 	m = &model.Notice{Id: id}
 	err = conn.Model(m).WherePK().For("UPDATE").Select()
 	if err != nil {
@@ -50,9 +50,17 @@ func (c *NoticeDao) GetById(conn *pg.Conn, id string) (m *model.Notice, err erro
 	}
 	return
 }
+func (c *NoticeDao) GetById(conn *pg.Conn, id string) (m *model.Notice, err error) {
+	m = &model.Notice{Id: id}
+	err = conn.Model(m).WherePK().Select()
+	if err != nil {
+		m = nil
+	}
+	return
+}
 
 // if find nothing, return pg.ErrNoRows
-func (c *NoticeDao) Query(conn *pg.Conn, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+func (c *NoticeDao) QueryWithLock(conn *pg.Conn, condition string, params ...interface{}) (ms []*model.Notice, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).For("UPDATE").Select()
 	} else {
@@ -63,10 +71,28 @@ func (c *NoticeDao) Query(conn *pg.Conn, condition string, params ...interface{}
 	}
 	return
 }
+func (c *NoticeDao) Query(conn *pg.Conn, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+	if len(condition) < 1 {
+		err = conn.Model(&ms).Select()
+	} else {
+		err = conn.Model(&ms).Where(condition, params...).Select()
+	}
+	if err != nil { //be sure
+		ms = nil
+	}
+	return
+}
 
 // if find nothing, return pg.ErrNoRows
-func (c *NoticeDao) List(conn *pg.Conn) (ms []*model.Notice, err error) {
+func (c *NoticeDao) ListWithLock(conn *pg.Conn) (ms []*model.Notice, err error) {
 	err = conn.Model(&ms).For("UPDATE").Select()
+	if err != nil { //be sure
+		ms = nil
+	}
+	return
+}
+func (c *NoticeDao) List(conn *pg.Conn) (ms []*model.Notice, err error) {
+	err = conn.Model(&ms).Select()
 	if err != nil { //be sure
 		ms = nil
 	}
@@ -83,7 +109,7 @@ func (c *NoticeDao) Count(conn *pg.Conn, condition string, params ...interface{}
 }
 
 // if find nothing, return pg.ErrNoRows
-func (c *NoticeDao) QueryPage(conn *pg.Conn, pageSize int, page int, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+func (c *NoticeDao) QueryPageWithLock(conn *pg.Conn, pageSize int, page int, condition string, params ...interface{}) (ms []*model.Notice, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).For("UPDATE").Select()
 	} else {
@@ -94,14 +120,37 @@ func (c *NoticeDao) QueryPage(conn *pg.Conn, pageSize int, page int, condition s
 	}
 	return
 }
+func (c *NoticeDao) QueryPage(conn *pg.Conn, pageSize int, page int, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+	if len(condition) < 1 {
+		err = conn.Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).Select()
+	} else {
+		err = conn.Model(&ms).Where(condition, params...).Limit(pageSize).Offset((page - 1) * pageSize).Select()
+	}
+	if err != nil { //be sure
+		ms = nil
+	}
+	return
+}
 
 // if find nothing, return pg.ErrNoRows
-func (c *NoticeDao) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *model.Notice, err error) {
+func (c *NoticeDao) QueryOneWithLock(conn *pg.Conn, condition string, params ...interface{}) (m *model.Notice, err error) {
 	m = &model.Notice{}
 	if len(condition) < 1 {
 		err = conn.Model(m).For("UPDATE").First()
 	} else {
 		err = conn.Model(m).Where(condition, params...).For("UPDATE").First()
+	}
+	if err != nil { //be sure
+		m = nil
+	}
+	return
+}
+func (c *NoticeDao) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *model.Notice, err error) {
+	m = &model.Notice{}
+	if len(condition) < 1 {
+		err = conn.Model(m).First()
+	} else {
+		err = conn.Model(m).Where(condition, params...).First()
 	}
 	if err != nil { //be sure
 		m = nil
@@ -116,7 +165,6 @@ func (c *NoticeDao) Insert(conn *pg.Conn, m *model.Notice) (err error) {
 	}
 	m.CreateTime = time.Now().Unix()
 	m.UpdateTime = m.CreateTime
-	m.Version = 1
 	err = conn.Insert(m)
 	return
 }
@@ -128,7 +176,6 @@ func (c *NoticeDao) InsertReturn(conn *pg.Conn, m *model.Notice) (mnew *model.No
 	}
 	m.CreateTime = time.Now().Unix()
 	m.UpdateTime = m.CreateTime
-	m.Version = 1
 
 	mnew = &model.Notice{}
 	_, err = conn.Model(m).Returning("*").Insert(mnew)
@@ -147,10 +194,8 @@ func (c *NoticeDao) Upsert(conn *pg.Conn, m *model.Notice) (err error) {
 	} else if m.CreateTime == 0 {
 		m.CreateTime = m.UpdateTime
 	}
-	if m.Version == 0 {
-		m.Version = 1
-	}
-	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("Notice."+model.Notice_Version+" = ?", m.Version)
+
+	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("Notice."+model.Notice_OptimisticLockVersion+" = ?", m.OptimisticLockVersion)
 	for _, it := range m.ToUpsertSet() {
 		om.Set(it)
 	}
@@ -170,11 +215,8 @@ func (c *NoticeDao) UpsertReturn(conn *pg.Conn, m *model.Notice) (mnew *model.No
 	} else if m.CreateTime == 0 {
 		m.CreateTime = m.UpdateTime
 	}
-	if m.Version == 0 {
-		m.Version = 1
-	}
 
-	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("Notice."+model.Notice_Version+" = ?", m.Version)
+	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("Notice."+model.Notice_OptimisticLockVersion+" = ?", m.OptimisticLockVersion)
 	for _, it := range m.ToUpsertSet() {
 		om.Set(it)
 	}
@@ -189,9 +231,9 @@ func (c *NoticeDao) UpsertReturn(conn *pg.Conn, m *model.Notice) (mnew *model.No
 //if update nothing, then return pg.ErrNoRows
 func (c *NoticeDao) Update(conn *pg.Conn, m *model.Notice) (err error) {
 	m.UpdateTime = time.Now().Unix()
-	m.Version++
+	m.OptimisticLockVersion++
 	//err = conn.Update(m)
-	res, err := conn.Model(m).Where(model.Notice_Id+" = ? and "+model.Notice_Version+" = ?", m.Id, m.Version-1).Update()
+	res, err := conn.Model(m).Where(model.Notice_Id+" = ? and "+model.Notice_OptimisticLockVersion+" = ?", m.Id, m.OptimisticLockVersion-1).Update()
 	if res.RowsAffected() == 0 {
 		err = pg.ErrNoRows
 	}
@@ -201,9 +243,9 @@ func (c *NoticeDao) Update(conn *pg.Conn, m *model.Notice) (err error) {
 //if update nothing, then return pg.ErrNoRows
 func (c *NoticeDao) UpdateReturn(conn *pg.Conn, m *model.Notice) (mnew *model.Notice, err error) {
 	m.UpdateTime = time.Now().Unix()
-	m.Version++
+	m.OptimisticLockVersion++
 	mnew = &model.Notice{}
-	res, err := conn.Model(m).Where(model.Notice_Id+" = ? and "+model.Notice_Version+" = ?", m.Id, m.Version-1).Returning("*").Update(mnew)
+	res, err := conn.Model(m).Where(model.Notice_Id+" = ? and "+model.Notice_OptimisticLockVersion+" = ?", m.Id, m.OptimisticLockVersion-1).Returning("*").Update(mnew)
 	if err != nil {
 		mnew = nil
 	}

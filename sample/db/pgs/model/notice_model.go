@@ -6,17 +6,17 @@ import (
 )
 
 const (
-	Notice_Table      = "notice"
-	Notice_Id         = "id"
-	Notice_Status     = "status"
-	Notice_CreateTime = "create_time"
-	Notice_UpdateTime = "update_time"
-	Notice_Version    = "version"
+	Notice_Table                 = "notice"
+	Notice_Id                    = "id"
+	Notice_Status                = "status"
+	Notice_CreateTime            = "create_time"
+	Notice_UpdateTime            = "update_time"
+	Notice_OptimisticLockVersion = "optimistic_lock_version"
 )
 
 func (m *Notice) String() string {
 	//todo please change the format string
-	//m.Id, m.Status, m.CreateTime, m.UpdateTime, m.Version,
+	//m.Id, m.Status, m.CreateTime, m.UpdateTime, m.OptimisticLockVersion,
 	str := fmt.Sprintf("Notice<%s >",
 		m.Id,
 	)
@@ -28,8 +28,6 @@ func (m *Notice) ToMap() map[string]string {
 	return res
 }
 
-//todo Please modify with lock
-//fmt.Sprintf("%s = EXCLUDED.%s+1", Notice_Version, Notice_Version),
 func (m *Notice) ToUpsertSet() []string {
 	res := []string{
 
@@ -37,7 +35,7 @@ func (m *Notice) ToUpsertSet() []string {
 		fmt.Sprintf("%s = EXCLUDED.%s", Notice_Status, Notice_Status),
 		fmt.Sprintf("%s = EXCLUDED.%s", Notice_CreateTime, Notice_CreateTime),
 		fmt.Sprintf("%s = EXCLUDED.%s", Notice_UpdateTime, Notice_UpdateTime),
-		fmt.Sprintf("%s = EXCLUDED.%s+1", Notice_Version, Notice_Version),
+		fmt.Sprintf("%s = EXCLUDED.%s+1", Notice_OptimisticLockVersion, Notice_OptimisticLockVersion),
 	}
 	return res
 }

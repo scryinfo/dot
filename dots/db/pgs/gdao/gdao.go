@@ -50,7 +50,6 @@ func parms(data *tData) {
 	flag.StringVar(&params_.tableName, "tableName", "", "")
 	flag.StringVar(&params_.daoPackage, "daoPackage", "", "")
 	flag.StringVar(&params_.suffix, "suffix", "Dao", "")
-	flag.BoolVar(&params_.useLock, "lock", true, "")
 	flag.Parse()
 
 	if len(params_.tableName) < 1 {
@@ -159,7 +158,7 @@ func makeData(data *tData) {
 
 func gmodel(data *tData) []byte {
 
-	tempWithLock := `
+	temp := `
 package {{$.DaoPkgName}}
 import (
 	"time"
@@ -203,7 +202,7 @@ func {{$.DaoName}}TypeLives() []*dot.TypeLives {
 }
 
 // if find nothing, return pg.ErrNoRows
-func (c *{{$.DaoName}}) GetById(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+func (c *{{$.DaoName}}) GetByIdWithLock(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	m = &{{$.ModelPkgName}}.{{$.TypeName}}{Id: id,}
 	err = conn.Model(m).WherePK().For("UPDATE").Select()
 	if err != nil {
@@ -211,9 +210,18 @@ func (c *{{$.DaoName}}) GetById(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}
 	}
 	return
 }
+func (c *{{$.DaoName}}) GetById(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	m = &{{$.ModelPkgName}}.{{$.TypeName}}{Id: id,}
+	err = conn.Model(m).WherePK().Select()
+	if err != nil {
+		m = nil
+	}
+	return
+}
+
 
 // if find nothing, return pg.ErrNoRows
-func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+func (c *{{$.DaoName}}) QueryWithLock(conn *pg.Conn, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).For("UPDATE").Select()
 	} else {
@@ -224,251 +232,6 @@ func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interfa
 	}
 	return
 }
-
-// if find nothing, return pg.ErrNoRows
-func (c *{{$.DaoName}}) List(conn *pg.Conn) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
-	err = conn.Model(&ms).For("UPDATE").Select()
-	if err != nil {//be sure
-		ms = nil
-	}
-	return
-}
-
-func (c *{{$.DaoName}}) Count(conn *pg.Conn, condition string, params ...interface{}) (count int, err error) {
-	if len(condition) < 1 {
-		count, err = conn.Model(&{{$.ModelPkgName}}.{{$.TypeName}}{}).Count()
-	}else {
-		count, err = conn.Model(&{{$.ModelPkgName}}.{{$.TypeName}}{}).Where(condition, params...).Count()
-	}
-	return
-}
-
-// if find nothing, return pg.ErrNoRows
-func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, pageSize int, page int, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
-	if len(condition) < 1 {
-		err = conn.Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).For("UPDATE").Select()
-	}else {
-		err = conn.Model(&ms).Where(condition, params...).Limit(pageSize).Offset((page - 1) * pageSize).For("UPDATE").Select()
-	}
-	if err != nil { //be sure
-		ms = nil
-	}
-	return
-}
-
-// if find nothing, return pg.ErrNoRows
-func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
-	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
-	if len(condition) < 1 {
-		err = conn.Model(m).For("UPDATE").First()
-	} else {
-		err = conn.Model(m).Where(condition, params...).For("UPDATE").First()
-	}
-	if err != nil {//be sure
-		m = nil
-	}
-	return
-}
-
-//if insert nothing, then return pg.ErrNoRows
-func (c *{{$.DaoName}}) Insert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
-	if len(m.Id) < 1 {
-		m.Id = uuid.GetUuid()
-	}
-	m.CreateTime = time.Now().Unix()
-	m.UpdateTime = m.CreateTime
-	m.Version=1
-	err = conn.Insert(m)
-	return
-}
-//if insert nothing, then return pg.ErrNoRows
-func (c *{{$.DaoName}}) InsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) ( mnew *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
-	if len(m.Id) < 1 {
-		m.Id = uuid.GetUuid()
-	}
-	m.CreateTime = time.Now().Unix()
-	m.UpdateTime = m.CreateTime
-	m.Version=1
-
-	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
-	_, err = conn.Model(m).Returning("*").Insert(mnew)
-	if err != nil{
-		mnew = nil
-	}
-	return
-}
-
-
-//if update nothing, then return pg.ErrNoRows
-func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
-    m.UpdateTime = time.Now().Unix()
-	if len(m.Id) < 1 {
-		m.Id = uuid.GetUuid()
-		m.CreateTime = m.UpdateTime
-	} else if m.CreateTime == 0 {
-		m.CreateTime = m.UpdateTime
-	}
-	if m.Version ==0 {
-		m.Version=1
-	}
-	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("{{$.TypeName}}."+{{$.ModelPkgName}}.{{$.TypeName}}_Version+" = ?",m.Version)
-	for _, it := range m.ToUpsertSet() {
-		om.Set(it)
-	}
-	res, err := om.Insert()
-	if res.RowsAffected() == 0 {
-		err = pg.ErrNoRows
-	}
-	return err
-}
-
-//if update nothing, then return pg.ErrNoRows
-func (c *{{$.DaoName}}) UpsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) ( mnew *{{$.ModelPkgName}}.{{$.TypeName}},err error) {
-	m.UpdateTime = time.Now().Unix()
-	if len(m.Id) < 1 {
-		m.Id = uuid.GetUuid()
-		m.CreateTime = m.UpdateTime
-	} else if m.CreateTime == 0 {
-		m.CreateTime = m.UpdateTime
-	}
-	if m.Version == 0 {
-		m.Version=1
-	}
-
-	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("{{$.TypeName}}."+{{$.ModelPkgName}}.{{$.TypeName}}_Version+" = ?",m.Version)
-	for _, it := range m.ToUpsertSet() {
-		om.Set(it)
-	}
-	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
-	_, err = om.Returning("*").Insert(mnew)
-	if err != nil {
-		mnew = nil
-	}
-	return
-}
-//if update nothing, then return pg.ErrNoRows
-func (c *{{$.DaoName}}) Update(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
-	m.UpdateTime = time.Now().Unix()
-	m.Version++
-	//err = conn.Update(m)
-	res, err := conn.Model(m).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" = ? and "+{{$.ModelPkgName}}.{{$.TypeName}}_Version+" = ?", m.Id, m.Version-1).Update()
-	if res.RowsAffected() == 0 {
-		err = pg.ErrNoRows
-	}
-	return
-}
-
-//if update nothing, then return pg.ErrNoRows
-func (c *{{$.DaoName}}) UpdateReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (mnew *{{$.ModelPkgName}}.{{$.TypeName}},  err error) {
-	m.UpdateTime = time.Now().Unix()
-	m.Version++
-	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
-	res, err := conn.Model(m).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" = ? and "+{{$.ModelPkgName}}.{{$.TypeName}}_Version+" = ?", m.Id, m.Version-1).Returning("*").Update(mnew)
-	if err != nil {
-		mnew = nil
-	}
-	if res.RowsAffected() == 0 {
-		err = pg.ErrNoRows
-	}
-	return
-}
-
-//if delete nothing, then return pg.ErrNoRows
-func (c *{{$.DaoName}}) Delete(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
-	err = conn.Delete(m)
-	return
-}
-
-//if delete nothing, then return pg.ErrNoRows
-func (c *{{$.DaoName}}) DeleteById(conn *pg.Conn, id string) (err error) {
-	_, err = conn.Model((*{{$.ModelPkgName}}.{{$.TypeName}})(nil)).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" = ?", id).Delete()
-	return
-}
-
-//if delete nothing, then return pg.ErrNoRows
-func (c *{{$.DaoName}}) DeleteByIds(conn *pg.Conn, ids []string, oneMax int) (err error) {
-	m := (*{{$.ModelPkgName}}.{{$.TypeName}})(nil)
-	max := oneMax
-	times := len(ids)/max;
-	for i := 1; i < times; i++ {
-		oneIds := ids[(i-1) * max:i * max -1]
-		_, err = conn.Model(m).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" in (?)", pg.In(oneIds)).Delete()
-		if err != nil {
-			return
-		}
-	}
-
-	if max * times < len(ids) {
-		oneIds := ids[max * times:]
-		_, err = conn.Model(m).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" in (?)", pg.In(oneIds)).Delete()
-	}
-	return 
-}
-
-//if delete nothing, then return pg.ErrNoRows
-func (c *{{$.DaoName}}) DeleteReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (mnew *{{$.ModelPkgName}}.{{$.TypeName}},err error) {
-	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
-	_, err = conn.Model(m).WherePK().Returning("*").Delete(mnew)
-	if err != nil {
-		mnew = nil
-	}
-	return
-}
-`
-	tempUoLock := `
-package {{$.DaoPkgName}}
-import (
-	"time"
-	
-	"github.com/go-pg/pg/v9"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/db/pgs"
-	"github.com/scryinfo/scryg/sutils/uuid"
-	"{{$.ImportModelPkgName}}"
-)
-
-const {{$.DaoName}}TypeId = "{{$.Id}}"
-
-type {{$.DaoName}} struct {
-	*pgs.DaoBase {{$.BackQuote}}dot:""{{$.BackQuote}}
-}
-
-//{{$.DaoName}}TypeLives
-func {{$.DaoName}}TypeLives() []*dot.TypeLives {
-	tl := &dot.TypeLives{
-		Meta: dot.Metadata{
-			Name: "{{$.DaoName}}",
-			TypeId: {{$.DaoName}}TypeId, 
-			NewDoter: func(conf []byte) (dot.Dot, error) {
-				return &{{$.DaoName}}{}, nil
-			},
-		},
-		Lives: []dot.Live{
-			{
-				LiveId: {{$.DaoName}}TypeId,
-				RelyLives: map[string]dot.LiveId{
-					"DaoBase": pgs.DaoBaseTypeId,
-				},
-			},
-		},
-	}
-
-	lives := pgs.DaoBaseTypeLives()
-	lives = append(lives, tl)
-	return lives
-}
-
-// if find nothing, return pg.ErrNoRows
-func (c *{{$.DaoName}}) GetById(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
-	m = &{{$.ModelPkgName}}.{{$.TypeName}}{Id: id,}
-	err = conn.Model(m).WherePK().Select()
-	if err != nil {
-		m = nil
-	}
-	return
-}
-
-// if find nothing, return pg.ErrNoRows
 func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).Select()
@@ -481,7 +244,15 @@ func (c *{{$.DaoName}}) Query(conn *pg.Conn, condition string, params ...interfa
 	return
 }
 
+
 // if find nothing, return pg.ErrNoRows
+func (c *{{$.DaoName}}) ListWithLock(conn *pg.Conn) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	err = conn.Model(&ms).For("UPDATE").Select()
+	if err != nil {//be sure
+		ms = nil
+	}
+	return
+}
 func (c *{{$.DaoName}}) List(conn *pg.Conn) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	err = conn.Model(&ms).Select()
 	if err != nil {//be sure
@@ -500,6 +271,17 @@ func (c *{{$.DaoName}}) Count(conn *pg.Conn, condition string, params ...interfa
 }
 
 // if find nothing, return pg.ErrNoRows
+func (c *{{$.DaoName}}) QueryPageWithLock(conn *pg.Conn, pageSize int, page int, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	if len(condition) < 1 {
+		err = conn.Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).For("UPDATE").Select()
+	}else {
+		err = conn.Model(&ms).Where(condition, params...).Limit(pageSize).Offset((page - 1) * pageSize).For("UPDATE").Select()
+	}
+	if err != nil { //be sure
+		ms = nil
+	}
+	return
+}
 func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, pageSize int, page int, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).Select()
@@ -513,6 +295,18 @@ func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, pageSize int, page int, conditi
 }
 
 // if find nothing, return pg.ErrNoRows
+func (c *{{$.DaoName}}) QueryOneWithLock(conn *pg.Conn, condition string, params ...interface{}) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
+	if len(condition) < 1 {
+		err = conn.Model(m).For("UPDATE").First()
+	} else {
+		err = conn.Model(m).Where(condition, params...).For("UPDATE").First()
+	}
+	if err != nil {//be sure
+		m = nil
+	}
+	return
+}
 func (c *{{$.DaoName}}) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
 	if len(condition) < 1 {
@@ -562,11 +356,15 @@ func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName
 	} else if m.CreateTime == 0 {
 		m.CreateTime = m.UpdateTime
 	}
-	om := conn.Model(m).OnConflict("(id) DO UPDATE")
+	
+	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("{{$.TypeName}}."+{{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion+" = ?",m.OptimisticLockVersion)
 	for _, it := range m.ToUpsertSet() {
 		om.Set(it)
 	}
-	_, err = om.Insert()
+	res, err := om.Insert()
+	if res.RowsAffected() == 0 {
+		err = pg.ErrNoRows
+	}
 	return err
 }
 
@@ -580,7 +378,7 @@ func (c *{{$.DaoName}}) UpsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 		m.CreateTime = m.UpdateTime
 	}
 
-	om := conn.Model(m).OnConflict("(id) DO UPDATE")
+	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("{{$.TypeName}}."+{{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion+" = ?",m.OptimisticLockVersion)
 	for _, it := range m.ToUpsertSet() {
 		om.Set(it)
 	}
@@ -594,17 +392,26 @@ func (c *{{$.DaoName}}) UpsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 //if update nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) Update(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
 	m.UpdateTime = time.Now().Unix()
-	err = conn.Update(m)
+	m.OptimisticLockVersion++
+	//err = conn.Update(m)
+	res, err := conn.Model(m).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" = ? and "+{{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion+" = ?", m.Id, m.OptimisticLockVersion-1).Update()
+	if res.RowsAffected() == 0 {
+		err = pg.ErrNoRows
+	}
 	return
 }
 
 //if update nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) UpdateReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName}}) (mnew *{{$.ModelPkgName}}.{{$.TypeName}},  err error) {
 	m.UpdateTime = time.Now().Unix()
+	m.OptimisticLockVersion++
 	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
-	_, err = conn.Model(m).WherePK().Returning("*").Update(mnew)
+	res, err := conn.Model(m).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" = ? and "+{{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion+" = ?", m.Id, m.OptimisticLockVersion-1).Returning("*").Update(mnew)
 	if err != nil {
 		mnew = nil
+	}
+	if res.RowsAffected() == 0 {
+		err = pg.ErrNoRows
 	}
 	return
 }
@@ -653,13 +460,7 @@ func (c *{{$.DaoName}}) DeleteReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 `
 	var src []byte = nil
 	{
-		var t *template.Template
-		var err error
-		if params_.useLock {
-			t, err = template.New("").Parse(tempWithLock)
-		} else {
-			t, err = template.New("").Parse(tempUoLock)
-		}
+		t, err := template.New("").Parse(temp)
 		if err != nil {
 			log.Fatal(err)
 		}
