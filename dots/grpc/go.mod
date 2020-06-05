@@ -12,7 +12,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/scryinfo/dot v0.1.4
-	github.com/scryinfo/dot/dots/gindot v0.0.0-20200311030916-18de37ac25e4
+	github.com/scryinfo/dot/dots/gindot v0.0.0-20200520093457-f8a16513551b
 	go.uber.org/zap v1.14.0
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
 	google.golang.org/grpc v1.28.0
