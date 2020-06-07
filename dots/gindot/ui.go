@@ -13,6 +13,19 @@ import (
 
 const UiTypeId = "d9972be7-cef9-464c-9bbb-d1f11abea803" //type id of dot
 
+//todo 为了避免路径冲突以及使用方便，将如下功能以配置方式实现
+//d.Engine_.GinEngine().GET("/", func(ctx *gin.Context) {
+//	ctx.Redirect(http.StatusFound, d.UrlRelativePath()+"/home.html")
+//})
+//
+////for dev
+//{
+//if !sfile.ExistFile(d.ResAbsolutePath("dist")) {
+//dot.Logger().Debugln("UiPreAdd", zap.String("", "../../ui"))
+//d.SetResRelativePath("../../ui")
+//}
+//}
+
 type configUi struct {
 	UrlRelativePath string `json:"urlRelativePath"` //relative path of url
 	ResRelativePath string `json:"resRelativePath"` //relative path of resource， The order of locating files is: absolute path, relative path，executable path，current path，user path
