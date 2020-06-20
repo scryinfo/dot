@@ -5,9 +5,10 @@ package line
 
 import (
 	"fmt"
-	"go.uber.org/zap"
 	"reflect"
 	"sync"
+
+	"go.uber.org/zap"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/sconfig"
@@ -560,22 +561,29 @@ func (c *lineImp) Inject(obj interface{}) error {
 		}
 
 		tField := t.Field(i)
-		tname, ok := tField.Tag.Lookup(dot.TagDot)
+		tagName, ok := tField.Tag.Lookup(dot.TagDot)
 		if !ok {
 			continue
 		}
 
 		var d dot.Dot
 		{
-			if len(tname) < 1 { //by type
+			if len(tagName) < 1 || tagName == "?" { //by type
 				d, err2 = c.GetByType(f.Type())
 			} else { //by liveid
-				d, err2 = c.GetByLiveId(dot.LiveId(tname))
+				d, err2 = c.GetByLiveId(dot.LiveId(tagName))
 			}
 
 			if err2 != nil {
-				logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
-				multiErr(err2)
+				if tagName == "?" { //组件为可选
+					if etemp, ok := err2.(dot.Errorer); !ok || etemp.Code() != dot.SError.NotExisted.Code() { //如果error code不为不存在
+						logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
+						multiErr(err2)
+					}
+				} else {
+					logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
+					multiErr(err2)
+				}
 			}
 
 			if d == nil {
@@ -590,7 +598,7 @@ func (c *lineImp) Inject(obj interface{}) error {
 			if vv.IsValid() && vv.Type().AssignableTo(f.Type()) {
 				f.Set(vv)
 			} else {
-				multiErr(dot.SError.DotInvalid.AddNewError(tField.Type.String() + "  " + tname))
+				multiErr(dot.SError.DotInvalid.AddNewError(tField.Type.String() + "  " + tagName))
 			}
 		}
 	}
@@ -624,14 +632,14 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 	t := v.Type()
 
 	for i := 0; i < v.NumField(); i++ {
-		var errt2 error = nil
+		var err2 error = nil
 		f := v.Field(i)
 		if !f.CanSet() {
 			continue
 		}
 
 		tField := t.Field(i)
-		tname, ok := tField.Tag.Lookup(dot.TagDot)
+		tagName, ok := tField.Tag.Lookup(dot.TagDot)
 		if !ok {
 			continue
 		}
@@ -640,20 +648,27 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 		{
 			if len(live.RelyLives) > 0 { //Config prior
 				if lid, ok := live.RelyLives[tField.Name]; ok {
-					d, errt2 = c.GetByLiveId(dot.LiveId(lid))
+					d, err2 = c.GetByLiveId(dot.LiveId(lid))
 				}
 			}
 			if d == nil {
-				if len(tname) < 1 { //by type
-					d, errt2 = c.GetByType(f.Type())
+				if len(tagName) < 1 || tagName == "?" { //by type
+					d, err2 = c.GetByType(f.Type())
 				} else { //by liveid
-					d, errt2 = c.GetByLiveId(dot.LiveId(tname))
+					d, err2 = c.GetByLiveId(dot.LiveId(tagName))
 				}
 			}
 
-			if errt2 != nil {
-				logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, live: %v, err: %v", tField.Name, live, errt2))
-				multiErr(errt2)
+			if err2 != nil {
+				if tagName == "?" { //组件为可选
+					if errTemp, ok := err2.(dot.Errorer); !ok || errTemp.Code() != dot.SError.NotExisted.Code() { //如果error code不为不存在
+						logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
+						multiErr(err2)
+					}
+				} else {
+					logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
+					multiErr(err2)
+				}
 			}
 
 			if d == nil {
@@ -662,13 +677,13 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 			}
 		}
 
-		if errt2 == nil {
+		if err2 == nil {
 			vv := reflect.ValueOf(d)
 			//fmt.Println("vv: ", vv.Type(), "f: ", f.Type(), "dd: ", reflect.TypeOf(d))
 			if vv.IsValid() && vv.Type().AssignableTo(f.Type()) {
 				f.Set(vv)
 			} else if err == nil {
-				multiErr(dot.SError.DotInvalid.AddNewError(tField.Type.String() + "  " + tname))
+				multiErr(dot.SError.DotInvalid.AddNewError(tField.Type.String() + "  " + tagName))
 			}
 		}
 	}

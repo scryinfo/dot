@@ -13,7 +13,7 @@ func TestLineImp_Start(t *testing.T) {
 		_ = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{
 				TypeId: "one1",
-				NewDoter: func(args interface{}) (dot dot.Dot, err error) {
+				NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 					t := 1
 					return &t, nil
 				},
@@ -31,7 +31,7 @@ func TestLineImp_Start(t *testing.T) {
 		_ = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{
 				TypeId: "one3",
-				NewDoter: func(args interface{}) (dot dot.Dot, err error) {
+				NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 					t := 1
 					return &t, nil
 				},
@@ -46,7 +46,7 @@ func TestLineImp_Start(t *testing.T) {
 		_ = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{
 				TypeId: "two",
-				NewDoter: func(args interface{}) (dot dot.Dot, err error) {
+				NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 					t := 1
 					return &t, nil
 				},
@@ -66,7 +66,7 @@ func TestLineImp_Start(t *testing.T) {
 		_ = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{
 				TypeId: "three",
-				NewDoter: func(args interface{}) (dot dot.Dot, err error) {
+				NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 					t := 1
 					return &t, nil
 				},
@@ -87,7 +87,7 @@ func TestLineImp_Start(t *testing.T) {
 			_ = l.PreAdd(&dot.TypeLives{
 				Meta: dot.Metadata{
 					TypeId: "circle",
-					NewDoter: func(args interface{}) (dot dot.Dot, err error) {
+					NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 						t := 1
 						return &t, nil
 					},
@@ -106,7 +106,7 @@ func TestLineImp_Start(t *testing.T) {
 			_ = l.PreAdd(&dot.TypeLives{
 				Meta: dot.Metadata{
 					TypeId: "circle2",
-					NewDoter: func(args interface{}) (dot dot.Dot, err error) {
+					NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 						t := 1
 						return &t, nil
 					},
@@ -122,7 +122,7 @@ func TestLineImp_Start(t *testing.T) {
 			_ = l.PreAdd(&dot.TypeLives{
 				Meta: dot.Metadata{
 					TypeId: "circle3",
-					NewDoter: func(args interface{}) (dot dot.Dot, err error) {
+					NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 						t := 1
 						return &t, nil
 					},
@@ -139,7 +139,7 @@ func TestLineImp_Start(t *testing.T) {
 			_ = l.PreAdd(&dot.TypeLives{ //duplication
 				Meta: dot.Metadata{
 					TypeId: "circle3",
-					NewDoter: func(args interface{}) (dot dot.Dot, err error) {
+					NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 						t := 1
 						return &t, nil
 					},

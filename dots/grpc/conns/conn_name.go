@@ -15,7 +15,8 @@ const (
 type ConnName struct {
 	serviceName string
 	conn        *grpc.ClientConn
-	Conns_      Conns `dot:""`
+	Conns_      Conns      `dot:"?"` //可选组件，优先使用etcd
+	EtcdConns   *EtcdConns `dot:"?"` //可选组件，优先使用etcd
 }
 
 type configName struct {
@@ -37,19 +38,23 @@ func newConnName(conf []byte) (dot.Dot, error) {
 }
 
 func ConnNameTypeLives() []*dot.TypeLives {
-	return []*dot.TypeLives{{
+	tl := &dot.TypeLives{
 		Meta: dot.Metadata{TypeId: ConnNameTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newConnName(conf)
 		}},
 		Lives: []dot.Live{
 			{
 				LiveId:    ConnNameTypeId,
-				RelyLives: map[string]dot.LiveId{"Conns_": ConnsTypeId},
+				RelyLives: map[string]dot.LiveId{"Conns_": ConnsTypeId, "EtcdConns": EtcdConnsTypeId},
 			},
 		},
-	},
-		ConnsTypeLives(),
 	}
+
+	lives := EtcdConnsTypeLives()
+	lives = append(lives, tl)
+	lives = append(lives, ConnsTypeLives())
+
+	return lives
 }
 
 //jayce edit
@@ -62,8 +67,13 @@ func ConnNameConfigTypeLives() *dot.ConfigTypeLives {
 }
 
 func (c *ConnName) AfterAllInject(l dot.Line) {
-	if c.conn == nil && c.Conns_ != nil {
-		c.conn = c.Conns_.ClientConn(c.serviceName)
+	if c.conn == nil {
+		if c.EtcdConns != nil { //优先使用 etcd中的名字
+			c.conn = c.EtcdConns.ClientConn(c.serviceName)
+		}
+		if c.conn == nil {
+			c.conn = c.Conns_.ClientConn(c.serviceName)
+		}
 	}
 }
 
