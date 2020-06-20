@@ -37,6 +37,10 @@ func (c *EtcdConns) ClientConn(serviceName string) *grpc.ClientConn {
 	return conn
 }
 
+func (c *EtcdConns) EtcdClient() *clientv3.Client {
+	return c.etcdClient
+}
+
 //func (c *EtcdConns) Create(l dot.Line) error {
 //	//todo add
 //}
@@ -71,8 +75,7 @@ func newEtcdConns(conf []byte) (dot.Dot, error) {
 	}
 
 	d := &EtcdConns{conf: *dconf, conns: make(map[string]*grpc.ClientConn)}
-
-	if len(d.conf.Names) > 0 && len(d.conf.Endpoints) > 0 {
+	{
 		var tlsConfig *tls.Config
 		{
 			tlsConfig, err = utils.GetTlsConfig(&d.conf.Tls)
@@ -89,6 +92,9 @@ func newEtcdConns(conf []byte) (dot.Dot, error) {
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	if len(d.conf.Names) > 0 {
 		r := naming.GRPCResolver{Client: d.etcdClient}
 		b := grpc.RoundRobin(&r) //todo 改为新版实现
 

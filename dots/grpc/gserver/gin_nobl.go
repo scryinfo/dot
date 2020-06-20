@@ -4,14 +4,16 @@
 package gserver
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/improbable-eng/grpc-web/go/grpcweb"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/gindot"
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
+
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/gindot"
 )
 
 const (

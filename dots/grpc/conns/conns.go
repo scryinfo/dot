@@ -11,13 +11,14 @@ import (
 	"io/ioutil"
 
 	"github.com/pkg/errors"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/grpc/lb"
-	"github.com/scryinfo/dot/utils"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/resolver"
+
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/grpc/lb"
+	"github.com/scryinfo/dot/utils"
 )
 
 const (

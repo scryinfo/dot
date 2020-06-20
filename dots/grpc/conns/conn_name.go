@@ -4,8 +4,9 @@
 package conns
 
 import (
-	"github.com/scryinfo/dot/dot"
 	"google.golang.org/grpc"
+
+	"github.com/scryinfo/dot/dot"
 )
 
 const (
