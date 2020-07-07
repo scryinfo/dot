@@ -55,6 +55,8 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 		if err != nil {
 			return
 		}
+		//todo 检查依赖中的 字段名字是否与组件中结构体中的字段相同，如果不同，就输出一个警告
+		//todo 把tag中的组件依赖关系加入，以方便于作完整的依赖关系计算
 
 		line.autoMakeLiveId() //issue #17
 
