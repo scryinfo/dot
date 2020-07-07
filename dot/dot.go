@@ -74,7 +74,7 @@ type Metadata struct {
 	Single      bool         `json:"single"`
 	RelyTypeIds []TypeId     `json:"relyTypeIds"`
 	NewDoter    Newer        `json:"-"`
-	RefType     reflect.Type `json:"-"`
+	RefType     reflect.Type `json:"-"` //if the dot is interface, set the type of interface
 }
 
 //Live live/instance
@@ -195,6 +195,12 @@ type Tager interface {
 	GetTag() (tag interface{})
 }
 
+//return the interface type for dot
+type GetInterfaceType interface {
+	//get interface type
+	GetInterfaceType() reflect.Type
+}
+
 //StatusType status type
 type StatusType int
 
@@ -216,5 +222,6 @@ type Checker interface {
 
 const (
 	//TagDot tag dot
-	TagDot = "dot"
+	TagDot  = "dot"
+	CanNull = "?" //allow nil, if do not find the dot , set it nil
 )

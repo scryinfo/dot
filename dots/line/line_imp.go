@@ -452,6 +452,10 @@ LIVES:
 			t := reflect.TypeOf(it.Dot)
 			c.mutex.Lock()
 			c.types[t] = it.Dot
+			//if the dot implements the dot.GetInterfaceType, put the interface into types too
+			if getter, ok := it.Dot.(dot.GetInterfaceType); ok {
+				c.types[getter.GetInterfaceType()] = it.Dot
+			}
 			c.mutex.Unlock()
 		}
 	}
@@ -568,14 +572,14 @@ func (c *lineImp) Inject(obj interface{}) error {
 
 		var d dot.Dot
 		{
-			if len(tagName) < 1 || tagName == "?" { //by type
+			if len(tagName) < 1 || tagName == dot.CanNull { //by type
 				d, err2 = c.GetByType(f.Type())
 			} else { //by liveid
 				d, err2 = c.GetByLiveId(dot.LiveId(tagName))
 			}
 
 			if err2 != nil {
-				if tagName == "?" { //组件为可选
+				if tagName == dot.CanNull { //组件为可选
 					if etemp, ok := err2.(dot.Errorer); !ok || etemp.Code() != dot.SError.NotExisted.Code() { //如果error code不为不存在
 						logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
 						multiErr(err2)
@@ -652,7 +656,7 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 				}
 			}
 			if d == nil {
-				if len(tagName) < 1 || tagName == "?" { //by type
+				if len(tagName) < 1 || tagName == dot.CanNull { //by type
 					d, err2 = c.GetByType(f.Type())
 				} else { //by liveid
 					d, err2 = c.GetByLiveId(dot.LiveId(tagName))
@@ -660,7 +664,7 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 			}
 
 			if err2 != nil {
-				if tagName == "?" { //组件为可选
+				if tagName == dot.CanNull { //组件为可选
 					if errTemp, ok := err2.(dot.Errorer); !ok || errTemp.Code() != dot.SError.NotExisted.Code() { //如果error code不为不存在
 						logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
 						multiErr(err2)
@@ -903,6 +907,101 @@ func (c *lineImp) autoMakeLiveId() {
 		}
 	}
 
+}
+
+//get relay from the tag
+//merge type relay
+//merge live relay
+//verify the key of relay lives(the name have to eq the field name)
+var setExists = struct{}{} //only for set value
+func (c *lineImp) makeRelays() {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	logger := dot.Logger()
+	liveIdToType := make(map[dot.LiveId]dot.TypeId)
+	typeIdToLiveIds := make(map[dot.TypeId]map[dot.LiveId]struct{}, len(c.lives.LiveIdMap))
+	for _, live := range c.lives.LiveIdMap {
+		liveIdToType[live.LiveId] = live.TypeId
+		if _, ok := typeIdToLiveIds[live.TypeId]; !ok {
+			typeIdToLiveIds[live.TypeId] = make(map[dot.LiveId]struct{})
+		}
+		typeIdToLiveIds[live.TypeId][live.LiveId] = setExists
+	}
+	typeToTypeId := make(map[reflect.Type]dot.TypeId)
+	for _, meta := range c.metas.metas {
+		if meta.RefType != nil {
+			typeToTypeId[meta.RefType] = meta.TypeId
+		}
+	}
+	for _, meta := range c.metas.metas { //relay type
+		dotFields := make(map[string]dot.LiveId)
+		if meta.RefType != nil {
+			relayTypeIds := make(map[dot.TypeId]struct{})
+			for i := 0; i < meta.RefType.NumField(); i++ { // relay by tag
+				tField := meta.RefType.Field(i)
+				liveId, ok := tField.Tag.Lookup(dot.TagDot)
+				if !ok || liveId == dot.CanNull { //not find or eq ?
+					continue
+				}
+				dotFields[tField.Name] = dot.LiveId(liveId)
+				if len(liveId) < 1 {
+					if tid, ok := typeToTypeId[tField.Type]; ok {
+						relayTypeIds[tid] = setExists
+					} else {
+						//do not find typeId
+					}
+				} else {
+					if tid, ok := liveIdToType[dot.LiveId(liveId)]; ok {
+						relayTypeIds[tid] = setExists
+					}
+				}
+			}
+
+			if lives, ok := typeIdToLiveIds[meta.TypeId]; ok {
+				//for liveId := range lives { relay type and relay live, sometimes they are not same
+				//	if live, ok := c.lives.LiveIdMap[liveId]; ok {
+				//		relayTypeIds[live.TypeId] = setExists
+				//	}
+				//}
+
+				//verify the field name for relay live
+				for liveId := range lives {
+					if live, ok := c.lives.LiveIdMap[liveId]; ok {
+						for name := range live.RelyLives {
+							if _, ok := dotFields[name]; !ok {
+								if logger != nil {
+									logger.Warn(func() string {
+										return fmt.Sprintf("make relay of dot, meta: %v\n live: %v", meta, live)
+									})
+								}
+							}
+						}
+
+						for name, tid := range dotFields {
+							if _, ok := live.RelyLives[name]; !ok {
+								if len(tid.String()) > 0 {
+									live.RelyLives[name] = tid
+								} else {
+									//do nothing, do not know live id
+								}
+							}
+						}
+
+					}
+				}
+			}
+
+			if len(relayTypeIds) > 0 {
+				for _, typeId := range meta.RelyTypeIds { //distinct
+					relayTypeIds[typeId] = setExists
+				}
+				meta.RelyTypeIds = make([]dot.TypeId, 0, len(relayTypeIds))
+				for tid := range relayTypeIds {
+					meta.RelyTypeIds = append(meta.RelyTypeIds, tid)
+				}
+			}
+		}
+	}
 }
 
 //todo this method is private and will be realized with component method
