@@ -1345,4 +1345,17 @@ func (c *lineImp) InfoAllTypeAdnLives() {
 	})
 }
 
+func (c *lineImp) Lives() []*dot.Live {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	re := make([]*dot.Live, 0, len(c.lives.LiveIdMap))
+	for _, v := range c.lives.LiveIdMap {
+		if v.Dot != nil {
+			re = append(re, v)
+		}
+	}
+
+	return re
+}
+
 ///////////////

@@ -89,6 +89,8 @@ type Line interface {
 	GetLineBuilder() *Builder
 	//InfoAllTypeAdnLives just for debug, log info all types and lives
 	InfoAllTypeAdnLives()
+	//Lives return a new slice of lives
+	Lives() []*Live
 }
 
 // If component need to know current line, then realize this API, and this API Will be called before component Create

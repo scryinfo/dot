@@ -5,6 +5,7 @@ package gserver
 
 import (
 	"net/http"
+	"reflect"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,7 @@ type ginNobl struct {
 func GinNoblTypeLives() []*dot.TypeLives {
 
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: GinNoblTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeId: GinNoblTypeId, RefType: reflect.TypeOf((*ginNobl)(nil)).Elem(), NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return &ginNobl{}, nil
 		}},
 		Lives: []dot.Live{

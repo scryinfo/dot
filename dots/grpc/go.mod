@@ -19,6 +19,6 @@ require (
 )
 
 replace (
-	github.com/scryinfo/dot v0.1.4 => ../../
+	github.com/scryinfo/dot => ../../
 	github.com/scryinfo/dot/dots/gindot v0.0.0-20200311030916-18de37ac25e4 => ../gindot
 )

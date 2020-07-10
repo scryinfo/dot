@@ -22,13 +22,13 @@ const (
 
 type ServerNobl interface {
 	Server() *grpc.Server
+	ServerItems() ServerItem
 }
 
 type ConfigNobl struct {
-	//sample :  1.1.1.1:568
-	Addrs []string `json:"addrs"`
-
-	Tls utils.TlsConfig `json:"tls"`
+	Name  string          `json:"name"`
+	Addrs []string        `json:"addrs"` //sample :  1.1.1.1:568
+	Tls   utils.TlsConfig `json:"tls"`
 }
 
 //grpc server component, without bl; one server can monitor in multi address or API at the same time,support tls
@@ -36,6 +36,36 @@ type serverNoblImp struct {
 	conf      ConfigNobl
 	server    *grpc.Server
 	listeners []net.Listener
+}
+
+func (c *serverNoblImp) Server() *grpc.Server {
+	return c.server
+}
+
+func (c *serverNoblImp) ServerItems() ServerItem {
+	serverItem := ServerItem{Name: c.conf.Name}
+
+	for i, _ := range c.listeners {
+		l := c.listeners[i]
+		if l != nil {
+			serverItem.Addr = append(serverItem.Addr, l.Addr().String())
+		}
+	}
+
+	return serverItem
+}
+
+func (c *serverNoblImp) startServer() {
+	for _, lis := range c.listeners {
+		go func(li net.Listener) {
+			logger := dot.Logger()
+			logger.Infoln("ServerNobl", zap.String("", li.Addr().String()))
+			err := c.server.Serve(li)
+			if err != nil {
+				logger.Errorln(err.Error())
+			}
+		}(lis)
+	}
 }
 
 //Construct component
@@ -48,6 +78,13 @@ func newServerNobl(conf []byte) (dot.Dot, error) {
 
 	d := &serverNoblImp{
 		conf: *dconf,
+	}
+
+	if len(d.conf.Name) < 1 {
+		dot.Logger().Warnln("serverNoblImp", zap.String("", "the server name is empty"))
+	}
+	if len(d.conf.Addrs) < 1 {
+		dot.Logger().Warnln("serverNoblImp", zap.String("", "the server addrs are empty"))
 	}
 
 	return d, err
@@ -210,21 +247,4 @@ func (c *serverNoblImp) Stop(ignore bool) error {
 	}
 
 	return nil
-}
-
-func (c *serverNoblImp) Server() *grpc.Server {
-	return c.server
-}
-
-func (c *serverNoblImp) startServer() {
-	for _, lis := range c.listeners {
-		go func(li net.Listener) {
-			logger := dot.Logger()
-			logger.Infoln("ServerNobl", zap.String("", li.Addr().String()))
-			err := c.server.Serve(li)
-			if err != nil {
-				logger.Errorln(err.Error())
-			}
-		}(lis)
-	}
 }

@@ -1,12 +1,15 @@
 package conns
 
 import (
+	"context"
 	"crypto/tls"
+	"github.com/pkg/errors"
 	"time"
 
 	"go.etcd.io/etcd/clientv3"
-	"go.etcd.io/etcd/clientv3/naming"
+	etcdnaming "go.etcd.io/etcd/clientv3/naming"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/naming"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/utils"
@@ -14,17 +17,22 @@ import (
 
 const EtcdConnsTypeId = "c91c8c68-281a-4949-8e55-3516664e80c7"
 
+//see https://github.com/etcd-io/etcd/blob/master/Documentation/dev-guide/grpc_naming.md
+
 type configEtcdConns struct {
 	Endpoints   []string        `json:"endpoints"`
 	DialTimeout int64           `json:"dialTimeout"`
-	Names       []string        `json:"names"`
-	Tls         utils.TlsConfig `json:"tls"`
+	Tls         utils.TlsConfig `json:"tls"` //not sure about the Mutual Authentication can work
+
+	Names []string `json:"names"` //服务名字
 }
 
+//etcd 客户端连接组件
 type EtcdConns struct {
-	etcdClient *clientv3.Client
-	conns      map[string]*grpc.ClientConn
-	conf       configEtcdConns
+	etcdClient   *clientv3.Client
+	grpcResolver *etcdnaming.GRPCResolver //ref the etcdClient
+	conns        map[string]*grpc.ClientConn
+	conf         configEtcdConns
 }
 
 func (c *EtcdConns) ClientConn(serviceName string) *grpc.ClientConn {
@@ -39,6 +47,22 @@ func (c *EtcdConns) ClientConn(serviceName string) *grpc.ClientConn {
 
 func (c *EtcdConns) EtcdClient() *clientv3.Client {
 	return c.etcdClient
+}
+
+func (c *EtcdConns) GRPCResolver() *etcdnaming.GRPCResolver {
+	return c.grpcResolver
+}
+func (c *EtcdConns) RegisterServer(name string, addr string) error {
+	if c.grpcResolver != nil {
+		return c.grpcResolver.Update(context.TODO(), name, naming.Update{Op: grpcName.Add, Addr: addr})
+	}
+	return errors.New("GRPC Resolver is null")
+}
+func (c *EtcdConns) UnRegisterServer(name string, addr string) error {
+	if c.grpcResolver != nil {
+		return c.grpcResolver.Update(context.TODO(), name, naming.Update{Op: grpcName.Delete, Addr: addr})
+	}
+	return errors.New("GRPC Resolver is null")
 }
 
 //func (c *EtcdConns) Create(l dot.Line) error {
@@ -93,10 +117,11 @@ func newEtcdConns(conf []byte) (dot.Dot, error) {
 			return nil, err
 		}
 	}
-
+	d.grpcResolver = &etcdnaming.GRPCResolver{
+		Client: d.etcdClient,
+	}
 	if len(d.conf.Names) > 0 {
-		r := naming.GRPCResolver{Client: d.etcdClient}
-		b := grpc.RoundRobin(&r) //todo 改为新版实现
+		b := grpc.RoundRobin(d.grpcResolver)
 
 		for _, n := range d.conf.Names {
 			conn, err := grpc.Dial(n, grpc.WithBalancer(b), grpc.WithBlock())
