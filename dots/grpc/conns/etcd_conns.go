@@ -54,13 +54,13 @@ func (c *EtcdConns) GRPCResolver() *etcdnaming.GRPCResolver {
 }
 func (c *EtcdConns) RegisterServer(name string, addr string) error {
 	if c.grpcResolver != nil {
-		return c.grpcResolver.Update(context.TODO(), name, naming.Update{Op: grpcName.Add, Addr: addr})
+		return c.grpcResolver.Update(context.TODO(), name, naming.Update{Op: naming.Add, Addr: addr})
 	}
 	return errors.New("GRPC Resolver is null")
 }
 func (c *EtcdConns) UnRegisterServer(name string, addr string) error {
 	if c.grpcResolver != nil {
-		return c.grpcResolver.Update(context.TODO(), name, naming.Update{Op: grpcName.Delete, Addr: addr})
+		return c.grpcResolver.Update(context.TODO(), name, naming.Update{Op: naming.Delete, Addr: addr})
 	}
 	return errors.New("GRPC Resolver is null")
 }
