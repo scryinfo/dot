@@ -12,6 +12,7 @@ require (
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/scryinfo/dot v0.1.5-0.20200620045039-00dee0543f89
 	github.com/scryinfo/dot/dots/gindot v0.0.0-20200520093457-f8a16513551b
+	github.com/stretchr/testify v1.4.0
 	go.etcd.io/etcd v0.0.0-20200520232829-54ba9589114f
 	go.uber.org/zap v1.14.0
 	golang.org/x/net v0.0.0-20200301022130-244492dfa37a

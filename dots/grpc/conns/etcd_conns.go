@@ -3,6 +3,7 @@ package conns
 import (
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"github.com/pkg/errors"
 	"time"
 
@@ -107,6 +108,9 @@ func newEtcdConns(conf []byte) (dot.Dot, error) {
 				return nil, err
 			}
 		}
+		if d.conf.DialTimeout < 1 {
+			d.conf.DialTimeout = 6
+		}
 
 		d.etcdClient, err = clientv3.New(clientv3.Config{
 			Endpoints:   d.conf.Endpoints,
@@ -124,7 +128,7 @@ func newEtcdConns(conf []byte) (dot.Dot, error) {
 		b := grpc.RoundRobin(d.grpcResolver)
 
 		for _, n := range d.conf.Names {
-			conn, err := grpc.Dial(n, grpc.WithBalancer(b), grpc.WithBlock())
+			conn, err := grpc.Dial(n, grpc.WithBalancer(b), grpc.WithInsecure())
 			if err != nil {
 				return nil, err
 			}
@@ -162,4 +166,17 @@ func EtcdConnsConfigTypeLive() *dot.ConfigTypeLives {
 		TypeIdConfig: EtcdConnsTypeId,
 		ConfigInfo:   &configEtcdConns{},
 	}
+}
+
+func NewEtcd(endpoints []string, names []string) *EtcdConns {
+	conf := &configEtcdConns{
+		Endpoints:   endpoints,
+		DialTimeout: 10,
+		Tls:         utils.TlsConfig{},
+		Names:       names,
+	}
+	bs, _ := json.Marshal(conf)
+	re, _ := newEtcdConns(bs)
+	etcdConns, _ := re.(*EtcdConns)
+	return etcdConns
 }
