@@ -42,29 +42,30 @@ func (c *EtcdRegister) AfterAllInject(l dot.Line) {
 			return true
 		})
 		nameItems := make(map[string]*ServerItem, len(items)+len(c.conf.Items))
-		for i := range c.conf.Items {
-			it := &c.conf.Items[i]
-			mit := nameItems[it.Name]
-			if mit == nil {
-				mit = &ServerItem{}
-				nameItems[it.Name] = mit
-			}
-			for ai := range it.Addrs {
-				mit.Addrs = append(mit.Addrs, it.Addrs[ai])
+		putToMap := func(nameMap map[string]*ServerItem, serverItems []ServerItem) {
+			for i := range serverItems {
+				item := &serverItems[i]
+				mapItem := nameMap[item.Name]
+				if mapItem == nil {
+					mapItem = &ServerItem{Name: item.Name}
+					nameMap[item.Name] = mapItem
+				}
+				for _, addr := range item.Addrs {
+					exist := false
+					for _, old := range mapItem.Addrs { //find the new addr
+						if addr == old {
+							exist = true
+							break
+						}
+					}
+					if !exist { //if it new, append it
+						mapItem.Addrs = append(mapItem.Addrs, addr)
+					}
+				}
 			}
 		}
-
-		for i := range items {
-			it := &items[i]
-			mit := nameItems[it.Name]
-			if mit == nil {
-				mit = &ServerItem{}
-				nameItems[it.Name] = mit
-			}
-			for ai := range it.Addrs {
-				mit.Addrs = append(mit.Addrs, it.Addrs[ai])
-			}
-		}
+		putToMap(nameItems, c.conf.Items)
+		putToMap(nameItems, items)
 
 		c.items = make([]ServerItem, 0, len(nameItems))
 		for _, item := range nameItems {
