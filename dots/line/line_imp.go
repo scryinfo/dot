@@ -1345,17 +1345,32 @@ func (c *lineImp) InfoAllTypeAdnLives() {
 	})
 }
 
-func (c *lineImp) Lives() []*dot.Live {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-	re := make([]*dot.Live, 0, len(c.lives.LiveIdMap))
-	for _, v := range c.lives.LiveIdMap {
-		if v.Dot != nil {
-			re = append(re, v)
+func (c *lineImp) EachLives(call func(live *dot.Live, meta *dot.Metadata) bool) {
+	if call != nil {
+		c.mutex.Lock()
+		liveIds := make([]dot.LiveId, 0, len(c.lives.LiveIdMap))
+		for liveId := range c.lives.LiveIdMap {
+			liveIds = append(liveIds, liveId)
+		}
+		typeIds := make([]dot.TypeId, 0, len(c.metas.metas))
+		for typeId := range c.metas.metas {
+			typeIds = append(typeIds, typeId)
+		}
+		c.mutex.Unlock()
+		for _, liveId := range liveIds {
+			var live *dot.Live
+			var meta *dot.Metadata
+			c.mutex.Lock()
+			live = c.lives.LiveIdMap[liveId] //if the key do not exist, return nil
+			if live != nil {
+				meta = c.metas.metas[live.TypeId] //if the key do not exist, return nil
+			}
+			c.mutex.Unlock() //unlock mutex to avoid the dead lock
+			if !call(live, meta) {
+				break
+			}
 		}
 	}
-
-	return re
 }
 
 ///////////////
