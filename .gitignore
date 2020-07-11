@@ -85,3 +85,7 @@
 /tools/dotcli/go.sum
 /tools/dotcli/dotcli.exe
 /dots/db/pgs/before.log
+
+**/*.log
+**/go.sum
+**/.idea
