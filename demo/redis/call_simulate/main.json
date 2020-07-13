@@ -1,0 +1,25 @@
+{
+  "dots": [
+    {
+      "metaData": {
+        "name": "",
+        "typeId": "0ae35550-7e37-4afe-866e-b129099759b7"
+      },
+      "lives": [
+        {
+          "liveId": "0ae35550-7e37-4afe-866e-b129099759b7",
+          "json": {
+              "addr":"192.168.1.65:6379",
+              "user":"",
+              "password":"",
+              "database":0
+          }
+        }
+      ]
+    }
+  ],
+  "log": {
+    "file": "log.log",
+    "level": "debug"
+  }
+}

@@ -7,6 +7,8 @@ import (
 
 var confStr = `{"addr":"192.168.1.65:6379","user":"","password":"","database":0}`
 
+// Attention!
+// before start, you should change ↑ value, especially 'db addr'.
 func ExampleBasicProcess() {
     rdb := GenerateRedis(confStr)
 

@@ -6,3 +6,5 @@ require (
 	github.com/go-redis/redis/v8 v8.0.0-beta.6
 	github.com/scryinfo/dot v0.1.4
 )
+
+replace github.com/scryinfo/dot v0.1.4 => ../../../

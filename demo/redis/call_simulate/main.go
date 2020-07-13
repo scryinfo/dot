@@ -2,7 +2,7 @@ package main
 
 import (
     "github.com/scryinfo/dot/dot"
-    "github.com/scryinfo/dot/dots/grpc/gserver"
+    dot_redis "github.com/scryinfo/dot/dots/db/redis"
     "github.com/scryinfo/dot/dots/line"
     "github.com/scryinfo/scryg/sutils/ssignal"
     "go.uber.org/zap"
@@ -16,13 +16,13 @@ func main() {
     }
     defer line.StopAndDestroy(l, true)
     dot.Logger().Infoln("dot ok")
+    
     ssignal.WaitCtrlC(func(s os.Signal) bool {
         return false
     })
 }
 func add(l dot.Line) error {
-    lives := gserver.GinNoblTypeLives()
-    //lives = append(lives, redis.)
+    lives := dot_redis.RedisTypeLives()
     err := l.PreAdd(lives...)
 
     return err

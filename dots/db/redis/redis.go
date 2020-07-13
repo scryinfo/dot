@@ -27,6 +27,8 @@ type Redis struct {
 // todo：为 缓存优先 的业务提供统一的管理方法
 // todo?：考虑修改包名和结构体名
 
+// todo：缓存安全
+
 func (c *Redis) Create(_ dot.Line) error {
 	c.DB = redis.NewClient(&redis.Options{
 		Addr:     c.conf.Addr,
