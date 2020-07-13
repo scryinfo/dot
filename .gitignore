@@ -89,3 +89,4 @@
 **/*.log
 **/go.sum
 **/.idea
+**/*.exe
