@@ -1,8 +1,8 @@
 package main
 
 import (
+    "github.com/scryinfo/dot/demo/redis/call_simulate/component"
     "github.com/scryinfo/dot/dot"
-    dot_redis "github.com/scryinfo/dot/dots/db/redis"
     "github.com/scryinfo/dot/dots/line"
     "github.com/scryinfo/scryg/sutils/ssignal"
     "go.uber.org/zap"
@@ -22,7 +22,7 @@ func main() {
     })
 }
 func add(l dot.Line) error {
-    lives := dot_redis.RedisTypeLives()
+    lives := component.RedisDemoTypeLives()
     err := l.PreAdd(lives...)
 
     return err
