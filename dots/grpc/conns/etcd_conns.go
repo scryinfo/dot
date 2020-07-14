@@ -28,7 +28,7 @@ type configEtcdConns struct {
 	Names []string `json:"names"` //服务名字
 }
 
-//etcd 客户端连接组件
+//etcd client
 type EtcdConns struct {
 	etcdClient   *clientv3.Client
 	grpcResolver *etcdnaming.GRPCResolver //ref the etcdClient
