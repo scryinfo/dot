@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"encoding/json"
 	"github.com/albrow/zoom"
 	"github.com/scryinfo/dot/dot"
 	"go.uber.org/zap"
@@ -9,7 +10,7 @@ import (
 const RedisTypeId = "0ae35550-7e37-4afe-866e-b129099759b7"
 
 type configRedis struct {
-	Addr     string `json:"addr"`
+	Addr string `json:"addr"`
 }
 type Redis struct {
 	conf configRedis
@@ -26,8 +27,12 @@ type Redis struct {
 // all models can use 'find all' support from zoom, because of the param: 'Index: true'
 func (c *Redis) RegisterCollections(models []Model) []*Collection {
 	res := make([]*Collection, 0)
-	for i, model := range models {
-		c, err := c.pool.NewCollectionWithOptions(model, zoom.CollectionOptions{Index: true, Name: model.GetName()})
+	for i, m := range models {
+		c, err := c.pool.NewCollectionWithOptions(m, zoom.CollectionOptions{
+			FallbackMarshalerUnmarshaler: m,
+			Index:                        true,
+			Name:                         m.GetName(),
+		})
 		if err != nil {
 			dot.Logger().Errorln("register redis collection failed",
 				zap.Int("index", i),
@@ -100,18 +105,48 @@ func RedisConfigTypeLive() *dot.ConfigTypeLives {
 }
 
 type Model interface {
-	zoom.Model
+	zoom.Model // zoom.RandomID implements this interface
+	zoom.MarshalerUnmarshaler
 	GetName() string
 }
 
-//type ModelImp struct {
-//	zoom.RandomID
-//	ModelName string
-//}
-//
-//func (m *ModelImp) GetName() string {
-//	return m.ModelName
-//}
+var _ Model = (*ModelImp)(nil)
+
+type ModelImp struct {
+	Id   string
+	Name string
+}
+
+func (m *ModelImp) Marshal(v interface{}) ([]byte, error) {
+	return json.Marshal(v)
+}
+
+func (m *ModelImp) Unmarshal(data []byte, v interface{}) error {
+	return json.Unmarshal(data, v)
+}
+
+func (m *ModelImp) ModelID() string {
+	if m.Id == "" {
+		m.Id = (&zoom.RandomID{}).ModelID()
+	}
+
+	return m.Id
+}
+
+func (m *ModelImp) SetModelID(id string) {
+	m.Id = id
+}
+
+func (m *ModelImp) GetName() string {
+	if m.Name != "" {
+	} else if m.Id != "" {
+		m.Name = m.Id
+	} else {
+		m.Name = m.ModelID()
+	}
+
+	return m.Name
+}
 
 type Collection struct {
 	*zoom.Collection
