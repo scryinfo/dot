@@ -1,7 +1,6 @@
 package redis
 
 import (
-	"encoding/json"
 	"github.com/albrow/zoom"
 	"github.com/scryinfo/dot/dot"
 	"go.uber.org/zap"
@@ -31,21 +30,17 @@ func (c *Redis) RegisterCollections(models []Model) []*Collection {
 		c, err := c.pool.NewCollectionWithOptions(m, zoom.CollectionOptions{
 			FallbackMarshalerUnmarshaler: m,
 			Index:                        true,
-			Name:                         m.GetName(),
+			Name:                         m.ModelName(),
 		})
 		if err != nil {
 			dot.Logger().Errorln("register redis collection failed",
 				zap.Int("index", i),
-				zap.NamedError("error", err))
+				zap.NamedError("error", err),
+				zap.Any("collection", c))
 			continue
 		}
-		res = append(res, &Collection{Collection: c})
-	}
 
-	if len(models) != len(res) {
-		dot.Logger().Errorln("something works not as suppose",
-			zap.Int("models.length", len(models)),
-			zap.Int("result.length", len(res)))
+		res = append(res, &Collection{Collection: c})
 	}
 
 	return res
@@ -102,52 +97,4 @@ func RedisConfigTypeLive() *dot.ConfigTypeLives {
 			//todo
 		},
 	}
-}
-
-type Model interface {
-	zoom.Model // zoom.RandomID implements this interface
-	zoom.MarshalerUnmarshaler
-	GetName() string
-}
-
-var _ Model = (*ModelImp)(nil)
-
-type ModelImp struct {
-	Id   string
-	Name string
-}
-
-func (m *ModelImp) Marshal(v interface{}) ([]byte, error) {
-	return json.Marshal(v)
-}
-
-func (m *ModelImp) Unmarshal(data []byte, v interface{}) error {
-	return json.Unmarshal(data, v)
-}
-
-func (m *ModelImp) ModelID() string {
-	if m.Id == "" {
-		m.Id = (&zoom.RandomID{}).ModelID()
-	}
-
-	return m.Id
-}
-
-func (m *ModelImp) SetModelID(id string) {
-	m.Id = id
-}
-
-func (m *ModelImp) GetName() string {
-	if m.Name != "" {
-	} else if m.Id != "" {
-		m.Name = m.Id
-	} else {
-		m.Name = m.ModelID()
-	}
-
-	return m.Name
-}
-
-type Collection struct {
-	*zoom.Collection
 }

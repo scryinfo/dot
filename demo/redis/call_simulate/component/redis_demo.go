@@ -13,6 +13,7 @@ const RedisDemoTypeId = "c5f966e2-147a-4b09-a5dc-8c74ff603d38"
 
 type RedisDemo struct {
 	Collections []*dot_redis.Collection
+
 	Redis       *dot_redis.Redis `dot:""`
 }
 
@@ -24,7 +25,7 @@ type Demo struct {
 
 func (c *RedisDemo) AfterAllInject(_ dot.Line) {
 	demoInsWithName := &Demo{}
-	demoInsWithName.SetModelID("demo")
+	demoInsWithName.SetModelName("demo")
 
 	c.Collections = make([]*dot_redis.Collection, 0)
 	c.Collections = append(c.Collections, c.Redis.RegisterCollections([]dot_redis.Model{demoInsWithName})...)
