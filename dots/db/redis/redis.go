@@ -1,9 +1,10 @@
 package redis
 
 import (
-	"github.com/albrow/zoom"
+	"encoding/json"
+	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/scryinfo/dot/dot"
-	"go.uber.org/zap"
 )
 
 const RedisTypeId = "0ae35550-7e37-4afe-866e-b129099759b7"
@@ -14,7 +15,7 @@ type configRedis struct {
 type Redis struct {
 	conf configRedis
 
-	pool *zoom.Pool
+	*redis.Client
 }
 
 // todo?：考虑修改包名和结构体名，但是不知道改成啥
@@ -23,38 +24,18 @@ type Redis struct {
 // todo：缓存安全
 // todo：思考服务器端redis配置，包括但不限于分配多大的内存、内存占用已满时的策略（报错或删除一部分内存，一共6种策略的那个）
 
-// all models can use 'find all' support from zoom, because of the param: 'Index: true'
-func (c *Redis) RegisterCollections(models []Model) []*Collection {
-	res := make([]*Collection, 0)
-	for i, m := range models {
-		c, err := c.pool.NewCollectionWithOptions(m, zoom.CollectionOptions{
-			FallbackMarshalerUnmarshaler: m,
-			Index:                        true,
-			Name:                         m.ModelName(),
-		})
-		if err != nil {
-			dot.Logger().Errorln("register redis collection failed",
-				zap.Int("index", i),
-				zap.NamedError("error", err),
-				zap.Any("collection", c))
-			continue
-		}
-
-		res = append(res, &Collection{Collection: c})
-	}
-
-	return res
-}
-
 func (c *Redis) Create(_ dot.Line) error {
-	c.pool = zoom.NewPool(c.conf.Addr)
+	c.Client = redis.NewClient(&redis.Options{
+		Addr:     c.conf.Addr,
+	})
 
 	return nil
 }
 
 func (c *Redis) AfterAllIDestroy(_ dot.Line) {
-	if err := c.pool.Close(); err != nil {
-		dot.Logger().Errorln("redis close failed", zap.NamedError("error", err))
+	if c.Client != nil {
+		_ = c.Client.Close()
+		c.Client = nil
 	}
 
 	return
@@ -97,4 +78,19 @@ func RedisConfigTypeLive() *dot.ConfigTypeLives {
 			//todo
 		},
 	}
+}
+
+// GenerateRedis func is for unit test and example
+func GenerateRedis(conf string) *Redis {
+	res := &Redis{conf: configRedis{}}
+	if err := json.Unmarshal([]byte(conf), &res.conf); err != nil {
+		fmt.Println("Test: json unmarshal failed, error:", err)
+		return nil
+	}
+	if err := res.Create(nil); err != nil {
+		fmt.Println("Test: res.create failed, error:", err)
+		return nil
+	}
+
+	return res
 }
