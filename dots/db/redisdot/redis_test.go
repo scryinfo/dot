@@ -1,4 +1,4 @@
-package redis
+package redisdot
 
 import (
     "fmt"

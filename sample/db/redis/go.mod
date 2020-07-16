@@ -12,4 +12,4 @@ require (
 	go.uber.org/zap v1.15.0
 )
 
-replace github.com/scryinfo/dot/dots/db/redis v0.0.0-20200711033836-fdd979f912ac => ../../../dots/db/redis
+replace github.com/scryinfo/dot/dots/db/redisdot v0.0.0-20200711033836-fdd979f912ac => ../../../dots/db/redisdot
