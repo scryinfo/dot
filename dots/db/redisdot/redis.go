@@ -7,18 +7,18 @@ import (
 	"github.com/pkg/errors"
 	"github.com/scryinfo/dot/dot"
 	"go.uber.org/zap"
+	"strings"
 )
 
 const RedisTypeId = "0ae35550-7e37-4afe-866e-b129099759b7"
 
 type configRedis struct {
-	Addr                string `json:"addr"`
+	Addr         string `json:"addr"`
 	KeepVersions int    `json:"keepVersions"`
 }
 type Redis struct {
 	conf configRedis
 
-	subscribe *redis.PubSub
 	currentVersion map[string]int
 	*redis.Client
 }
@@ -45,11 +45,10 @@ func (c *Redis) GetVersion(key string, registerNX ...int) (int, error) {
 }
 
 func (c *Redis) SetVersion(key string, version int) error {
-	// tx: current version / history version / publish: current version's modify
+	// tx: current version / all versions
 	pipe := c.TxPipeline()
-	pipe.Set(c.Context(), key, version, 0)
-	pipe.RPush(c.Context(), key, version)
-	pipe.Publish(c.Context(), VersionControlChannelName, MarshalKeyAndVersion(key, version))
+	pipe.Set(c.Context(), key+RegisteredKeySuffix, version, 0)
+	pipe.LPush(c.Context(), key+RegisteredKeysListSuffix, version)
 
 	_, err := pipe.Exec(c.Context())
 	if err != nil {
@@ -57,9 +56,12 @@ func (c *Redis) SetVersion(key string, version int) error {
 		return err
 	}
 
+	c.currentVersion[key] = version
+
 	// limit keep versions' length
-	// set version 函数本身重点不在于维护历史版本list，某一次维护失败对业务没有影响，所以维护操作没有加入事务中，且出错也只是打印日志，而不算作函数执行错误
-	length, err := c.LLen(c.Context(), key).Result()
+	// set version 函数本身重点不在于维护历史版本list，某一次维护失败对业务没有影响，
+	// 所以维护操作没有加入事务中，且出错也只是打印日志，而不认为函数执行错误
+	length, err := c.LLen(c.Context(), key+RegisteredKeysListSuffix).Result()
 	if err != nil {
 		dot.Logger().Errorln("redis get list.length failed",
 			zap.NamedError("error", err),
@@ -67,9 +69,9 @@ func (c *Redis) SetVersion(key string, version int) error {
 		return nil
 	}
 	if length > int64(c.conf.KeepVersions) {
-		for i := 0; i < int(length) - c.conf.KeepVersions; i++ {
-			if err = c.LPop(c.Context(), key).Err(); err != nil {
-				dot.Logger().Errorln("redis.lPop failed", zap.NamedError("error", err))
+		for i := 0; i < int(length)-c.conf.KeepVersions; i++ {
+			if err = c.RPop(c.Context(), key+RegisteredKeysListSuffix).Err(); err != nil {
+				dot.Logger().Errorln("redis.rPop failed", zap.NamedError("error", err))
 			}
 		}
 	}
@@ -108,50 +110,27 @@ func (c *Redis) DeleteVersion(key string, versions ...int) error {
 	return nil
 }
 
+func (c *Redis) GetAllVersions(key string) (string, error) {
+	versions, err := c.LRange(c.Context(), key+RegisteredKeysListSuffix, 0, -1).Result()
+	if err != nil {
+		dot.Logger().Errorln("redis get all versions failed", zap.NamedError("error", err))
+		return "", err
+	}
+
+	return strings.Join(versions, " <- "), nil
+}
+
 func (c *Redis) Create(_ dot.Line) error {
 	c.Client = redis.NewClient(&redis.Options{
 		Addr: c.conf.Addr,
 	})
 
 	c.currentVersion = make(map[string]int)
-	go func() {
-		// 断线自动重连
-		c.subscribe = c.Subscribe(c.Context(), VersionControlChannelName)
-
-		for {
-			msgI, err := c.subscribe.Receive(c.Context())
-			if err != nil {
-				dot.Logger().Errorln("receive from subscribe redis publish failed", zap.NamedError("error", err))
-				continue
-			}
-
-			switch msg := msgI.(type) {
-			case *redis.Subscription:
-				dot.Logger().Infoln("subscribe to", zap.String("channel name", msg.Channel))
-			case *redis.Message:
-				dot.Logger().Debugln("Node: get msg from redis publish.")
-				key, version, err := UnmarshalKeyWithVersion(msg.Payload)
-				if err != nil {
-					dot.Logger().Errorln("unmarshal redis key with version failed",
-						zap.NamedError("error", err),
-						zap.String("key with version", msg.Payload))
-					continue
-				}
-
-				c.currentVersion[key] = version
-			default:
-				dot.Logger().Warnln("Unknown msg from redis subscribe", zap.Any("type", msg))
-			}
-		}
-	}()
-
 
 	return nil
 }
 
 func (c *Redis) AfterAllIDestroy(_ dot.Line) {
-	_ = c.subscribe.Close()
-
 	if c.Client != nil {
 		_ = c.Client.Close()
 		c.Client = nil
