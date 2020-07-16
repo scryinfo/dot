@@ -4,11 +4,9 @@
 package lb
 
 import (
-	"context"
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/balancer/base"
 	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/resolver"
 	"math/rand"
 	"sync"
 	"time"
@@ -19,7 +17,7 @@ const Name = Round
 
 // newBuilder creates a new roundrobin balancer builder.
 func newBuilder() balancer.Builder {
-	return base.NewBalancerBuilderWithConfig(Name, &rrPickerBuilder{r: rand.New(rand.NewSource(time.Now().UnixNano()))}, base.Config{HealthCheck: true})
+	return base.NewBalancerBuilderV2(Name, &rrPickerBuilder{r: rand.New(rand.NewSource(time.Now().UnixNano()))}, base.Config{HealthCheck: true})
 }
 
 func init() {
@@ -39,13 +37,13 @@ func (c *rrPickerBuilder) Intn(n int) int {
 	return res
 }
 
-func (c *rrPickerBuilder) Build(readySCs map[resolver.Address]balancer.SubConn) balancer.Picker {
-	grpclog.Infof("roundrobinPicker: newPicker called with readySCs: %v", readySCs)
-	if len(readySCs) == 0 {
-		return base.NewErrPicker(balancer.ErrNoSubConnAvailable)
+func (c *rrPickerBuilder) Build(info base.PickerBuildInfo) balancer.V2Picker {
+	grpclog.Infof("roundrobinPicker: newPicker called with readySCs: %v", info)
+	if len(info.ReadySCs) == 0 {
+		return base.NewErrPickerV2(balancer.ErrNoSubConnAvailable)
 	}
 	var scs []balancer.SubConn
-	for _, sc := range readySCs {
+	for sc := range info.ReadySCs {
 		scs = append(scs, sc)
 	}
 	return &rrPicker{
@@ -67,10 +65,10 @@ type rrPicker struct {
 	next int
 }
 
-func (c *rrPicker) Pick(ctx context.Context, opts balancer.PickInfo) (balancer.SubConn, func(balancer.DoneInfo), error) {
+func (c *rrPicker) Pick(balancer.PickInfo) (balancer.PickResult, error) {
 	c.mu.Lock()
 	sc := c.subConns[c.next]
 	c.next = (c.next + 1) % len(c.subConns)
 	c.mu.Unlock()
-	return sc, nil, nil
+	return balancer.PickResult{SubConn: sc}, nil
 }

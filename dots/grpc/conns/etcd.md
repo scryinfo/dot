@@ -1,6 +1,8 @@
 # etcd server
 the etcd 3.4.9 on default port 2379 , (2380 is for peer)
 
+[download](https://github.com/etcd-io/etcd/releases)
+
 ## cluster
 [see](https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/clustering.md)
 
