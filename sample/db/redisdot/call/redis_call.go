@@ -78,6 +78,8 @@ func (c *RedisDemo) versionControlDemo() {
 	// get all versions
 	versions, err := c.Redis.GetAllVersions(versionControlDemoKey)
 	checkError("Example: get all versions failed", err)
+
+	fmt.Println("All versions: 5 <- 4 <- 3 <- 2| <- suppose |")
 	fmt.Println("All versions:", versions)
 
 	fmt.Println("Node: version control demo passed.")

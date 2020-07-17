@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap"
 	"regexp"
 	"strings"
+	"sync"
 )
 
 const RedisTypeId = "0ae35550-7e37-4afe-866e-b129099759b7"
@@ -21,7 +22,7 @@ type RedisClient struct {
 	conf configRedis
 
 	subscribe *redis.PubSub
-	currentVersion map[string]string // todo: goroutine safe
+	currentVersion sync.Map
 	*redis.Client
 }
 
@@ -31,9 +32,14 @@ type RedisClient struct {
 // GetVersion get current version by key, return version and error.
 func (c *RedisClient) GetVersion(key string) (string, error) {
 	// get current version by key,
-	version, ok := c.currentVersion[key]
+	versionI, ok := c.currentVersion.Load(key)
 	if !ok {
 		return "", errors.New(fmt.Sprintf("key: %s is not exist", key))
+	}
+
+	version, ok := versionI.(string)
+	if !ok {
+		return "", errors.New(fmt.Sprintf("key: %s is not string type", key))
 	}
 
 	return version, nil
@@ -52,7 +58,7 @@ func (c *RedisClient) SetVersion(key, version string) error {
 		return err
 	}
 
-	c.currentVersion[key] = version
+	c.currentVersion.Store(key, version)
 
 	// limit keep versions' length
 	// set version 函数本身重点不在于维护历史版本list，某一次维护失败对业务没有影响，
@@ -139,7 +145,6 @@ func (c *RedisClient) Create(_ dot.Line) error {
 		Addr: c.conf.Addr,
 	})
 
-	c.currentVersion = make(map[string]string)
 	c.subscribe = c.Subscribe(c.Context(), VersionControlChannelName)
 
 	_, err := c.subscribe.Receive(c.Context())
@@ -157,7 +162,7 @@ func (c *RedisClient) Create(_ dot.Line) error {
 				continue
 			}
 
-			c.currentVersion[key] = version
+			c.currentVersion.Store(key, version)
 		}
 	}()
 
@@ -198,18 +203,6 @@ func RedisTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{tl}
 
 	return lives
-}
-
-//RedisConfigTypeLive
-func RedisConfigTypeLive() *dot.ConfigTypeLives {
-	paths := make([]string, 0)
-	paths = append(paths, "")
-	return &dot.ConfigTypeLives{
-		TypeIdConfig: RedisTypeId,
-		ConfigInfo:   &configRedis{
-			//todo
-		},
-	}
 }
 
 // GenerateRedis func is for unit test and example
