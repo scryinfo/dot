@@ -57,6 +57,9 @@ func (c *RedisDemo) versionControlDemo() {
 	// register
 	checkError("Example: set version failed", c.Redis.SetVersion(versionControlDemoKey, versionControlDemoVersionOne))
 
+	// wait for subscribe goroutine
+	time.Sleep(time.Second)
+
 	// get version
 	v, err := c.Redis.GetVersion(versionControlDemoKey)
 	checkError("Example: get version failed", err)

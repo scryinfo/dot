@@ -1,7 +1,6 @@
 package redisdot
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
@@ -15,13 +14,14 @@ import (
 const RedisTypeId = "0ae35550-7e37-4afe-866e-b129099759b7"
 
 type configRedis struct {
-	Addr           string `json:"addr"`
-	KeepVersionNum int    `json:"keepVersionNum"`
+	Addr                string `json:"addr"`
+	KeepVersionNum      int    `json:"keepVersionNum"`
+	GetVersionFromRedis bool   `json:"getVersionFromRedis"`
 }
 type RedisClient struct {
 	conf configRedis
 
-	subscribe *redis.PubSub
+	subscribe      *redis.PubSub
 	currentVersion sync.Map
 	*redis.Client
 }
@@ -31,7 +31,10 @@ type RedisClient struct {
 
 // GetVersion get current version by key, return version and error.
 func (c *RedisClient) GetVersion(key string) (string, error) {
-	// get current version by key,
+	if c.conf.GetVersionFromRedis {
+		return c.Get(c.Context(), addCVPrefix(key)).Result()
+	}
+
 	versionI, ok := c.currentVersion.Load(key)
 	if !ok {
 		return "", errors.New(fmt.Sprintf("key: %s is not exist", key))
@@ -46,7 +49,48 @@ func (c *RedisClient) GetVersion(key string) (string, error) {
 }
 
 func (c *RedisClient) SetVersion(key, version string) error {
+	if c.conf.GetVersionFromRedis {
+		return c.setVersionDirectlyRedis(key, version)
+	}
+
+	return c.setVersion(key, version)
+}
+
+func (c *RedisClient) setVersionDirectlyRedis(key, version string) error {
 	// tx: current version / all versions
+	pipe := c.TxPipeline()
+	pipe.Set(c.Context(), addCVPrefix(key), version, 0)
+	pipe.LPush(c.Context(), addAVsLPrefix(key), version)
+
+	_, err := pipe.Exec(c.Context())
+	if err != nil {
+		dot.Logger().Errorln("redis set version failed", zap.NamedError("error", err))
+		return err
+	}
+
+	// limit keep versions' length
+	// set version 函数本身重点不在于维护历史版本list，某一次维护失败对业务没有影响，
+	// 所以维护操作没有加入事务中，且出错也只是打印日志，而不认为函数执行错误
+	length, err := c.LLen(c.Context(), addAVsLPrefix(key)).Result()
+	if err != nil {
+		dot.Logger().Errorln("redis get list.length failed",
+			zap.NamedError("error", err),
+			zap.String("list name", key))
+		return nil
+	}
+	if length > int64(c.conf.KeepVersionNum) {
+		for i := 0; i < int(length)-c.conf.KeepVersionNum; i++ {
+			if err = c.RPop(c.Context(), addAVsLPrefix(key)).Err(); err != nil {
+				dot.Logger().Errorln("redis.rPop failed", zap.NamedError("error", err))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (c *RedisClient) setVersion(key, version string) error {
+	// tx: current version / all versions / (publish)
 	pipe := c.TxPipeline()
 	pipe.Set(c.Context(), addCVPrefix(key), version, 0)
 	pipe.LPush(c.Context(), addAVsLPrefix(key), version)
@@ -81,40 +125,6 @@ func (c *RedisClient) SetVersion(key, version string) error {
 	return nil
 }
 
-func addCVPrefix(key string) string {
-	return CurrentVersionPrefix +key
-}
-
-func addAVsLPrefix(key string) string {
-	return AllVersionsListPrefix +key
-}
-
-func MarshalKeyAndVersion(key, version string) string {
-	return fmt.Sprintf(KeyWithVersionTemplate, version,  key)
-}
-
-func UnmarshalKeyWithVersion(keyWithVersion string) (string, string, error) {
-	pattern, err := regexp.Compile(KeyWithVersionTemplateRE)
-	if err != nil {
-		dot.Logger().Errorln("make pattern failed", zap.NamedError("error", err))
-		return "", "", err
-	}
-
-	strs := pattern.FindStringSubmatch(keyWithVersion)
-	if len(strs) != 3 {
-		dot.Logger().Errorln("regular experience match failed",
-			zap.String("str", keyWithVersion),
-			zap.String("pattern", pattern.String()),
-			zap.Strings("res", strs))
-		return "", "", errors.New("regular experience match failed")
-	}
-
-	version := strs[1]
-	key := strs[2]
-
-	return key, version, nil
-}
-
 // DeleteVersion del versions in key
 func (c *RedisClient) DeleteVersion(key string, versions ...string) error {
 	// re-curse del target versions
@@ -145,12 +155,19 @@ func (c *RedisClient) Create(_ dot.Line) error {
 		Addr: c.conf.Addr,
 	})
 
+	// directly return if not use component to manage version
+	if c.conf.GetVersionFromRedis {
+		return nil
+	}
+
 	c.subscribe = c.Subscribe(c.Context(), VersionControlChannelName)
 
+	// wait until subscribe success
 	_, err := c.subscribe.Receive(c.Context())
 	if err != nil {
 		dot.Logger().Errorln("subscription redis failed", zap.NamedError("error", err))
 	}
+
 	go func() {
 		ch := c.subscribe.Channel()
 		for msg := range ch {
@@ -173,6 +190,10 @@ func (c *RedisClient) AfterAllIDestroy(_ dot.Line) {
 	if c.Client != nil {
 		_ = c.Client.Close()
 		c.Client = nil
+	}
+
+	if c.subscribe != nil {
+		_ = c.subscribe.Close()
 	}
 
 	return
@@ -205,17 +226,36 @@ func RedisTypeLives() []*dot.TypeLives {
 	return lives
 }
 
-// GenerateRedis func is for unit test and example
-func GenerateRedis(conf string) *RedisClient {
-	res := &RedisClient{conf: configRedis{}}
-	if err := json.Unmarshal([]byte(conf), &res.conf); err != nil {
-		fmt.Println("Test: json unmarshal failed, error:", err)
-		return nil
-	}
-	if err := res.Create(nil); err != nil {
-		fmt.Println("Test: res.create failed, error:", err)
-		return nil
+func addCVPrefix(key string) string {
+	return CurrentVersionPrefix + key
+}
+
+func addAVsLPrefix(key string) string {
+	return AllVersionsListPrefix + key
+}
+
+func MarshalKeyAndVersion(key, version string) string {
+	return fmt.Sprintf(KeyWithVersionTemplate, version, key)
+}
+
+func UnmarshalKeyWithVersion(keyWithVersion string) (string, string, error) {
+	pattern, err := regexp.Compile(KeyWithVersionTemplateRE)
+	if err != nil {
+		dot.Logger().Errorln("make pattern failed", zap.NamedError("error", err))
+		return "", "", err
 	}
 
-	return res
+	strs := pattern.FindStringSubmatch(keyWithVersion)
+	if len(strs) != 3 {
+		dot.Logger().Errorln("regular experience match failed",
+			zap.String("str", keyWithVersion),
+			zap.String("pattern", pattern.String()),
+			zap.Strings("res", strs))
+		return "", "", errors.New("regular experience match failed")
+	}
+
+	version := strs[1]
+	key := strs[2]
+
+	return key, version, nil
 }

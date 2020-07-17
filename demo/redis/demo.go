@@ -41,7 +41,7 @@ func expireDemo() {
     v, err := getValue("demo")
     fmt.Printf("get value immediately, value: |%s|, error: %v\n", v, err)
 
-    time.Sleep(time.Second*2)
+    time.Sleep(time.Second)
 
     v, err = getValue("demo")
     fmt.Printf("get value after 2s   , value: |%s|, error: %v\n", v, err)
