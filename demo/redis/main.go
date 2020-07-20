@@ -6,4 +6,5 @@ func main() {
     basicDemo()
     expireDemo()
     updateDemo()
+    pubsubDemo()
 }

@@ -1,4 +1,4 @@
-package component
+package call
 
 import (
 	"fmt"
@@ -7,13 +7,14 @@ import (
 	"github.com/scryinfo/dot/dots/db/redisdot"
 	"go.uber.org/zap"
 	"os"
+	"strconv"
 	"time"
 )
 
 const RedisDemoTypeId = "c5f966e2-147a-4b09-a5dc-8c74ff603d38"
 
 type RedisDemo struct {
-	Redis *redisdot.Redis `dot:""`
+	Redis *redisdot.RedisClient `dot:""`
 }
 
 func (c *RedisDemo) Start(_ bool) (err error) {
@@ -22,7 +23,6 @@ func (c *RedisDemo) Start(_ bool) (err error) {
 	go func() {
 		c.basicDemo()
 		c.versionControlDemo()
-		c.versionControlExceptionProcessDemo()
 	}()
 
 	return nil
@@ -57,10 +57,13 @@ func (c *RedisDemo) versionControlDemo() {
 	// register
 	checkError("Example: set version failed", c.Redis.SetVersion(versionControlDemoKey, versionControlDemoVersionOne))
 
+	// wait for subscribe goroutine
+	time.Sleep(time.Second)
+
 	// get version
 	v, err := c.Redis.GetVersion(versionControlDemoKey)
 	checkError("Example: get version failed", err)
-	fmt.Printf("Version get suppose: %d, actually: %d\n", versionControlDemoVersionOne, v)
+	fmt.Printf("Version get suppose: %s, actually: %s\n", versionControlDemoVersionOne, v)
 
 	// set(update) version
 	checkError("Example: set version failed", c.Redis.SetVersion(versionControlDemoKey, versionControlDemoVersionTwo))
@@ -68,16 +71,18 @@ func (c *RedisDemo) versionControlDemo() {
 	// get version
 	v, err = c.Redis.GetVersion(versionControlDemoKey)
 	checkError("Example: get version failed", err)
-	fmt.Printf("Version get suppose: %d, actually: %d\n", versionControlDemoVersionTwo, v)
+	fmt.Printf("Version get suppose: %s, actually: %s\n", versionControlDemoVersionTwo, v)
 
 	// set version 3 times
 	for i := 3; i < 6; i++ {
-		checkError("Example: set version failed", c.Redis.SetVersion(versionControlDemoKey, i))
+		checkError("Example: set version failed", c.Redis.SetVersion(versionControlDemoKey, strconv.Itoa(i)))
 	}
 
 	// get all versions
 	versions, err := c.Redis.GetAllVersions(versionControlDemoKey)
 	checkError("Example: get all versions failed", err)
+
+	fmt.Println("All versions: 5 <- 4 <- 3 <- 2| <- suppose |")
 	fmt.Println("All versions:", versions)
 
 	fmt.Println("Node: version control demo passed.")
@@ -85,36 +90,6 @@ func (c *RedisDemo) versionControlDemo() {
 
 	return
 }
-
-// 异常流程：没有注册时，获取版本号；获取不存在的版本号；获取不存在的版本号并注册
-func (c *RedisDemo) versionControlExceptionProcessDemo() {
-	// get version not exist and not register
-	flag, err := c.Redis.GetVersion(versionControlExceptionProcessDemoKey)
-	if flag != redisdot.GetVersionNotExistFlag {
-		fmt.Println("Example: get version not exist and not register failed, error:", err)
-		os.Exit(-1)
-	}
-
-	// get version not exist and register
-	flag, err = c.Redis.GetVersion(versionControlExceptionProcessDemoKey, versionControlExceptionProcessDemoVersion)
-	if flag != redisdot.GetVersionNotExistAndRegisterFlag || err != nil {
-		fmt.Println("Example: get version not exist and register failed, error:", err)
-		os.Exit(-1)
-	}
-
-	// get version authenticate
-	version, err := c.Redis.GetVersion(versionControlExceptionProcessDemoKey)
-	if version != versionControlExceptionProcessDemoVersion || err != nil {
-		fmt.Println("Example: register by calling 'GetValue' failed, error:", err)
-		os.Exit(-1)
-	}
-
-	fmt.Println("Node: version control exception process demo passed.")
-	fmt.Println("-------")
-
-	return
-}
-
 
 func checkError(msg string, err error) {
 	if err != nil {
@@ -134,7 +109,7 @@ func RedisDemoTypeLives() []*dot.TypeLives {
 		Lives: []dot.Live{
 			{
 				LiveId:    RedisDemoTypeId,
-				RelyLives: map[string]dot.LiveId{"Redis": redisdot.RedisTypeId},
+				RelyLives: map[string]dot.LiveId{"RedisClient": redisdot.RedisTypeId},
 			},
 		},
 	}

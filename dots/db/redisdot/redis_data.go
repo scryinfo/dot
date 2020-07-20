@@ -2,10 +2,10 @@ package redisdot
 
 const (
 	VersionControlChannelName = "version_control"
-	KeyWithVersionTemplate = "%s:v%d"
-	RegisteredKeySuffix = ":currentVersion"
-	RegisteredKeysListSuffix = ":versions"
 
-	GetVersionNotExistFlag = iota - 2
-	GetVersionNotExistAndRegisterFlag
+	KeyWithVersionTemplate = `v%s:%s`
+	KeyWithVersionTemplateRE = `v(\w*):(\w*)`
+
+	CurrentVersionPrefix  = "CV:"
+	AllVersionsListPrefix = "AVsL:"
 )
