@@ -159,7 +159,7 @@ func TestLineImp_Start(t *testing.T) {
 
 	lImp, _ := l.(*lineImp)
 
-	order, err := lImp.RelyOrder()
+	order, err := lImp.relyOrder()
 	if len(order) != 11 {
 		t.Error("len(order) != 11")
 	}

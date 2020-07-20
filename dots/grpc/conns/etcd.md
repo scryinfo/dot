@@ -37,3 +37,7 @@ $ etcd --name etcdnode3 --initial-advertise-peer-urls http://10.0.1.12:2380 \
   --initial-cluster-state new
 ```
 
+# etcd browser
+1. [etcdkeeper](https://github.com/evildecay/etcdkeeper)
+2. [e3w](https://github.com/xiaowei520/e3w)
+3. [etcd-manager](https://www.npmjs.com/package/etcd-manager)

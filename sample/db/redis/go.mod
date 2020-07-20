@@ -10,6 +10,7 @@ require (
 	github.com/scryinfo/dot/dots/db/redisdot v0.0.0-20200711033836-fdd979f912ac
 	github.com/scryinfo/dot/dots/grpc v0.0.0-20200711033836-fdd979f912ac
 	github.com/scryinfo/scryg v0.1.3
+	github.com/tv42/base58 v0.0.0-20150113235651-b6649477bfe6 // indirect
 	go.uber.org/zap v1.15.0
 )
 

@@ -60,7 +60,7 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 
 		line.makeRelays()
 
-		dotOrder, circles := line.RelyOrder() //do not care the error, it is circle dependency
+		dotOrder, circles := line.relyOrder() //do not care the error, it is circle dependency
 		//circle dependency
 		if len(circles) > 0 {
 			bs, _ := json.Marshal(circles) //the %v just print the address of memory

@@ -6,6 +6,7 @@ package line
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"sync"
 
 	"go.uber.org/zap"
@@ -154,7 +155,10 @@ func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 	return err
 }
 
-func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
+//order the dots by relay relation
+//first return, ordered dots
+//second return, circle relay dots
+func (c *lineImp) relyOrder() ([]*dot.Live, []*dot.Live) {
 
 	var cloneLives map[dot.LiveId]*dot.Live
 	var cloneMetas map[dot.TypeId]*dot.Metadata
@@ -175,7 +179,6 @@ func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 	order := make([]*dot.Live, 0, len(cloneLives))
 	var circle []*dot.Live
 	{
-
 		relyed := make(map[dot.LiveId][]dot.LiveId, len(cloneLives))
 		for _, it := range cloneLives {
 
@@ -249,7 +252,7 @@ func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 			}
 		}
 
-		//todo type dependency
+		//todo type relay
 		{
 			for i, lev := range levels {
 				logger.Debugln(fmt.Sprintf("level : %d", i))
@@ -282,10 +285,9 @@ func (c *lineImp) RelyOrder() ([]*dot.Live, []*dot.Live) {
 }
 
 //CreateDots create dots
-func (c *lineImp) CreateDots(order []*dot.Live) error {
+func (c *lineImp) CreateDots(orderedDots []*dot.Live) error {
 	logger := dot.Logger()
-	tdots := order
-	creator := func(it *dot.Live) error {
+	createDotFun := func(it *dot.Live) error {
 		{ // Check whether special info needed before Create
 			if nl, ok := it.Dot.(dot.SetterLine); ok {
 				nl.SetLine(c)
@@ -296,7 +298,7 @@ func (c *lineImp) CreateDots(order []*dot.Live) error {
 			}
 		}
 
-		if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 { // dot not care the dot.Creator
+		if b := c.dotEventer.TypeEvents(it.TypeId); len(b) > 0 { // do before create for type
 			for i := range b {
 				e := &b[i]
 				if e.BeforeCreate != nil {
@@ -305,7 +307,7 @@ func (c *lineImp) CreateDots(order []*dot.Live) error {
 			}
 		}
 
-		if b := c.dotEventer.LiveEvents(it.LiveId); len(b) > 0 { // dot not care the dot.Creator
+		if b := c.dotEventer.LiveEvents(it.LiveId); len(b) > 0 { // do before create for live
 			for i := range b {
 				e := &b[i]
 				if e.BeforeCreate != nil {
@@ -314,13 +316,13 @@ func (c *lineImp) CreateDots(order []*dot.Live) error {
 			}
 		}
 
-		if creator, ok := it.Dot.(dot.Creator); ok {
+		if creator, ok := it.Dot.(dot.Creator); ok { //do createDotFun
 			if err := creator.Create(c); err != nil {
 				return err
 			}
 		}
 
-		if a := c.dotEventer.LiveEvents(it.LiveId); len(a) > 0 { // dot not care the dot.Creator
+		if a := c.dotEventer.LiveEvents(it.LiveId); len(a) > 0 { //do after create for live
 			for i := range a {
 				e := &a[i]
 				if e.AfterCreate != nil {
@@ -329,7 +331,7 @@ func (c *lineImp) CreateDots(order []*dot.Live) error {
 			}
 		}
 
-		if a := c.dotEventer.TypeEvents(it.TypeId); len(a) > 0 { // dot not care the dot.Creator
+		if a := c.dotEventer.TypeEvents(it.TypeId); len(a) > 0 { // dot after create for type
 			for i := range a {
 				e := &a[i]
 				if e.AfterCreate != nil {
@@ -341,78 +343,79 @@ func (c *lineImp) CreateDots(order []*dot.Live) error {
 		return nil
 	}
 	var err error
-	var outIt *dot.Live //just dor debug
-LIVES:
-	for _, outIt = range tdots {
+	var dotLive *dot.Live //just for debug
+CreateLives:
+	for _, dotLive = range orderedDots {
 		logger.Debug(func() string {
-			m, _ := c.metas.Get(outIt.TypeId)
+			m, _ := c.metas.Get(dotLive.TypeId)
 			if m != nil {
-				return fmt.Sprintf("Create dot, type id: %s, live id: %s, name: %s", outIt.TypeId, outIt.LiveId, m.Name)
+				return fmt.Sprintf("Create dot, type id: %s, live id: %s, name: %s", dotLive.TypeId, dotLive.LiveId, m.Name)
 			} else {
-				return fmt.Sprintf("Create dot, type id: %s, live id: %s", outIt.TypeId, outIt.LiveId)
+				return fmt.Sprintf("Create dot, type id: %s, live id: %s", dotLive.TypeId, dotLive.LiveId)
 			}
 		})
 
-		if skit.IsNil(&outIt.Dot) == true {
-			var bconfig []byte
+		if skit.IsNil(&dotLive.Dot) {
+			var bytesConfig []byte
 			var config *dot.LiveConfig
-			if true {
-				config = c.config.FindConfig(outIt.TypeId, outIt.LiveId)
-				bconfig, err = dot.MarshalConfig(config)
+			{
+				config = c.config.FindConfig(dotLive.TypeId, dotLive.LiveId)
+				bytesConfig, err = dot.MarshalConfig(config)
 				if err != nil {
-					break LIVES
+					break CreateLives
 				}
 			}
-			//liveid
+
+			//new by liveId
 			{
-				if newer, ok := c.newerLiveid[outIt.LiveId]; ok {
-					outIt.Dot, err = newer(bconfig)
+				if newer, ok := c.newerLiveid[dotLive.LiveId]; ok {
+					dotLive.Dot, err = newer(bytesConfig)
 					if err != nil {
-						break LIVES
+						break CreateLives
 					} else {
-						if err = creator(outIt); err != nil {
-							break LIVES
+						if err = createDotFun(dotLive); err != nil {
+							break CreateLives
 						}
-						continue LIVES
+						continue CreateLives
 					}
 				}
 			}
-			//typeid
+			//new by typeId
 			{
-				if newer, ok := c.newerTypeid[outIt.TypeId]; ok {
-					outIt.Dot, err = newer(bconfig)
+				if newer, ok := c.newerTypeid[dotLive.TypeId]; ok {
+					dotLive.Dot, err = newer(bytesConfig)
 					if err != nil {
-						break LIVES
+						break CreateLives
 					} else {
-						if err = creator(outIt); err != nil {
-							break LIVES
+						if err = createDotFun(dotLive); err != nil {
+							break CreateLives
 						}
-						continue LIVES
+						continue CreateLives
 					}
 				}
 			}
 
-			//metadata
+			//new by metadata
 			{
 				var m *dot.Metadata
-				m, err = c.metas.Get(outIt.TypeId)
+				m, err = c.metas.Get(dotLive.TypeId)
 				if err != nil {
-					break LIVES
+					break CreateLives
 				}
 
 				if m.NewDoter == nil && m.RefType == nil {
 					err = dot.SError.NoDotNewer.AddNewError(m.TypeId.String())
-					break LIVES
+					break CreateLives
 				}
 
-				outIt.Dot, err = m.NewDot(bconfig)
+				dotLive.Dot, err = m.NewDot(bytesConfig)
 				if err == nil {
-					if err = creator(outIt); err != nil {
-						break LIVES
+					if err = createDotFun(dotLive); err != nil {
+						break CreateLives
 					}
-					continue LIVES
+					continue CreateLives
 				} else {
-					break LIVES
+					break CreateLives
 				}
 			}
 		}
@@ -420,11 +423,11 @@ LIVES:
 
 	if err != nil {
 		logger.Debug(func() string {
-			m, _ := c.metas.Get(outIt.TypeId)
+			m, _ := c.metas.Get(dotLive.TypeId)
 			if m != nil {
-				return fmt.Sprintf("Create dot, meta: %v\n live: %v", m, outIt)
+				return fmt.Sprintf("Create dot, meta: %v\n live: %v", m, dotLive)
 			} else {
-				return fmt.Sprintf("Create dot, live: %v", outIt)
+				return fmt.Sprintf("Create dot, live: %v", dotLive)
 			}
 		})
 		logger.Errorln("lineImp", zap.Error(err))
@@ -447,7 +450,7 @@ LIVES:
 	}
 
 	//Add type and relationships with dot, only record whose typeid == liveId
-	for _, it := range tdots {
+	for _, it := range orderedDots {
 		if !skit.IsNil(&it.Dot) && ((string)(it.TypeId) == (string)(it.LiveId)) {
 			t := reflect.TypeOf(it.Dot)
 			c.mutex.Lock()
@@ -462,7 +465,8 @@ LIVES:
 
 	{
 		afterInjects := make([]dot.AfterAllInjecter, 0, 20)
-		for _, it := range tdots {
+		err = nil
+		for _, it := range orderedDots {
 			if it.Dot != nil { //todo not success
 				_ = c.injectInLine(it.Dot, it)
 				if ed, ok := it.Dot.(dot.Injected); ok {
@@ -545,27 +549,27 @@ func (c *lineImp) Inject(obj interface{}) error {
 		err = er
 	}
 
-	v := reflect.ValueOf(obj)
+	value := reflect.ValueOf(obj)
 
-	for v.Kind() == reflect.Ptr {
-		v = v.Elem()
+	for value.Kind() == reflect.Ptr {
+		value = value.Elem()
 	}
 
-	if v.Kind() != reflect.Struct {
+	if value.Kind() != reflect.Struct {
 		return dot.SError.NotStruct
 	}
 
-	t := v.Type()
+	rType := value.Type()
 
-	for i := 0; i < v.NumField(); i++ {
+	for i := 0; i < value.NumField(); i++ {
 		var err2 error = nil
-		f := v.Field(i)
-		if !f.CanSet() {
+		valueField := value.Field(i)
+		if !valueField.CanSet() {
 			continue
 		}
 
-		tField := t.Field(i)
-		tagName, ok := tField.Tag.Lookup(dot.TagDot)
+		typeField := rType.Field(i)
+		tagName, ok := typeField.Tag.Lookup(dot.TagDot)
 		if !ok {
 			continue
 		}
@@ -573,36 +577,36 @@ func (c *lineImp) Inject(obj interface{}) error {
 		var d dot.Dot
 		{
 			if len(tagName) < 1 || tagName == dot.CanNull { //by type
-				d, err2 = c.GetByType(f.Type())
+				d, err2 = c.GetByType(valueField.Type())
 			} else { //by liveid
-				d, err2 = c.GetByLiveId(dot.LiveId(tagName))
+				liveId := strings.TrimPrefix(tagName, dot.CanNull) // like ?live id
+				d, err2 = c.GetByLiveId(dot.LiveId(liveId))
 			}
 
 			if err2 != nil {
 				if tagName == dot.CanNull { //组件为可选
-					if etemp, ok := err2.(dot.Errorer); !ok || etemp.Code() != dot.SError.NotExisted.Code() { //如果error code不为不存在
-						logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
+					if dotError, ok := err2.(dot.Errorer); !ok || dotError.Code() != dot.SError.NotExisted.Code() { //如果error code不为不存在
+						logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %value", typeField.Name, err2))
 						multiErr(err2)
 					}
 				} else {
-					logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
+					logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %value", typeField.Name, err2))
 					multiErr(err2)
 				}
 			}
 
 			if d == nil {
-				logger.Debugln(fmt.Sprintf("lineImp, can not find dot error, field: %s", tField.Name))
+				logger.Debugln(fmt.Sprintf("lineImp, can not find dot error, field: %s", typeField.Name))
 				continue
 			}
 		}
 
 		if err2 == nil {
-			vv := reflect.ValueOf(d)
-			//fmt.Println("vv: ", vv.Type(), "f: ", f.Type(), "dd: ", reflect.TypeOf(d))
-			if vv.IsValid() && vv.Type().AssignableTo(f.Type()) {
-				f.Set(vv)
+			valueDot := reflect.ValueOf(d)
+			if valueDot.IsValid() && valueDot.Type().AssignableTo(valueField.Type()) {
+				valueField.Set(valueDot)
 			} else {
-				multiErr(dot.SError.DotInvalid.AddNewError(tField.Type.String() + "  " + tagName))
+				multiErr(dot.SError.DotInvalid.AddNewError(typeField.Type.String() + "  " + tagName))
 			}
 		}
 	}
@@ -610,6 +614,7 @@ func (c *lineImp) Inject(obj interface{}) error {
 	return err
 }
 
+// like Inject func
 func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 	logger := dot.Logger()
 	var err error
@@ -623,26 +628,26 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 		err = er
 	}
 
-	v := reflect.ValueOf(obj)
+	value := reflect.ValueOf(obj)
 
-	for v.Kind() == reflect.Ptr {
-		v = v.Elem()
+	for value.Kind() == reflect.Ptr {
+		value = value.Elem()
 	}
 
-	if v.Kind() != reflect.Struct {
+	if value.Kind() != reflect.Struct {
 		return dot.SError.NotStruct
 	}
 
-	t := v.Type()
+	rType := value.Type()
 
-	for i := 0; i < v.NumField(); i++ {
+	for i := 0; i < value.NumField(); i++ {
 		var err2 error = nil
-		f := v.Field(i)
-		if !f.CanSet() {
+		valueField := value.Field(i)
+		if !valueField.CanSet() {
 			continue
 		}
 
-		tField := t.Field(i)
+		tField := rType.Field(i)
 		tagName, ok := tField.Tag.Lookup(dot.TagDot)
 		if !ok {
 			continue
@@ -651,41 +656,42 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 		var d dot.Dot
 		{
 			if len(live.RelyLives) > 0 { //Config prior
-				if lid, ok := live.RelyLives[tField.Name]; ok {
-					d, err2 = c.GetByLiveId(dot.LiveId(lid))
+				if liveId, ok := live.RelyLives[tField.Name]; ok {
+					d, err2 = c.GetByLiveId(dot.LiveId(liveId))
 				}
 			}
 			if d == nil {
 				if len(tagName) < 1 || tagName == dot.CanNull { //by type
-					d, err2 = c.GetByType(f.Type())
+					d, err2 = c.GetByType(valueField.Type())
 				} else { //by liveid
-					d, err2 = c.GetByLiveId(dot.LiveId(tagName))
+					liveId := strings.TrimPrefix(tagName, dot.CanNull) // like ?live id
+					d, err2 = c.GetByLiveId(dot.LiveId(liveId))
 				}
 			}
 
 			if err2 != nil {
 				if tagName == dot.CanNull { //组件为可选
-					if errTemp, ok := err2.(dot.Errorer); !ok || errTemp.Code() != dot.SError.NotExisted.Code() { //如果error code不为不存在
-						logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
+					if dotError, ok := err2.(dot.Errorer); !ok || dotError.Code() != dot.SError.NotExisted.Code() { //如果error code不为不存在
+						logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %value", tField.Name, err2))
 						multiErr(err2)
 					}
 				} else {
-					logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %v", tField.Name, err2))
+					logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %value", tField.Name, err2))
 					multiErr(err2)
 				}
 			}
 
 			if d == nil {
-				logger.Debugln(fmt.Sprintf("lineImp, can not find dot error, field: %s, live: %v", tField.Name, live))
+				logger.Debugln(fmt.Sprintf("lineImp, can not find dot error, field: %s, live: %value", tField.Name, live))
 				continue
 			}
 		}
 
 		if err2 == nil {
-			vv := reflect.ValueOf(d)
-			//fmt.Println("vv: ", vv.Type(), "f: ", f.Type(), "dd: ", reflect.TypeOf(d))
-			if vv.IsValid() && vv.Type().AssignableTo(f.Type()) {
-				f.Set(vv)
+			valueDot := reflect.ValueOf(d)
+			//fmt.Println("valueDot: ", valueDot.Type(), "valueField: ", valueField.Type(), "dd: ", reflect.TypeOf(d))
+			if valueDot.IsValid() && valueDot.Type().AssignableTo(valueField.Type()) {
+				valueField.Set(valueDot)
 			} else if err == nil {
 				multiErr(dot.SError.DotInvalid.AddNewError(tField.Type.String() + "  " + tagName))
 			}
@@ -735,35 +741,35 @@ func (c *lineImp) GetByLiveId(liveId dot.LiveId) (d dot.Dot, err error) {
 //ReplaceOrAddByType update
 func (c *lineImp) ReplaceOrAddByType(d dot.Dot) error {
 	var err error
-	t := reflect.TypeOf(d)
-	//for t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
-	//	t = t.Elem()
+	typeDot := reflect.TypeOf(d)
+	//for typeDot.Kind() == reflect.Ptr || typeDot.Kind() == reflect.Interface {
+	//	typeDot = typeDot.Elem()
 	//}
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.types[t] = d
+	c.types[typeDot] = d
 	return err
 }
 
 //ReplaceOrAddByParamType update
-func (c *lineImp) ReplaceOrAddByParamType(d dot.Dot, t reflect.Type) error {
+func (c *lineImp) ReplaceOrAddByParamType(d dot.Dot, rType reflect.Type) error {
 	var err error
-	//for t.Kind() == reflect.Ptr || t.Kind() == reflect.Interface {
-	//	t = t.Elem()
+	//for rType.Kind() == reflect.Ptr || rType.Kind() == reflect.Interface {
+	//	rType = rType.Elem()
 	//}
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	c.types[t] = d
+	c.types[rType] = d
 	return err
 }
 
 //ReplaceOrAddByLiveId update
-func (c *lineImp) ReplaceOrAddByLiveId(d dot.Dot, id dot.LiveId) error {
+func (c *lineImp) ReplaceOrAddByLiveId(d dot.Dot, liveId dot.LiveId) error {
 	var err error
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	l := dot.Live{LiveId: id, TypeId: "", Dot: d, RelyLives: nil}
+	l := dot.Live{LiveId: liveId, TypeId: "", Dot: d, RelyLives: nil}
 	//c.lives.Remove(&l)
 	err = c.lives.UpdateOrAdd(&l)
 
@@ -771,26 +777,26 @@ func (c *lineImp) ReplaceOrAddByLiveId(d dot.Dot, id dot.LiveId) error {
 }
 
 //RemoveByType remove
-func (c *lineImp) RemoveByType(t reflect.Type) error {
+func (c *lineImp) RemoveByType(rType reflect.Type) error {
 	var err error
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	delete(c.types, t)
+	delete(c.types, rType)
 	return err
 }
 
 //RemoveByLiveId remove
-func (c *lineImp) RemoveByLiveId(id dot.LiveId) error {
+func (c *lineImp) RemoveByLiveId(liveId dot.LiveId) error {
 	var err error
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	err = c.lives.RemoveById(id)
+	err = c.lives.RemoveById(liveId)
 	return err
 }
 
 //SetParent set parent injecter
-func (c *lineImp) SetParent(p dot.Injecter) {
-	c.parent = p
+func (c *lineImp) SetParent(parent dot.Injecter) {
+	c.parent = parent
 }
 
 //GetParent get parent injecter
@@ -843,45 +849,45 @@ func (c *lineImp) makeDotMetaFromConfig() error {
 	defer c.mutex.Unlock()
 
 	var err error
-	var outIt *dot.DotConfig
-ForFun: //handle config
+	var dotConfig *dot.DotConfig
+ForConfigDots: //handle config
 	for i := range c.config.Dots {
-		outIt = &c.config.Dots[i]
-		if len(outIt.MetaData.TypeId.String()) < 1 {
+		dotConfig = &c.config.Dots[i]
+		if len(dotConfig.MetaData.TypeId.String()) < 1 {
 			err = dot.SError.Config.AddNewError("typeid is null")
-			break ForFun
+			break ForConfigDots
 		}
 
-		if err = c.metas.UpdateOrAdd(&outIt.MetaData); err != nil {
-			break ForFun
+		if err = c.metas.UpdateOrAdd(&dotConfig.MetaData); err != nil {
+			break ForConfigDots
 		}
 
-		if len(outIt.Lives) < 1 { //create the single live
-			live := dot.Live{TypeId: outIt.MetaData.TypeId, LiveId: dot.LiveId(outIt.MetaData.TypeId), Dot: nil}
-			if len(outIt.MetaData.RelyTypeIds) > 0 {
-				live.RelyLives = make(map[string]dot.LiveId, len(outIt.MetaData.RelyTypeIds))
-				for i := range outIt.MetaData.RelyTypeIds {
-					li := &outIt.MetaData.RelyTypeIds[i]
+		if len(dotConfig.Lives) < 1 { //create the single live
+			live := dot.Live{TypeId: dotConfig.MetaData.TypeId, LiveId: dot.LiveId(dotConfig.MetaData.TypeId), Dot: nil}
+			if len(dotConfig.MetaData.RelyTypeIds) > 0 {
+				live.RelyLives = make(map[string]dot.LiveId, len(dotConfig.MetaData.RelyTypeIds))
+				for i := range dotConfig.MetaData.RelyTypeIds {
+					li := &dotConfig.MetaData.RelyTypeIds[i]
 					live.RelyLives[li.String()] = dot.LiveId(*li)
 				}
 			}
 			if err = c.lives.UpdateOrAdd(&live); err != nil {
-				break ForFun
+				break ForConfigDots
 			}
 		} else {
-			for _, li := range outIt.Lives {
+			for _, li := range dotConfig.Lives {
 				if len(li.LiveId.String()) < 1 {
-					li.LiveId = dot.LiveId(outIt.MetaData.TypeId)
+					li.LiveId = dot.LiveId(dotConfig.MetaData.TypeId)
 				}
-				live := dot.Live{TypeId: outIt.MetaData.TypeId, LiveId: li.LiveId, RelyLives: li.RelyLives, Dot: nil}
+				live := dot.Live{TypeId: dotConfig.MetaData.TypeId, LiveId: li.LiveId, RelyLives: li.RelyLives, Dot: nil}
 				if err = c.lives.UpdateOrAdd(&live); err != nil {
-					break ForFun
+					break ForConfigDots
 				}
 			}
 		}
 	}
 	if err != nil {
-		dot.Logger().Debugln(fmt.Sprintf("lineImp, %v", outIt))
+		dot.Logger().Debugln(fmt.Sprintf("lineImp, %v", dotConfig))
 	}
 
 	return err
@@ -1032,7 +1038,7 @@ func (c *lineImp) Start(ignore bool) error {
 		//start other
 		{
 			//recount the order, maybe the "Ceate" change it
-			tdots, _ := c.RelyOrder() //do not care the circle
+			tdots, _ := c.relyOrder() //do not care the circle
 			afterStarts := make([]dot.AfterAllStarter, 0, 20)
 			for _, it := range tdots {
 				logger.Debug(func() string {
@@ -1124,7 +1130,7 @@ func (c *lineImp) Stop(ignore bool) error {
 	//stop others
 	{
 		//recount the order, maybe the "Ceate" change it
-		tdots, _ := c.RelyOrder() //do not care the circle
+		tdots, _ := c.relyOrder() //do not care the circle
 		{
 			beforeStops := make([]dot.BeforeAllStopper, 0, 20)
 
@@ -1236,7 +1242,7 @@ func (c *lineImp) Destroy(ignore bool) error {
 	{
 		afterAllI := make([]dot.AfterAllIDestroyer, 0, 20)
 		//recount the order, maybe the "Ceate" change it
-		tdots, _ := c.RelyOrder() //do not care the circle
+		tdots, _ := c.relyOrder() //do not care the circle
 		for idot := len(tdots) - 1; idot >= 0; idot-- {
 			it := tdots[idot]
 			logger.Debug(func() string {
