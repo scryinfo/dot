@@ -15,7 +15,7 @@ type Metas struct {
 //NewMetas
 func NewMetas() *Metas {
 	m := &Metas{}
-	m.metas = make(map[dot.TypeId]*dot.Metadata, 0)
+	m.metas = make(map[dot.TypeId]*dot.Metadata)
 	return m
 }
 
@@ -36,8 +36,7 @@ func (ms *Metas) Add(m *dot.Metadata) error {
 		return dot.SError.NilParameter
 	}
 
-	_, ok := ms.metas[m.TypeId]
-	if ok {
+	if _, ok := ms.metas[m.TypeId]; ok {
 		return dot.SError.Existed.AddNewError(m.TypeId.String())
 	}
 
@@ -65,11 +64,13 @@ func (ms *Metas) Remove(m *dot.Metadata) error {
 	return nil
 }
 
-func (ms *Metas) RemoveById(typeid dot.TypeId) error {
-	delete(ms.metas, typeid)
+//RemoveById
+func (ms *Metas) RemoveById(typeId dot.TypeId) error {
+	delete(ms.metas, typeId)
 	return nil
 }
 
+//Get
 func (ms *Metas) Get(typeId dot.TypeId) (meta *dot.Metadata, err error) {
 	meta = nil
 	err = nil
@@ -135,16 +136,16 @@ func (ms *Lives) Remove(m *dot.Live) error {
 	return nil
 }
 
+//RemoveById
 func (ms *Lives) RemoveById(id dot.LiveId) error {
 	delete(ms.LiveIdMap, id)
 	return nil
 }
 
+//Get
 func (ms *Lives) Get(liveId dot.LiveId) (meta *dot.Live, err error) {
-	meta = nil
-	err = nil
-
-	meta, ok := ms.LiveIdMap[liveId]
+	var ok bool
+	meta, ok = ms.LiveIdMap[liveId]
 	if !ok {
 		err = dot.SError.NotExisted.AddNewError(liveId.String())
 	}

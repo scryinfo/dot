@@ -21,8 +21,8 @@ type dotEventerImp struct {
 
 func (c *dotEventerImp) Init() {
 	c.mutex.Lock()
-	c.typeEvents = make(map[dot.TypeId][]dot.TypeEvents, 0)
-	c.liveEvents = make(map[dot.LiveId][]dot.LiveEvents, 0)
+	c.typeEvents = make(map[dot.TypeId][]dot.TypeEvents)
+	c.liveEvents = make(map[dot.LiveId][]dot.LiveEvents)
 	c.mutex.Unlock()
 }
 
@@ -47,7 +47,7 @@ func (c *dotEventerImp) AddLiveEvents(lid dot.LiveId, liveEvents *dot.LiveEvents
 
 func (c *dotEventerImp) LiveEvents(lid dot.LiveId) []dot.LiveEvents {
 	c.mutex.Lock()
-	f, _ := c.liveEvents[lid]
+	f := c.liveEvents[lid]
 	c.mutex.Unlock()
 	return f
 }
@@ -72,7 +72,7 @@ func (c *dotEventerImp) AddTypeEvents(tid dot.TypeId, typeEvents *dot.TypeEvents
 
 func (c *dotEventerImp) TypeEvents(tid dot.TypeId) []dot.TypeEvents {
 	c.mutex.Lock()
-	f, _ := c.typeEvents[tid]
+	f := c.typeEvents[tid]
 	c.mutex.Unlock()
 	return f
 }

@@ -56,43 +56,28 @@ type MakeStringer func() string
 
 //SLogger log belongs to one component Dot, but it is too basic, most Dot need it, so defined it to dot.go file
 //All log calling should not call function in parameters, function run priorly than log, if must call function, you should use callback(must run normally)
-//S represents scryinfo, log name used frequently so add s to distinguish it
+//S represents scry info, log name used frequently so add s to distinguish it
 type SLogger interface {
 	//GetLevel get level
 	GetLevel() Level
 	//SetLevel set level
 	SetLevel(level Level)
-
-	//Debugf debug
-	//Debugf(format string, args ...interface{})
 	//Debugln debug
 	Debugln(msg string, fields ...zap.Field)
 	//Debug debug
 	Debug(mstr MakeStringer)
-
-	//Infof info
-	//Infof(format string, args ...interface{})
 	//Infoln info
 	Infoln(msg string, fields ...zap.Field)
 	//Info info
 	Info(mstr MakeStringer)
-
-	//Warnf warn
-	//Warnf(format string, args ...interface{})
 	//Warnln warn
 	Warnln(msg string, fields ...zap.Field)
 	//Warn warn
 	Warn(mstr MakeStringer)
-
-	//Errorf error
-	//Errorf(format string, args ...interface{})
 	//Errorln error
 	Errorln(msg string, fields ...zap.Field)
 	//Error error
 	Error(mstr MakeStringer)
-
-	//Fatalf fatal
-	//Fatalf(format string, args ...interface{})
 	//Fatalln fatal
 	Fatalln(msg string, fields ...zap.Field)
 	//Fatal fatal

@@ -15,8 +15,8 @@ var (
 	_ dot.SLogger = (*sLogger)(nil)
 )
 
-//NewConfiger new sConfig
-func NewSLogger(conf *dot.LogConfig, l dot.Line) *sLogger {
+//NewSLogger new sConfig
+func NewSLogger(conf *dot.LogConfig, l dot.Line) dot.SLogger {
 	if conf == nil {
 		conf = &dot.LogConfig{
 			File:  "log.log",
@@ -125,8 +125,8 @@ func (log *sLogger) NewLogger(callerSkip int) dot.SLogger {
 	return n
 }
 
+//Create
 func (log *sLogger) Create(l dot.Line) (err error) {
-
 	encoderCfg := zapcore.EncoderConfig{
 		// Keys can be anything except the empty string.
 		TimeKey:        "T",
@@ -159,25 +159,11 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 
 	logger, err := customCfg.Build(zap.AddCallerSkip(1))
 
-	if err != nil {
-
-	} else {
+	if err == nil {
 		log.Logger = logger
 	}
-
 	return err
 }
-
-////start
-//func (log *sLogger) Start(ignore bool) error {
-//	return nil
-//}
-//
-////Stop
-////ignore When calling other Lifer, if true erred then continue, if false erred then return directly
-//func (log *sLogger) Stop(ignore bool) error {
-//	return nil
-//}
 
 //Destroy Destroy Dot
 //ignore When calling other Lifer, if true erred then continue, if false erred then return directly

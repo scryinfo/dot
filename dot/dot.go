@@ -107,20 +107,20 @@ func (m *Metadata) Merge(m2 *Metadata) {
 	}
 	m.Single = m2.Single
 	if len(m2.RelyTypeIds) > 0 {
-		t := make([]TypeId, 0, len(m.RelyTypeIds)+len(m2.RelyTypeIds))
-		t = append(t, m.RelyTypeIds...)
-		tmap := make(map[TypeId]bool, cap(t))
+		mergeIds := make([]TypeId, 0, len(m.RelyTypeIds)+len(m2.RelyTypeIds))
+		mergeIds = append(mergeIds, m.RelyTypeIds...)
+		hasId := make(map[TypeId]bool, cap(mergeIds))
 		for i := range m.RelyTypeIds {
-			tmap[m.RelyTypeIds[i]] = true
+			hasId[m.RelyTypeIds[i]] = true
 		}
 
-		for _, it := range m2.RelyTypeIds {
-			if _, ok := tmap[it]; !ok {
-				tmap[it] = true
-				t = append(t, it)
+		for _, relyTypeId := range m2.RelyTypeIds {
+			if _, ok := hasId[relyTypeId]; !ok {
+				hasId[relyTypeId] = true
+				mergeIds = append(mergeIds, relyTypeId)
 			}
 		}
-		m.RelyTypeIds = t[:]
+		m.RelyTypeIds = mergeIds[:]
 	}
 	if m2.NewDoter != nil {
 		m.NewDoter = m2.NewDoter
@@ -143,10 +143,10 @@ func (m *Metadata) NewDot(args []byte) (dot Dot, err error) {
 	return
 }
 
-//Newer instace for new dot
+//Newer instance for new dot
 type Newer = func(args []byte) (dot Dot, err error)
 
-//Dot componet
+//Dot component
 type Dot interface{}
 
 //Lifer life cycle

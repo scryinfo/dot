@@ -114,8 +114,8 @@ type AfterAllInjecter interface {
 }
 
 // After all destroy, before builder AfterDestroy
-type AfterAllIDestroyer interface {
-	AfterAllIDestroy(l Line)
+type AfterAllDestroyer interface {
+	AfterAllDestroy(l Line)
 }
 
 // Call before all stop, after Builder BeforeStop

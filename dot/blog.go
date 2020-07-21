@@ -24,7 +24,7 @@ type blog struct {
 	logger *zap.Logger
 }
 
-func (c *blog) Destroy(ignore bool) error {
+func (c *blog) Destroy(_ bool) error {
 	if c.logger != nil {
 		_ = c.logger.Sync()
 		c.logger = nil
@@ -36,7 +36,7 @@ func (c *blog) GetLevel() Level {
 	return zap.DebugLevel
 }
 
-func (c *blog) SetLevel(level Level) {
+func (c *blog) SetLevel(Level) {
 
 }
 
@@ -88,9 +88,7 @@ func (c *blog) NewLogger(callerSkip int) SLogger {
 }
 
 func newBlog() *blog {
-
 	encoderCfg := zapcore.EncoderConfig{
-		// Keys can be anything except the empty string.
 		TimeKey:        "T",
 		LevelKey:       "L",
 		NameKey:        "N",
@@ -120,7 +118,7 @@ func newBlog() *blog {
 	logger, err := customCfg.Build()
 
 	if err != nil {
-		//todo Here is no log, log cannot be output
+		//Here is no log, log cannot be output
 		fmt.Println(err)
 	}
 

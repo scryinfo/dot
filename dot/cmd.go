@@ -35,7 +35,6 @@ const (
 
 //CmdDefines General command parameter initialization
 func FlagDefines() {
-
 	flag.StringVar(&GCmd.ConfigPath, CmdConfigPath.String(), "", "config path")
 	flag.StringVar(&GCmd.ConfigFile, CmdConfigFile.String(), "", "config file, not include path")
 }

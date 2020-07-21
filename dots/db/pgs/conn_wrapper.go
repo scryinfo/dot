@@ -37,7 +37,7 @@ func (c *ConnWrapper) Create(l dot.Line) error {
 	return nil
 }
 
-func (c *ConnWrapper) AfterAllIDestroy(l dot.Line) {
+func (c *ConnWrapper) AfterAllDestroy(l dot.Line) {
 	if c.db != nil {
 		_ = c.db.Close()
 		c.db = nil

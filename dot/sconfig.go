@@ -34,7 +34,8 @@ type SConfig interface {
 
 	Marshal(data []byte) error
 
-	//If no corresponding key or data type cannot be converted, must pay attention to default value, so add "Def" before function to notify default value
+	//If no corresponding key or data type cannot be converted, must pay attention to default value,
+	//so add "Def" before function to notify default value
 	DefInterface(key string, def interface{}) interface{}
 	DefArray(key string, def []interface{}) []interface{}
 	DefMap(key string, def map[string]interface{}) map[string]interface{}
@@ -63,8 +64,8 @@ func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
 	err = nil
 
 	if lconf != nil {
-		if !skit.IsNil(lconf.Json) {
-			conf, err = lconf.Json.MarshalJSON()
+		if !skit.IsNil(lconf.JSON) {
+			conf, err = lconf.JSON.MarshalJSON()
 		}
 	}
 	return conf, err

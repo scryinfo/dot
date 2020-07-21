@@ -10,22 +10,21 @@ import (
 	"go.uber.org/zap"
 )
 
-//  Construct line and call create rely createdots start
-//  add will be called before reply, after create
+//BuildAndStart
+//Construct line and call create rely create dots start
+//add will be called before reply, after create
 func BuildAndStart(add dot.BuildNewer) (l dot.Line, err error) {
-	err = nil
 	builder := &dot.Builder{Add: add, LineLiveId: "default"}
 	l, err = BuildAndStartBy(builder)
-	return
+	return l, err
 }
 
-//  Construct line and call create rely createdots start
+//BuildAndStartBy
+//Construct line and call create rely create dots start
 func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
-
 	if !flag.Parsed() {
 		flag.Parse()
 	}
-
 	err = nil
 
 	if len(builder.LineLiveId) < 1 {
@@ -93,9 +92,10 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 
 	dot.Logger().Infoln("dots Start")
 
-	return
+	return l, err
 }
 
+//StopAndDestroy
 func StopAndDestroy(l dot.Line, ignore bool) {
 	builder := l.GetLineBuilder()
 

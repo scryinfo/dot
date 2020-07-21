@@ -14,7 +14,7 @@ type LiveConfig struct {
 	//RelyLives rely lives， If cannot confirm key value then key value is livid value
 	RelyLives map[string]LiveId `json:"relyLives"`
 	//Json json
-	Json *json.RawMessage `json:"json"`
+	JSON *json.RawMessage `json:"json"`
 }
 
 //DotConfig dot config
@@ -30,18 +30,18 @@ type Config struct {
 }
 
 //FindConfig find config
-func (c *Config) FindConfig(tid TypeId, live LiveId) *LiveConfig {
+func (c *Config) FindConfig(typeId TypeId, live LiveId) *LiveConfig {
 	var lcon *LiveConfig = nil
 
 OutFor:
-	for _, it := range c.Dots {
-		if len(tid.String()) > 0 && tid != it.MetaData.TypeId {
+	for _, dotConfig := range c.Dots {
+		if len(typeId.String()) > 0 && typeId != dotConfig.MetaData.TypeId {
 			continue
 		}
 
-		for _, li := range it.Lives {
-			if li.LiveId == live || (len(li.LiveId.String()) < 1 && live.String() == it.MetaData.TypeId.String()) {
-				lcon = &li
+		for _, liveConfig := range dotConfig.Lives {
+			if liveConfig.LiveId == live || (len(liveConfig.LiveId.String()) < 1 && live.String() == dotConfig.MetaData.TypeId.String()) {
+				lcon = &liveConfig
 				break OutFor
 			}
 		}

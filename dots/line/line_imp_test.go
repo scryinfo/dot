@@ -126,7 +126,7 @@ func TestLineImp_Start(t *testing.T) {
 						t := 1
 						return &t, nil
 					},
-					RelyTypeIds: []dot.TypeId{dot.TypeId("circle")},
+					RelyTypeIds: []dot.TypeId{"circle"},
 				},
 				Lives: []dot.Live{
 					{
@@ -143,7 +143,7 @@ func TestLineImp_Start(t *testing.T) {
 						t := 1
 						return &t, nil
 					},
-					RelyTypeIds: []dot.TypeId{dot.TypeId("circle")},
+					RelyTypeIds: []dot.TypeId{"circle"},
 				},
 				Lives: []dot.Live{
 					{
