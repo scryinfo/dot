@@ -3,7 +3,7 @@ module github.com/scryinfo/dot/sample/grpc
 go 1.14
 
 require (
-	github.com/golang/protobuf v1.3.4
+	github.com/golang/protobuf v1.4.1
 	github.com/json-iterator/go v1.1.8 // indirect
 	github.com/mattn/go-isatty v0.0.10 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -14,6 +14,7 @@ require (
 	go.uber.org/zap v1.14.0
 	golang.org/x/sys v0.0.0-20191120155948-bd437916bb0e // indirect
 	google.golang.org/grpc v1.28.0
+	google.golang.org/protobuf v1.25.0
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	gopkg.in/yaml.v2 v2.2.7 // indirect
 )

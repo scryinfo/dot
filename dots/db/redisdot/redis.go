@@ -89,7 +89,7 @@ func (c *RedisClient) setVersionDirectlyRedis(key, version string) error {
 	return nil
 }
 
-func (c *RedisClient) setVersion(key, version string) error {
+func (c *RedisClient) setVersion(key, version string) error { //todo review 没有订阅
 	// tx: current version / all versions / (publish)
 	pipe := c.TxPipeline()
 	pipe.Set(c.Context(), addCVPrefix(key), version, 0)
@@ -115,7 +115,7 @@ func (c *RedisClient) setVersion(key, version string) error {
 		return nil
 	}
 	if length > int64(c.conf.KeepVersionNum) {
-		for i := 0; i < int(length)-c.conf.KeepVersionNum; i++ {
+		for i := 0; i < int(length)-c.conf.KeepVersionNum; i++ { //todo review 使用事务， 且设定一个事务中最多执行多少条命名; 版本对应的数据怎么处理？
 			if err = c.RPop(c.Context(), addAVsLPrefix(key)).Err(); err != nil {
 				dot.Logger().Errorln("redis.rPop failed", zap.NamedError("error", err))
 			}
@@ -128,7 +128,7 @@ func (c *RedisClient) setVersion(key, version string) error {
 // DeleteVersion del versions in key
 func (c *RedisClient) DeleteVersion(key string, versions ...string) error {
 	// re-curse del target versions
-	for i := range versions {
+	for i := range versions { //todo 使用事务， 且设定一个事务中最多执行多少条命名
 		if err := c.LRem(c.Context(), key, 1, versions[i]).Err(); err != nil {
 			dot.Logger().Errorln("redis del versions failed",
 				zap.NamedError("error", err),
@@ -136,6 +136,8 @@ func (c *RedisClient) DeleteVersion(key string, versions ...string) error {
 			return err
 		}
 	}
+	//todo review , scan命令，参见 http://doc.redisfans.com/key/scan.html
+	//清理版本开头的所有key
 
 	return nil
 }
@@ -160,7 +162,7 @@ func (c *RedisClient) Create(_ dot.Line) error {
 		return nil
 	}
 
-	c.subscribe = c.Subscribe(c.Context(), VersionControlChannelName)
+	c.subscribe = c.Subscribe(c.Context(), VersionControlChannelName) //todo review 确认只会有第一层的 "channel"吗？ 如： v:key:id,这种key的数据会进来吗
 
 	// wait until subscribe success
 	_, err := c.subscribe.Receive(c.Context())
@@ -169,7 +171,7 @@ func (c *RedisClient) Create(_ dot.Line) error {
 	}
 
 	go func() {
-		ch := c.subscribe.Channel()
+		ch := c.subscribe.Channel() //todo review 没有退出机制
 		for msg := range ch {
 			key, version, err := UnmarshalKeyWithVersion(msg.Payload)
 			if err != nil {
@@ -186,13 +188,13 @@ func (c *RedisClient) Create(_ dot.Line) error {
 	return nil
 }
 
-func (c *RedisClient) AfterAllIDestroy(_ dot.Line) {
+func (c *RedisClient) AfterAllDestroy(_ dot.Line) {
 	if c.Client != nil {
 		_ = c.Client.Close()
 		c.Client = nil
 	}
 
-	if c.subscribe != nil {
+	if c.subscribe != nil { //todo review, sub 与 client的先后关系
 		_ = c.subscribe.Close()
 	}
 
@@ -235,11 +237,11 @@ func addAVsLPrefix(key string) string {
 }
 
 func MarshalKeyAndVersion(key, version string) string {
-	return fmt.Sprintf(KeyWithVersionTemplate, version, key)
+	return fmt.Sprintf(KeyWithVersionTemplate, version, key) //todo review, fmt的性能不好，如果不想自己拼接字符串，可以使用strings.Join
 }
 
 func UnmarshalKeyWithVersion(keyWithVersion string) (string, string, error) {
-	pattern, err := regexp.Compile(KeyWithVersionTemplateRE)
+	pattern, err := regexp.Compile(KeyWithVersionTemplateRE) //todo review, 不建议使用regex，如果要使用也要先编译好 pattern，不用每次使用都编译一次
 	if err != nil {
 		dot.Logger().Errorln("make pattern failed", zap.NamedError("error", err))
 		return "", "", err
