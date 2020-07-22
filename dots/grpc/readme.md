@@ -5,7 +5,7 @@ protoc-gen-go:  go install github.com/golang/protobuf/protoc-gen-go
 
 # go package
 https://github.com/grpc/grpc-go  
-github.com/improbable-eng/grpc-web,  grpc-web
+github.com/improbable-eng/grpc-web,  grpc-web，ts-protoc-gen
 
 # generate code
 go code  
@@ -14,3 +14,5 @@ ts code
 protoc --js_out=import_style=commonjs:%out%/ --grpc-web_out=import_style=commonjs+dts,mode=grpcweb:%out%/ hi.proto  
 js code  
 protoc --js_out=import_style=commonjs:%out%/ --grpc-web_out=import_style=commonjs,mode=grpcweb:%out%/ hi.proto  
+ts-protoc-gen
+protoc --plugin="protoc-gen-ts" --js_out=import_style=commonjs,binary:%out%/ --ts_out=%out%/ hi.proto  

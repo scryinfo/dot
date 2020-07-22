@@ -1,4 +1,4 @@
-package redisdot
+package redis_client
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"sync"
 )
 
-const RedisTypeId = "0ae35550-7e37-4afe-866e-b129099759b7"
+const RedisClientTypeId = "0ae35550-7e37-4afe-866e-b129099759b7"
 
 type configRedis struct {
 	Addr                string `json:"addr"`
@@ -23,7 +23,11 @@ type RedisClient struct {
 
 	subscribe      *redis.PubSub
 	currentVersion sync.Map
-	*redis.Client
+	clientV8       *redis.Client
+}
+
+func (c *RedisClient) ClientV8() *redis.Client {
+	return c.clientV8
 }
 
 // todo：缓存安全
@@ -32,7 +36,7 @@ type RedisClient struct {
 // GetVersion get current version by key, return version and error.
 func (c *RedisClient) GetVersion(key string) (string, error) {
 	if c.conf.GetVersionFromRedis {
-		return c.Get(c.Context(), addCVPrefix(key)).Result()
+		return c.clientV8.Get(c.clientV8.Context(), addCVPrefix(key)).Result()
 	}
 
 	versionI, ok := c.currentVersion.Load(key)
@@ -58,11 +62,11 @@ func (c *RedisClient) SetVersion(key, version string) error {
 
 func (c *RedisClient) setVersionDirectlyRedis(key, version string) error {
 	// tx: current version / all versions
-	pipe := c.TxPipeline()
-	pipe.Set(c.Context(), addCVPrefix(key), version, 0)
-	pipe.LPush(c.Context(), addAVsLPrefix(key), version)
+	pipe := c.clientV8.TxPipeline()
+	pipe.Set(c.clientV8.Context(), addCVPrefix(key), version, 0)
+	pipe.LPush(c.clientV8.Context(), addAVsLPrefix(key), version)
 
-	_, err := pipe.Exec(c.Context())
+	_, err := pipe.Exec(c.clientV8.Context())
 	if err != nil {
 		dot.Logger().Errorln("redis set version failed", zap.NamedError("error", err))
 		return err
@@ -71,7 +75,7 @@ func (c *RedisClient) setVersionDirectlyRedis(key, version string) error {
 	// limit keep versions' length
 	// set version 函数本身重点不在于维护历史版本list，某一次维护失败对业务没有影响，
 	// 所以维护操作没有加入事务中，且出错也只是打印日志，而不认为函数执行错误
-	length, err := c.LLen(c.Context(), addAVsLPrefix(key)).Result()
+	length, err := c.clientV8.LLen(c.clientV8.Context(), addAVsLPrefix(key)).Result()
 	if err != nil {
 		dot.Logger().Errorln("redis get list.length failed",
 			zap.NamedError("error", err),
@@ -80,7 +84,7 @@ func (c *RedisClient) setVersionDirectlyRedis(key, version string) error {
 	}
 	if length > int64(c.conf.KeepVersionNum) {
 		for i := 0; i < int(length)-c.conf.KeepVersionNum; i++ {
-			if err = c.RPop(c.Context(), addAVsLPrefix(key)).Err(); err != nil {
+			if err = c.clientV8.RPop(c.clientV8.Context(), addAVsLPrefix(key)).Err(); err != nil {
 				dot.Logger().Errorln("redis.rPop failed", zap.NamedError("error", err))
 			}
 		}
@@ -91,12 +95,12 @@ func (c *RedisClient) setVersionDirectlyRedis(key, version string) error {
 
 func (c *RedisClient) setVersion(key, version string) error { //todo review 没有订阅
 	// tx: current version / all versions / (publish)
-	pipe := c.TxPipeline()
-	pipe.Set(c.Context(), addCVPrefix(key), version, 0)
-	pipe.LPush(c.Context(), addAVsLPrefix(key), version)
-	pipe.Publish(c.Context(), VersionControlChannelName, MarshalKeyAndVersion(key, version))
+	pipe := c.clientV8.TxPipeline()
+	pipe.Set(c.clientV8.Context(), addCVPrefix(key), version, 0)
+	pipe.LPush(c.clientV8.Context(), addAVsLPrefix(key), version)
+	pipe.Publish(c.clientV8.Context(), VersionControlChannelName, MarshalKeyAndVersion(key, version))
 
-	_, err := pipe.Exec(c.Context())
+	_, err := pipe.Exec(c.clientV8.Context())
 	if err != nil {
 		dot.Logger().Errorln("redis set version failed", zap.NamedError("error", err))
 		return err
@@ -107,7 +111,7 @@ func (c *RedisClient) setVersion(key, version string) error { //todo review 没�
 	// limit keep versions' length
 	// set version 函数本身重点不在于维护历史版本list，某一次维护失败对业务没有影响，
 	// 所以维护操作没有加入事务中，且出错也只是打印日志，而不认为函数执行错误
-	length, err := c.LLen(c.Context(), addAVsLPrefix(key)).Result()
+	length, err := c.clientV8.LLen(c.clientV8.Context(), addAVsLPrefix(key)).Result()
 	if err != nil {
 		dot.Logger().Errorln("redis get list.length failed",
 			zap.NamedError("error", err),
@@ -116,7 +120,7 @@ func (c *RedisClient) setVersion(key, version string) error { //todo review 没�
 	}
 	if length > int64(c.conf.KeepVersionNum) {
 		for i := 0; i < int(length)-c.conf.KeepVersionNum; i++ { //todo review 使用事务， 且设定一个事务中最多执行多少条命名; 版本对应的数据怎么处理？
-			if err = c.RPop(c.Context(), addAVsLPrefix(key)).Err(); err != nil {
+			if err = c.clientV8.RPop(c.clientV8.Context(), addAVsLPrefix(key)).Err(); err != nil {
 				dot.Logger().Errorln("redis.rPop failed", zap.NamedError("error", err))
 			}
 		}
@@ -129,7 +133,7 @@ func (c *RedisClient) setVersion(key, version string) error { //todo review 没�
 func (c *RedisClient) DeleteVersion(key string, versions ...string) error {
 	// re-curse del target versions
 	for i := range versions { //todo 使用事务， 且设定一个事务中最多执行多少条命名
-		if err := c.LRem(c.Context(), key, 1, versions[i]).Err(); err != nil {
+		if err := c.clientV8.LRem(c.clientV8.Context(), key, 1, versions[i]).Err(); err != nil {
 			dot.Logger().Errorln("redis del versions failed",
 				zap.NamedError("error", err),
 				zap.Int("index of versions slice", i))
@@ -143,7 +147,7 @@ func (c *RedisClient) DeleteVersion(key string, versions ...string) error {
 }
 
 func (c *RedisClient) GetAllVersions(key string) (string, error) {
-	versions, err := c.LRange(c.Context(), addAVsLPrefix(key), 0, -1).Result()
+	versions, err := c.clientV8.LRange(c.clientV8.Context(), addAVsLPrefix(key), 0, -1).Result()
 	if err != nil {
 		dot.Logger().Errorln("redis get all versions failed", zap.NamedError("error", err))
 		return "", err
@@ -153,7 +157,7 @@ func (c *RedisClient) GetAllVersions(key string) (string, error) {
 }
 
 func (c *RedisClient) Create(_ dot.Line) error {
-	c.Client = redis.NewClient(&redis.Options{
+	c.clientV8 = redis.NewClient(&redis.Options{
 		Addr: c.conf.Addr,
 	})
 
@@ -162,10 +166,10 @@ func (c *RedisClient) Create(_ dot.Line) error {
 		return nil
 	}
 
-	c.subscribe = c.Subscribe(c.Context(), VersionControlChannelName) //todo review 确认只会有第一层的 "channel"吗？ 如： v:key:id,这种key的数据会进来吗
+	c.subscribe = c.clientV8.Subscribe(c.clientV8.Context(), VersionControlChannelName) //todo review 确认只会有第一层的 "channel"吗？ 如： v:key:id,这种key的数据会进来吗
 
 	// wait until subscribe success
-	_, err := c.subscribe.Receive(c.Context())
+	_, err := c.subscribe.Receive(c.clientV8.Context())
 	if err != nil {
 		dot.Logger().Errorln("subscription redis failed", zap.NamedError("error", err))
 	}
@@ -189,9 +193,9 @@ func (c *RedisClient) Create(_ dot.Line) error {
 }
 
 func (c *RedisClient) AfterAllDestroy(_ dot.Line) {
-	if c.Client != nil {
-		_ = c.Client.Close()
-		c.Client = nil
+	if c.clientV8 != nil {
+		_ = c.clientV8.Close()
+		c.clientV8 = nil
 	}
 
 	if c.subscribe != nil { //todo review, sub 与 client的先后关系
@@ -202,7 +206,7 @@ func (c *RedisClient) AfterAllDestroy(_ dot.Line) {
 }
 
 //construct dot
-func newRedis(conf []byte) (dot.Dot, error) {
+func newRedisClient(conf []byte) (dot.Dot, error) {
 	dconf := &configRedis{}
 
 	err := dot.UnMarshalConfig(conf, dconf)
@@ -215,17 +219,21 @@ func newRedis(conf []byte) (dot.Dot, error) {
 	return d, nil
 }
 
-//RedisTypeLives
-func RedisTypeLives() []*dot.TypeLives {
+//RedisClientTypeLives
+func RedisClientTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: RedisTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
-			return newRedis(conf)
+		Meta: dot.Metadata{TypeId: RedisClientTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+			return newRedisClient(conf)
 		}},
 	}
 
 	lives := []*dot.TypeLives{tl}
 
 	return lives
+}
+
+func GenerateKey(keys ...string) string {
+	return strings.Join(keys, KeySplitChar)
 }
 
 func addCVPrefix(key string) string {

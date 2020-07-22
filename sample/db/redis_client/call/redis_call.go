@@ -2,23 +2,25 @@ package call
 
 import (
 	"fmt"
-	"github.com/go-redis/redis/v8"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/db/redisdot"
-	"go.uber.org/zap"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/go-redis/redis/v8"
+	"go.uber.org/zap"
+
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/db/redis_client"
 )
 
 const RedisDemoTypeId = "c5f966e2-147a-4b09-a5dc-8c74ff603d38"
 
 type RedisDemo struct {
-	Redis *redisdot.RedisClient `dot:""`
+	Redis *redis_client.RedisClient `dot:""`
 }
 
 func (c *RedisDemo) Start(_ bool) (err error) {
-	c.Redis.FlushAll(c.Redis.Context())
+	c.Redis.ClientV8().FlushAll(c.Redis.ClientV8().Context())
 
 	go func() {
 		c.basicDemo()
@@ -30,17 +32,17 @@ func (c *RedisDemo) Start(_ bool) (err error) {
 
 func (c *RedisDemo) basicDemo() {
 	// simulate query in cache first (no result)
-	v1, err := c.Redis.Get(c.Redis.Context(), basicDemoKey).Result()
+	v1, err := c.Redis.ClientV8().Get(c.Redis.ClientV8().Context(), basicDemoKey).Result()
 	if err != redis.Nil {
 		fmt.Println("Example: get value not run as suppose, error:", err)
 		os.Exit(-1)
 	}
 
 	// skip query in db, only simulate update cache
-	checkError("Example: set value failed", c.Redis.Set(c.Redis.Context(), basicDemoKey, basicDemoValue, 0).Err())
+	checkError("Example: set value failed", c.Redis.ClientV8().Set(c.Redis.ClientV8().Context(), basicDemoKey, basicDemoValue, 0).Err())
 
 	// suppose a request comes now, query in cache (has result)
-	v2, err := c.Redis.Get(c.Redis.Context(), basicDemoKey).Result()
+	v2, err := c.Redis.ClientV8().Get(c.Redis.ClientV8().Context(), basicDemoKey).Result()
 	checkError("Example: get value failed", err)
 
 	time.Sleep(time.Second)
@@ -109,13 +111,13 @@ func RedisDemoTypeLives() []*dot.TypeLives {
 		Lives: []dot.Live{
 			{
 				LiveId:    RedisDemoTypeId,
-				RelyLives: map[string]dot.LiveId{"RedisClient": redisdot.RedisTypeId},
+				RelyLives: map[string]dot.LiveId{"RedisClient": redis_client.RedisClientTypeId},
 			},
 		},
 	}
 
 	lives := []*dot.TypeLives{tl}
-	lives = append(lives, redisdot.RedisTypeLives()...)
+	lives = append(lives, redis_client.RedisClientTypeLives()...)
 
 	return lives
 }

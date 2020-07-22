@@ -10,6 +10,7 @@
     "inspect": "vue-cli-service inspect > temp.js"
   },
   "dependencies": {
+    "@improbable-eng/grpc-web": "^0.13.0",
     "core-js": "^2.6.9",
     "direct-vuex": "^0.8.2",
     "element-ui": "^2.4.5",
