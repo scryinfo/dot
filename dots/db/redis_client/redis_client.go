@@ -88,7 +88,7 @@ func (c *RedisClient) SetVersion(category, version string) error {
 		Member: version,
 	}) //zadd will ignore the same version
 
-	pipe.Publish(c.ctx, VersionControlChannelName, MarshalKeyAndVersion(&VersionControl{
+	pipe.Publish(c.ctx, VersionControlChannelName, MarshalVersionControl(&VersionControl{
 		Op: Set, Key: categoryKey, Version: version,
 	}))
 	_, err := pipe.Exec(c.ctx)
@@ -131,9 +131,16 @@ func (c *RedisClient) Set(category string, version string, itemKey string, value
 	return c.clientV8.Set(c.ctx, key, value, expiration).Result()
 }
 
+//Del
+func (c *RedisClient) Del(category string, version string, itemKey string) (int64, error) {
+	key := VersionItemKey(category, version, itemKey)
+	return c.clientV8.Del(c.ctx, key).Result()
+}
+
 //CleanVersion del versions in key
 func (c *RedisClient) CleanVersion(category string, version string) error {
 	categoryKey := CategoryKey(category)
+	categoriesKey := CategoriesKey(category)
 	versionKey := VersionKey(category, version)
 	// re-curse del target versions
 	var keys []string
@@ -155,8 +162,8 @@ func (c *RedisClient) CleanVersion(category string, version string) error {
 	}
 	pipe := c.clientV8.TxPipeline()
 	pipe.Del(c.ctx, categoryKey)
-	pipe.ZRem(c.ctx, categoryKey, version)
-	pipe.Publish(c.ctx, VersionControlChannelName, MarshalKeyAndVersion(&VersionControl{
+	pipe.ZRem(c.ctx, categoriesKey, version)
+	pipe.Publish(c.ctx, VersionControlChannelName, MarshalVersionControl(&VersionControl{
 		Op: Clean, Key: categoryKey, Version: "",
 	}))
 	_, err = pipe.Exec(c.ctx)
@@ -168,7 +175,7 @@ func (c *RedisClient) CleanVersion(category string, version string) error {
 
 //GetVersions,  返回版本号按按照字典顺序由小到大排列
 func (c *RedisClient) GetVersions(category string) ([]string, error) {
-	categoryKey := CategoryKey(category)
+	categoryKey := CategoriesKey(category)
 	versions, err := c.clientV8.ZRange(c.ctx, categoryKey, 0, -1).Result()
 	if err != nil {
 		dot.Logger().Errorln("redis get all versions failed", zap.NamedError("error", err))
@@ -201,7 +208,7 @@ func (c *RedisClient) Create(dot.Line) error {
 			case <-c.ctx.Done():
 				return
 			case msg := <-c.subscribe.Channel():
-				vc, err := UnmarshalKeyWithVersion(msg.Payload)
+				vc, err := UnmarshalVersionControl(msg.Payload)
 				if err != nil {
 					dot.Logger().Errorln("unmarshal key with version failed",
 						zap.NamedError("error", err),
@@ -269,6 +276,17 @@ func RedisClientTypeLives() []*dot.TypeLives {
 	return lives
 }
 
+func RedisClientTest(jsonConfig string) *RedisClient {
+	d, err := newRedisClient([]byte(jsonConfig))
+	if err != nil || d == nil {
+		return nil
+	}
+
+	redisClient := d.(*RedisClient)
+	redisClient.Create(nil)
+	return redisClient
+}
+
 func GenerateKey(keys ...string) string {
 	return strings.Join(keys, KeySplitChar)
 }
@@ -290,7 +308,7 @@ func VersionItemKey(category string, version string, itemKey string) string {
 	return GenerateKey(CategoryPrefix, category, version, itemKey)
 }
 
-func MarshalKeyAndVersion(vc *VersionControl) string {
+func MarshalVersionControl(vc *VersionControl) string {
 	bs, err := json.Marshal(vc)
 	if err == nil {
 		return string(bs)
@@ -298,7 +316,7 @@ func MarshalKeyAndVersion(vc *VersionControl) string {
 	return ""
 }
 
-func UnmarshalKeyWithVersion(jsonStr string) (*VersionControl, error) {
+func UnmarshalVersionControl(jsonStr string) (*VersionControl, error) {
 	vc := &VersionControl{}
 	err := json.Unmarshal([]byte(jsonStr), vc)
 	if err != nil {
