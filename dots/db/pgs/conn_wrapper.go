@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	ConnWrapperTypeId = "ffc08507-dd5f-456c-84ea-cdae00b220bf"
+	ConnWrapperTypeID = "ffc08507-dd5f-456c-84ea-cdae00b220bf"
 )
 
 type config struct { //todo 连接池等配置
@@ -70,7 +70,7 @@ func newConnWrapper(conf []byte) (dot.Dot, error) {
 //ConnWrapperTypeLives make all type lives
 func ConnWrapperTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: ConnWrapperTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: ConnWrapperTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newConnWrapper(conf)
 		}},
 	}

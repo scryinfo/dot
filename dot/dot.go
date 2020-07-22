@@ -7,19 +7,19 @@ import (
 	"reflect"
 )
 
-//TypeId dot type guid
-type TypeId string
+//TypeID dot type guid
+type TypeID string
 
-//LiveId dot live guid
-type LiveId string
+//LiveID dot live guid
+type LiveID string
 
 //String convert typeid to string
-func (c *TypeId) String() string {
+func (c *TypeID) String() string {
 	return string(*c)
 }
 
 //String convert liveid to string
-func (c *LiveId) String() string {
+func (c *LiveID) String() string {
 	return string(*c)
 }
 
@@ -52,49 +52,49 @@ type LiveEvents = Events
 //Eventer
 type Eventer interface {
 	//
-	ReSetLiveEvents(lid LiveId, liveEvents *LiveEvents)
+	ReSetLiveEvents(lid LiveID, liveEvents *LiveEvents)
 	//
-	AddLiveEvents(lid LiveId, liveEvents *LiveEvents)
+	AddLiveEvents(lid LiveID, liveEvents *LiveEvents)
 	//
-	LiveEvents(lid LiveId) []LiveEvents
+	LiveEvents(lid LiveID) []LiveEvents
 	//
-	ReSetTypeEvents(tid TypeId, typeEvents *TypeEvents)
+	ReSetTypeEvents(tid TypeID, typeEvents *TypeEvents)
 	//
-	AddTypeEvents(tid TypeId, typeEvents *TypeEvents)
+	AddTypeEvents(tid TypeID, typeEvents *TypeEvents)
 	//
-	TypeEvents(tid TypeId) []TypeEvents
+	TypeEvents(tid TypeID) []TypeEvents
 }
 
 //Metadata dot metadata
 type Metadata struct {
-	TypeId      TypeId       `json:"typeId"`
+	TypeID      TypeID       `json:"typeId"`
 	Version     string       `json:"version"`
 	Name        string       `json:"name"`
 	ShowName    string       `json:"showName"`
 	Single      bool         `json:"single"`
-	RelyTypeIds []TypeId     `json:"relyTypeIds"`
+	RelyTypeIDs []TypeID     `json:"relyTypeIds"`
 	NewDoter    Newer        `json:"-"`
 	RefType     reflect.Type `json:"-"` //if the dot is interface, set the type of interface
 }
 
 //Live live/instance
 type Live struct {
-	TypeId    TypeId            `json:"typeId"`
-	LiveId    LiveId            `json:"liveId"`
-	RelyLives map[string]LiveId `json:"relyLives"`
+	TypeID    TypeID            `json:"typeId"`
+	LiveID    LiveID            `json:"liveId"`
+	RelyLives map[string]LiveID `json:"relyLives"`
 	Dot       Dot               `json:"-"`
 }
 
 //Clone clone Metadata
 func (m *Metadata) Clone() *Metadata {
 	c := *m
-	c.RelyTypeIds = append(m.RelyTypeIds[:0:0], m.RelyTypeIds...)
+	c.RelyTypeIDs = append(m.RelyTypeIDs[:0:0], m.RelyTypeIDs...)
 	return &c
 }
 
 func (m *Metadata) Merge(m2 *Metadata) {
-	if len(m2.TypeId) > 0 {
-		m.TypeId = m2.TypeId
+	if len(m2.TypeID) > 0 {
+		m.TypeID = m2.TypeID
 	}
 	if len(m2.Version) > 0 {
 		m.Version = m2.Version
@@ -106,21 +106,21 @@ func (m *Metadata) Merge(m2 *Metadata) {
 		m.ShowName = m2.ShowName
 	}
 	m.Single = m2.Single
-	if len(m2.RelyTypeIds) > 0 {
-		mergeIds := make([]TypeId, 0, len(m.RelyTypeIds)+len(m2.RelyTypeIds))
-		mergeIds = append(mergeIds, m.RelyTypeIds...)
-		hasId := make(map[TypeId]bool, cap(mergeIds))
-		for i := range m.RelyTypeIds {
-			hasId[m.RelyTypeIds[i]] = true
+	if len(m2.RelyTypeIDs) > 0 {
+		mergeIDs := make([]TypeID, 0, len(m.RelyTypeIDs)+len(m2.RelyTypeIDs))
+		mergeIDs = append(mergeIDs, m.RelyTypeIDs...)
+		hasID := make(map[TypeID]bool, cap(mergeIDs))
+		for i := range m.RelyTypeIDs {
+			hasID[m.RelyTypeIDs[i]] = true
 		}
 
-		for _, relyTypeId := range m2.RelyTypeIds {
-			if _, ok := hasId[relyTypeId]; !ok {
-				hasId[relyTypeId] = true
-				mergeIds = append(mergeIds, relyTypeId)
+		for _, relyTypeID := range m2.RelyTypeIDs {
+			if _, ok := hasID[relyTypeID]; !ok {
+				hasID[relyTypeID] = true
+				mergeIDs = append(mergeIDs, relyTypeID)
 			}
 		}
-		m.RelyTypeIds = mergeIds[:]
+		m.RelyTypeIDs = mergeIDs[:]
 	}
 	if m2.NewDoter != nil {
 		m.NewDoter = m2.NewDoter

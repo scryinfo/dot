@@ -217,6 +217,100 @@ func (x *WriteRes) GetData() string {
 	return ""
 }
 
+type HelloRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Greeting string `protobuf:"bytes,1,opt,name=greeting,proto3" json:"greeting,omitempty"`
+}
+
+func (x *HelloRequest) Reset() {
+	*x = HelloRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hi_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *HelloRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HelloRequest) ProtoMessage() {}
+
+func (x *HelloRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_hi_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HelloRequest.ProtoReflect.Descriptor instead.
+func (*HelloRequest) Descriptor() ([]byte, []int) {
+	return file_hi_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *HelloRequest) GetGreeting() string {
+	if x != nil {
+		return x.Greeting
+	}
+	return ""
+}
+
+type HelloResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Reply string `protobuf:"bytes,1,opt,name=reply,proto3" json:"reply,omitempty"`
+}
+
+func (x *HelloResponse) Reset() {
+	*x = HelloResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_hi_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *HelloResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HelloResponse) ProtoMessage() {}
+
+func (x *HelloResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_hi_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HelloResponse.ProtoReflect.Descriptor instead.
+func (*HelloResponse) Descriptor() ([]byte, []int) {
+	return file_hi_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *HelloResponse) GetReply() string {
+	if x != nil {
+		return x.Reply
+	}
+	return ""
+}
+
 var File_hi_proto protoreflect.FileDescriptor
 
 var file_hi_proto_rawDesc = []byte{
@@ -228,16 +322,33 @@ var file_hi_proto_rawDesc = []byte{
 	0x72, 0x69, 0x74, 0x65, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x1e, 0x0a, 0x08, 0x57,
 	0x72, 0x69, 0x74, 0x65, 0x52, 0x65, 0x73, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0x54, 0x0a, 0x05, 0x48,
-	0x69, 0x44, 0x6f, 0x74, 0x12, 0x20, 0x0a, 0x02, 0x48, 0x69, 0x12, 0x0c, 0x2e, 0x68, 0x69, 0x64,
-	0x6f, 0x74, 0x2e, 0x48, 0x69, 0x52, 0x65, 0x71, 0x1a, 0x0c, 0x2e, 0x68, 0x69, 0x64, 0x6f, 0x74,
-	0x2e, 0x48, 0x69, 0x52, 0x65, 0x73, 0x12, 0x29, 0x0a, 0x05, 0x57, 0x72, 0x69, 0x74, 0x65, 0x12,
-	0x0f, 0x2e, 0x68, 0x69, 0x64, 0x6f, 0x74, 0x2e, 0x57, 0x72, 0x69, 0x74, 0x65, 0x52, 0x65, 0x71,
-	0x1a, 0x0f, 0x2e, 0x68, 0x69, 0x64, 0x6f, 0x74, 0x2e, 0x57, 0x72, 0x69, 0x74, 0x65, 0x52, 0x65,
-	0x73, 0x42, 0x32, 0x5a, 0x30, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
-	0x73, 0x63, 0x72, 0x79, 0x69, 0x6e, 0x66, 0x6f, 0x2f, 0x64, 0x6f, 0x74, 0x2f, 0x73, 0x61, 0x6d,
-	0x70, 0x6c, 0x65, 0x2f, 0x67, 0x72, 0x70, 0x63, 0x2f, 0x67, 0x6f, 0x5f, 0x6f, 0x75, 0x74, 0x2f,
-	0x68, 0x69, 0x64, 0x6f, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x2a, 0x0a, 0x0c, 0x48,
+	0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x67,
+	0x72, 0x65, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x67,
+	0x72, 0x65, 0x65, 0x74, 0x69, 0x6e, 0x67, 0x22, 0x25, 0x0a, 0x0d, 0x48, 0x65, 0x6c, 0x6c, 0x6f,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x72, 0x65, 0x70, 0x6c,
+	0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x72, 0x65, 0x70, 0x6c, 0x79, 0x32, 0x8a,
+	0x02, 0x0a, 0x05, 0x48, 0x69, 0x44, 0x6f, 0x74, 0x12, 0x20, 0x0a, 0x02, 0x48, 0x69, 0x12, 0x0c,
+	0x2e, 0x68, 0x69, 0x64, 0x6f, 0x74, 0x2e, 0x48, 0x69, 0x52, 0x65, 0x71, 0x1a, 0x0c, 0x2e, 0x68,
+	0x69, 0x64, 0x6f, 0x74, 0x2e, 0x48, 0x69, 0x52, 0x65, 0x73, 0x12, 0x29, 0x0a, 0x05, 0x57, 0x72,
+	0x69, 0x74, 0x65, 0x12, 0x0f, 0x2e, 0x68, 0x69, 0x64, 0x6f, 0x74, 0x2e, 0x57, 0x72, 0x69, 0x74,
+	0x65, 0x52, 0x65, 0x71, 0x1a, 0x0f, 0x2e, 0x68, 0x69, 0x64, 0x6f, 0x74, 0x2e, 0x57, 0x72, 0x69,
+	0x74, 0x65, 0x52, 0x65, 0x73, 0x12, 0x3b, 0x0a, 0x0c, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x53,
+	0x74, 0x72, 0x65, 0x61, 0x6d, 0x12, 0x13, 0x2e, 0x68, 0x69, 0x64, 0x6f, 0x74, 0x2e, 0x48, 0x65,
+	0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e, 0x68, 0x69, 0x64,
+	0x6f, 0x74, 0x2e, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x30, 0x01, 0x12, 0x3b, 0x0a, 0x0c, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x53, 0x74, 0x72, 0x65,
+	0x61, 0x6d, 0x12, 0x13, 0x2e, 0x68, 0x69, 0x64, 0x6f, 0x74, 0x2e, 0x48, 0x65, 0x6c, 0x6c, 0x6f,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e, 0x68, 0x69, 0x64, 0x6f, 0x74, 0x2e,
+	0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x28, 0x01, 0x12,
+	0x3a, 0x0a, 0x09, 0x42, 0x6f, 0x74, 0x68, 0x53, 0x69, 0x64, 0x65, 0x73, 0x12, 0x13, 0x2e, 0x68,
+	0x69, 0x64, 0x6f, 0x74, 0x2e, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x14, 0x2e, 0x68, 0x69, 0x64, 0x6f, 0x74, 0x2e, 0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x28, 0x01, 0x30, 0x01, 0x42, 0x32, 0x5a, 0x30, 0x67,
+	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x73, 0x63, 0x72, 0x79, 0x69, 0x6e,
+	0x66, 0x6f, 0x2f, 0x64, 0x6f, 0x74, 0x2f, 0x73, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2f, 0x67, 0x72,
+	0x70, 0x63, 0x2f, 0x67, 0x6f, 0x5f, 0x6f, 0x75, 0x74, 0x2f, 0x68, 0x69, 0x64, 0x6f, 0x74, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -252,20 +363,28 @@ func file_hi_proto_rawDescGZIP() []byte {
 	return file_hi_proto_rawDescData
 }
 
-var file_hi_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_hi_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_hi_proto_goTypes = []interface{}{
-	(*HiReq)(nil),    // 0: hidot.HiReq
-	(*HiRes)(nil),    // 1: hidot.HiRes
-	(*WriteReq)(nil), // 2: hidot.WriteReq
-	(*WriteRes)(nil), // 3: hidot.WriteRes
+	(*HiReq)(nil),         // 0: hidot.HiReq
+	(*HiRes)(nil),         // 1: hidot.HiRes
+	(*WriteReq)(nil),      // 2: hidot.WriteReq
+	(*WriteRes)(nil),      // 3: hidot.WriteRes
+	(*HelloRequest)(nil),  // 4: hidot.HelloRequest
+	(*HelloResponse)(nil), // 5: hidot.HelloResponse
 }
 var file_hi_proto_depIdxs = []int32{
 	0, // 0: hidot.HiDot.Hi:input_type -> hidot.HiReq
 	2, // 1: hidot.HiDot.Write:input_type -> hidot.WriteReq
-	1, // 2: hidot.HiDot.Hi:output_type -> hidot.HiRes
-	3, // 3: hidot.HiDot.Write:output_type -> hidot.WriteRes
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: hidot.HiDot.ServerStream:input_type -> hidot.HelloRequest
+	4, // 3: hidot.HiDot.ClientStream:input_type -> hidot.HelloRequest
+	4, // 4: hidot.HiDot.BothSides:input_type -> hidot.HelloRequest
+	1, // 5: hidot.HiDot.Hi:output_type -> hidot.HiRes
+	3, // 6: hidot.HiDot.Write:output_type -> hidot.WriteRes
+	5, // 7: hidot.HiDot.ServerStream:output_type -> hidot.HelloResponse
+	5, // 8: hidot.HiDot.ClientStream:output_type -> hidot.HelloResponse
+	5, // 9: hidot.HiDot.BothSides:output_type -> hidot.HelloResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -325,6 +444,30 @@ func file_hi_proto_init() {
 				return nil
 			}
 		}
+		file_hi_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*HelloRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_hi_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*HelloResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -332,7 +475,7 @@ func file_hi_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_hi_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -360,6 +503,9 @@ const _ = grpc.SupportPackageIsVersion6
 type HiDotClient interface {
 	Hi(ctx context.Context, in *HiReq, opts ...grpc.CallOption) (*HiRes, error)
 	Write(ctx context.Context, in *WriteReq, opts ...grpc.CallOption) (*WriteRes, error)
+	ServerStream(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (HiDot_ServerStreamClient, error)
+	ClientStream(ctx context.Context, opts ...grpc.CallOption) (HiDot_ClientStreamClient, error)
+	BothSides(ctx context.Context, opts ...grpc.CallOption) (HiDot_BothSidesClient, error)
 }
 
 type hiDotClient struct {
@@ -388,10 +534,110 @@ func (c *hiDotClient) Write(ctx context.Context, in *WriteReq, opts ...grpc.Call
 	return out, nil
 }
 
+func (c *hiDotClient) ServerStream(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (HiDot_ServerStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_HiDot_serviceDesc.Streams[0], "/hidot.HiDot/ServerStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &hiDotServerStreamClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type HiDot_ServerStreamClient interface {
+	Recv() (*HelloResponse, error)
+	grpc.ClientStream
+}
+
+type hiDotServerStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *hiDotServerStreamClient) Recv() (*HelloResponse, error) {
+	m := new(HelloResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *hiDotClient) ClientStream(ctx context.Context, opts ...grpc.CallOption) (HiDot_ClientStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_HiDot_serviceDesc.Streams[1], "/hidot.HiDot/ClientStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &hiDotClientStreamClient{stream}
+	return x, nil
+}
+
+type HiDot_ClientStreamClient interface {
+	Send(*HelloRequest) error
+	CloseAndRecv() (*HelloResponse, error)
+	grpc.ClientStream
+}
+
+type hiDotClientStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *hiDotClientStreamClient) Send(m *HelloRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *hiDotClientStreamClient) CloseAndRecv() (*HelloResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(HelloResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *hiDotClient) BothSides(ctx context.Context, opts ...grpc.CallOption) (HiDot_BothSidesClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_HiDot_serviceDesc.Streams[2], "/hidot.HiDot/BothSides", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &hiDotBothSidesClient{stream}
+	return x, nil
+}
+
+type HiDot_BothSidesClient interface {
+	Send(*HelloRequest) error
+	Recv() (*HelloResponse, error)
+	grpc.ClientStream
+}
+
+type hiDotBothSidesClient struct {
+	grpc.ClientStream
+}
+
+func (x *hiDotBothSidesClient) Send(m *HelloRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *hiDotBothSidesClient) Recv() (*HelloResponse, error) {
+	m := new(HelloResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // HiDotServer is the server API for HiDot service.
 type HiDotServer interface {
 	Hi(context.Context, *HiReq) (*HiRes, error)
 	Write(context.Context, *WriteReq) (*WriteRes, error)
+	ServerStream(*HelloRequest, HiDot_ServerStreamServer) error
+	ClientStream(HiDot_ClientStreamServer) error
+	BothSides(HiDot_BothSidesServer) error
 }
 
 // UnimplementedHiDotServer can be embedded to have forward compatible implementations.
@@ -403,6 +649,15 @@ func (*UnimplementedHiDotServer) Hi(context.Context, *HiReq) (*HiRes, error) {
 }
 func (*UnimplementedHiDotServer) Write(context.Context, *WriteReq) (*WriteRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Write not implemented")
+}
+func (*UnimplementedHiDotServer) ServerStream(*HelloRequest, HiDot_ServerStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method ServerStream not implemented")
+}
+func (*UnimplementedHiDotServer) ClientStream(HiDot_ClientStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method ClientStream not implemented")
+}
+func (*UnimplementedHiDotServer) BothSides(HiDot_BothSidesServer) error {
+	return status.Errorf(codes.Unimplemented, "method BothSides not implemented")
 }
 
 func RegisterHiDotServer(s *grpc.Server, srv HiDotServer) {
@@ -445,6 +700,79 @@ func _HiDot_Write_Handler(srv interface{}, ctx context.Context, dec func(interfa
 	return interceptor(ctx, in, info, handler)
 }
 
+func _HiDot_ServerStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(HelloRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(HiDotServer).ServerStream(m, &hiDotServerStreamServer{stream})
+}
+
+type HiDot_ServerStreamServer interface {
+	Send(*HelloResponse) error
+	grpc.ServerStream
+}
+
+type hiDotServerStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *hiDotServerStreamServer) Send(m *HelloResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _HiDot_ClientStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(HiDotServer).ClientStream(&hiDotClientStreamServer{stream})
+}
+
+type HiDot_ClientStreamServer interface {
+	SendAndClose(*HelloResponse) error
+	Recv() (*HelloRequest, error)
+	grpc.ServerStream
+}
+
+type hiDotClientStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *hiDotClientStreamServer) SendAndClose(m *HelloResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *hiDotClientStreamServer) Recv() (*HelloRequest, error) {
+	m := new(HelloRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _HiDot_BothSides_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(HiDotServer).BothSides(&hiDotBothSidesServer{stream})
+}
+
+type HiDot_BothSidesServer interface {
+	Send(*HelloResponse) error
+	Recv() (*HelloRequest, error)
+	grpc.ServerStream
+}
+
+type hiDotBothSidesServer struct {
+	grpc.ServerStream
+}
+
+func (x *hiDotBothSidesServer) Send(m *HelloResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *hiDotBothSidesServer) Recv() (*HelloRequest, error) {
+	m := new(HelloRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 var _HiDot_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "hidot.HiDot",
 	HandlerType: (*HiDotServer)(nil),
@@ -458,6 +786,23 @@ var _HiDot_serviceDesc = grpc.ServiceDesc{
 			Handler:    _HiDot_Write_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "ServerStream",
+			Handler:       _HiDot_ServerStream_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "ClientStream",
+			Handler:       _HiDot_ClientStream_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "BothSides",
+			Handler:       _HiDot_BothSides_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "hi.proto",
 }

@@ -51,7 +51,7 @@ func main() {
 func add(l dot.Line) error {
 	lives := nobl.RpcImplementTypeLives()
 	lives = append(lives, gserver.GinNoblTypeLives()...)
-	l.ToDotEventer().AddLiveEvents(dot.LiveId(gindot.EngineLiveId), &dot.LiveEvents{
+	l.ToDotEventer().AddLiveEvents(dot.LiveID(gindot.EngineLiveID), &dot.LiveEvents{
 		AfterCreate: func(live *dot.Live, l dot.Line) {
 			if g, ok := live.Dot.(*gindot.Engine); ok {
 				g.GinEngine().StaticFS("/", http.Dir("../app/dist"))

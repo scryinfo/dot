@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	DaoBaseTypeId = "4d6adee7-7c10-4471-8885-a589688bac93"
+	DaoBaseTypeID = "4d6adee7-7c10-4471-8885-a589688bac93"
 )
 
 type DaoBase struct {
@@ -51,13 +51,13 @@ func (c *DaoBase) WithNoTx(tast func(conn *pg.Conn) error) error {
 //DaoBaseTypeLives make all type lives
 func DaoBaseTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: DaoBaseTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: DaoBaseTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return &DaoBase{}, nil
 		}},
 		Lives: []dot.Live{
 			dot.Live{
-				LiveId:    DaoBaseTypeId,
-				RelyLives: map[string]dot.LiveId{"Wrapper": ConnWrapperTypeId},
+				LiveID:    DaoBaseTypeID,
+				RelyLives: map[string]dot.LiveID{"Wrapper": ConnWrapperTypeID},
 			},
 		},
 	}

@@ -31,7 +31,7 @@ func main() {
 func add(l dot.Line) error {
 	logger := dot.Logger()
 	err := l.PreAdd(&dot.TypeLives{
-		Meta: dot.Metadata{TypeId: "dotId",
+		Meta: dot.Metadata{TypeID: "dotId",
 			NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 				d := 1
 				return &d, nil

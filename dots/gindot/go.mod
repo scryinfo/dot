@@ -10,3 +10,7 @@ require (
 	github.com/scryinfo/scryg v0.1.3
 	go.uber.org/zap v1.14.0
 )
+
+replace (
+	github.com/scryinfo/dot v0.1.4 => ../../
+)

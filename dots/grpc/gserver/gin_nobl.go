@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	GinNoblTypeId = "3c9e8119-3d42-45bd-98f9-32939c895c6d"
+	GinNoblTypeID = "3c9e8119-3d42-45bd-98f9-32939c895c6d"
 )
 
 //support the http and tcp
@@ -33,13 +33,13 @@ type ginNobl struct {
 func GinNoblTypeLives() []*dot.TypeLives {
 
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: GinNoblTypeId, RefType: reflect.TypeOf((*ginNobl)(nil)).Elem(), NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeID: GinNoblTypeID, RefType: reflect.TypeOf((*ginNobl)(nil)).Elem(), NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return &ginNobl{}, nil
 		}},
 		Lives: []dot.Live{
 			dot.Live{
-				LiveId:    GinNoblTypeId,
-				RelyLives: map[string]dot.LiveId{"GinRouter": gindot.RouterTypeId, "ServerNobl": ServerNoblTypeId},
+				LiveID:    GinNoblTypeID,
+				RelyLives: map[string]dot.LiveID{"GinRouter": gindot.RouterTypeID, "ServerNobl": ServerNoblTypeID},
 			},
 		},
 	}

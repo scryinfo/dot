@@ -12,7 +12,7 @@ func TestLineImp_Start(t *testing.T) {
 	l, _ := BuildAndStart(func(l dot.Line) error {
 		_ = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{
-				TypeId: "one1",
+				TypeID: "one1",
 				NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 					t := 1
 					return &t, nil
@@ -20,17 +20,17 @@ func TestLineImp_Start(t *testing.T) {
 			},
 			Lives: []dot.Live{
 				{
-					LiveId: "one1-1",
+					LiveID: "one1-1",
 				},
 				{
-					LiveId: "one1-2",
+					LiveID: "one1-2",
 				},
 			},
 		})
 
 		_ = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{
-				TypeId: "one3",
+				TypeID: "one3",
 				NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 					t := 1
 					return &t, nil
@@ -38,14 +38,14 @@ func TestLineImp_Start(t *testing.T) {
 			},
 			Lives: []dot.Live{
 				{
-					LiveId: "one3-1",
+					LiveID: "one3-1",
 				},
 			},
 		})
 
 		_ = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{
-				TypeId: "two",
+				TypeID: "two",
 				NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 					t := 1
 					return &t, nil
@@ -53,19 +53,19 @@ func TestLineImp_Start(t *testing.T) {
 			},
 			Lives: []dot.Live{
 				{
-					LiveId:    "two-1",
-					RelyLives: map[string]dot.LiveId{"_": "one1-1"},
+					LiveID:    "two-1",
+					RelyLives: map[string]dot.LiveID{"_": "one1-1"},
 				},
 				{
-					LiveId:    "two-2",
-					RelyLives: map[string]dot.LiveId{"_": "one1-2"},
+					LiveID:    "two-2",
+					RelyLives: map[string]dot.LiveID{"_": "one1-2"},
 				},
 			},
 		})
 
 		_ = l.PreAdd(&dot.TypeLives{
 			Meta: dot.Metadata{
-				TypeId: "three",
+				TypeID: "three",
 				NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 					t := 1
 					return &t, nil
@@ -73,12 +73,12 @@ func TestLineImp_Start(t *testing.T) {
 			},
 			Lives: []dot.Live{
 				{
-					LiveId:    "three-1",
-					RelyLives: map[string]dot.LiveId{"_": "one1-1"},
+					LiveID:    "three-1",
+					RelyLives: map[string]dot.LiveID{"_": "one1-1"},
 				},
 				{
-					LiveId:    "three-2",
-					RelyLives: map[string]dot.LiveId{"_": "two-2"},
+					LiveID:    "three-2",
+					RelyLives: map[string]dot.LiveID{"_": "two-2"},
 				},
 			},
 		})
@@ -86,7 +86,7 @@ func TestLineImp_Start(t *testing.T) {
 		{ //circle
 			_ = l.PreAdd(&dot.TypeLives{
 				Meta: dot.Metadata{
-					TypeId: "circle",
+					TypeID: "circle",
 					NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 						t := 1
 						return &t, nil
@@ -94,18 +94,18 @@ func TestLineImp_Start(t *testing.T) {
 				},
 				Lives: []dot.Live{
 					{
-						LiveId:    "circle-1",
-						RelyLives: map[string]dot.LiveId{"_": "circle2-1"},
+						LiveID:    "circle-1",
+						RelyLives: map[string]dot.LiveID{"_": "circle2-1"},
 					},
 					{
-						LiveId: "circle-2",
+						LiveID: "circle-2",
 					},
 				},
 			})
 
 			_ = l.PreAdd(&dot.TypeLives{
 				Meta: dot.Metadata{
-					TypeId: "circle2",
+					TypeID: "circle2",
 					NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 						t := 1
 						return &t, nil
@@ -113,42 +113,42 @@ func TestLineImp_Start(t *testing.T) {
 				},
 				Lives: []dot.Live{
 					{
-						LiveId:    "circle2-1",
-						RelyLives: map[string]dot.LiveId{"_": "circle3-1"},
+						LiveID:    "circle2-1",
+						RelyLives: map[string]dot.LiveID{"_": "circle3-1"},
 					},
 				},
 			})
 
 			_ = l.PreAdd(&dot.TypeLives{
 				Meta: dot.Metadata{
-					TypeId: "circle3",
+					TypeID: "circle3",
 					NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 						t := 1
 						return &t, nil
 					},
-					RelyTypeIds: []dot.TypeId{"circle"},
+					RelyTypeIDs: []dot.TypeID{"circle"},
 				},
 				Lives: []dot.Live{
 					{
-						LiveId:    "circle3-1",
-						RelyLives: map[string]dot.LiveId{"_": "circle-1"},
+						LiveID:    "circle3-1",
+						RelyLives: map[string]dot.LiveID{"_": "circle-1"},
 					},
 				},
 			})
 
 			_ = l.PreAdd(&dot.TypeLives{ //duplication
 				Meta: dot.Metadata{
-					TypeId: "circle3",
+					TypeID: "circle3",
 					NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 						t := 1
 						return &t, nil
 					},
-					RelyTypeIds: []dot.TypeId{"circle"},
+					RelyTypeIDs: []dot.TypeID{"circle"},
 				},
 				Lives: []dot.Live{
 					{
-						LiveId:    "circle3-1",
-						RelyLives: map[string]dot.LiveId{"_": "circle-1"},
+						LiveID:    "circle3-1",
+						RelyLives: map[string]dot.LiveID{"_": "circle-1"},
 					},
 				},
 			})

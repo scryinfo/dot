@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	HttpTypeId = "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0"
+	HttpTypeID = "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0"
 )
 
 type httpNoblConf struct {
@@ -64,13 +64,13 @@ func newHttpNobl(conf []byte) (dot.Dot, error) {
 func HttpNoblTypeLives() []*dot.TypeLives {
 
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: HttpTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeID: HttpTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newHttpNobl(conf)
 		}},
 		Lives: []dot.Live{
 			{
-				LiveId:    HttpTypeId,
-				RelyLives: map[string]dot.LiveId{"ServerNobl": ServerNoblTypeId},
+				LiveID:    HttpTypeID,
+				RelyLives: map[string]dot.LiveID{"ServerNobl": ServerNoblTypeID},
 			},
 		},
 	}
@@ -84,7 +84,7 @@ func HttpNoblTypeLives() []*dot.TypeLives {
 //return config of HttpNobl
 func HttpNoblConfigTypeLives() *dot.ConfigTypeLives {
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: HttpTypeId,
+		TypeIDConfig: HttpTypeID,
 		ConfigInfo:   &httpNoblConf{},
 	}
 }

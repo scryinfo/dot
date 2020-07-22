@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	HiClientTypeId = "hiclient"
+	HiClientTypeID = "hiclient"
 )
 
 type HiClient struct {
@@ -29,13 +29,13 @@ func (c *HiClient) AfterAllInject(l dot.Line) {
 //HiClientTypeLives make all type lives
 func HiClientTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: HiClientTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: HiClientTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return &HiClient{}, nil
 		}},
 		Lives: []dot.Live{
 			dot.Live{
-				LiveId:    HiClientTypeId,
-				RelyLives: map[string]dot.LiveId{"Conn": conns.ConnNameTypeId},
+				LiveID:    HiClientTypeID,
+				RelyLives: map[string]dot.LiveID{"Conn": conns.ConnNameTypeID},
 			},
 		},
 	}

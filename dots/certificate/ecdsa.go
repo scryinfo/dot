@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	EcdsaTypeId = "4b8b1751-4799-4578-af46-d9b339cf582f"
+	EcdsaTypeID = "4b8b1751-4799-4578-af46-d9b339cf582f"
 )
 
 type Ecdsa struct {
@@ -37,7 +37,7 @@ func newEcdsa(conf []byte) (dot.Dot, error) {
 
 func TypeLiveEcdsa() *dot.TypeLives {
 	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: EcdsaTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeID: EcdsaTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newEcdsa(conf)
 		}},
 	}

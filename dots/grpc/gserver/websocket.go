@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	WebSocketTypeId = "27709862-0a7b-48e9-8427-5bbc86760c41"
+	WebSocketTypeID = "27709862-0a7b-48e9-8427-5bbc86760c41"
 )
 
 // WebSocket component makes it possible the full-duplex communication with low latency
@@ -32,14 +32,14 @@ type WebSocket struct {
 func WebSocketTypeLives() []*dot.TypeLives {
 	websocktTypeLive := func() *dot.TypeLives {
 		return &dot.TypeLives{
-			Meta: dot.Metadata{TypeId: WebSocketTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+			Meta: dot.Metadata{TypeID: WebSocketTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 				return &WebSocket{}, nil
 			}},
 			//Lives: []dot.Live{
 			//	{
-			//		TypeId: WebSocketTypeId,
-			//		RelyLives: map[string]dot.LiveId{
-			//			"GinEngine": gindot.EngineTypeId,
+			//		TypeID: WebSocketTypeID,
+			//		RelyLives: map[string]dot.LiveID{
+			//			"GinEngine": gindot.EngineTypeID,
 			//		},
 			//	},
 			//},

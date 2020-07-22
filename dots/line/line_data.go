@@ -9,80 +9,80 @@ import (
 
 //Metas
 type Metas struct {
-	metas map[dot.TypeId]*dot.Metadata
+	metas map[dot.TypeID]*dot.Metadata
 }
 
 //NewMetas
 func NewMetas() *Metas {
 	m := &Metas{}
-	m.metas = make(map[dot.TypeId]*dot.Metadata)
+	m.metas = make(map[dot.TypeID]*dot.Metadata)
 	return m
 }
 
 //Lives
 type Lives struct {
-	// typeIdMap map[dot.TypeId][]*dot.Live
-	LiveIdMap map[dot.LiveId]*dot.Live
+	// typeIDMap map[dot.TypeID][]*dot.Live
+	LiveIDMap map[dot.LiveID]*dot.Live
 }
 
 func NewLives() *Lives {
 	l := &Lives{}
-	l.LiveIdMap = make(map[dot.LiveId]*dot.Live)
+	l.LiveIDMap = make(map[dot.LiveID]*dot.Live)
 	return l
 }
 
 func (ms *Metas) Add(m *dot.Metadata) error {
-	if m == nil || m.TypeId.String() == "" {
+	if m == nil || m.TypeID.String() == "" {
 		return dot.SError.NilParameter
 	}
 
-	if _, ok := ms.metas[m.TypeId]; ok {
-		return dot.SError.Existed.AddNewError(m.TypeId.String())
+	if _, ok := ms.metas[m.TypeID]; ok {
+		return dot.SError.Existed.AddNewError(m.TypeID.String())
 	}
 
-	ms.metas[m.TypeId] = m.Clone()
+	ms.metas[m.TypeID] = m.Clone()
 
 	return nil
 }
 
 func (ms *Metas) UpdateOrAdd(m *dot.Metadata) error {
-	if m == nil || m.TypeId.String() == "" {
+	if m == nil || m.TypeID.String() == "" {
 		return dot.SError.NilParameter
 	}
 
-	old, ok := ms.metas[m.TypeId]
+	old, ok := ms.metas[m.TypeID]
 	if ok {
 		old.Merge(m)
 	} else {
-		ms.metas[m.TypeId] = m.Clone()
+		ms.metas[m.TypeID] = m.Clone()
 	}
 	return nil
 }
 
 func (ms *Metas) Remove(m *dot.Metadata) error {
-	delete(ms.metas, m.TypeId)
+	delete(ms.metas, m.TypeID)
 	return nil
 }
 
-//RemoveById
-func (ms *Metas) RemoveById(typeId dot.TypeId) error {
-	delete(ms.metas, typeId)
+//RemoveByID
+func (ms *Metas) RemoveByID(typeID dot.TypeID) error {
+	delete(ms.metas, typeID)
 	return nil
 }
 
 //Get
-func (ms *Metas) Get(typeId dot.TypeId) (meta *dot.Metadata, err error) {
+func (ms *Metas) Get(typeID dot.TypeID) (meta *dot.Metadata, err error) {
 	meta = nil
 	err = nil
 
-	meta, ok := ms.metas[typeId]
+	meta, ok := ms.metas[typeID]
 	if !ok {
-		err = dot.SError.NotExisted.AddNewError(typeId.String())
+		err = dot.SError.NotExisted.AddNewError(typeID.String())
 	}
 	return
 }
 
-func (ms *Metas) NewDot(t dot.TypeId) (dot dot.Dot, err error) {
+func (ms *Metas) NewDot(t dot.TypeID) (dot dot.Dot, err error) {
 	dot = nil
 	err = nil
 
@@ -94,60 +94,60 @@ func (ms *Metas) NewDot(t dot.TypeId) (dot dot.Dot, err error) {
 }
 
 func (ms *Lives) Add(m *dot.Live) error {
-	if m == nil || m.LiveId.String() == "" {
+	if m == nil || m.LiveID.String() == "" {
 		return dot.SError.NilParameter
 	}
 
-	_, ok := ms.LiveIdMap[m.LiveId]
+	_, ok := ms.LiveIDMap[m.LiveID]
 	if ok {
-		return dot.SError.Existed.AddNewError(m.LiveId.String())
+		return dot.SError.Existed.AddNewError(m.LiveID.String())
 	}
-	ms.LiveIdMap[m.LiveId] = m
+	ms.LiveIDMap[m.LiveID] = m
 
 	return nil
 }
 
 func (ms *Lives) UpdateOrAdd(m *dot.Live) error {
-	if m == nil || m.LiveId.String() == "" {
+	if m == nil || m.LiveID.String() == "" {
 		return dot.SError.NilParameter
 	}
 
-	old, ok := ms.LiveIdMap[m.LiveId]
+	old, ok := ms.LiveIDMap[m.LiveID]
 	if ok {
 		old.Dot = m.Dot
-		old.TypeId = m.TypeId
+		old.TypeID = m.TypeID
 		if len(m.RelyLives) > 0 { //merge the rely lives
 			if old.RelyLives == nil {
-				old.RelyLives = make(map[string]dot.LiveId, len(m.RelyLives))
+				old.RelyLives = make(map[string]dot.LiveID, len(m.RelyLives))
 			}
 			for k, v := range m.RelyLives {
 				old.RelyLives[k] = v
 			}
 		}
 	} else {
-		ms.LiveIdMap[m.LiveId] = m
+		ms.LiveIDMap[m.LiveID] = m
 	}
 
 	return nil
 }
 
 func (ms *Lives) Remove(m *dot.Live) error {
-	delete(ms.LiveIdMap, m.LiveId)
+	delete(ms.LiveIDMap, m.LiveID)
 	return nil
 }
 
-//RemoveById
-func (ms *Lives) RemoveById(id dot.LiveId) error {
-	delete(ms.LiveIdMap, id)
+//RemoveByID
+func (ms *Lives) RemoveByID(id dot.LiveID) error {
+	delete(ms.LiveIDMap, id)
 	return nil
 }
 
 //Get
-func (ms *Lives) Get(liveId dot.LiveId) (meta *dot.Live, err error) {
+func (ms *Lives) Get(liveID dot.LiveID) (meta *dot.Live, err error) {
 	var ok bool
-	meta, ok = ms.LiveIdMap[liveId]
+	meta, ok = ms.LiveIDMap[liveID]
 	if !ok {
-		err = dot.SError.NotExisted.AddNewError(liveId.String())
+		err = dot.SError.NotExisted.AddNewError(liveID.String())
 	}
 	return
 }

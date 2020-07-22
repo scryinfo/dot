@@ -18,7 +18,7 @@ import (
 const templateStr = `
 package {{$.Package}}
 import "github.com/scryinfo/dot/dot"
-const {{$.Name}}TypeId = "{{$.Id}}"
+const {{$.Name}}TypeID = "{{$.ID}}"
 type config{{$.Name}} struct {
 	//todo add
 }
@@ -65,13 +65,13 @@ func new{{$.Name}}(conf []byte) (dot.Dot, error) {
 //{{$.Name}}TypeLives
 func {{$.Name}}TypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: {{$.Name}}TypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: {{$.Name}}TypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return new{{$.Name}}(conf)
 		}},
 		//Lives: []dot.Live{
 		//	{
-		//		LiveId:    {{$.Name}}TypeId,
-		//		RelyLives: map[string]dot.LiveId{"some field": "some id"},
+		//		LiveID:    {{$.Name}}TypeID,
+		//		RelyLives: map[string]dot.LiveID{"some field": "some id"},
 		//	},
 		//},
 	}
@@ -86,7 +86,7 @@ func {{$.Name}}ConfigTypeLive() *dot.ConfigTypeLives {
 	paths := make([]string, 0)
 	paths = append(paths, "")
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: {{$.Name}}TypeId,
+		TypeIDConfig: {{$.Name}}TypeID,
 		ConfigInfo: &config{{$.Name}}{
 			//todo
 		},
@@ -96,7 +96,7 @@ func {{$.Name}}ConfigTypeLive() *dot.ConfigTypeLives {
 
 type tData struct {
 	Name      string
-	Id        string
+	ID        string
 	Config    bool //default true
 	Package   string
 	BackQuote string
@@ -106,15 +106,15 @@ var help bool = false
 
 func parms(data *tData) {
 	flag.StringVar(&data.Name, "name", "AnyName", "struct name")
-	flag.StringVar(&data.Id, "id", "", "dot id, if not set, will make a new")
+	flag.StringVar(&data.ID, "id", "", "dot id, if not set, will make a new")
 	//flag.BoolVar(&data.Config, "config", true, "")
 	flag.StringVar(&data.Package, "package", "", "package name")
 
 	flag.BoolVar(&help, "h", false, "")
 
 	flag.Parse()
-	if len(data.Id) < 1 {
-		data.Id = uuid.GetUuid()
+	if len(data.ID) < 1 {
+		data.ID = uuid.GetUuid()
 	}
 	if len(data.Package) < 1 {
 		curPath, err := os.Getwd()

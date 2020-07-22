@@ -24,7 +24,7 @@ func main() {
 	dot.Logger().Infoln("dot ok")
 	//second step ....
 
-	dd, _ := l.ToInjecter().GetByLiveId(dot.LiveId(certificate.EcdsaTypeId))
+	dd, _ := l.ToInjecter().GetByLiveID(dot.LiveID(certificate.EcdsaTypeID))
 	if d, ok := dd.(*certificate.Ecdsa); ok {
 		err := makeSample(d)
 		if err != nil {

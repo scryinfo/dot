@@ -14,3 +14,7 @@ require (
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/tools v0.0.0-20200310231627-71bfc1b943ce // indirect
 )
+
+replace (
+	github.com/scryinfo/dot v0.1.4 => ../../../
+)

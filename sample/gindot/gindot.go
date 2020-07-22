@@ -42,16 +42,16 @@ func main() {
 func add(l dot.Line) error {
 	err := l.PreAdd(gindot.TypeLiveRouter()...)
 	//ReSetLiveEvents AddLiveEvents , they are different
-	l.ToDotEventer().ReSetLiveEvents(dot.LiveId("6be39d0b-3f5b-47b4-818c-642c049f3166"), &dot.LiveEvents{AfterStart: func(live *dot.Live, l dot.Line) {
+	l.ToDotEventer().ReSetLiveEvents(dot.LiveID("6be39d0b-3f5b-47b4-818c-642c049f3166"), &dot.LiveEvents{AfterStart: func(live *dot.Live, l dot.Line) {
 		//do any init for the router
 		// router.Router().Use()
 		// ....
 	}})
 
 	//add the SampleCtroller
-	err = l.PreAdd(gindot.PreAddControlDot(reflect.TypeOf((*SampleCtroller)(nil)).Elem(), dot.LiveId("6be39d0b-3f5b-47b4-818c-642c049f3166")))
+	err = l.PreAdd(gindot.PreAddControlDot(reflect.TypeOf((*SampleCtroller)(nil)).Elem(), dot.LiveID("6be39d0b-3f5b-47b4-818c-642c049f3166")))
 
-	l.ToDotEventer().AddLiveEvents(dot.LiveId(gindot.EngineLiveId), &dot.LiveEvents{
+	l.ToDotEventer().AddLiveEvents(dot.LiveID(gindot.EngineLiveID), &dot.LiveEvents{
 		AfterCreate: func(live *dot.Live, l dot.Line) {
 			if g, ok := live.Dot.(*gindot.Engine); ok {
 				//d.GinEngine().St

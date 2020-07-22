@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	ConnNameTypeId = "2d281e77-3133-4718-a5b7-9eea069591ca"
+	ConnNameTypeID = "2d281e77-3133-4718-a5b7-9eea069591ca"
 )
 
 type ConnName struct {
@@ -40,13 +40,13 @@ func newConnName(conf []byte) (dot.Dot, error) {
 
 func ConnNameTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: ConnNameTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeID: ConnNameTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newConnName(conf)
 		}},
 		Lives: []dot.Live{
 			{
-				LiveId:    ConnNameTypeId,
-				RelyLives: map[string]dot.LiveId{"Conns_": ConnsTypeId, "EtcdConns": EtcdConnsTypeId},
+				LiveID:    ConnNameTypeID,
+				RelyLives: map[string]dot.LiveID{"Conns_": ConnsTypeID, "EtcdConns": EtcdConnsTypeID},
 			},
 		},
 	}
@@ -62,7 +62,7 @@ func ConnNameTypeLives() []*dot.TypeLives {
 //return config of ConnName
 func ConnNameConfigTypeLives() *dot.ConfigTypeLives {
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: ConnNameTypeId,
+		TypeIDConfig: ConnNameTypeID,
 		ConfigInfo:   &configName{},
 	}
 }

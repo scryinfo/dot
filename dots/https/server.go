@@ -13,7 +13,7 @@ import (
 	"net/http"
 )
 
-const TypeId = "a998357a-3d92-4390-bd5c-ef6fd6e2ba41"
+const TypeID = "a998357a-3d92-4390-bd5c-ef6fd6e2ba41"
 
 type config struct {
 	Addr string          `json:"addr"` // addr smaple:  ":8080"
@@ -53,7 +53,7 @@ func newServer(conf []byte) (dot.Dot, error) {
 func TypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{
 		{
-			Meta: dot.Metadata{TypeId: TypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+			Meta: dot.Metadata{TypeID: TypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 				return newServer(conf)
 			}},
 		},
@@ -65,7 +65,7 @@ func ConfigTypeLive() *dot.ConfigTypeLives {
 	paths := make([]string, 0)
 	paths = append(paths, "")
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: TypeId,
+		TypeIDConfig: TypeID,
 		ConfigInfo:   &config{},
 	}
 }

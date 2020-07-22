@@ -17,10 +17,10 @@ import (
 )
 
 const (
-	//EngineTypeId for gin dot
-	EngineTypeId = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
-	//EngineLiveId for gin dot
-	EngineLiveId = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+	//EngineTypeID for gin dot
+	EngineTypeID = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+	//EngineLiveID for gin dot
+	EngineLiveID = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
 )
 
 type configEngine struct {
@@ -46,7 +46,7 @@ func DefaultGinEngine() *gin.Engine {
 		logger.Errorln("the line do not create, do not call it")
 		return nil
 	}
-	d, err := l.ToInjecter().GetByLiveId(EngineLiveId)
+	d, err := l.ToInjecter().GetByLiveID(EngineLiveID)
 	if err != nil {
 		logger.Errorln(err.Error())
 		return nil
@@ -76,7 +76,7 @@ func newGinDot(conf []byte) (dot.Dot, error) {
 //TypeLiveGinDot generate data for structural  dot
 func TypeLiveGinDot() *dot.TypeLives {
 	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: EngineTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeID: EngineTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newGinDot(conf)
 		}},
 	}
@@ -88,7 +88,7 @@ func ConfigTypeLiveGinDot() *dot.ConfigTypeLives {
 	paths := make([]string, 0)
 	paths = append(paths, "")
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: EngineTypeId,
+		TypeIDConfig: EngineTypeID,
 		ConfigInfo: &configEngine{
 			LogSkipPaths: paths,
 		},

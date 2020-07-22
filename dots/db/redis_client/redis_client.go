@@ -15,7 +15,7 @@ import (
 	"github.com/scryinfo/dot/dot"
 )
 
-const RedisClientTypeId = "0ae35550-7e37-4afe-866e-b129099759b7"
+const RedisClientTypeID = "0ae35550-7e37-4afe-866e-b129099759b7"
 
 type configRedis struct {
 	Addr                string `json:"addr"`
@@ -266,7 +266,7 @@ func newRedisClient(conf []byte) (dot.Dot, error) {
 //RedisClientTypeLives
 func RedisClientTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: RedisClientTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: RedisClientTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newRedisClient(conf)
 		}},
 	}

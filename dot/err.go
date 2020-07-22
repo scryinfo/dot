@@ -48,7 +48,7 @@ type Error struct {
 	NotExisted       Errorer
 	Parameter        Errorer
 	RelyTypeNotMatch Errorer
-	TypeIdEmpty      Errorer
+	TypeIDEmpty      Errorer
 	Config           Errorer
 	NoDotNewer       Errorer
 	NotStruct        Errorer
@@ -64,7 +64,7 @@ func init() {
 	SError.NotExisted = NewError("dot_not_existed", "the not exited: ")
 	SError.Parameter = NewError("dot_error_parameter", "the parameter error ")
 	SError.RelyTypeNotMatch = NewError("dot_rely_type", "rely type not match ")
-	SError.TypeIdEmpty = NewError("dot_typeid_null", "typeid null: ")
+	SError.TypeIDEmpty = NewError("dot_typeid_null", "typeid null: ")
 	SError.Config = NewError("dot_config", "config error: ")
 	SError.NoDotNewer = NewError("dot_no_newer", "Do not newer: ")
 	SError.NotStruct = NewError("dot_not_struct", "Not struct: ")

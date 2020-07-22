@@ -12,30 +12,30 @@ type Injecter interface {
 	//Inject inject
 	//obj only support structure
 	//dot.TagDot (dot) tag is in the field
-	//If tag is empty, then input with field type, otherwise input with tag value（dot.LiveId）
+	//If tag is empty, then input with field type, otherwise input with tag value（dot.LiveID）
 	//In the process if error occurred, it will not quit, returned error is the first one occurred
 	Inject(obj interface{}) error
 	//GetByType get by type
 	//If no related object in current container, then will call parent to search
 	//type container is seperate with liveid container
 	GetByType(t reflect.Type) (d Dot, err error)
-	//GetByLiveId get by liveid
+	//GetByLiveID get by liveid
 	//If no related object in current container, then will call parent to search
 	//type container is seperate with liveid container
-	GetByLiveId(id LiveId) (d Dot, err error)
+	GetByLiveID(id LiveID) (d Dot, err error)
 
 	//ReplaceOrAddByType update
 	//Cannot operate parent
 	ReplaceOrAddByType(d Dot) error
 	//Cannot operate parent
 	ReplaceOrAddByParamType(d Dot, t reflect.Type) error
-	//ReplaceOrAddByLiveId update
+	//ReplaceOrAddByLiveID update
 	//Cannot operate parent
-	ReplaceOrAddByLiveId(d Dot, id LiveId) error
+	ReplaceOrAddByLiveID(d Dot, id LiveID) error
 	//RemoveByType remove
 	RemoveByType(t reflect.Type) error
-	//RemoveByLiveId remove
-	RemoveByLiveId(id LiveId) error
+	//RemoveByLiveID remove
+	RemoveByLiveID(id LiveID) error
 
 	//SetParent set parent injecter
 	SetParent(p Injecter)
@@ -46,7 +46,7 @@ type Injecter interface {
 //Line line
 type Line interface {
 	//Return unique Line name
-	Id() string
+	ID() string
 	//Line API
 	Config() *Config
 	//SConfig general config API
@@ -58,14 +58,14 @@ type Line interface {
 	//1,Search liveid corresponding newer
 	//2,Search typid corresponding newer
 	//3,Search right newer in meta
-	//AddNewerByLiveId add new for liveid
-	AddNewerByLiveId(liveid LiveId, newDot Newer) error
-	//AddNewerByTypeId add new for type
-	AddNewerByTypeId(typeid TypeId, newDot Newer) error
-	//RemoveNewerByLiveId remove
-	RemoveNewerByLiveId(liveid LiveId)
-	//RemoveNewerByTypeId remove
-	RemoveNewerByTypeId(typeid TypeId)
+	//AddNewerByLiveID add new for liveid
+	AddNewerByLiveID(liveID LiveID, newDot Newer) error
+	//AddNewerByTypeID add new for type
+	AddNewerByTypeID(typeID TypeID, newDot Newer) error
+	//RemoveNewerByLiveID remove
+	RemoveNewerByLiveID(liveID LiveID)
+	//RemoveNewerByTypeID remove
+	RemoveNewerByTypeID(typeID TypeID)
 
 	//PreAdd Add dot liveid and meta info, here no dot is created, it will be generated after Computing dependence
 	//If it is the single sample, don't need to point sample info, sample id is typeid
@@ -84,7 +84,7 @@ type Line interface {
 	ToDotEventer() Eventer
 
 	//GetDotConfig get
-	GetDotConfig(liveid LiveId) *LiveConfig
+	GetDotConfig(liveID LiveID) *LiveConfig
 
 	GetLineBuilder() *Builder
 	//InfoAllTypeAdnLives just for debug, log info all types and lives
@@ -98,9 +98,9 @@ type SetterLine interface {
 	SetLine(l Line)
 }
 
-// If component need to know current TypeId or LiveId, then realize this API, and this API Will be called before component Create
-type SetterTypeAndLiveId interface {
-	SetTypeId(tid TypeId, lid LiveId)
+// If component need to know current TypeID or LiveID, then realize this API, and this API Will be called before component Create
+type SetterTypeAndLiveID interface {
+	SetTypeID(typeID TypeID, liveID LiveID)
 }
 
 // After all start, before builder AfterStart
@@ -132,7 +132,7 @@ type TypeLives struct {
 //jayce edit
 //config json
 type ConfigTypeLives struct {
-	TypeIdConfig TypeId      `json:"typeId"`
+	TypeIDConfig TypeID      `json:"typeId"`
 	ConfigInfo   interface{} `json:"json"`
 }
 
@@ -153,7 +153,7 @@ type Builder struct {
 	BeforeDestroy AllEvent //Before  all dot destroy
 	AfterDestroy  AllEvent //After  all dot destroy
 
-	LineLiveId string //line unique id， default value is “default”
+	LineLiveID string //line unique id， default value is “default”
 }
 
 //NewTypeLives new living
@@ -168,7 +168,7 @@ func (c *TypeLives) Clone() *TypeLives {
 	cc := *c
 	cc.Lives = make([]Live, len(c.Lives))
 	copy(cc.Lives, c.Lives)
-	cc.Meta.RelyTypeIds = make([]TypeId, len(c.Meta.RelyTypeIds))
-	copy(cc.Meta.RelyTypeIds, c.Meta.RelyTypeIds)
+	cc.Meta.RelyTypeIDs = make([]TypeID, len(c.Meta.RelyTypeIDs))
+	copy(cc.Meta.RelyTypeIDs, c.Meta.RelyTypeIDs)
 	return &cc
 }

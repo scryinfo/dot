@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	ServerTypeId = "rpcImplement"
+	ServerTypeID = "rpcImplement"
 )
 
 type config struct {
@@ -55,13 +55,13 @@ func (serv *RpcImplement) Start(ignore bool) error {
 //RpcImplementTypeLives make all type lives
 func RpcImplementTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: ServerTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: ServerTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newRpcImplement(conf)
 		}},
 		Lives: []dot.Live{
 			dot.Live{
-				LiveId:    ServerTypeId,
-				RelyLives: map[string]dot.LiveId{"ServerNobl": gserver.ServerNoblTypeId},
+				LiveID:    ServerTypeID,
+				RelyLives: map[string]dot.LiveID{"ServerNobl": gserver.ServerNoblTypeID},
 			},
 		},
 	}

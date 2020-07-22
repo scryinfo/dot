@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	ConnsTypeId = "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
+	ConnsTypeID = "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
 )
 
 //grpc connection, support one Scheme, multi services are below, every service can have multi address(ClientConn load balancing)
@@ -80,7 +80,7 @@ func newConns(conf []byte) (dot.Dot, error) {
 //Data structure needed when generating newer component
 func ConnsTypeLives() *dot.TypeLives {
 	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: ConnsTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeID: ConnsTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newConns(conf)
 		}},
 	}
@@ -95,7 +95,7 @@ func ConnsConfigTypeLives() *dot.ConfigTypeLives {
 	slice1 = append(slice1, ServiceConfig{Addrs: slice2})
 
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: ConnsTypeId,
+		TypeIDConfig: ConnsTypeID,
 		ConfigInfo: &ConnsConfig{
 			Services: slice1,
 		},

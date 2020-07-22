@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	TypeId = "d2b575cd-e38f-4002-b4bd-9dc85fe13fe6"
+	GormTypeID = "d2b575cd-e38f-4002-b4bd-9dc85fe13fe6"
 )
 
 type config struct {
@@ -78,7 +78,7 @@ func newGorms(conf []byte) (d dot.Dot, err error) {
 func TypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{
 		{
-			Meta: dot.Metadata{TypeId: TypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+			Meta: dot.Metadata{TypeID: GormTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 				return newGorms(conf)
 			}},
 		},
@@ -89,7 +89,7 @@ func TypeLives() []*dot.TypeLives {
 //ConfigTypeLives
 func ConfigTypeLives() *dot.ConfigTypeLives {
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: TypeId,
+		TypeIDConfig: GormTypeID,
 		ConfigInfo:   &config{},
 	}
 }

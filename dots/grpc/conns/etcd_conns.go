@@ -16,7 +16,7 @@ import (
 	"github.com/scryinfo/dot/utils"
 )
 
-const EtcdConnsTypeId = "c91c8c68-281a-4949-8e55-3516664e80c7"
+const EtcdConnsTypeID = "c91c8c68-281a-4949-8e55-3516664e80c7"
 
 //see https://github.com/etcd-io/etcd/blob/master/Documentation/dev-guide/grpc_naming.md
 
@@ -142,13 +142,13 @@ func newEtcdConns(conf []byte) (dot.Dot, error) {
 //EtcdConnsTypeLives
 func EtcdConnsTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: EtcdConnsTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: EtcdConnsTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newEtcdConns(conf)
 		}},
 		//Lives: []dot.Live{
 		//	{
-		//		LiveId:    EtcdConnsTypeId,
-		//		RelyLives: map[string]dot.LiveId{"some field": "some id"},
+		//		LiveID:    EtcdConnsTypeID,
+		//		RelyLives: map[string]dot.LiveID{"some field": "some id"},
 		//	},
 		//},
 	}
@@ -163,7 +163,7 @@ func EtcdConnsConfigTypeLive() *dot.ConfigTypeLives {
 	paths := make([]string, 0)
 	paths = append(paths, "")
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: EtcdConnsTypeId,
+		TypeIDConfig: EtcdConnsTypeID,
 		ConfigInfo:   &configEtcdConns{},
 	}
 }

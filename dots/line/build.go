@@ -14,7 +14,7 @@ import (
 //Construct line and call create rely create dots start
 //add will be called before reply, after create
 func BuildAndStart(add dot.BuildNewer) (l dot.Line, err error) {
-	builder := &dot.Builder{Add: add, LineLiveId: "default"}
+	builder := &dot.Builder{Add: add, LineLiveID: "default"}
 	l, err = BuildAndStartBy(builder)
 	return l, err
 }
@@ -27,8 +27,8 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 	}
 	err = nil
 
-	if len(builder.LineLiveId) < 1 {
-		builder.LineLiveId = "default"
+	if len(builder.LineLiveID) < 1 {
+		builder.LineLiveID = "default"
 	}
 
 	line := newLine(builder)
@@ -55,7 +55,7 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 			return
 		}
 
-		line.autoMakeLiveId() //issue #17
+		line.autoMakeLiveID() //issue #17
 
 		line.makeRelays()
 

@@ -27,7 +27,7 @@ func TestEtcdConns_EtcdRegister(t *testing.T) {
 	{
 		l, err := line.BuildAndStart(nil)
 		assert.Equal(t, nil, err)
-		l.ToInjecter().ReplaceOrAddByLiveId(etcdConns, conns.EtcdConnsTypeId)
+		l.ToInjecter().ReplaceOrAddByLiveID(etcdConns, conns.EtcdConnsTypeID)
 		{
 			controller := gomock.NewController(t)
 			s := NewMockServerNobl(controller)
@@ -36,11 +36,11 @@ func TestEtcdConns_EtcdRegister(t *testing.T) {
 				Addrs: []string{addr},
 			})
 
-			l.ToInjecter().ReplaceOrAddByLiveId(s, GinNoblTypeId)
+			l.ToInjecter().ReplaceOrAddByLiveID(s, GinNoblTypeID)
 		}
 
 		etcdRegister := &EtcdRegister{EtcdConns: etcdConns}
-		l.ToInjecter().ReplaceOrAddByLiveId(etcdRegister, EtcdRegisterTypeId)
+		l.ToInjecter().ReplaceOrAddByLiveID(etcdRegister, EtcdRegisterTypeID)
 		etcdRegister.AfterAllInject(l)
 		etcdRegister.AfterAllStart()
 	}

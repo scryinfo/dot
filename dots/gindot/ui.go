@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 )
 
-const UiTypeId = "d9972be7-cef9-464c-9bbb-d1f11abea803" //type id of dot
+const UiTypeID = "d9972be7-cef9-464c-9bbb-d1f11abea803" //type id of dot
 
 //todo 为了避免路径冲突以及使用方便，将如下功能以配置方式实现
 //d.Engine_.GinEngine().GET("/", func(ctx *gin.Context) {
@@ -191,14 +191,14 @@ func newUi(conf []byte) (*Ui, error) {
 //UiTypeLives generate data for structural  dot,  include gindot.Engine
 func UiTypeLives() []*dot.TypeLives {
 	return []*dot.TypeLives{&dot.TypeLives{
-		Meta: dot.Metadata{TypeId: UiTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: UiTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newUi(conf)
 		}},
 
 		Lives: []dot.Live{
 			{
-				LiveId:    UiTypeId,
-				RelyLives: map[string]dot.LiveId{"Engine_": EngineLiveId},
+				LiveID:    UiTypeID,
+				RelyLives: map[string]dot.LiveID{"Engine_": EngineLiveID},
 			},
 		},
 	},
@@ -209,7 +209,7 @@ func UiTypeLives() []*dot.TypeLives {
 //return config of Ui
 func UiConfigTypeLive() *dot.ConfigTypeLives {
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: UiTypeId,
+		TypeIDConfig: UiTypeID,
 		ConfigInfo:   &configUi{},
 	}
 }

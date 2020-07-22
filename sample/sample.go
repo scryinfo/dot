@@ -41,14 +41,14 @@ func add(l dot.Line) error {
 		t := reflect.TypeOf((*Dot1)(nil))
 		t = t.Elem()
 		err = l.PreAdd(&dot.TypeLives{
-			Meta: dot.Metadata{TypeId: "1", RefType: t}, Lives: []dot.Live{
-				{LiveId: "1"},
+			Meta: dot.Metadata{TypeID: "1", RefType: t}, Lives: []dot.Live{
+				{LiveID: "1"},
 			},
 		})
 
 		// Point newer for typeid
 		err = l.PreAdd(&dot.TypeLives{
-			Meta: dot.Metadata{TypeId: "1", NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+			Meta: dot.Metadata{TypeID: "1", NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 				return &Dot1{Name: "Create by type 1"}, nil
 			}},
 		})
@@ -59,14 +59,14 @@ func add(l dot.Line) error {
 		t = t.Elem()
 		//If no newer assignment, then use reflect.newLine to create it
 		err = l.PreAdd(&dot.TypeLives{
-			Meta: dot.Metadata{TypeId: "2", RefType: t}, Lives: []dot.Live{
-				{LiveId: "21"}, {LiveId: "22"},
+			Meta: dot.Metadata{TypeID: "2", RefType: t}, Lives: []dot.Live{
+				{LiveID: "21"}, {LiveID: "22"},
 			},
 		})
 	}
 
-	{ // The following is Newer using LiveId，
-		err = l.AddNewerByLiveId(dot.LiveId("31"), func(conf []byte) (d dot.Dot, err error) {
+	{ // The following is Newer using LiveID，
+		err = l.AddNewerByLiveID(dot.LiveID("31"), func(conf []byte) (d dot.Dot, err error) {
 			d = &Dot3{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -82,7 +82,7 @@ func add(l dot.Line) error {
 			return
 		})
 
-		err = l.AddNewerByLiveId(dot.LiveId("32"), func(conf []byte) (d dot.Dot, err error) {
+		err = l.AddNewerByLiveID(dot.LiveID("32"), func(conf []byte) (d dot.Dot, err error) {
 			d = &Dot3{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -99,8 +99,8 @@ func add(l dot.Line) error {
 		})
 	}
 
-	{ // The following is Newer using typeid and LiveId，if both are provided, then use Liveid priorly
-		err = l.AddNewerByLiveId(dot.LiveId("41"), func(conf []byte) (d dot.Dot, err error) {
+	{ // The following is Newer using typeid and LiveID，if both are provided, then use Liveid priorly
+		err = l.AddNewerByLiveID(dot.LiveID("41"), func(conf []byte) (d dot.Dot, err error) {
 			d = &Dot4{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -116,7 +116,7 @@ func add(l dot.Line) error {
 			return
 		})
 
-		err = l.AddNewerByTypeId(dot.TypeId("type_live"), func(conf []byte) (d dot.Dot, err error) {
+		err = l.AddNewerByTypeID(dot.TypeID("type_live"), func(conf []byte) (d dot.Dot, err error) {
 			d = &Dot4{}
 			err = nil
 			t := reflect.ValueOf(conf)
@@ -137,7 +137,7 @@ func add(l dot.Line) error {
 //Add assigned type to container directly
 func addDot(l dot.Line) {
 	_ = l.ToInjecter().ReplaceOrAddByType(&Dot1{Name: "null"})
-	_ = l.ToInjecter().ReplaceOrAddByLiveId(&Dot1{Name: "6666"}, dot.LiveId("6666"))
+	_ = l.ToInjecter().ReplaceOrAddByLiveID(&Dot1{Name: "6666"}, dot.LiveID("6666"))
 }
 
 type Dot1 struct {

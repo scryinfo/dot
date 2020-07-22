@@ -7,7 +7,7 @@ import (
 	"github.com/scryinfo/dot/utils"
 )
 
-const EtcdServiceTypeId = "59b10f33-4f8b-40b9-9912-02068f78c228"
+const EtcdServiceTypeID = "59b10f33-4f8b-40b9-9912-02068f78c228"
 
 type configEtcdService struct {
 	Pears     []string        `json:"endpoints"`
@@ -71,13 +71,13 @@ func newEtcdService(conf []byte) (dot.Dot, error) {
 //EtcdServiceTypeLives
 func EtcdServiceTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: EtcdServiceTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: EtcdServiceTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newEtcdService(conf)
 		}},
 		//Lives: []dot.Live{
 		//	{
-		//		LiveId:    EtcdServiceTypeId,
-		//		RelyLives: map[string]dot.LiveId{"some field": "some id"},
+		//		LiveID:    EtcdServiceTypeID,
+		//		RelyLives: map[string]dot.LiveID{"some field": "some id"},
 		//	},
 		//},
 	}
@@ -92,7 +92,7 @@ func EtcdServiceConfigTypeLive() *dot.ConfigTypeLives {
 	paths := make([]string, 0)
 	paths = append(paths, "")
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: EtcdServiceTypeId,
+		TypeIDConfig: EtcdServiceTypeID,
 		ConfigInfo:   &configEtcdService{
 			//todo
 		},

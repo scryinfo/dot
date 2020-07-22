@@ -30,8 +30,8 @@ type lineImp struct {
 	metas      *Metas      //
 	lives      *Lives      //
 	types      map[reflect.Type]dot.Dot
-	newerLives map[dot.LiveId]dot.Newer
-	newerTypes map[dot.TypeId]dot.Newer
+	newerLives map[dot.LiveID]dot.Newer
+	newerTypes map[dot.TypeID]dot.Newer
 
 	parent dot.Injecter
 	mutex  sync.Mutex
@@ -46,8 +46,8 @@ type lineImp struct {
 func newLine(builder *dot.Builder) *lineImp {
 	a := &lineImp{metas: NewMetas(),
 		lives: NewLives(), types: make(map[reflect.Type]dot.Dot),
-		newerLives:  make(map[dot.LiveId]dot.Newer),
-		newerTypes:  make(map[dot.TypeId]dot.Newer),
+		newerLives:  make(map[dot.LiveID]dot.Newer),
+		newerTypes:  make(map[dot.TypeID]dot.Newer),
 		lineBuilder: builder,
 	}
 	a.dotEvent.Init()
@@ -59,51 +59,51 @@ func newLine(builder *dot.Builder) *lineImp {
 	return a
 }
 
-func (c *lineImp) Id() string {
-	return c.lineBuilder.LineLiveId
+func (c *lineImp) ID() string {
+	return c.lineBuilder.LineLiveID
 }
 
-//AddNewerByLiveId add new for live id
-func (c *lineImp) AddNewerByLiveId(liveId dot.LiveId, newDot dot.Newer) error {
+//AddNewerByLiveID add new for live id
+func (c *lineImp) AddNewerByLiveID(liveID dot.LiveID, newDot dot.Newer) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	if _, ok := c.newerLives[liveId]; ok {
-		return dot.SError.Existed.AddNewError(liveId.String())
+	if _, ok := c.newerLives[liveID]; ok {
+		return dot.SError.Existed.AddNewError(liveID.String())
 	}
 
-	c.newerLives[liveId] = newDot
+	c.newerLives[liveID] = newDot
 
 	return nil
 }
 
-//AddNewerByTypeId add new for type
-func (c *lineImp) AddNewerByTypeId(typeId dot.TypeId, newDot dot.Newer) error {
+//AddNewerByTypeID add new for type
+func (c *lineImp) AddNewerByTypeID(typeID dot.TypeID, newDot dot.Newer) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	if _, ok := c.newerTypes[typeId]; ok {
-		return dot.SError.Existed.AddNewError(typeId.String())
+	if _, ok := c.newerTypes[typeID]; ok {
+		return dot.SError.Existed.AddNewError(typeID.String())
 	}
 
-	c.newerTypes[typeId] = newDot
+	c.newerTypes[typeID] = newDot
 
 	return nil
 }
 
-//RemoveNewerByLiveId remove
-func (c *lineImp) RemoveNewerByLiveId(liveId dot.LiveId) {
+//RemoveNewerByLiveID remove
+func (c *lineImp) RemoveNewerByLiveID(liveID dot.LiveID) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	delete(c.newerLives, liveId)
+	delete(c.newerLives, liveID)
 }
 
-//RemoveNewerByTypeId remove
-func (c *lineImp) RemoveNewerByTypeId(typeId dot.TypeId) {
+//RemoveNewerByTypeID remove
+func (c *lineImp) RemoveNewerByTypeID(typeID dot.TypeID) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	delete(c.newerTypes, typeId)
+	delete(c.newerTypes, typeID)
 }
 
 //PreAdd the dot is nil, do not create it
@@ -121,12 +121,12 @@ func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 			if len(typeLive.Lives) > 0 {
 				for i := range typeLive.Lives {
 					it := &typeLive.Lives[i]
-					if len(it.TypeId.String()) < 1 {
-						it.TypeId = typeLive.Meta.TypeId
+					if len(it.TypeID.String()) < 1 {
+						it.TypeID = typeLive.Meta.TypeID
 					}
 
-					//live := dot.Live{TypeId: it.TypeId, LiveId: it.LiveId, Dot: nil}
-					//live.RelyLives = CloneRelyLiveId(it.RelyLives)
+					//live := dot.Live{TypeID: it.TypeID, LiveID: it.LiveID, Dot: nil}
+					//live.RelyLives = CloneRelyLiveID(it.RelyLives)
 					err2 = c.lives.UpdateOrAdd(it)
 					if err2 != nil {
 						if err != nil {
@@ -160,16 +160,16 @@ func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 //second return, circle relay dots
 func (c *lineImp) relyOrder() ([]*dot.Live, []*dot.Live) {
 
-	var cloneLives map[dot.LiveId]*dot.Live
-	var cloneMetas map[dot.TypeId]*dot.Metadata
+	var cloneLives map[dot.LiveID]*dot.Live
+	var cloneMetas map[dot.TypeID]*dot.Metadata
 	logger := dot.Logger()
 	{ //clone live and type
 		c.mutex.Lock()
-		cloneLives = make(map[dot.LiveId]*dot.Live, len(c.lives.LiveIdMap))
-		for k, v := range c.lives.LiveIdMap {
+		cloneLives = make(map[dot.LiveID]*dot.Live, len(c.lives.LiveIDMap))
+		for k, v := range c.lives.LiveIDMap {
 			cloneLives[k] = v
 		}
-		cloneMetas = make(map[dot.TypeId]*dot.Metadata, len(c.metas.metas))
+		cloneMetas = make(map[dot.TypeID]*dot.Metadata, len(c.metas.metas))
 		for k, v := range c.metas.metas {
 			cloneMetas[k] = v
 		}
@@ -179,66 +179,66 @@ func (c *lineImp) relyOrder() ([]*dot.Live, []*dot.Live) {
 	order := make([]*dot.Live, 0, len(cloneLives))
 	var circle []*dot.Live
 	{
-		relyed := make(map[dot.LiveId][]dot.LiveId, len(cloneLives))
+		relyed := make(map[dot.LiveID][]dot.LiveID, len(cloneLives))
 		for _, it := range cloneLives {
-			if _, ok := relyed[it.LiveId]; !ok {
-				relyed[it.LiveId] = []dot.LiveId{}
+			if _, ok := relyed[it.LiveID]; !ok {
+				relyed[it.LiveID] = []dot.LiveID{}
 			}
 
-			for _, liveId := range it.RelyLives {
-				r, ok := relyed[liveId]
+			for _, liveID := range it.RelyLives {
+				r, ok := relyed[liveID]
 				if !ok {
-					r = []dot.LiveId{it.LiveId}
+					r = []dot.LiveID{it.LiveID}
 				} else {
-					r = append(r, it.LiveId)
+					r = append(r, it.LiveID)
 				}
-				relyed[liveId] = r
+				relyed[liveID] = r
 			}
 		}
-		done := make(map[dot.LiveId]bool, len(relyed))          //know orderId
-		remain := make(map[dot.LiveId]bool, len(relyed))        //do not know orderId
-		levels := make([]map[dot.LiveId]bool, 0, len(relyed)/3) //
+		done := make(map[dot.LiveID]bool, len(relyed))          //know orderID
+		remain := make(map[dot.LiveID]bool, len(relyed))        //do not know orderID
+		levels := make([]map[dot.LiveID]bool, 0, len(relyed)/3) //
 		{
-			for liveId := range relyed {
-				remain[liveId] = true
+			for liveID := range relyed {
+				remain[liveID] = true
 			}
-			level0 := make(map[dot.LiveId]bool)
-			for liveId, live := range cloneLives { //level 0
+			level0 := make(map[dot.LiveID]bool)
+			for liveID, live := range cloneLives { //level 0
 				if len(live.RelyLives) < 1 {
-					level0[liveId] = true
-					delete(remain, liveId)
-					done[liveId] = true
+					level0[liveID] = true
+					delete(remain, liveID)
+					done[liveID] = true
 				}
 			}
 			levels = append(levels, level0)
 			levelCurrent := level0
 			//todo if level0 is zero
 			for curFor := 0; curFor <= len(relyed); curFor++ { //
-				levelNext := make(map[dot.LiveId]bool, len(remain))
-				for liveId := range levelCurrent {
-					des := relyed[liveId]
+				levelNext := make(map[dot.LiveID]bool, len(remain))
+				for liveID := range levelCurrent {
+					des := relyed[liveID]
 					if len(des) < 1 {
-						delete(remain, liveId)
-						done[liveId] = true
+						delete(remain, liveID)
+						done[liveID] = true
 					} else {
-						for _, liveId2 := range des {
+						for _, liveID2 := range des {
 							allDone := true
-							for _, liveId3 := range cloneLives[liveId2].RelyLives { //check all RelyLives
-								if _, ok := done[liveId3]; !ok {
+							for _, liveID3 := range cloneLives[liveID2].RelyLives { //check all RelyLives
+								if _, ok := done[liveID3]; !ok {
 									allDone = false
 									break
 								}
 							}
 							if allDone {
-								if _, ok := done[liveId2]; !ok { //just do it once
-									levelNext[liveId2] = true
-									done[liveId2] = true
+								if _, ok := done[liveID2]; !ok { //just do it once
+									levelNext[liveID2] = true
+									done[liveID2] = true
 								}
 
-								delete(remain, liveId2)
+								delete(remain, liveID2)
 
 							} else {
-								//levelNext[liveId2] = true //put next level
+								//levelNext[liveID2] = true //put next level
 							}
 						}
 					}
@@ -255,25 +255,25 @@ func (c *lineImp) relyOrder() ([]*dot.Live, []*dot.Live) {
 		{
 			for i, lev := range levels {
 				logger.Debugln(fmt.Sprintf("level : %d", i))
-				for liveId := range lev {
-					logger.Debugln(cloneLives[liveId].LiveId.String())
-					live, ok := cloneLives[liveId]
+				for liveID := range lev {
+					logger.Debugln(cloneLives[liveID].LiveID.String())
+					live, ok := cloneLives[liveID]
 					if ok {
 						order = append(order, live)
 					} else {
-						logger.Warnln("", zap.String("", "dot not find the dot live id: "+liveId.String()))
+						logger.Warnln("", zap.String("", "dot not find the dot live id: "+liveID.String()))
 					}
 				}
 			}
 			if len(remain) > 0 {
 				circle = make([]*dot.Live, 0, len(remain))
-				for liveId := range remain { //append to tail
-					live, ok := cloneLives[liveId]
+				for liveID := range remain { //append to tail
+					live, ok := cloneLives[liveID]
 					if ok {
 						order = append(order, live)
 						circle = append(circle, live)
 					} else {
-						logger.Warnln("", zap.String("", "dot not find the dot live id: "+liveId.String()))
+						logger.Warnln("", zap.String("", "dot not find the dot live id: "+liveID.String()))
 					}
 				}
 			}
@@ -292,12 +292,12 @@ func (c *lineImp) CreateDots(orderedDots []*dot.Live) error {
 				nl.SetLine(c)
 			}
 
-			if nl, ok := it.Dot.(dot.SetterTypeAndLiveId); ok {
-				nl.SetTypeId(it.TypeId, it.LiveId)
+			if nl, ok := it.Dot.(dot.SetterTypeAndLiveID); ok {
+				nl.SetTypeID(it.TypeID, it.LiveID)
 			}
 		}
 
-		if b := c.dotEvent.TypeEvents(it.TypeId); len(b) > 0 { // do before create for type
+		if b := c.dotEvent.TypeEvents(it.TypeID); len(b) > 0 { // do before create for type
 			for i := range b {
 				e := &b[i]
 				if e.BeforeCreate != nil {
@@ -306,7 +306,7 @@ func (c *lineImp) CreateDots(orderedDots []*dot.Live) error {
 			}
 		}
 
-		if b := c.dotEvent.LiveEvents(it.LiveId); len(b) > 0 { // do before create for live
+		if b := c.dotEvent.LiveEvents(it.LiveID); len(b) > 0 { // do before create for live
 			for i := range b {
 				e := &b[i]
 				if e.BeforeCreate != nil {
@@ -321,7 +321,7 @@ func (c *lineImp) CreateDots(orderedDots []*dot.Live) error {
 			}
 		}
 
-		if a := c.dotEvent.LiveEvents(it.LiveId); len(a) > 0 { //do after create for live
+		if a := c.dotEvent.LiveEvents(it.LiveID); len(a) > 0 { //do after create for live
 			for i := range a {
 				e := &a[i]
 				if e.AfterCreate != nil {
@@ -330,7 +330,7 @@ func (c *lineImp) CreateDots(orderedDots []*dot.Live) error {
 			}
 		}
 
-		if a := c.dotEvent.TypeEvents(it.TypeId); len(a) > 0 { // dot after create for type
+		if a := c.dotEvent.TypeEvents(it.TypeID); len(a) > 0 { // dot after create for type
 			for i := range a {
 				e := &a[i]
 				if e.AfterCreate != nil {
@@ -346,11 +346,11 @@ func (c *lineImp) CreateDots(orderedDots []*dot.Live) error {
 CreateLives:
 	for _, dotLive = range orderedDots {
 		logger.Debug(func() string {
-			m, _ := c.metas.Get(dotLive.TypeId)
+			m, _ := c.metas.Get(dotLive.TypeID)
 			if m != nil {
-				return fmt.Sprintf("Create dot, type id: %s, live id: %s, name: %s", dotLive.TypeId, dotLive.LiveId, m.Name)
+				return fmt.Sprintf("Create dot, type id: %s, live id: %s, name: %s", dotLive.TypeID, dotLive.LiveID, m.Name)
 			} else {
-				return fmt.Sprintf("Create dot, type id: %s, live id: %s", dotLive.TypeId, dotLive.LiveId)
+				return fmt.Sprintf("Create dot, type id: %s, live id: %s", dotLive.TypeID, dotLive.LiveID)
 			}
 		})
 
@@ -358,16 +358,16 @@ CreateLives:
 			var bytesConfig []byte
 			var config *dot.LiveConfig
 			{
-				config = c.config.FindConfig(dotLive.TypeId, dotLive.LiveId)
+				config = c.config.FindConfig(dotLive.TypeID, dotLive.LiveID)
 				bytesConfig, err = dot.MarshalConfig(config)
 				if err != nil {
 					break CreateLives
 				}
 			}
 
-			//new by liveId
+			//new by liveID
 			{
-				if newer, ok := c.newerLives[dotLive.LiveId]; ok {
+				if newer, ok := c.newerLives[dotLive.LiveID]; ok {
 					dotLive.Dot, err = newer(bytesConfig)
 					if err != nil {
 						break CreateLives
@@ -379,9 +379,9 @@ CreateLives:
 					}
 				}
 			}
-			//new by typeId
+			//new by typeID
 			{
-				if newer, ok := c.newerTypes[dotLive.TypeId]; ok {
+				if newer, ok := c.newerTypes[dotLive.TypeID]; ok {
 					dotLive.Dot, err = newer(bytesConfig)
 					if err != nil {
 						break CreateLives
@@ -397,13 +397,13 @@ CreateLives:
 			//new by metadata
 			{
 				var m *dot.Metadata
-				m, err = c.metas.Get(dotLive.TypeId)
+				m, err = c.metas.Get(dotLive.TypeID)
 				if err != nil {
 					break CreateLives
 				}
 
 				if m.NewDoter == nil && m.RefType == nil {
-					err = dot.SError.NoDotNewer.AddNewError(m.TypeId.String())
+					err = dot.SError.NoDotNewer.AddNewError(m.TypeID.String())
 					break CreateLives
 				}
 
@@ -422,7 +422,7 @@ CreateLives:
 
 	if err != nil {
 		logger.Debug(func() string {
-			m, _ := c.metas.Get(dotLive.TypeId)
+			m, _ := c.metas.Get(dotLive.TypeID)
 			if m != nil {
 				return fmt.Sprintf("Create dot, meta: %v\n live: %v", m, dotLive)
 			}
@@ -447,9 +447,9 @@ CreateLives:
 		c.mutex.Unlock()
 	}
 
-	//Add type and relationships with dot, only record whose type id == live Id
+	//Add type and relationships with dot, only record whose type id == live ID
 	for _, it := range orderedDots {
-		if !skit.IsNil(&it.Dot) && ((string)(it.TypeId) == (string)(it.LiveId)) {
+		if !skit.IsNil(&it.Dot) && ((string)(it.TypeID) == (string)(it.LiveID)) {
 			t := reflect.TypeOf(it.Dot)
 			c.mutex.Lock()
 			c.types[t] = it.Dot
@@ -471,7 +471,7 @@ CreateLives:
 					err = ed.Injected(c)
 					if err != nil {
 						logger.Debug(func() string {
-							m, _ := c.metas.Get(it.TypeId)
+							m, _ := c.metas.Get(it.TypeID)
 							if m != nil {
 								return fmt.Sprintf("Create dot, meta: %v\n live: %v", m, it)
 							} else {
@@ -522,12 +522,12 @@ func (c *lineImp) ToDotEventer() dot.Eventer {
 	return &c.dotEvent
 }
 
-func (c *lineImp) GetDotConfig(liveId dot.LiveId) *dot.LiveConfig {
+func (c *lineImp) GetDotConfig(liveID dot.LiveID) *dot.LiveConfig {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
 	var co *dot.LiveConfig
-	co = c.config.FindConfig("", liveId)
+	co = c.config.FindConfig("", liveID)
 	return co
 }
 
@@ -576,8 +576,8 @@ func (c *lineImp) Inject(obj interface{}) error {
 			if len(tagName) < 1 || tagName == dot.CanNull { //by type
 				d, err2 = c.GetByType(valueField.Type())
 			} else { //by live id
-				liveId := strings.TrimPrefix(tagName, dot.CanNull) // like ?live id
-				d, err2 = c.GetByLiveId(dot.LiveId(liveId))
+				liveID := strings.TrimPrefix(tagName, dot.CanNull) // like ?live id
+				d, err2 = c.GetByLiveID(dot.LiveID(liveID))
 			}
 
 			if err2 != nil {
@@ -653,16 +653,16 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 		var d dot.Dot
 		{
 			if len(live.RelyLives) > 0 { //Config prior
-				if liveId, ok := live.RelyLives[tField.Name]; ok {
-					d, err2 = c.GetByLiveId(liveId)
+				if liveID, ok := live.RelyLives[tField.Name]; ok {
+					d, err2 = c.GetByLiveID(liveID)
 				}
 			}
 			if d == nil {
 				if len(tagName) < 1 || tagName == dot.CanNull { //by type
 					d, err2 = c.GetByType(valueField.Type())
 				} else { //by live id
-					liveId := strings.TrimPrefix(tagName, dot.CanNull) // like ?live id
-					d, err2 = c.GetByLiveId(dot.LiveId(liveId))
+					liveID := strings.TrimPrefix(tagName, dot.CanNull) // like ?live id
+					d, err2 = c.GetByLiveID(dot.LiveID(liveID))
 				}
 			}
 
@@ -716,17 +716,17 @@ func (c *lineImp) GetByType(t reflect.Type) (d dot.Dot, err error) {
 	return
 }
 
-//GetByLiveId get by live id
-func (c *lineImp) GetByLiveId(liveId dot.LiveId) (d dot.Dot, err error) {
+//GetByLiveID get by live id
+func (c *lineImp) GetByLiveID(liveID dot.LiveID) (d dot.Dot, err error) {
 	d = nil
 	err = nil
 	c.mutex.Lock()
 	var l *dot.Live
-	l, err = c.lives.Get(liveId)
+	l, err = c.lives.Get(liveID)
 	c.mutex.Unlock()
 	if err != nil {
 		if c.parent != nil {
-			d, err = c.parent.GetByLiveId(liveId)
+			d, err = c.parent.GetByLiveID(liveID)
 		}
 	} else {
 		d = l.Dot
@@ -760,13 +760,13 @@ func (c *lineImp) ReplaceOrAddByParamType(d dot.Dot, rType reflect.Type) error {
 	return err
 }
 
-//ReplaceOrAddByLiveId update
-func (c *lineImp) ReplaceOrAddByLiveId(d dot.Dot, liveId dot.LiveId) error {
+//ReplaceOrAddByLiveID update
+func (c *lineImp) ReplaceOrAddByLiveID(d dot.Dot, liveID dot.LiveID) error {
 	var err error
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	l := dot.Live{LiveId: liveId, TypeId: "", Dot: d, RelyLives: nil}
+	l := dot.Live{LiveID: liveID, TypeID: "", Dot: d, RelyLives: nil}
 	//c.lives.Remove(&l)
 	err = c.lives.UpdateOrAdd(&l)
 
@@ -782,12 +782,12 @@ func (c *lineImp) RemoveByType(rType reflect.Type) error {
 	return err
 }
 
-//RemoveByLiveId remove
-func (c *lineImp) RemoveByLiveId(liveId dot.LiveId) error {
+//RemoveByLiveID remove
+func (c *lineImp) RemoveByLiveID(liveID dot.LiveID) error {
 	var err error
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	err = c.lives.RemoveById(liveId)
+	err = c.lives.RemoveByID(liveID)
 	return err
 }
 
@@ -805,7 +805,7 @@ func (c *lineImp) GetParent() dot.Injecter {
 
 //Create create
 //If live id is empty， directly assign type id
-//If live id repeated，directly return dot.SError.ErrExistedLiveId
+//If live id repeated，directly return dot.SError.ErrExistedLiveID
 func (c *lineImp) Create(l dot.Line) error {
 	var err error
 
@@ -845,7 +845,7 @@ func (c *lineImp) makeDotMetaFromConfig() error {
 ForConfigDots: //handle config
 	for i := range c.config.Dots {
 		dotConfig = &c.config.Dots[i]
-		if len(dotConfig.MetaData.TypeId.String()) < 1 {
+		if len(dotConfig.MetaData.TypeID.String()) < 1 {
 			err = dot.SError.Config.AddNewError("type id is null")
 			break ForConfigDots
 		}
@@ -855,12 +855,12 @@ ForConfigDots: //handle config
 		}
 
 		if len(dotConfig.Lives) < 1 { //create the single live
-			live := dot.Live{TypeId: dotConfig.MetaData.TypeId, LiveId: dot.LiveId(dotConfig.MetaData.TypeId), Dot: nil}
-			if len(dotConfig.MetaData.RelyTypeIds) > 0 {
-				live.RelyLives = make(map[string]dot.LiveId, len(dotConfig.MetaData.RelyTypeIds))
-				for i := range dotConfig.MetaData.RelyTypeIds {
-					li := &dotConfig.MetaData.RelyTypeIds[i]
-					live.RelyLives[li.String()] = dot.LiveId(*li)
+			live := dot.Live{TypeID: dotConfig.MetaData.TypeID, LiveID: dot.LiveID(dotConfig.MetaData.TypeID), Dot: nil}
+			if len(dotConfig.MetaData.RelyTypeIDs) > 0 {
+				live.RelyLives = make(map[string]dot.LiveID, len(dotConfig.MetaData.RelyTypeIDs))
+				for i := range dotConfig.MetaData.RelyTypeIDs {
+					li := &dotConfig.MetaData.RelyTypeIDs[i]
+					live.RelyLives[li.String()] = dot.LiveID(*li)
 				}
 			}
 			if err = c.lives.UpdateOrAdd(&live); err != nil {
@@ -868,10 +868,10 @@ ForConfigDots: //handle config
 			}
 		} else {
 			for _, li := range dotConfig.Lives {
-				if len(li.LiveId.String()) < 1 {
-					li.LiveId = dot.LiveId(dotConfig.MetaData.TypeId)
+				if len(li.LiveID.String()) < 1 {
+					li.LiveID = dot.LiveID(dotConfig.MetaData.TypeID)
 				}
-				live := dot.Live{TypeId: dotConfig.MetaData.TypeId, LiveId: li.LiveId, RelyLives: li.RelyLives, Dot: nil}
+				live := dot.Live{TypeID: dotConfig.MetaData.TypeID, LiveID: li.LiveID, RelyLives: li.RelyLives, Dot: nil}
 				if err = c.lives.UpdateOrAdd(&live); err != nil {
 					break ForConfigDots
 				}
@@ -886,18 +886,18 @@ ForConfigDots: //handle config
 }
 
 //case #17
-func (c *lineImp) autoMakeLiveId() {
+func (c *lineImp) autoMakeLiveID() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-	hasType := make(map[dot.TypeId]bool, len(c.lives.LiveIdMap))
-	for _, v := range c.lives.LiveIdMap {
-		hasType[v.TypeId] = true
+	hasType := make(map[dot.TypeID]bool, len(c.lives.LiveIDMap))
+	for _, v := range c.lives.LiveIDMap {
+		hasType[v.TypeID] = true
 	}
 
-	for typeId := range c.metas.metas {
-		if _, ok := hasType[typeId]; !ok {
-			liveId := (dot.LiveId)(typeId)
-			live := dot.Live{TypeId: typeId, LiveId: liveId, Dot: nil, RelyLives: nil}
+	for typeID := range c.metas.metas {
+		if _, ok := hasType[typeID]; !ok {
+			liveID := (dot.LiveID)(typeID)
+			live := dot.Live{TypeID: typeID, LiveID: liveID, Dot: nil, RelyLives: nil}
 			err2 := c.lives.UpdateOrAdd(&live)
 			if err2 != nil && c.logger != nil {
 				c.logger.Debugln(fmt.Sprintf("err: %v, live: %v", err2, live))
@@ -915,55 +915,55 @@ func (c *lineImp) makeRelays() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	logger := dot.Logger()
-	liveIdToType := make(map[dot.LiveId]dot.TypeId)
-	typeIdToLiveIds := make(map[dot.TypeId]map[dot.LiveId]struct{}, len(c.lives.LiveIdMap))
-	for _, live := range c.lives.LiveIdMap {
-		liveIdToType[live.LiveId] = live.TypeId
-		if _, ok := typeIdToLiveIds[live.TypeId]; !ok {
-			typeIdToLiveIds[live.TypeId] = make(map[dot.LiveId]struct{})
+	liveIDToType := make(map[dot.LiveID]dot.TypeID)
+	typeIDToLiveIds := make(map[dot.TypeID]map[dot.LiveID]struct{}, len(c.lives.LiveIDMap))
+	for _, live := range c.lives.LiveIDMap {
+		liveIDToType[live.LiveID] = live.TypeID
+		if _, ok := typeIDToLiveIds[live.TypeID]; !ok {
+			typeIDToLiveIds[live.TypeID] = make(map[dot.LiveID]struct{})
 		}
-		typeIdToLiveIds[live.TypeId][live.LiveId] = setExists
+		typeIDToLiveIds[live.TypeID][live.LiveID] = setExists
 	}
-	typeToTypeId := make(map[reflect.Type]dot.TypeId)
+	typeToTypeID := make(map[reflect.Type]dot.TypeID)
 	for _, meta := range c.metas.metas {
 		if meta.RefType != nil {
-			typeToTypeId[meta.RefType] = meta.TypeId
+			typeToTypeID[meta.RefType] = meta.TypeID
 		}
 	}
 	for _, meta := range c.metas.metas { //relay type
-		dotFields := make(map[string]dot.LiveId)
+		dotFields := make(map[string]dot.LiveID)
 		if meta.RefType != nil {
-			relayTypeIds := make(map[dot.TypeId]struct{})
+			relayTypeIDs := make(map[dot.TypeID]struct{})
 			for i := 0; i < meta.RefType.NumField(); i++ { // relay by tag
 				tField := meta.RefType.Field(i)
-				liveId, ok := tField.Tag.Lookup(dot.TagDot)
-				if !ok || liveId == dot.CanNull { //not find or eq ?
+				liveID, ok := tField.Tag.Lookup(dot.TagDot)
+				if !ok || liveID == dot.CanNull { //not find or eq ?
 					continue
 				}
-				dotFields[tField.Name] = dot.LiveId(liveId)
-				if len(liveId) < 1 {
-					if typeId, ok := typeToTypeId[tField.Type]; ok {
-						relayTypeIds[typeId] = setExists
+				dotFields[tField.Name] = dot.LiveID(liveID)
+				if len(liveID) < 1 {
+					if typeID, ok := typeToTypeID[tField.Type]; ok {
+						relayTypeIDs[typeID] = setExists
 					} else {
-						//do not find typeId
+						//do not find typeID
 					}
 				} else {
-					if typeId, ok := liveIdToType[dot.LiveId(liveId)]; ok {
-						relayTypeIds[typeId] = setExists
+					if typeID, ok := liveIDToType[dot.LiveID(liveID)]; ok {
+						relayTypeIDs[typeID] = setExists
 					}
 				}
 			}
 
-			if lives, ok := typeIdToLiveIds[meta.TypeId]; ok {
-				//for liveId := range lives { relay type and relay live, sometimes they are not same
-				//	if live, ok := c.lives.LiveIdMap[liveId]; ok {
-				//		relayTypeIds[live.TypeId] = setExists
+			if lives, ok := typeIDToLiveIds[meta.TypeID]; ok {
+				//for liveID := range lives { relay type and relay live, sometimes they are not same
+				//	if live, ok := c.lives.LiveIDMap[liveID]; ok {
+				//		relayTypeIDs[live.TypeID] = setExists
 				//	}
 				//}
 
 				//verify the field name for relay live
-				for liveId := range lives {
-					if live, ok := c.lives.LiveIdMap[liveId]; ok {
+				for liveID := range lives {
+					if live, ok := c.lives.LiveIDMap[liveID]; ok {
 						for name := range live.RelyLives {
 							if _, ok := dotFields[name]; !ok {
 								if logger != nil {
@@ -974,10 +974,10 @@ func (c *lineImp) makeRelays() {
 							}
 						}
 
-						for name, nameLiveId := range dotFields {
+						for name, nameLiveID := range dotFields {
 							if _, ok := live.RelyLives[name]; !ok {
-								if len(nameLiveId.String()) > 0 {
-									live.RelyLives[name] = nameLiveId
+								if len(nameLiveID.String()) > 0 {
+									live.RelyLives[name] = nameLiveID
 								} else {
 									//do nothing, do not know live id
 								}
@@ -987,13 +987,13 @@ func (c *lineImp) makeRelays() {
 				}
 			}
 
-			if len(relayTypeIds) > 0 {
-				for _, typeId := range meta.RelyTypeIds { //distinct
-					relayTypeIds[typeId] = setExists
+			if len(relayTypeIDs) > 0 {
+				for _, typeID := range meta.RelyTypeIDs { //distinct
+					relayTypeIDs[typeID] = setExists
 				}
-				meta.RelyTypeIds = make([]dot.TypeId, 0, len(relayTypeIds))
-				for typeId := range relayTypeIds {
-					meta.RelyTypeIds = append(meta.RelyTypeIds, typeId)
+				meta.RelyTypeIDs = make([]dot.TypeID, 0, len(relayTypeIDs))
+				for typeID := range relayTypeIDs {
+					meta.RelyTypeIDs = append(meta.RelyTypeIDs, typeID)
 				}
 			}
 		}
@@ -1031,14 +1031,14 @@ func (c *lineImp) Start(ignore bool) error {
 			afterStarts := make([]dot.AfterAllStarter, 0, 20)
 			for _, it := range tdots {
 				logger.Debug(func() string {
-					m, _ := c.metas.Get(it.TypeId)
+					m, _ := c.metas.Get(it.TypeID)
 					if m != nil {
-						return fmt.Sprintf("Start dot, type id: %s, live id: %s, name: %s", it.TypeId, it.LiveId, m.Name)
+						return fmt.Sprintf("Start dot, type id: %s, live id: %s, name: %s", it.TypeID, it.LiveID, m.Name)
 					} else {
-						return fmt.Sprintf("Start dot, type id: %s, live id: %s", it.TypeId, it.LiveId)
+						return fmt.Sprintf("Start dot, type id: %s, live id: %s", it.TypeID, it.LiveID)
 					}
 				})
-				if b := c.dotEvent.TypeEvents(it.TypeId); len(b) > 0 {
+				if b := c.dotEvent.TypeEvents(it.TypeID); len(b) > 0 {
 					for i := range b {
 						e := &b[i]
 						if e.BeforeStart != nil {
@@ -1048,7 +1048,7 @@ func (c *lineImp) Start(ignore bool) error {
 
 				}
 
-				if b := c.dotEvent.LiveEvents(it.LiveId); len(b) > 0 {
+				if b := c.dotEvent.LiveEvents(it.LiveID); len(b) > 0 {
 					for i := range b {
 						e := &b[i]
 						if e.BeforeStart != nil {
@@ -1061,7 +1061,7 @@ func (c *lineImp) Start(ignore bool) error {
 					err2 := d.Start(ignore)
 					if err2 != nil {
 						logger.Debug(func() string {
-							m, _ := c.metas.Get(it.TypeId)
+							m, _ := c.metas.Get(it.TypeID)
 							if m != nil {
 								return fmt.Sprintf("Start dot, meta: %v\n live: %v\n %v", m, it, d)
 							} else {
@@ -1078,7 +1078,7 @@ func (c *lineImp) Start(ignore bool) error {
 					}
 				}
 
-				if a := c.dotEvent.LiveEvents(it.LiveId); len(a) > 0 {
+				if a := c.dotEvent.LiveEvents(it.LiveID); len(a) > 0 {
 					for i := range a {
 						e := &a[i]
 						if e.AfterStart != nil {
@@ -1087,7 +1087,7 @@ func (c *lineImp) Start(ignore bool) error {
 					}
 				}
 
-				if a := c.dotEvent.TypeEvents(it.TypeId); len(a) > 0 {
+				if a := c.dotEvent.TypeEvents(it.TypeID); len(a) > 0 {
 					for i := range a {
 						e := &a[i]
 						if e.AfterStart != nil {
@@ -1137,14 +1137,14 @@ func (c *lineImp) Stop(ignore bool) error {
 		for i := len(tdots) - 1; i >= 0; i-- {
 			it := tdots[i]
 			logger.Debug(func() string {
-				m, _ := c.metas.Get(it.TypeId)
+				m, _ := c.metas.Get(it.TypeID)
 				if m != nil {
-					return fmt.Sprintf("Stop dot, type id: %s, live id: %s, name: %s", it.TypeId, it.LiveId, m.Name)
+					return fmt.Sprintf("Stop dot, type id: %s, live id: %s, name: %s", it.TypeID, it.LiveID, m.Name)
 				} else {
-					return fmt.Sprintf("Stop dot, type id: %s, live id: %s", it.TypeId, it.LiveId)
+					return fmt.Sprintf("Stop dot, type id: %s, live id: %s", it.TypeID, it.LiveID)
 				}
 			})
-			if b := c.dotEvent.TypeEvents(it.TypeId); len(b) > 0 {
+			if b := c.dotEvent.TypeEvents(it.TypeID); len(b) > 0 {
 				for i := range b {
 					e := &b[i]
 					if e.BeforeStop != nil {
@@ -1153,7 +1153,7 @@ func (c *lineImp) Stop(ignore bool) error {
 				}
 			}
 
-			if b := c.dotEvent.LiveEvents(it.LiveId); len(b) > 0 {
+			if b := c.dotEvent.LiveEvents(it.LiveID); len(b) > 0 {
 				for i := range b {
 					e := &b[i]
 					if e.BeforeStop != nil {
@@ -1177,7 +1177,7 @@ func (c *lineImp) Stop(ignore bool) error {
 				}
 			}
 
-			if a := c.dotEvent.LiveEvents(it.LiveId); len(a) > 0 {
+			if a := c.dotEvent.LiveEvents(it.LiveID); len(a) > 0 {
 				for i := range a {
 					e := &a[i]
 					if e.AfterStop != nil {
@@ -1186,7 +1186,7 @@ func (c *lineImp) Stop(ignore bool) error {
 				}
 			}
 
-			if a := c.dotEvent.TypeEvents(it.TypeId); len(a) > 0 {
+			if a := c.dotEvent.TypeEvents(it.TypeID); len(a) > 0 {
 				for i := range a {
 					e := &a[i]
 					if e.AfterStop != nil {
@@ -1235,14 +1235,14 @@ func (c *lineImp) Destroy(ignore bool) error {
 		for i := len(tdots) - 1; i >= 0; i-- {
 			it := tdots[i]
 			logger.Debug(func() string {
-				m, _ := c.metas.Get(it.TypeId)
+				m, _ := c.metas.Get(it.TypeID)
 				if m != nil {
-					return fmt.Sprintf("Destroy dot, type id: %s, live id: %s, name: %s", it.TypeId, it.LiveId, m.Name)
+					return fmt.Sprintf("Destroy dot, type id: %s, live id: %s, name: %s", it.TypeID, it.LiveID, m.Name)
 				} else {
-					return fmt.Sprintf("Destroy dot, type id: %s, live id: %s", it.TypeId, it.LiveId)
+					return fmt.Sprintf("Destroy dot, type id: %s, live id: %s", it.TypeID, it.LiveID)
 				}
 			})
-			if b := c.dotEvent.TypeEvents(it.TypeId); len(b) > 0 {
+			if b := c.dotEvent.TypeEvents(it.TypeID); len(b) > 0 {
 				for i := range b {
 					e := &b[i]
 					if e.BeforeDestroy != nil {
@@ -1251,7 +1251,7 @@ func (c *lineImp) Destroy(ignore bool) error {
 				}
 			}
 
-			if b := c.dotEvent.LiveEvents(it.LiveId); len(b) > 0 {
+			if b := c.dotEvent.LiveEvents(it.LiveID); len(b) > 0 {
 				for i := range b {
 					e := &b[i]
 					if e.BeforeDestroy != nil {
@@ -1274,7 +1274,7 @@ func (c *lineImp) Destroy(ignore bool) error {
 				}
 			}
 
-			if a := c.dotEvent.LiveEvents(it.LiveId); len(a) > 0 {
+			if a := c.dotEvent.LiveEvents(it.LiveID); len(a) > 0 {
 				for i := range a {
 					e := &a[i]
 					if e.AfterDestroy != nil {
@@ -1283,7 +1283,7 @@ func (c *lineImp) Destroy(ignore bool) error {
 				}
 			}
 
-			if a := c.dotEvent.TypeEvents(it.TypeId); len(a) > 0 {
+			if a := c.dotEvent.TypeEvents(it.TypeID); len(a) > 0 {
 				for i := range a {
 					e := &a[i]
 					if e.AfterDestroy != nil {
@@ -1336,29 +1336,29 @@ func (c *lineImp) GetLineBuilder() *dot.Builder {
 func (c *lineImp) InfoAllTypeAdnLives() {
 	logger := c.logger
 	logger.Info(func() string {
-		return fmt.Sprintf("lives - %d: %v, types - %d: %v", len(c.lives.LiveIdMap), c.lives.LiveIdMap, len(c.types), c.types)
+		return fmt.Sprintf("lives - %d: %v, types - %d: %v", len(c.lives.LiveIDMap), c.lives.LiveIDMap, len(c.types), c.types)
 	})
 }
 
 func (c *lineImp) EachLives(call func(live *dot.Live, meta *dot.Metadata) bool) {
 	if call != nil {
 		c.mutex.Lock()
-		liveIds := make([]dot.LiveId, 0, len(c.lives.LiveIdMap))
-		for liveId := range c.lives.LiveIdMap {
-			liveIds = append(liveIds, liveId)
+		liveIDS := make([]dot.LiveID, 0, len(c.lives.LiveIDMap))
+		for liveID := range c.lives.LiveIDMap {
+			liveIDS = append(liveIDS, liveID)
 		}
-		typeIds := make([]dot.TypeId, 0, len(c.metas.metas))
-		for typeId := range c.metas.metas {
-			typeIds = append(typeIds, typeId)
+		typeIDS := make([]dot.TypeID, 0, len(c.metas.metas))
+		for typeID := range c.metas.metas {
+			typeIDS = append(typeIDS, typeID)
 		}
 		c.mutex.Unlock()
-		for _, liveId := range liveIds {
+		for _, liveID := range liveIDS {
 			var live *dot.Live
 			var meta *dot.Metadata
 			c.mutex.Lock()
-			live = c.lives.LiveIdMap[liveId] //if the key do not exist, return nil
+			live = c.lives.LiveIDMap[liveID] //if the key do not exist, return nil
 			if live != nil {
-				meta = c.metas.metas[live.TypeId] //if the key do not exist, return nil
+				meta = c.metas.metas[live.TypeID] //if the key do not exist, return nil
 			}
 			c.mutex.Unlock() //unlock mutex to avoid the dead lock
 			if !call(live, meta) {

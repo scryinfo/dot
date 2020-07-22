@@ -6,7 +6,7 @@ import (
 	"go.uber.org/zap"
 )
 
-const EtcdRegisterTypeId = "c2c90392-ed06-4e7f-ac2a-662b0153ecb5"
+const EtcdRegisterTypeID = "c2c90392-ed06-4e7f-ac2a-662b0153ecb5"
 
 type ServerItem struct {
 	Name  string   `json:"name"`
@@ -119,13 +119,13 @@ func newEtcdRegister(conf []byte) (dot.Dot, error) {
 //EtcdRegisterTypeLives
 func EtcdRegisterTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: EtcdRegisterTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: EtcdRegisterTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newEtcdRegister(conf)
 		}},
 		Lives: []dot.Live{
 			{
-				LiveId:    EtcdRegisterTypeId,
-				RelyLives: map[string]dot.LiveId{"EtcdConns": conns.EtcdConnsTypeId},
+				LiveID:    EtcdRegisterTypeID,
+				RelyLives: map[string]dot.LiveID{"EtcdConns": conns.EtcdConnsTypeID},
 			},
 		},
 	}
@@ -141,7 +141,7 @@ func EtcdRegisterConfigTypeLive() *dot.ConfigTypeLives {
 	paths := make([]string, 0)
 	paths = append(paths, "")
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: EtcdRegisterTypeId,
+		TypeIDConfig: EtcdRegisterTypeID,
 		ConfigInfo: &ConfigEtcdRegister{
 			Items: []ServerItem{},
 		},

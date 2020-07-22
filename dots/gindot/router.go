@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	//RouterTypeId for gin dot
-	RouterTypeId = "6be39d0b-3f5b-47b4-818c-642c049f3166"
+	//RouterTypeID for gin dot
+	RouterTypeID = "6be39d0b-3f5b-47b4-818c-642c049f3166"
 )
 
 type configRouter struct {
@@ -24,7 +24,7 @@ type Router struct {
 	Engine_ *Engine `dot:""`
 	router  *gin.RouterGroup
 	config  configRouter
-	liveId  dot.LiveId
+	liveID  dot.LiveID
 }
 
 //construct dot
@@ -43,13 +43,13 @@ func newRouter(conf []byte) (*Router, error) {
 //TypeLiveRouter generate data for structural  dot,  include gindot.Engine
 func TypeLiveRouter() []*dot.TypeLives {
 	return []*dot.TypeLives{&dot.TypeLives{
-		Meta: dot.Metadata{TypeId: RouterTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: RouterTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newRouter(conf)
 		}},
 		Lives: []dot.Live{
 			{
-				LiveId:    RouterTypeId,
-				RelyLives: map[string]dot.LiveId{"Engine_": EngineLiveId},
+				LiveID:    RouterTypeID,
+				RelyLives: map[string]dot.LiveID{"Engine_": EngineLiveID},
 			},
 		},
 	},
@@ -61,13 +61,13 @@ func TypeLiveRouter() []*dot.TypeLives {
 //return config of Router
 func ConfigTypeLiveRouter() *dot.ConfigTypeLives {
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: RouterTypeId,
+		TypeIDConfig: RouterTypeID,
 		ConfigInfo:   &configRouter{},
 	}
 }
 
-func (c *Router) SetTypeId(tid dot.TypeId, lid dot.LiveId) {
-	c.liveId = lid
+func (c *Router) SetTypeID(_ dot.TypeID, liveID dot.LiveID) {
+	c.liveID = liveID
 }
 
 func (c *Router) AfterAllInject(l dot.Line) {

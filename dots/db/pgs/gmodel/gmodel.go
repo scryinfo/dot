@@ -19,22 +19,22 @@ import (
 
 //todo bug说明 类似如下情况
 /*type Token struct {
-	Id string `pg:",pk,type:varchar(36)"`
+	ID string `pg:",pk,type:varchar(36)"`
 	DefaultToken
 }
 
 type DefaultToken struct {
-	Id 	 string
+	ID 	 string
 	Name string
 }
 gmodel result
 const (
 	Lock_Table      = "locks"
-	Lock_Id         = "id"
-	Lock_Id         = "id"
+	Lock_ID         = "id"
+	Lock_ID         = "id"
 	Lock_Name       = "name"
 pgs.CreateSchema result
-	DefaultToken.Id	字段缺失
+	DefaultToken.ID	字段缺失
 )*/
 
 //do not use the map, we need the order

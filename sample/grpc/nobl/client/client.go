@@ -29,7 +29,7 @@ func main() {
 	//second step ....
 
 	go func() {
-		dd, _ := l.ToInjecter().GetByLiveId(dot.LiveId(nobl.HiClientTypeId))
+		dd, _ := l.ToInjecter().GetByLiveID(dot.LiveID(nobl.HiClientTypeID))
 		if hiclient, ok := dd.(*nobl.HiClient); ok {
 			logger := dot.Logger()
 			for i := 0; i < 1000; i++ {

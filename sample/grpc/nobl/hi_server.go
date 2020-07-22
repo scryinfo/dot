@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	HiServerTypeId = "hiserver"
+	HiServerTypeID = "hiserver"
 )
 
 type config struct {
@@ -65,13 +65,13 @@ func (serv *HiServer) Start(ignore bool) error {
 //HiServerTypeLives make all type lives
 func HiServerTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: HiServerTypeId, NewDoter: func(conf []byte) (dot.Dot, error) {
+		Meta: dot.Metadata{TypeID: HiServerTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newHiServer(conf)
 		}},
 		Lives: []dot.Live{
 			dot.Live{
-				LiveId:    HiServerTypeId,
-				RelyLives: map[string]dot.LiveId{"ServerNobl": gserver.ServerNoblTypeId},
+				LiveID:    HiServerTypeID,
+				RelyLives: map[string]dot.LiveID{"ServerNobl": gserver.ServerNoblTypeID},
 			},
 		},
 	}

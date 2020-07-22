@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	ServerNoblTypeId = "77a766e7-c288-413f-946b-bc9de6df3d70"
+	ServerNoblTypeID = "77a766e7-c288-413f-946b-bc9de6df3d70"
 )
 
 type ServerNobl interface {
@@ -93,7 +93,7 @@ func newServerNobl(conf []byte) (dot.Dot, error) {
 //Data structure needed when generating newer component
 func ServerNoblTypeLive() *dot.TypeLives {
 	return &dot.TypeLives{
-		Meta: dot.Metadata{TypeId: ServerNoblTypeId, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+		Meta: dot.Metadata{TypeID: ServerNoblTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newServerNobl(conf)
 		}},
 	}
@@ -105,7 +105,7 @@ func ServerNoblConfigTypeLive() *dot.ConfigTypeLives {
 	addrs := make([]string, 0)
 	addrs = append(addrs, "")
 	return &dot.ConfigTypeLives{
-		TypeIdConfig: ServerNoblTypeId,
+		TypeIDConfig: ServerNoblTypeID,
 		ConfigInfo: &ConfigNobl{
 			Addrs: addrs,
 		},

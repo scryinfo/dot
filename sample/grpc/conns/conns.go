@@ -24,7 +24,7 @@ func main() {
 	dot.Logger().Infoln("dot ok")
 	//second step ....
 
-	dd, _ := l.ToInjecter().GetByLiveId(dot.LiveId(conns.ConnNameTypeId))
+	dd, _ := l.ToInjecter().GetByLiveID(dot.LiveID(conns.ConnNameTypeID))
 	if dd != nil {
 
 	}
