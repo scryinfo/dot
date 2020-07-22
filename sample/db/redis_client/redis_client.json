@@ -10,8 +10,8 @@
           "liveId": "0ae35550-7e37-4afe-866e-b129099759b7",
           "json": {
             "addr": "192.168.1.65:6379",
-            "keepVersionNum": 4,
-            "getVersionFromRedis": true
+            "keepMaxVersionCount": 4,
+            "versionFromRedis": true
           }
         }
       ]

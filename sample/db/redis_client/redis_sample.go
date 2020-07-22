@@ -88,7 +88,7 @@ func (c *RedisSample) versionControlDemo() {
 	}
 
 	// get all versions
-	versions, err := c.RedisClient.GetAllVersions(versionControlDemoKey)
+	versions, err := c.RedisClient.GetVersions(versionControlDemoKey)
 	checkError("Example: get all versions failed", err)
 
 	fmt.Println("All versions: 5 <- 4 <- 3 <- 2| <- suppose |")
