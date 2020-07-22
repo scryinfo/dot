@@ -473,6 +473,28 @@ func (c *{{$.DaoName}}) DeleteReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 	}
 	return
 }
+
+//example,please edit it
+//update designated column with Optimistic Lock
+func (c *{{$.DaoName}}) Update{{$.TypeName}}SomeColumn(conn *pg.Conn, ids []string,/*todo: update parameters*/) (err error) {
+
+	ms, err := c.GetLockById(conn, ids)
+	if err != nil {
+		return
+	}
+
+	for i, _ := range ms {
+		ms[i].UpdateTime = time.Now().Unix()
+		ms[i].OptimisticLockVersion++
+		//todo ms[i].xx=parameter
+		_, err = conn.Model(ms[i]).Where({{$.ModelPkgName}}.{{$.TypeName}}_Id+" = ? and "+{{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion+" = ?", ms[i].Id, ms[i].OptimisticLockVersion-1).Column(/*{{$.ModelPkgName}}.{{$.TypeName}}_xx,*/ {{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion, {{$.ModelPkgName}}.{{$.TypeName}}_UpdateTime).Update()
+		if err != nil {
+			dot.Logger().Debugln(err.Error())
+			return
+		}
+	}
+	return
+}
 `
 	var src []byte = nil
 	{
