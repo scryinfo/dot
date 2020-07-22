@@ -219,6 +219,22 @@ func (c *{{$.DaoName}}) GetById(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}
 	return
 }
 
+//update before
+//you must get OptimisticLockVersion value
+func (c *{{$.DaoName}}) GetLockById(conn *pg.Conn, ids []string) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	for i,_ := range ids {
+		m := &{{$.ModelPkgName}}.{{$.TypeName}}{Id: ids[i],}
+		ms=append(ms,m)
+	}
+	err=conn.Model(&ms).WherePK().Column({{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion,{{$.ModelPkgName}}.{{$.TypeName}}_Id).For("UPDATE").Select()
+	if err != nil {
+		ms=nil
+	}
+	return
+}
+func (c *{{$.DaoName}}) GetLockByModelId(conn *pg.Conn, ms []*{{$.ModelPkgName}}.{{$.TypeName}}) error {
+	return conn.Model(&ms).WherePK().Column({{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion,{{$.ModelPkgName}}.{{$.TypeName}}_Id).For("UPDATE").Select()
+}
 
 // if find nothing, return pg.ErrNoRows
 func (c *{{$.DaoName}}) QueryWithLock(conn *pg.Conn, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
