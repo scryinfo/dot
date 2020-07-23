@@ -48,8 +48,8 @@ const (
 	conf          = "conf"
 )
 
-//newConfig new sConfig
-func newConfig() *sConfig {
+//NewConfig new sConfig
+func NewConfig() *sConfig {
 	return &sConfig{}
 }
 

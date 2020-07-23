@@ -151,6 +151,7 @@ func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 //order the dots by relay relation
 //first return, ordered dots
 //second return, circle relay dots
+//nolint:funlen
 func (c *lineImp) relyOrder() ([]*dot.Live, []*dot.Live) {
 
 	var cloneLives map[dot.LiveID]*dot.Live
@@ -785,7 +786,7 @@ func (c *lineImp) Create(l dot.Line) error {
 	var err error
 
 	//first create config
-	c.sConfig = sconfig.newConfig()
+	c.sConfig = sconfig.NewConfig()
 	c.sConfig.RootPath()
 	if s, ok := c.sConfig.(dot.Creator); ok {
 		if err = s.Create(l); err != nil {
@@ -1019,7 +1020,6 @@ func (c *lineImp) Start(ignore bool) error {
 							e.BeforeStart(it, c)
 						}
 					}
-
 				}
 
 				if b := c.dotEvent.LiveEvents(it.LiveID); len(b) > 0 {
