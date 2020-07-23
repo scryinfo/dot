@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+//CreateSchema create tables
 func CreateSchema(db *pg.DB, ms []interface{}) error {
 	for _, model := range ms {
 		err := db.CreateTable(model, &orm.CreateTableOptions{Temp: false, IfNotExists: true})
@@ -18,12 +19,13 @@ func CreateSchema(db *pg.DB, ms []interface{}) error {
 	return nil
 }
 
-//
-func SqlLikeEscapePostgres(param string) string {
-	return SqlLikeEscape(param, []rune{'%', '_'}, '\\')
+//SQLLikeEscapePostgres like escape
+func SQLLikeEscapePostgres(param string) string {
+	return SQLLikeEscape(param, []rune{'%', '_'}, '\\')
 }
 
-func SqlLikeEscape(param string, special []rune, escape rune) string {
+//SQLLikeEscape  like escape
+func SQLLikeEscape(param string, special []rune, escape rune) string {
 	cs := []rune(param)
 	newcs := make([]rune, 0, len(cs)+10)
 	es := escape
@@ -41,7 +43,7 @@ func SqlLikeEscape(param string, special []rune, escape rune) string {
 	return res
 }
 
-//把结构体的字段转换为 map,  key为字段名首字母小写
+//ToMap convert fields of struct to map,  key is Lowercase for the first letter of the field name
 func ToMap(d interface{}, ex map[string]bool) map[string]string {
 	if ex == nil {
 		ex = map[string]bool{}
@@ -71,7 +73,7 @@ func ToMap(d interface{}, ex map[string]bool) map[string]string {
 	return res
 }
 
-//首字母小写
+//ToFirstLower Lowercase for the first letter
 func ToFirstLower(s string) string {
 	cs := []rune(s)
 	return strings.ToLower(string(cs[0])) + string(cs[1:])
@@ -113,7 +115,7 @@ func Underscore(s string) string {
 	return string(r)
 }
 
-// Just work for ASCⅡ code
+//CamelCased Just work for ASCⅡ code
 func CamelCased(s string) string {
 	r := make([]byte, 0, len(s))
 	upperNext := true
@@ -134,7 +136,7 @@ func CamelCased(s string) string {
 	return string(r)
 }
 
-// Just work for ASCⅡ code
+//ToExported Just work for ASCⅡ code
 func ToExported(s string) string {
 	if len(s) == 0 {
 		return s
@@ -147,7 +149,7 @@ func ToExported(s string) string {
 	return s
 }
 
-// Just work for ASCⅡ code
+//UpperString Just work for ASCⅡ code
 func UpperString(s string) string {
 	if isUpperString(s) {
 		return s

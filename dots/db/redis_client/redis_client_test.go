@@ -1,4 +1,4 @@
-package redis_client
+package redis_client //nolint:golint
 
 import (
 	"encoding/json"

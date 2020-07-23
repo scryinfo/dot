@@ -37,7 +37,7 @@ pgs.CreateSchema result
 	DefaultToken.ID	字段缺失
 )*/
 
-//do not use the map, we need the order
+//DbField do not use the map, we need the order
 type DbField struct {
 	Name   string
 	DbName string
@@ -52,22 +52,22 @@ type tData struct {
 	StringFields []DbField
 }
 
-var params_ struct {
+var params struct {
 	typeName    string
 	tableName   string
 	mapExcludes string
 }
 
 func parms(data *tData) {
-	flag.StringVar(&params_.typeName, "typeName", "", "")
-	flag.StringVar(&params_.tableName, "tableName", "", "")
-	flag.StringVar(&params_.mapExcludes, "mapExcludes", "", "split ','")
+	flag.StringVar(&params.typeName, "typeName", "", "")
+	flag.StringVar(&params.tableName, "tableName", "", "")
+	flag.StringVar(&params.mapExcludes, "mapExcludes", "", "split ','")
 	flag.Parse()
 
-	if len(params_.mapExcludes) > 0 {
-		exes := strings.Split(params_.mapExcludes, ",")
+	if len(params.mapExcludes) > 0 {
+		exes := strings.Split(params.mapExcludes, ",")
 		data.MapExcludes = make(map[string]bool, len(exes))
-		for i, _ := range exes {
+		for i := range exes {
 			it := pgs.CamelCased(exes[i])
 			data.MapExcludes[it] = true
 		}
@@ -75,12 +75,12 @@ func parms(data *tData) {
 		data.MapExcludes = make(map[string]bool, 0)
 	}
 
-	if len(params_.tableName) < 1 {
-		params_.tableName = pgs.Underscore(params_.typeName)
+	if len(params.tableName) < 1 {
+		params.tableName = pgs.Underscore(params.typeName)
 	}
 
-	data.TypeName = params_.typeName
-	data.TableName = params_.tableName
+	data.TypeName = params.typeName
+	data.TableName = params.tableName
 }
 
 //env:   GOPACKAGE=model;GOFILE=D:\peace\gopath\src\github.com\scryinfo\cashbox_site\shared\db\model\model_api.go
@@ -88,11 +88,11 @@ func main() {
 	log.Println("run gmodel")
 	data := &tData{}
 	parms(data)
-	if len(params_.typeName) < 1 {
+	if len(params.typeName) < 1 {
 		log.Fatal("type name is null")
 	}
 
-	if len(params_.tableName) < 1 {
+	if len(params.tableName) < 1 {
 		log.Fatal("table name is null")
 	}
 
@@ -104,7 +104,7 @@ func main() {
 
 	outputName := ""
 	{
-		types := strings.Split(params_.typeName, ",")
+		types := strings.Split(params.typeName, ",")
 		baseName := fmt.Sprintf("%s_model.go", types[0])
 		outputName = filepath.Join(".", strings.ToLower(baseName))
 	}

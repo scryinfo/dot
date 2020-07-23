@@ -18,7 +18,7 @@ import (
 	"text/template"
 )
 
-//do not use the map, we need the order
+//DbField do not use the map, we need the order
 type DbField struct {
 	Name   string
 	DbName string
@@ -37,7 +37,7 @@ type tData struct {
 	//StringFields []DbField
 }
 
-var params_ struct {
+var params struct {
 	typeName   string
 	tableName  string
 	daoPackage string
@@ -46,24 +46,24 @@ var params_ struct {
 }
 
 func parms(data *tData) {
-	flag.StringVar(&params_.typeName, "typeName", "", "")
-	flag.StringVar(&params_.tableName, "tableName", "", "")
-	flag.StringVar(&params_.daoPackage, "daoPackage", "", "")
-	flag.StringVar(&params_.suffix, "suffix", "Dao", "")
+	flag.StringVar(&params.typeName, "typeName", "", "")
+	flag.StringVar(&params.tableName, "tableName", "", "")
+	flag.StringVar(&params.daoPackage, "daoPackage", "", "")
+	flag.StringVar(&params.suffix, "suffix", "Dao", "")
 	flag.Parse()
 
-	if len(params_.tableName) < 1 {
-		params_.tableName = pgs.Underscore(params_.typeName)
+	if len(params.tableName) < 1 {
+		params.tableName = pgs.Underscore(params.typeName)
 	}
 
-	data.TypeName = params_.typeName
-	data.TableName = params_.tableName
-	data.DaoPkgName = params_.daoPackage
+	data.TypeName = params.typeName
+	data.TableName = params.tableName
+	data.DaoPkgName = params.daoPackage
 	if len(data.DaoPkgName) < 1 {
 		data.DaoPkgName = "dao"
 	}
-	if len(params_.suffix) > 0 {
-		data.DaoName = data.TypeName + params_.suffix
+	if len(params.suffix) > 0 {
+		data.DaoName = data.TypeName + params.suffix
 	} else {
 		data.DaoName = data.TypeName
 	}
@@ -75,11 +75,11 @@ func main() {
 	data := &tData{}
 	data.BackQuote = "`"
 	parms(data)
-	if len(params_.typeName) < 1 {
+	if len(params.typeName) < 1 {
 		log.Fatal("type name is null")
 	}
 
-	if len(params_.tableName) < 1 {
+	if len(params.tableName) < 1 {
 		log.Fatal("table name is null")
 	}
 

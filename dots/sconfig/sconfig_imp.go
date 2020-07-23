@@ -39,7 +39,7 @@ var (
 type sConfig struct {
 	confPath   string           //Config path
 	file       string           //File name
-	simpleJson *simplejson.Json //All config
+	simpleJSON *simplejson.Json //All config
 }
 
 const (
@@ -48,8 +48,8 @@ const (
 	conf          = "conf"
 )
 
-//NewConfiger new sConfig
-func NewConfiger() *sConfig {
+//newConfig new sConfig
+func newConfig() *sConfig {
 	return &sConfig{}
 }
 
@@ -113,7 +113,7 @@ func (c *sConfig) Create(l dot.Line) error {
 		return nil
 	}
 	defer f.Close()
-	c.simpleJson, err = simplejson.NewFromReader(f)
+	c.simpleJSON, err = simplejson.NewFromReader(f)
 	return err
 }
 
@@ -129,7 +129,7 @@ func (c *sConfig) Create(l dot.Line) error {
 
 //Destroy  implement
 func (c *sConfig) Destroy(ignore bool) error {
-	c.simpleJson = nil
+	c.simpleJSON = nil
 	return nil
 }
 
@@ -147,12 +147,12 @@ func (c *sConfig) ConfigFile() string {
 func (c *sConfig) Key(key string) bool {
 
 	re := false
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			_, re = c.simpleJson.CheckGet(key)
+			_, re = c.simpleJSON.CheckGet(key)
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				re = true
 			}
@@ -164,7 +164,7 @@ func (c *sConfig) Key(key string) bool {
 
 //Map  implement
 func (c *sConfig) Map() (m map[string]interface{}, err error) {
-	return c.simpleJson.Map()
+	return c.simpleJSON.Map()
 }
 
 //Unmarshal implement
@@ -172,8 +172,8 @@ func (c *sConfig) Unmarshal(s interface{}) error {
 	f := filepath.Join(c.ConfigPath(), c.ConfigFile())
 	var data []byte
 	var err error
-	if c.simpleJson != nil {
-		data, err = c.simpleJson.MarshalJSON()
+	if c.simpleJSON != nil {
+		data, err = c.simpleJSON.MarshalJSON()
 	} else if sfile.ExistFile(f) {
 		data, err = ioutil.ReadFile(filepath.Join(c.ConfigPath(), c.ConfigFile()))
 	}
@@ -186,7 +186,7 @@ func (c *sConfig) Unmarshal(s interface{}) error {
 
 func (c *sConfig) Marshal(data []byte) error {
 	var err error
-	c.simpleJson, err = simplejson.NewJson(data)
+	c.simpleJSON, err = simplejson.NewJson(data)
 	return err
 }
 
@@ -194,14 +194,14 @@ func (c *sConfig) Marshal(data []byte) error {
 func (c *sConfig) DefInterface(key string, def interface{}) interface{} {
 
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				re = t.Interface()
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				re = t.Interface()
 			}
@@ -214,15 +214,15 @@ func (c *sConfig) DefInterface(key string, def interface{}) interface{} {
 func (c *sConfig) UnmarshalKey(key string, obj interface{}) error {
 
 	var err error = nil
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		var bs []byte = nil
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				bs, err = json.Marshal(t)
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				bs, err = json.Marshal(t)
 			}
@@ -241,16 +241,16 @@ func (c *sConfig) UnmarshalKey(key string, obj interface{}) error {
 func (c *sConfig) DefArray(key string, def []interface{}) []interface{} {
 
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				if t2, err := t.Array(); err == nil {
 					re = t2
 				}
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				if t2, err := t.Array(); err == nil {
 					re = t2
@@ -265,16 +265,16 @@ func (c *sConfig) DefArray(key string, def []interface{}) []interface{} {
 func (c *sConfig) DefMap(key string, def map[string]interface{}) map[string]interface{} {
 
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				if t2, err := t.Map(); err == nil {
 					re = t2
 				}
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				if t2, err := t.Map(); err == nil {
 					re = t2
@@ -290,16 +290,16 @@ func (c *sConfig) DefMap(key string, def map[string]interface{}) map[string]inte
 func (c *sConfig) DefString(key string, def string) string {
 
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				if t2, err := t.String(); err == nil {
 					re = t2
 				}
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				if t2, err := t.String(); err == nil {
 					re = t2
@@ -315,16 +315,16 @@ func (c *sConfig) DefString(key string, def string) string {
 func (c *sConfig) DefInt32(key string, def int32) int32 {
 
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				if t2, err := t.Int(); err == nil {
 					re = int32(t2)
 				}
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				if t2, err := t.Int(); err == nil {
 					re = int32(t2)
@@ -340,16 +340,16 @@ func (c *sConfig) DefInt32(key string, def int32) int32 {
 func (c *sConfig) DefUint32(key string, def uint32) uint32 {
 
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				if t2, err := t.Uint64(); err == nil {
 					re = uint32(t2)
 				}
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				if t2, err := t.Uint64(); err == nil {
 					re = uint32(t2)
@@ -365,16 +365,16 @@ func (c *sConfig) DefUint32(key string, def uint32) uint32 {
 func (c *sConfig) DefInt64(key string, def int64) int64 {
 
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				if t2, err := t.Int64(); err == nil {
 					re = t2
 				}
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				if t2, err := t.Int64(); err == nil {
 					re = t2
@@ -390,16 +390,16 @@ func (c *sConfig) DefInt64(key string, def int64) int64 {
 //DefUint64  implement
 func (c *sConfig) DefUint64(key string, def uint64) uint64 {
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				if t2, err := t.Uint64(); err == nil {
 					re = t2
 				}
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				if t2, err := t.Uint64(); err == nil {
 					re = t2
@@ -414,16 +414,16 @@ func (c *sConfig) DefUint64(key string, def uint64) uint64 {
 //DefBool  implement
 func (c *sConfig) DefBool(key string, def bool) bool {
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				if t2, err := t.Bool(); err == nil {
 					re = t2
 				}
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				if t2, err := t.Bool(); err == nil {
 					re = t2
@@ -438,16 +438,16 @@ func (c *sConfig) DefBool(key string, def bool) bool {
 //DefFloat32  implement
 func (c *sConfig) DefFloat32(key string, def float32) float32 {
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				if t2, err := t.Float64(); err == nil {
 					re = float32(t2)
 				}
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				if t2, err := t.Float64(); err == nil {
 					re = float32(t2)
@@ -461,16 +461,16 @@ func (c *sConfig) DefFloat32(key string, def float32) float32 {
 //DefFloat64  implement
 func (c *sConfig) DefFloat64(key string, def float64) float64 {
 	re := def
-	if c.simpleJson != nil {
+	if c.simpleJSON != nil {
 		keys := c.keys(key)
 		if len(keys) == 1 {
-			if t, ok := c.simpleJson.CheckGet(key); ok {
+			if t, ok := c.simpleJSON.CheckGet(key); ok {
 				if t2, err := t.Float64(); err == nil {
 					re = t2
 				}
 			}
 		} else if len(keys) > 1 {
-			t := c.simpleJson.GetPath(keys...)
+			t := c.simpleJSON.GetPath(keys...)
 			if t != nil {
 				if t2, err := t.Float64(); err == nil {
 					re = t2

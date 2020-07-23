@@ -8,46 +8,50 @@ import (
 )
 
 const (
+	//ConnWrapperTypeID type id
 	ConnWrapperTypeID = "ffc08507-dd5f-456c-84ea-cdae00b220bf"
 )
 
-type config struct { //todo 连接池等配置
+type config struct {
 	Addr     string `json:"addr"`
 	User     string `json:"user"`
 	Password string `json:"password"`
 	Database string `json:"database"`
-	ShowSql  bool   `json:"showSql"`
+	ShowSQL  bool   `json:"showSql"`
 }
 
+//ConnWrapper connect wrapper
 type ConnWrapper struct {
 	db   *pg.DB
 	conf config
 }
 
-func (c *ConnWrapper) Create(l dot.Line) error {
+func (c *ConnWrapper) Create(dot.Line) error {
 	c.db = pg.Connect(&pg.Options{
 		Addr:     c.conf.Addr,
 		User:     c.conf.User,
 		Password: c.conf.Password,
 		Database: c.conf.Database,
 	})
-	if c.conf.ShowSql {
+	if c.conf.ShowSQL {
 		c.db.AddQueryHook(pgLogger{})
 	}
 	return nil
 }
 
-func (c *ConnWrapper) AfterAllDestroy(l dot.Line) {
+func (c *ConnWrapper) AfterAllDestroy(dot.Line) {
 	if c.db != nil {
 		_ = c.db.Close()
 		c.db = nil
 	}
 }
 
+//GetDb get db
 func (c *ConnWrapper) GetDb() *pg.DB {
 	return c.db
 }
 
+//TestConn test the connect
 func (c *ConnWrapper) TestConn() bool {
 	n := -1
 	_, _ = c.db.QueryOne(pg.Scan(&n), "select 1")
@@ -61,46 +65,38 @@ func newConnWrapper(conf []byte) (dot.Dot, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	d := &ConnWrapper{conf: *dconf}
-
 	return d, err
 }
 
 //ConnWrapperTypeLives make all type lives
 func ConnWrapperTypeLives() []*dot.TypeLives {
-	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeID: ConnWrapperTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
-			return newConnWrapper(conf)
-		}},
-	}
-
-	lives := []*dot.TypeLives{tl}
-
-	return lives
+	return []*dot.TypeLives{{
+		Meta: dot.Metadata{TypeID: ConnWrapperTypeID, NewDoter: newConnWrapper},
+	}}
 }
 
-//GenarateConnWrapper this func is for test
-func GenarateConnWrapper(conf string) *ConnWrapper {
+//GenerateConnWrapper this func is for test
+func GenerateConnWrapper(conf string) *ConnWrapper {
 	conn := &ConnWrapper{}
 	_ = json.Unmarshal([]byte(conf), &conn.conf)
 	_ = conn.Create(nil)
 	return conn
 }
 
-//GenarateConnWrapper this func is for test
-func GenarateConnWrapperByDb(db *pg.DB) *ConnWrapper {
+//GenerateConnWrapperByDb this func is for test
+func GenerateConnWrapperByDb(db *pg.DB) *ConnWrapper {
 	conn := &ConnWrapper{db, config{}}
 	return conn
 }
 
 type pgLogger struct{}
 
-func (d pgLogger) BeforeQuery(c context.Context, q *pg.QueryEvent) (context.Context, error) {
+func (d pgLogger) BeforeQuery(c context.Context, _ *pg.QueryEvent) (context.Context, error) {
 	return c, nil
 }
 
-func (d pgLogger) AfterQuery(c context.Context, q *pg.QueryEvent) error {
+func (d pgLogger) AfterQuery(_ context.Context, q *pg.QueryEvent) error {
 	dot.Logger().Debug(func() string {
 		temp, _ := q.FormattedQuery()
 		return temp

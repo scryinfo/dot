@@ -137,7 +137,7 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 		StacktraceKey:  "S",
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeLevel:    zapcore.CapitalLevelEncoder,
-		EncodeTime:     TimeEncoder,
+		EncodeTime:     timeEncoder,
 		EncodeDuration: zapcore.StringDurationEncoder,
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
@@ -175,6 +175,6 @@ func (log *sLogger) Destroy(ignore bool) error {
 	return nil
 }
 
-func TimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+func timeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString("[" + t.Format("2006-01-02 15:04:05") + "]")
 }

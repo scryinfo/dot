@@ -6,9 +6,11 @@ import (
 )
 
 const (
+	//DaoBaseTypeID type id
 	DaoBaseTypeID = "4d6adee7-7c10-4471-8885-a589688bac93"
 )
 
+//DaoBase doa base
 type DaoBase struct {
 	Wrapper *ConnWrapper `dot:""`
 }
@@ -18,32 +20,35 @@ func (c *DaoBase) getConn() *pg.Conn {
 	return conn
 }
 
-//在函数中有数据库操作失败，即使返回nil， 数也不会提交 //todo
-func (c *DaoBase) WithTx(tast func(conn *pg.Conn) error) error {
+//WithTx with transaction, if return err != nil then rollback, or commit the transaction
+func (c *DaoBase) WithTx(task func(conn *pg.Conn) error) error {
 	var err error
-	if tast != nil {
+	if task != nil {
 		conn := c.getConn()
 		defer conn.Close()
 		var tx *pg.Tx
 		tx, err = conn.Begin()
 		if err == nil {
-			err = tast(conn)
-			if err == nil {
-				err = tx.Commit()
-			} else {
-				err = tx.Rollback()
-			}
+			defer func() {
+				if err == nil {
+					err = tx.Commit()
+				} else {
+					err = tx.Rollback()
+				}
+			}()
+			err = task(conn)
 		}
 	}
 	return err
 }
 
-func (c *DaoBase) WithNoTx(tast func(conn *pg.Conn) error) error {
+//WithNoTx no transaction
+func (c *DaoBase) WithNoTx(task func(conn *pg.Conn) error) error {
 	var err error
-	if tast != nil {
+	if task != nil {
 		conn := c.getConn()
 		defer conn.Close()
-		err = tast(conn)
+		err = task(conn)
 	}
 	return err
 }
@@ -55,29 +60,27 @@ func DaoBaseTypeLives() []*dot.TypeLives {
 			return &DaoBase{}, nil
 		}},
 		Lives: []dot.Live{
-			dot.Live{
+			{
 				LiveID:    DaoBaseTypeID,
 				RelyLives: map[string]dot.LiveID{"Wrapper": ConnWrapperTypeID},
 			},
 		},
 	}
-
 	lives := ConnWrapperTypeLives()
 	lives = append(lives, tl)
-
 	return lives
 }
 
 //GenerateDaoBase this func is for test
 func GenerateDaoBase(conf string) *DaoBase {
-	wrapper := GenarateConnWrapper(conf)
+	wrapper := GenerateConnWrapper(conf)
 	base := &DaoBase{wrapper}
 	return base
 }
 
-//GenerateDaoBase this func is for test
+//GenerateDaoBaseByDb this func is for test
 func GenerateDaoBaseByDb(db *pg.DB) *DaoBase {
-	wrapper := GenarateConnWrapperByDb(db)
+	wrapper := GenerateConnWrapperByDb(db)
 	base := &DaoBase{wrapper}
 	return base
 }

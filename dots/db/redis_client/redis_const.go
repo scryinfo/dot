@@ -1,9 +1,13 @@
-package redis_client
+package redis_client //nolint:golint
 
 const (
+	//VersionControlChannelName Version Control Channel Name
 	VersionControlChannelName = "version_control"
 
-	KeySplitChar     = ":"
-	CategoryPrefix   = "CV"
+	//KeySplitChar Key Split Char
+	KeySplitChar = ":"
+	//CategoryPrefix Category Prefix
+	CategoryPrefix = "CV"
+	//CategoriesPrefix Categories Prefix
 	CategoriesPrefix = "CVS"
 )

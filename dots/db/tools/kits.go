@@ -36,7 +36,7 @@ func Underscore(s string) string {
 	return string(r)
 }
 
-// Just work for ASCⅡ code
+//CamelCased Just work for ASCⅡ code
 func CamelCased(s string) string {
 	r := make([]byte, 0, len(s))
 	upperNext := true
@@ -57,7 +57,7 @@ func CamelCased(s string) string {
 	return string(r)
 }
 
-// Just work for ASCⅡ code
+//ToExported Just work for ASCⅡ code
 func ToExported(s string) string {
 	if len(s) == 0 {
 		return s
@@ -70,7 +70,7 @@ func ToExported(s string) string {
 	return s
 }
 
-// Just work for ASCⅡ code
+//UpperString Just work for ASCⅡ code
 func UpperString(s string) string {
 	if isUpperString(s) {
 		return s

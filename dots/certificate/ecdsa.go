@@ -22,9 +22,11 @@ import (
 )
 
 const (
+	//EcdsaTypeID type id of dot
 	EcdsaTypeID = "4b8b1751-4799-4578-af46-d9b339cf582f"
 )
 
+//Ecdsa dot
 type Ecdsa struct {
 }
 
@@ -35,7 +37,7 @@ func newEcdsa(conf []byte) (dot.Dot, error) {
 	return d, err
 }
 
-//EcdsaTypeLives
+//EcdsaTypeLives return type lives
 func EcdsaTypeLives() []*dot.TypeLives {
 	return []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: EcdsaTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
@@ -44,7 +46,7 @@ func EcdsaTypeLives() []*dot.TypeLives {
 	}
 }
 
-//Generate ca certificate and private key
+//GenerateCaCertKey Generate ca certificate and private key
 // keyFile private key, pemFile ca certificate file
 func (c *Ecdsa) GenerateCaCertKey(caPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (ca *x509.Certificate, err error) {
 
@@ -117,7 +119,7 @@ func (c *Ecdsa) GenerateCaCertKey(caPri *ecdsa.PrivateKey, keyFile string, pemFi
 	return ca, err
 }
 
-//Generate subcertificate and private key
+//GenerateCertKey Generate subcertificate and private key
 // keyFile private file, pemFile subcertificate file
 func (c *Ecdsa) GenerateCertKey(caParent *x509.Certificate, caPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (err error) {
 	var serialNumber *big.Int = nil
@@ -188,7 +190,7 @@ func (c *Ecdsa) GenerateCertKey(caParent *x509.Certificate, caPri *ecdsa.Private
 	return err
 }
 
-//Read private key from keyFile
+//PrivateKey Read private key from keyFile
 func (c *Ecdsa) PrivateKey(keyFile string) (pri *ecdsa.PrivateKey, err error) {
 
 	file, err := exPathFile(keyFile)
@@ -216,7 +218,7 @@ func (c *Ecdsa) PrivateKey(keyFile string) (pri *ecdsa.PrivateKey, err error) {
 
 }
 
-//Read public key from pemFile
+//PublicKey Read public key from pemFile
 func (c *Ecdsa) PublicKey(pemFile string) (pubKey *ecdsa.PublicKey, err error) {
 
 	cer, err := c.Certificate(pemFile)
@@ -233,7 +235,7 @@ func (c *Ecdsa) PublicKey(pemFile string) (pubKey *ecdsa.PublicKey, err error) {
 	return pubKey, err
 }
 
-//Read certificate from pemFile
+//Certificate Read certificate from pemFile
 func (c *Ecdsa) Certificate(pemFile string) (cert *x509.Certificate, err error) {
 	file, err := exPathFile(pemFile)
 
@@ -326,7 +328,7 @@ func exPathFile(file string) (tfile string, err error) {
 	return
 }
 
-//Generate private key
+//MakePriKey Generate private key
 func MakePriKey() (*ecdsa.PrivateKey, error) {
 	return ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 }

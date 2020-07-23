@@ -785,7 +785,7 @@ func (c *lineImp) Create(l dot.Line) error {
 	var err error
 
 	//first create config
-	c.sConfig = sconfig.NewConfiger()
+	c.sConfig = sconfig.newConfig()
 	c.sConfig.RootPath()
 	if s, ok := c.sConfig.(dot.Creator); ok {
 		if err = s.Create(l); err != nil {
