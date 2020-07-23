@@ -54,7 +54,7 @@ func (serv *RpcImplement) Start(ignore bool) error {
 
 //RpcImplementTypeLives make all type lives
 func RpcImplementTypeLives() []*dot.TypeLives {
-	tl := &dot.TypeLives{
+	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: ServerTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newRpcImplement(conf)
 		}},
@@ -64,10 +64,8 @@ func RpcImplementTypeLives() []*dot.TypeLives {
 				RelyLives: map[string]dot.LiveID{"ServerNobl": gserver.ServerNoblTypeID},
 			},
 		},
-	}
-
-	lives := []*dot.TypeLives{gserver.ServerNoblTypeLive(), tl}
-
+	}}
+	lives = append(lives, gserver.ServerNoblTypeLives()...)
 	return lives
 }
 

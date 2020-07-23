@@ -37,7 +37,7 @@ func main() {
 }
 
 func add(l dot.Line) error {
-	err := l.PreAdd(certificate.TypeLiveEcdsa())
+	err := l.PreAdd(certificate.EcdsaTypeLives()...)
 	return err
 }
 

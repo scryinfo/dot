@@ -190,7 +190,7 @@ func newUi(conf []byte) (*Ui, error) {
 
 //UiTypeLives generate data for structural  dot,  include gindot.Engine
 func UiTypeLives() []*dot.TypeLives {
-	return []*dot.TypeLives{&dot.TypeLives{
+	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: UiTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newUi(conf)
 		}},
@@ -201,14 +201,14 @@ func UiTypeLives() []*dot.TypeLives {
 				RelyLives: map[string]dot.LiveID{"Engine_": EngineLiveID},
 			},
 		},
-	},
-		TypeLiveGinDot(),
-	}
+	}}
+	lives = append(lives, GinDotTypeLives()...)
+	return lives
 }
 
 //return config of Ui
-func UiConfigTypeLive() *dot.ConfigTypeLives {
-	return &dot.ConfigTypeLives{
+func UiConfigTypeLive() *dot.ConfigTypeLive {
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: UiTypeID,
 		ConfigInfo:   &configUi{},
 	}

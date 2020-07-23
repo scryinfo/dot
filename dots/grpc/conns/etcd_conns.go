@@ -159,10 +159,10 @@ func EtcdConnsTypeLives() []*dot.TypeLives {
 }
 
 //EtcdConnsConfigTypeLive
-func EtcdConnsConfigTypeLive() *dot.ConfigTypeLives {
+func EtcdConnsConfigTypeLive() *dot.ConfigTypeLive {
 	paths := make([]string, 0)
 	paths = append(paths, "")
-	return &dot.ConfigTypeLives{
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: EtcdConnsTypeID,
 		ConfigInfo:   &configEtcdConns{},
 	}

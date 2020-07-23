@@ -131,7 +131,7 @@ type TypeLives struct {
 
 //jayce edit
 //config json
-type ConfigTypeLives struct {
+type ConfigTypeLive struct {
 	TypeIDConfig TypeID      `json:"typeId"`
 	ConfigInfo   interface{} `json:"json"`
 }

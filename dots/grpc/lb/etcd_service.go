@@ -88,10 +88,10 @@ func EtcdServiceTypeLives() []*dot.TypeLives {
 }
 
 //EtcdServiceConfigTypeLive
-func EtcdServiceConfigTypeLive() *dot.ConfigTypeLives {
+func EtcdServiceConfigTypeLive() *dot.ConfigTypeLive {
 	paths := make([]string, 0)
 	paths = append(paths, "")
-	return &dot.ConfigTypeLives{
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: EtcdServiceTypeID,
 		ConfigInfo:   &configEtcdService{
 			//todo

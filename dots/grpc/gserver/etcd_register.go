@@ -137,10 +137,10 @@ func EtcdRegisterTypeLives() []*dot.TypeLives {
 }
 
 //EtcdRegisterConfigTypeLive
-func EtcdRegisterConfigTypeLive() *dot.ConfigTypeLives {
+func EtcdRegisterConfigTypeLive() *dot.ConfigTypeLive {
 	paths := make([]string, 0)
 	paths = append(paths, "")
-	return &dot.ConfigTypeLives{
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: EtcdRegisterTypeID,
 		ConfigInfo: &ConfigEtcdRegister{
 			Items: []ServerItem{},

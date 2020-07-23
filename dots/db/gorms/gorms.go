@@ -74,8 +74,8 @@ func newGorms(conf []byte) (d dot.Dot, err error) {
 	return d, err
 }
 
-//TypeLives
-func TypeLives() []*dot.TypeLives {
+//GormsTypeLives
+func GormsTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{
 		{
 			Meta: dot.Metadata{TypeID: GormTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
@@ -86,9 +86,9 @@ func TypeLives() []*dot.TypeLives {
 	return lives
 }
 
-//ConfigTypeLives
-func ConfigTypeLives() *dot.ConfigTypeLives {
-	return &dot.ConfigTypeLives{
+//GormsConfigTypeLive
+func GormsConfigTypeLive() *dot.ConfigTypeLive {
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: GormTypeID,
 		ConfigInfo:   &config{},
 	}

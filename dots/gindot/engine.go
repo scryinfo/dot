@@ -73,21 +73,21 @@ func newGinDot(conf []byte) (dot.Dot, error) {
 	return d, err
 }
 
-//TypeLiveGinDot generate data for structural  dot
-func TypeLiveGinDot() *dot.TypeLives {
-	return &dot.TypeLives{
+//GinDotTypeLives generate data for structural  dot
+func GinDotTypeLives() []*dot.TypeLives {
+	return []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: EngineTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newGinDot(conf)
-		}},
+		}}},
 	}
 }
 
 //jayce edit
 //return config of GinDot
-func ConfigTypeLiveGinDot() *dot.ConfigTypeLives {
+func GinDotConfigTypeLive() *dot.ConfigTypeLive {
 	paths := make([]string, 0)
 	paths = append(paths, "")
-	return &dot.ConfigTypeLives{
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: EngineTypeID,
 		ConfigInfo: &configEngine{
 			LogSkipPaths: paths,

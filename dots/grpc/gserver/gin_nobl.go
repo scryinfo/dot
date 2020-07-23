@@ -32,7 +32,7 @@ type ginNobl struct {
 //GinNoblTypeLives Data structure needed when generating newer component
 func GinNoblTypeLives() []*dot.TypeLives {
 
-	tl := &dot.TypeLives{
+	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: GinNoblTypeID, RefType: reflect.TypeOf((*ginNobl)(nil)).Elem(), NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return &ginNobl{}, nil
 		}},
@@ -42,13 +42,10 @@ func GinNoblTypeLives() []*dot.TypeLives {
 				RelyLives: map[string]dot.LiveID{"GinRouter": gindot.RouterTypeID, "ServerNobl": ServerNoblTypeID},
 			},
 		},
-	}
+	}}
 
-	lives := []*dot.TypeLives{
-		tl, ServerNoblTypeLive(),
-	}
-
-	lives = append(lives, gindot.TypeLiveRouter()...)
+	lives = append(lives, ServerNoblTypeLives()...)
+	lives = append(lives, gindot.RouterTypeLives()...)
 	return lives
 }
 

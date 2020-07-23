@@ -53,15 +53,15 @@ func ConnNameTypeLives() []*dot.TypeLives {
 
 	lives := EtcdConnsTypeLives()
 	lives = append(lives, tl)
-	lives = append(lives, ConnsTypeLives())
+	lives = append(lives, ConnsTypeLives()...)
 
 	return lives
 }
 
 //jayce edit
 //return config of ConnName
-func ConnNameConfigTypeLives() *dot.ConfigTypeLives {
-	return &dot.ConfigTypeLives{
+func ConnNameConfigTypeLive() *dot.ConfigTypeLive {
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: ConnNameTypeID,
 		ConfigInfo:   &configName{},
 	}

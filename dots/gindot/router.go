@@ -40,9 +40,9 @@ func newRouter(conf []byte) (*Router, error) {
 	return d, err
 }
 
-//TypeLiveRouter generate data for structural  dot,  include gindot.Engine
-func TypeLiveRouter() []*dot.TypeLives {
-	return []*dot.TypeLives{&dot.TypeLives{
+//RouterTypeLives generate data for structural  dot,  include gindot.Engine
+func RouterTypeLives() []*dot.TypeLives {
+	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: RouterTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newRouter(conf)
 		}},
@@ -52,15 +52,15 @@ func TypeLiveRouter() []*dot.TypeLives {
 				RelyLives: map[string]dot.LiveID{"Engine_": EngineLiveID},
 			},
 		},
-	},
-		TypeLiveGinDot(),
-	}
+	}}
+	lives = append(lives, GinDotTypeLives()...)
+	return lives
 }
 
 //jayce edit
 //return config of Router
-func ConfigTypeLiveRouter() *dot.ConfigTypeLives {
-	return &dot.ConfigTypeLives{
+func RouterConfigTypeLive() *dot.ConfigTypeLive {
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: RouterTypeID,
 		ConfigInfo:   &configRouter{},
 	}

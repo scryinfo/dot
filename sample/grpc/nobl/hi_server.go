@@ -64,7 +64,7 @@ func (serv *HiServer) Start(ignore bool) error {
 
 //HiServerTypeLives make all type lives
 func HiServerTypeLives() []*dot.TypeLives {
-	tl := &dot.TypeLives{
+	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: HiServerTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return newHiServer(conf)
 		}},
@@ -74,9 +74,7 @@ func HiServerTypeLives() []*dot.TypeLives {
 				RelyLives: map[string]dot.LiveID{"ServerNobl": gserver.ServerNoblTypeID},
 			},
 		},
-	}
-
-	lives := []*dot.TypeLives{gserver.ServerNoblTypeLive(), tl}
-
+	}}
+	lives = append(lives, gserver.ServerNoblTypeLives()...)
 	return lives
 }

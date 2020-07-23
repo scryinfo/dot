@@ -35,11 +35,12 @@ func newEcdsa(conf []byte) (dot.Dot, error) {
 	return d, err
 }
 
-func TypeLiveEcdsa() *dot.TypeLives {
-	return &dot.TypeLives{
+//EcdsaTypeLives
+func EcdsaTypeLives() []*dot.TypeLives {
+	return []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: EcdsaTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newEcdsa(conf)
-		}},
+		}}},
 	}
 }
 

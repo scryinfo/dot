@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	HttpTypeID = "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0"
+	httpNoblTypeID = "afbeac47-e5fd-4bf3-8fb1-f0fb8ec79bd0"
 )
 
 type httpNoblConf struct {
@@ -63,28 +63,26 @@ func newHttpNobl(conf []byte) (dot.Dot, error) {
 //HttpNoblTypeLives Data structure needed when generating newer component
 func HttpNoblTypeLives() []*dot.TypeLives {
 
-	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeID: HttpTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+	lives := []*dot.TypeLives{{
+		Meta: dot.Metadata{TypeID: httpNoblTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newHttpNobl(conf)
 		}},
 		Lives: []dot.Live{
 			{
-				LiveID:    HttpTypeID,
+				LiveID:    httpNoblTypeID,
 				RelyLives: map[string]dot.LiveID{"ServerNobl": ServerNoblTypeID},
 			},
 		},
-	}
-
-	return []*dot.TypeLives{
-		tl, ServerNoblTypeLive(),
-	}
+	}}
+	lives = append(lives, ServerNoblTypeLives()...)
+	return lives
 }
 
 //jayce edit
 //return config of HttpNobl
-func HttpNoblConfigTypeLives() *dot.ConfigTypeLives {
-	return &dot.ConfigTypeLives{
-		TypeIDConfig: HttpTypeID,
+func HttpNoblConfigTypeLive() *dot.ConfigTypeLive {
+	return &dot.ConfigTypeLive{
+		TypeIDConfig: httpNoblTypeID,
 		ConfigInfo:   &httpNoblConf{},
 	}
 }

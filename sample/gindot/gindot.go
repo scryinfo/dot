@@ -40,7 +40,7 @@ func main() {
 }
 
 func add(l dot.Line) error {
-	err := l.PreAdd(gindot.TypeLiveRouter()...)
+	err := l.PreAdd(gindot.RouterTypeLives()...)
 	//ReSetLiveEvents AddLiveEvents , they are different
 	l.ToDotEventer().ReSetLiveEvents(dot.LiveID("6be39d0b-3f5b-47b4-818c-642c049f3166"), &dot.LiveEvents{AfterStart: func(live *dot.Live, l dot.Line) {
 		//do any init for the router

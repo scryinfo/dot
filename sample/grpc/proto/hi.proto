@@ -32,7 +32,7 @@ service HiDot {
     rpc Hi (HiReq) returns (HiRes);
     rpc Write (WriteReq) returns (WriteRes);
 
-    rpc ServerStream(HelloRequest) returns (stream HelloResponse);
-    rpc ClientStream(stream HelloRequest) returns (HelloResponse);
-    rpc BothSides(stream HelloRequest) returns (stream HelloResponse);
+//    rpc ServerStream(HelloRequest) returns (stream HelloResponse);
+//    rpc ClientStream(stream HelloRequest) returns (HelloResponse);
+//    rpc BothSides(stream HelloRequest) returns (stream HelloResponse);
 }

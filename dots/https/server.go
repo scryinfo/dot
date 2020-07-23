@@ -49,8 +49,8 @@ func newServer(conf []byte) (dot.Dot, error) {
 	return d, err
 }
 
-//TypeLives
-func TypeLives() []*dot.TypeLives {
+//ServerTypeLives
+func ServerTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{
 		{
 			Meta: dot.Metadata{TypeID: TypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
@@ -61,10 +61,10 @@ func TypeLives() []*dot.TypeLives {
 	return lives
 }
 
-func ConfigTypeLive() *dot.ConfigTypeLives {
+func ServerConfigTypeLive() *dot.ConfigTypeLive {
 	paths := make([]string, 0)
 	paths = append(paths, "")
-	return &dot.ConfigTypeLives{
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: TypeID,
 		ConfigInfo:   &config{},
 	}

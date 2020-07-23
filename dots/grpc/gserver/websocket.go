@@ -29,23 +29,23 @@ type WebSocket struct {
 	wrappedServer *grpcweb.WrappedGrpcServer
 }
 
+//WebSocketTypeLives
 func WebSocketTypeLives() []*dot.TypeLives {
-	websocktTypeLive := func() *dot.TypeLives {
-		return &dot.TypeLives{
-			Meta: dot.Metadata{TypeID: WebSocketTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
-				return &WebSocket{}, nil
-			}},
-			//Lives: []dot.Live{
-			//	{
-			//		TypeID: WebSocketTypeID,
-			//		RelyLives: map[string]dot.LiveID{
-			//			"GinEngine": gindot.EngineTypeID,
-			//		},
-			//	},
-			//},
-		}
-	}
-	return []*dot.TypeLives{websocktTypeLive(), gindot.TypeLiveGinDot()}
+	lives := []*dot.TypeLives{{
+		Meta: dot.Metadata{TypeID: WebSocketTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
+			return &WebSocket{}, nil
+		}},
+		//Lives: []dot.Live{
+		//	{
+		//		TypeID: WebSocketTypeID,
+		//		RelyLives: map[string]dot.LiveID{
+		//			"GinEngine": gindot.EngineTypeID,
+		//		},
+		//	},
+		//},
+	}}
+	lives = append(lives, gindot.GinDotTypeLives()...)
+	return lives
 }
 
 func (s *WebSocket) Stop(ignore bool) error {

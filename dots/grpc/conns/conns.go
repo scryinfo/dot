@@ -78,23 +78,23 @@ func newConns(conf []byte) (dot.Dot, error) {
 }
 
 //Data structure needed when generating newer component
-func ConnsTypeLives() *dot.TypeLives {
-	return &dot.TypeLives{
+func ConnsTypeLives() []*dot.TypeLives {
+	return []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: ConnsTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newConns(conf)
 		}},
-	}
+	}}
 }
 
 //jayce edit
 //return config of Conn
-func ConnsConfigTypeLives() *dot.ConfigTypeLives {
+func ConnsConfigTypeLive() *dot.ConfigTypeLive {
 	slice1 := make([]ServiceConfig, 0)
 	slice2 := make([]string, 0)
 	slice2 = append(slice2, "")
 	slice1 = append(slice1, ServiceConfig{Addrs: slice2})
 
-	return &dot.ConfigTypeLives{
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: ConnsTypeID,
 		ConfigInfo: &ConnsConfig{
 			Services: slice1,

@@ -28,21 +28,17 @@ func (c *HiClient) AfterAllInject(l dot.Line) {
 
 //HiClientTypeLives make all type lives
 func HiClientTypeLives() []*dot.TypeLives {
-	tl := &dot.TypeLives{
+	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: HiClientTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
 			return &HiClient{}, nil
 		}},
 		Lives: []dot.Live{
-			dot.Live{
+			{
 				LiveID:    HiClientTypeID,
 				RelyLives: map[string]dot.LiveID{"Conn": conns.ConnNameTypeID},
 			},
 		},
-	}
-
-	lives := make([]*dot.TypeLives, 0, 3)
+	}}
 	lives = append(lives, conns.ConnNameTypeLives()...)
-	lives = append(lives, tl)
-
 	return lives
 }

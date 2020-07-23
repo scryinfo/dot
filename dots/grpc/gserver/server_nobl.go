@@ -91,20 +91,20 @@ func newServerNobl(conf []byte) (dot.Dot, error) {
 }
 
 //Data structure needed when generating newer component
-func ServerNoblTypeLive() *dot.TypeLives {
-	return &dot.TypeLives{
+func ServerNoblTypeLives() []*dot.TypeLives {
+	return []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: ServerNoblTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newServerNobl(conf)
 		}},
-	}
+	}}
 }
 
 //jayce edit
 //return config of ServerNobl
-func ServerNoblConfigTypeLive() *dot.ConfigTypeLives {
+func ServerNoblConfigTypeLive() *dot.ConfigTypeLive {
 	addrs := make([]string, 0)
 	addrs = append(addrs, "")
-	return &dot.ConfigTypeLives{
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: ServerNoblTypeID,
 		ConfigInfo: &ConfigNobl{
 			Addrs: addrs,
