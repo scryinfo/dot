@@ -68,10 +68,10 @@
 /tools/config/data/server/log.log
 /tools/config/data/server/result.json
 /tools/config/data/server/server_http.exe
-/tools/config/go.sum
+/tools/go.sum
 /tools/config/data/server/callMethod.go
 /dots/db/pgs/go.sum
-/sample/db/pgs/go.sum
+/sample/db/go.sum
 /tools/config/data/before.log
 /dots/db/gorms/go.sum
 /tools/config/data/log.log
