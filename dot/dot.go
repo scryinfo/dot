@@ -23,10 +23,10 @@ func (c *LiveID) String() string {
 	return string(*c)
 }
 
-//Event
+//Event dot event
 type Event = func(live *Live, l Line)
 
-//Events
+//Events dot events
 type Events struct {
 	//Before the dot create
 	BeforeCreate Event
@@ -46,10 +46,13 @@ type Events struct {
 	AfterDestroy Event
 }
 
+//TypeEvents dot events for type
 type TypeEvents = Events
+
+//LiveEvents dot events for live
 type LiveEvents = Events
 
-//Eventer
+//Eventer event interface
 type Eventer interface {
 	//
 	ReSetLiveEvents(lid LiveID, liveEvents *LiveEvents)
@@ -92,6 +95,7 @@ func (m *Metadata) Clone() *Metadata {
 	return &c
 }
 
+//Merge merge metadata
 func (m *Metadata) Merge(m2 *Metadata) {
 	if len(m2.TypeID) > 0 {
 		m.TypeID = m2.TypeID
@@ -161,26 +165,31 @@ type Lifer interface {
 	Destroyer
 }
 
+//Creator create interface
 type Creator interface {
 	//Create When this method is initializing, running or monitoring same content, better to realize it in Start method
 	Create(l Line) error
 }
 
+//Injected inject interface
 type Injected interface {
 	//Injected call the function after inject
 	Injected(l Line) error
 }
 
+//Starter start interface
 type Starter interface {
 	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
 	Start(ignore bool) error
 }
 
+//Stopper stop interface
 type Stopper interface {
 	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
 	Stop(ignore bool) error
 }
 
+//Destroyer destroy interface
 type Destroyer interface {
 	//Destroy Dot
 	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
@@ -195,7 +204,7 @@ type Tager interface {
 	GetTag() (tag interface{})
 }
 
-//return the interface type for dot
+//GetInterfaceType return the interface of dot
 type GetInterfaceType interface {
 	//get interface type
 	GetInterfaceType() reflect.Type
@@ -222,6 +231,7 @@ type Checker interface {
 
 const (
 	//TagDot tag dot
-	TagDot  = "dot"
-	CanNull = "?" //allow nil, if do not find the dot , set it nil
+	TagDot = "dot"
+	//CanNull allow nil, if do not find the dot , set it nil
+	CanNull = "?"
 )

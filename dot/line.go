@@ -7,7 +7,7 @@ import (
 	"reflect"
 )
 
-//
+//Injecter inject interface
 type Injecter interface {
 	//Inject inject
 	//obj only support structure
@@ -93,32 +93,32 @@ type Line interface {
 	EachLives(func(*Live, *Metadata) bool)
 }
 
-// If component need to know current line, then realize this API, and this API Will be called before component Create
+//SetterLine If component need to know current line, then realize this API, and this API Will be called before component Create
 type SetterLine interface {
 	SetLine(l Line)
 }
 
-// If component need to know current TypeID or LiveID, then realize this API, and this API Will be called before component Create
+//SetterTypeAndLiveID If component need to know current TypeID or LiveID, then realize this API, and this API Will be called before component Create
 type SetterTypeAndLiveID interface {
 	SetTypeID(typeID TypeID, liveID LiveID)
 }
 
-// After all start, before builder AfterStart
+//AfterAllStarter After all start, before builder AfterStart
 type AfterAllStarter interface {
 	AfterAllStart(l Line)
 }
 
-// After all inject, before builder AfterStart
+//AfterAllInjecter After all inject, before builder AfterStart
 type AfterAllInjecter interface {
 	AfterAllInject(l Line)
 }
 
-// After all destroy, before builder AfterDestroy
+//AfterAllDestroyer After all destroy, before builder AfterDestroy
 type AfterAllDestroyer interface {
 	AfterAllDestroy(l Line)
 }
 
-// Call before all stop, after Builder BeforeStop
+//BeforeAllStopper Call before all stop, after Builder BeforeStop
 type BeforeAllStopper interface {
 	BeforeAllStop(l Line)
 }
@@ -129,18 +129,20 @@ type TypeLives struct {
 	Lives []Live
 }
 
-//jayce edit
-//config json
+//ConfigTypeLive config json
 type ConfigTypeLive struct {
 	TypeIDConfig TypeID      `json:"typeId"`
 	ConfigInfo   interface{} `json:"json"`
 }
 
-//Add typeid, newer for dot in config file
+//BuildNewer Add typeid, newer for dot in config file
 //This function is run after line create, also you can add other initialized content
 type BuildNewer func(l Line) error
+
+//AllEvent all event
 type AllEvent func(l Line)
 
+//Builder builder line dot
 type Builder struct {
 	Add BuildNewer
 

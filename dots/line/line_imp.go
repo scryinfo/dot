@@ -115,7 +115,6 @@ func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 	var err error
 
 	for _, typeLive := range typeLives {
-
 		err2 := c.metas.UpdateOrAdd(&typeLive.Meta)
 		if err2 == nil {
 			if len(typeLive.Lives) > 0 {
@@ -130,22 +129,16 @@ func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 					err2 = c.lives.UpdateOrAdd(it)
 					if err2 != nil {
 						if err != nil {
-							logger.Debug(func() string {
-								return fmt.Sprintf("lineImp - meta: %v", typeLive.Meta)
-							})
+							logger.Debugln(fmt.Sprintf("lineImp - meta: %v", typeLive.Meta))
 							logger.Errorln("lineImp", zap.Error(err)) //write it into logfile, otherwise it will gone
 						}
 						err = err2
 					}
 				}
-			} else {
-				//do nothing
 			}
 		} else {
 			if err != nil {
-				logger.Debug(func() string {
-					return fmt.Sprintf("lineImp - meta: %v", typeLive.Meta)
-				})
+				logger.Debugln(fmt.Sprintf("lineImp - meta: %v", typeLive.Meta))
 				logger.Errorln("lineImp", zap.Error(err)) //write it into logfile, otherwise it will gone
 			}
 			err = err2
@@ -234,9 +227,7 @@ func (c *lineImp) relyOrder() ([]*dot.Live, []*dot.Live) {
 									levelNext[liveID2] = true
 									done[liveID2] = true
 								}
-
 								delete(remain, liveID2)
-
 							} else {
 								//levelNext[liveID2] = true //put next level
 							}
@@ -349,9 +340,8 @@ CreateLives:
 			m, _ := c.metas.Get(dotLive.TypeID)
 			if m != nil {
 				return fmt.Sprintf("Create dot, type id: %s, live id: %s, name: %s", dotLive.TypeID, dotLive.LiveID, m.Name)
-			} else {
-				return fmt.Sprintf("Create dot, type id: %s, live id: %s", dotLive.TypeID, dotLive.LiveID)
 			}
+			return fmt.Sprintf("Create dot, type id: %s, live id: %s", dotLive.TypeID, dotLive.LiveID)
 		})
 
 		if skit.IsNil(&dotLive.Dot) {
@@ -465,7 +455,7 @@ CreateLives:
 		afterInjects := make([]dot.AfterAllInjecter, 0, 20)
 		err = nil
 		for _, it := range orderedDots {
-			if it.Dot != nil { //todo not success
+			if it.Dot != nil { //not success
 				_ = c.injectInLine(it.Dot, it)
 				if ed, ok := it.Dot.(dot.Injected); ok {
 					err = ed.Injected(c)
@@ -474,9 +464,8 @@ CreateLives:
 							m, _ := c.metas.Get(it.TypeID)
 							if m != nil {
 								return fmt.Sprintf("Create dot, meta: %v\n live: %v", m, it)
-							} else {
-								return fmt.Sprintf("Create dot, live: %v", it)
 							}
+							return fmt.Sprintf("Create dot, live: %v", it)
 						})
 						logger.Errorln("lineImp", zap.Error(err))
 						break
@@ -525,9 +514,7 @@ func (c *lineImp) ToDotEventer() dot.Eventer {
 func (c *lineImp) GetDotConfig(liveID dot.LiveID) *dot.LiveConfig {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-
-	var co *dot.LiveConfig
-	co = c.config.FindConfig("", liveID)
+	co := c.config.FindConfig("", liveID)
 	return co
 }
 
@@ -538,12 +525,6 @@ func (c *lineImp) Inject(obj interface{}) error {
 	var err error
 	if skit.IsNil(obj) {
 		return dot.SError.NilParameter
-	}
-	multiErr := func(er error) {
-		if err != nil {
-			logger.Errorln("lineImp", zap.Error(err))
-		}
-		err = er
 	}
 
 	value := reflect.ValueOf(obj)
@@ -584,11 +565,11 @@ func (c *lineImp) Inject(obj interface{}) error {
 				if tagName == dot.CanNull { //组件为可选
 					if dotError, ok := err2.(dot.Errorer); !ok || dotError.Code() != dot.SError.NotExisted.Code() { //如果error code不为不存在
 						logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %value", typeField.Name, err2))
-						multiErr(err2)
+						multiErr(&err, err2)
 					}
 				} else {
 					logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %value", typeField.Name, err2))
-					multiErr(err2)
+					multiErr(&err, err2)
 				}
 			}
 
@@ -603,7 +584,7 @@ func (c *lineImp) Inject(obj interface{}) error {
 			if valueDot.IsValid() && valueDot.Type().AssignableTo(valueField.Type()) {
 				valueField.Set(valueDot)
 			} else {
-				multiErr(dot.SError.DotInvalid.AddNewError(typeField.Type.String() + "  " + tagName))
+				multiErr(&err, dot.SError.DotInvalid.AddNewError(typeField.Type.String()+"  "+tagName))
 			}
 		}
 	}
@@ -617,12 +598,6 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 	var err error
 	if skit.IsNil(obj) {
 		return dot.SError.NilParameter
-	}
-	multiErr := func(er error) {
-		if err != nil {
-			logger.Errorln("lineImp", zap.Error(err))
-		}
-		err = er
 	}
 
 	value := reflect.ValueOf(obj)
@@ -670,11 +645,11 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 				if tagName == dot.CanNull { //组件为可选
 					if dotError, ok := err2.(dot.Errorer); !ok || dotError.Code() != dot.SError.NotExisted.Code() { //如果error code不为不存在
 						logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %value", tField.Name, err2))
-						multiErr(err2)
+						multiErr(&err, err2)
 					}
 				} else {
 					logger.Debugln(fmt.Sprintf("lineImp, find dot error, field: %s, err: %value", tField.Name, err2))
-					multiErr(err2)
+					multiErr(&err, err2)
 				}
 			}
 
@@ -690,7 +665,7 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 			if valueDot.IsValid() && valueDot.Type().AssignableTo(valueField.Type()) {
 				valueField.Set(valueDot)
 			} else if err == nil {
-				multiErr(dot.SError.DotInvalid.AddNewError(tField.Type.String() + "  " + tagName))
+				multiErr(&err, dot.SError.DotInvalid.AddNewError(tField.Type.String()+"  "+tagName))
 			}
 		}
 	}
@@ -841,7 +816,7 @@ func (c *lineImp) makeDotMetaFromConfig() error {
 	defer c.mutex.Unlock()
 
 	var err error
-	var dotConfig *dot.DotConfig
+	var dotConfig *dot.MetaLivesConfig
 ForConfigDots: //handle config
 	for i := range c.config.Dots {
 		dotConfig = &c.config.Dots[i]
@@ -1034,9 +1009,8 @@ func (c *lineImp) Start(ignore bool) error {
 					m, _ := c.metas.Get(it.TypeID)
 					if m != nil {
 						return fmt.Sprintf("Start dot, type id: %s, live id: %s, name: %s", it.TypeID, it.LiveID, m.Name)
-					} else {
-						return fmt.Sprintf("Start dot, type id: %s, live id: %s", it.TypeID, it.LiveID)
 					}
+					return fmt.Sprintf("Start dot, type id: %s, live id: %s", it.TypeID, it.LiveID)
 				})
 				if b := c.dotEvent.TypeEvents(it.TypeID); len(b) > 0 {
 					for i := range b {
@@ -1064,9 +1038,8 @@ func (c *lineImp) Start(ignore bool) error {
 							m, _ := c.metas.Get(it.TypeID)
 							if m != nil {
 								return fmt.Sprintf("Start dot, meta: %v\n live: %v\n %v", m, it, d)
-							} else {
-								return fmt.Sprintf("Start dot, live: %v\n %v", it, d)
 							}
+							return fmt.Sprintf("Start dot, live: %v\n %v", it, d)
 						})
 						if err != nil {
 							logger.Errorln("lineImp", zap.Error(err))
@@ -1140,9 +1113,8 @@ func (c *lineImp) Stop(ignore bool) error {
 				m, _ := c.metas.Get(it.TypeID)
 				if m != nil {
 					return fmt.Sprintf("Stop dot, type id: %s, live id: %s, name: %s", it.TypeID, it.LiveID, m.Name)
-				} else {
-					return fmt.Sprintf("Stop dot, type id: %s, live id: %s", it.TypeID, it.LiveID)
 				}
+				return fmt.Sprintf("Stop dot, type id: %s, live id: %s", it.TypeID, it.LiveID)
 			})
 			if b := c.dotEvent.TypeEvents(it.TypeID); len(b) > 0 {
 				for i := range b {
@@ -1238,9 +1210,8 @@ func (c *lineImp) Destroy(ignore bool) error {
 				m, _ := c.metas.Get(it.TypeID)
 				if m != nil {
 					return fmt.Sprintf("Destroy dot, type id: %s, live id: %s, name: %s", it.TypeID, it.LiveID, m.Name)
-				} else {
-					return fmt.Sprintf("Destroy dot, type id: %s, live id: %s", it.TypeID, it.LiveID)
 				}
+				return fmt.Sprintf("Destroy dot, type id: %s, live id: %s", it.TypeID, it.LiveID)
 			})
 			if b := c.dotEvent.TypeEvents(it.TypeID); len(b) > 0 {
 				for i := range b {
@@ -1295,7 +1266,6 @@ func (c *lineImp) Destroy(ignore bool) error {
 			if all, ok := it.Dot.(dot.AfterAllDestroyer); ok {
 				afterAll = append(afterAll, all)
 			}
-
 		}
 
 		for _, it := range afterAll {
@@ -1334,8 +1304,7 @@ func (c *lineImp) GetLineBuilder() *dot.Builder {
 	return c.lineBuilder
 }
 func (c *lineImp) InfoAllTypeAdnLives() {
-	logger := c.logger
-	logger.Info(func() string {
+	c.logger.Info(func() string {
 		return fmt.Sprintf("lives - %d: %v, types - %d: %v", len(c.lives.LiveIDMap), c.lives.LiveIDMap, len(c.types), c.types)
 	})
 }
@@ -1369,3 +1338,12 @@ func (c *lineImp) EachLives(call func(live *dot.Live, meta *dot.Metadata) bool) 
 }
 
 ///////////////
+
+func multiErr(err *error, err2 error) {
+	if err2 != nil {
+		if *err != nil {
+			dot.Logger().Errorln("lineImp", zap.Error(*err))
+		}
+		*err = err2
+	}
+}

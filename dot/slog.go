@@ -8,9 +8,11 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+//Level level of log
 type Level = zapcore.Level
 
 const (
+	//LogLiveID log dot live id
 	LogLiveID = "d8299d21-4f43-48bd-9a5c-654c4395ea17"
 
 	// DebugLevel logs are typically voluminous, and are usually disabled in
@@ -24,7 +26,7 @@ const (
 	// ErrorLevel logs are high-priority. If an application is running smoothly,
 	// it shouldn't generate any error-level logs.
 	ErrorLevel = zapcore.ErrorLevel
-	// DPanicLevel logs are particularly important errors. In development the
+	//FatalLevel DPanicLevel logs are particularly important errors. In development the
 	// logger panics after writing the message.
 	FatalLevel = zapcore.FatalLevel
 )
@@ -32,14 +34,14 @@ const (
 //Default log, if not created, then returned log will be output to “before.log” file，all log will be returned
 var logger SLogger = nil
 
-//Return default log, this API is used to call log easily
+//Logger Return default log, this API is used to call log easily
 //This method does not consider thread security, Adjusting value is not suggested after program initialization
 //Note: Default log, if log is not created, then returned log will be output to control panel, all log will be output
 func Logger() SLogger {
 	return logger
 }
 
-//Set default log,
+//SetLogger Set default log,
 //This method does not consider thread security, Adjusting value is not suggested after program initialization
 func SetLogger(log SLogger) {
 	if logger != nil {
@@ -86,6 +88,7 @@ type SLogger interface {
 	NewLogger(callerSkip int) SLogger
 }
 
+//LogConfig log config
 type LogConfig struct {
 	File  string `json:"file"`
 	Level string `json:"level"`

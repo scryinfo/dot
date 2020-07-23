@@ -5,12 +5,12 @@ package dot
 
 var defaultLine Line
 
-//Return default Line，general program only has one line
+//GetDefaultLine Return default Line，general program only has one line
 func GetDefaultLine() Line {
 	return defaultLine
 }
 
-//Set default line
+//SetDefaultLine Set default line
 func SetDefaultLine(line Line) {
 	defaultLine = line
 }

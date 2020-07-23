@@ -10,6 +10,8 @@ import (
 )
 
 const (
+
+	//SconfigTypeID scofig dot type id
 	SconfigTypeID = "484ef01d-3c04-4517-a643-2d776a9ae758"
 )
 
@@ -49,6 +51,7 @@ type SConfig interface {
 	DefFloat64(key string, def float64) float64
 }
 
+//UnMarshalConfig unmarshal config
 func UnMarshalConfig(conf []byte, obj interface{}) (err error) {
 	err = nil
 	if conf != nil {
@@ -59,6 +62,7 @@ func UnMarshalConfig(conf []byte, obj interface{}) (err error) {
 	return err
 }
 
+//MarshalConfig marshal config
 func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
 	conf = nil
 	err = nil

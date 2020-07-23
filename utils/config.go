@@ -52,7 +52,6 @@ func GetFullPathFile(file string) string {
 	}
 
 	return res
-
 }
 func GetTlsConfig(conf *TlsConfig) (*tls.Config, error) {
 	if len(conf.CaPem) > 0 && len(conf.Key) > 0 && len(conf.Pem) > 0 { //both tls
@@ -84,19 +83,16 @@ func GetTlsConfig(conf *TlsConfig) (*tls.Config, error) {
 		if err != nil {
 			return nil, errors.WithStack(err)
 		}
-
 		return &tls.Config{
 			ServerName:   conf.ServerNameOverride,
 			Certificates: []tls.Certificate{cert},
 			RootCAs:      pool, //ClientConn, use the RootCAs
 		}, nil
-
 	} else if len(conf.Pem) > 0 { //just server
 		pemFile := GetFullPathFile(conf.Pem)
 		if len(pemFile) < 1 {
 			return nil, errors.New("the Pem is not empty, and can not find the file: " + conf.Pem)
 		}
-
 		b, err := ioutil.ReadFile(pemFile)
 		if err != nil {
 			return nil, err

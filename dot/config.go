@@ -17,16 +17,16 @@ type LiveConfig struct {
 	JSON *json.RawMessage `json:"json"`
 }
 
-//DotConfig dot config
-type DotConfig struct {
+//MetaLivesConfig dot config
+type MetaLivesConfig struct {
 	MetaData Metadata     `json:"metaData"`
 	Lives    []LiveConfig `json:"lives"`
 }
 
 //Config config
 type Config struct {
-	Log  LogConfig   `json:"log"`
-	Dots []DotConfig `json:"dots"`
+	Log  LogConfig         `json:"log"`
+	Dots []MetaLivesConfig `json:"dots"`
 }
 
 //FindConfig find config
