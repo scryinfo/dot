@@ -4,8 +4,7 @@
 var hi_pb = require("./hi_pb");
 var grpc = require("@improbable-eng/grpc-web").grpc;
 
-// var exports = (typeof module === 'object' && module != null && module.exports !== undefined) ? module.exports : {};
-// var exports = {};
+let exports = {};
 
 var HiDot = (function () {
   function HiDot() {}
@@ -58,7 +57,7 @@ HiDot.BothSides = {
   responseType: hi_pb.HelloResponse
 };
 
-// exports.HiDot = HiDot;
+exports.HiDot = HiDot;
 
 function HiDotClient(serviceHost, options) {
   this.serviceHost = serviceHost;
@@ -252,6 +251,6 @@ HiDotClient.prototype.bothSides = function bothSides(metadata) {
   };
 };
 
-// exports.HiDotClient = HiDotClient;
+exports.HiDotClient = HiDotClient;
 
 export {HiDot, HiDotClient}

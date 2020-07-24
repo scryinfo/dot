@@ -15,4 +15,10 @@ protoc --js_out=import_style=commonjs:%out%/ --grpc-web_out=import_style=commonj
 js code  
 protoc --js_out=import_style=commonjs:%out%/ --grpc-web_out=import_style=commonjs,mode=grpcweb:%out%/ hi.proto  
 ts-protoc-gen
-protoc --plugin="protoc-gen-ts" --js_out=import_style=commonjs,binary:%out%/ --ts_out=%out%/ hi.proto  
+protoc --plugin="protoc-gen-ts" --js_out=import_style=commonjs,binary:%out%/ --ts_out=service=grpc-web:%out%/ hi.proto  
+
+注：使用ts-protoc-gen生成的代码有一个bug ： exports is not defined
+  需要在 “X_pb_service.js” 文件中加入如果代码(参见sample中的处理)：
+```ts
+export {HiDot, HiDotClient}
+```
