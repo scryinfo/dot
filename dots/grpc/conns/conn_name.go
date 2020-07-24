@@ -4,6 +4,7 @@
 package conns
 
 import (
+	"errors"
 	"google.golang.org/grpc"
 
 	"github.com/scryinfo/dot/dot"
@@ -39,21 +40,20 @@ func newConnName(conf []byte) (dot.Dot, error) {
 }
 
 func ConnNameTypeLives() []*dot.TypeLives {
-	tl := &dot.TypeLives{
+	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: ConnNameTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
 			return newConnName(conf)
 		}},
-		Lives: []dot.Live{
-			{
-				LiveID:    ConnNameTypeID,
-				RelyLives: map[string]dot.LiveID{"Conns_": ConnsTypeID, "EtcdConns": EtcdConnsTypeID},
-			},
-		},
-	}
-
-	lives := EtcdConnsTypeLives()
-	lives = append(lives, tl)
-	lives = append(lives, ConnsTypeLives()...)
+		//Lives: []dot.Live{
+		//	{
+		//		LiveID:    ConnNameTypeID,
+		//		RelyLives: map[string]dot.LiveID{"Conns_": ConnsTypeID, "EtcdConns": EtcdConnsTypeID},
+		//	},
+		//},
+	}}
+	//please call the EtcdConnsTypeLives or ConnsTypeLives by yourself
+	//lives = EtcdConnsTypeLives()
+	//lives = append(lives, ConnsTypeLives()...)
 
 	return lives
 }
@@ -65,6 +65,13 @@ func ConnNameConfigTypeLive() *dot.ConfigTypeLive {
 		TypeIDConfig: ConnNameTypeID,
 		ConfigInfo:   &configName{},
 	}
+}
+
+func (c *ConnName) Injected(dot.Line) error {
+	if c.Conns_ == nil && c.EtcdConns == nil {
+		return errors.New("no conn is checked")
+	}
+	return nil
 }
 
 func (c *ConnName) AfterAllInject(l dot.Line) {
