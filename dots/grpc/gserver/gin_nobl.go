@@ -23,10 +23,10 @@ const (
 
 //support the http and tcp
 type ginNobl struct {
-	ServerNobl ServerNobl     `dot:""`
-	GinRouter  *gindot.Router `dot:""`
-	wrapserver *grpcweb.WrappedGrpcServer
-	preUrl     string
+	ServerNobl        ServerNobl     `dot:""`
+	GinRouter         *gindot.Router `dot:""`
+	wrappedGrpcServer *grpcweb.WrappedGrpcServer
+	preUrl            string
 }
 
 //GinNoblTypeLives Data structure needed when generating newer component
@@ -37,7 +37,7 @@ func GinNoblTypeLives() []*dot.TypeLives {
 			return &ginNobl{}, nil
 		}},
 		Lives: []dot.Live{
-			dot.Live{
+			{
 				LiveID:    GinNoblTypeID,
 				RelyLives: map[string]dot.LiveID{"GinRouter": gindot.RouterTypeID, "ServerNobl": ServerNoblTypeID},
 			},
@@ -50,7 +50,7 @@ func GinNoblTypeLives() []*dot.TypeLives {
 }
 
 //Run after every component finished start, this can ensure all service has been registered on grpc server
-func (c *ginNobl) AfterAllStart(l dot.Line) {
+func (c *ginNobl) AfterAllStart(dot.Line) {
 	if rp := c.GinRouter.RelativePath(); len(rp) > 0 && rp != "/" {
 		if !strings.HasPrefix(rp, "/") {
 			rp = "/" + rp
@@ -66,9 +66,9 @@ func (c *ginNobl) AfterAllStart(l dot.Line) {
 }
 
 //Stop stop dot
-func (c *ginNobl) Stop(ignore bool) error {
-	if c.wrapserver != nil {
-		c.wrapserver = nil
+func (c *ginNobl) Stop(bool) error {
+	if c.wrappedGrpcServer != nil {
+		c.wrappedGrpcServer = nil
 	}
 	return nil
 }
@@ -80,12 +80,31 @@ func (c *ginNobl) Server() *grpc.Server {
 func (c *ginNobl) startServer() {
 
 	logger := dot.Logger()
-	c.wrapserver = grpcweb.WrapServer(c.Server(), grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}))
+	// Control the behaviour of the gRPC-WebSocket wrapper (e.g. modifying CORS behaviour) using `With*` options.
+	options := []grpcweb.Option{
+		// Allows for handling grpc-web requests of websockets - enabling bidirectional requests.
+		grpcweb.WithWebsockets(true),
+		// Accept all requests from remote origins,
+		// don't check whether the origin of the request matches the host of the request.
+		grpcweb.WithWebsocketOriginFunc(func(req *http.Request) bool {
+			return true
+		}),
+		// Not allow requests incoming with a path prefix added to the URL,
+		// exposing the endpoint as the root resource, to avoid
+		// the performance cost of path processing for every request.
+		grpcweb.WithAllowNonRootResource(false),
+		// Only allow CORS requests for registered endpoints,
+		// not allow handling gRPC requests for unknown endpoints (e.g. for proxying).
+		grpcweb.WithCorsForRegisteredEndpointsOnly(true),
+		grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}),
+	}
+
+	c.wrappedGrpcServer = grpcweb.WrapServer(c.Server(), options...)
 
 	handle := func(ctx *gin.Context) {
 		logger.Debugln("ginNobl", zap.String("", ctx.Request.RequestURI))
 
-		if c.wrapserver.IsGrpcWebRequest(ctx.Request) {
+		if c.wrappedGrpcServer.IsGrpcWebRequest(ctx.Request) {
 			if len(c.preUrl) > 0 { // because can not set the "endpointFunc" of WrapServer, do this so so
 				old := ctx.Request.URL.Path
 				if strings.HasPrefix(old, c.preUrl) {
@@ -98,7 +117,18 @@ func (c *ginNobl) startServer() {
 			resp.Header().Set("Access-Control-Allow-Origin", "*")  //
 			resp.Header().Set("Access-Control-Allow-Methods", "*") //
 			resp.Header().Add("Access-Control-Allow-Headers", "content-type,x-grpc-web,x-user-agent")
-			c.wrapserver.ServeHTTP(resp, ctx.Request)
+			c.wrappedGrpcServer.ServeHTTP(resp, ctx.Request)
+			return
+		} else if c.wrappedGrpcServer.IsGrpcWebSocketRequest(ctx.Request) {
+			if len(c.preUrl) > 0 { // because can not set the "endpointFunc" of WrapServer, do this so so
+				old := ctx.Request.URL.Path
+				if strings.HasPrefix(old, c.preUrl) {
+					index := len(c.preUrl) - 1
+					ctx.Request.URL.Path = old[index:]
+				}
+			}
+			c.wrappedGrpcServer.HandleGrpcWebsocketRequest(ctx.Writer, ctx.Request)
+			return
 		} else {
 			ctx.String(http.StatusOK, "no rpc")
 		}
@@ -113,4 +143,5 @@ func (c *ginNobl) startServer() {
 		ctx.Header("Access-Control-Allow-Headers", "content-type,x-grpc-web,x-user-agent")
 		ctx.String(http.StatusOK, "ok")
 	})
+	c.GinRouter.Router().GET(url, handle) //for websocket
 }

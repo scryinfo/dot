@@ -9,6 +9,8 @@ import (
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dot/sample/grpc/go_out/hidot"
 	"go.uber.org/zap"
+	"io"
+	"strconv"
 )
 
 const (
@@ -22,6 +24,9 @@ type config struct {
 type HiServer struct {
 	ServerNobl gserver.ServerNobl `dot:""`
 	conf       config
+
+	ctx       context.Context
+	cancelFun context.CancelFunc
 }
 
 func newHiServer(conf interface{}) (dot.Dot, error) {
@@ -41,24 +46,100 @@ func newHiServer(conf interface{}) (dot.Dot, error) {
 	d := &HiServer{
 		conf: *dconf,
 	}
+	d.ctx, d.cancelFun = context.WithCancel(context.Background())
 
 	return d, err
 }
 
-func (serv *HiServer) Hi(ctx context.Context, req *hidot.HiReq) (*hidot.HiRes, error) {
-	dot.Logger().Infoln("HiServer", zap.String(serv.conf.Name, req.Name))
-	res := &hidot.HiRes{Name: serv.conf.Name}
+func (c *HiServer) Hi(ctx context.Context, req *hidot.HiReq) (*hidot.HiRes, error) {
+	dot.Logger().Infoln("HiServer", zap.String(c.conf.Name, req.Name))
+	res := &hidot.HiRes{Name: c.conf.Name}
 	return res, nil
 }
 
-func (serv *HiServer) Write(ctx context.Context, req *hidot.WriteReq) (*hidot.WriteRes, error) {
-	dot.Logger().Infoln("HiServer", zap.String(serv.conf.Name, req.Data))
+func (c *HiServer) Write(ctx context.Context, req *hidot.WriteReq) (*hidot.WriteRes, error) {
+	dot.Logger().Infoln("HiServer", zap.String(c.conf.Name, req.Data))
 	res := &hidot.WriteRes{Data: "Return : " + req.Data}
 	return res, nil
 }
 
-func (serv *HiServer) Start(ignore bool) error {
-	hidot.RegisterHiDotServer(serv.ServerNobl.Server(), serv)
+func (c *HiServer) ServerStream(req *hidot.HelloRequest, serverStream hidot.HiDot_ServerStreamServer) error {
+	dot.Logger().Infoln("HiServer", zap.String(c.conf.Name, "ServerStream"))
+
+	res := &hidot.HelloResponse{Reply: req.Greeting + " ServerStream"}
+	err := serverStream.Send(res)
+	if err == io.EOF {
+		return nil
+	} else if err != nil {
+		return err
+	}
+
+	//req.Reset()
+	//err = serverStream.RecvMsg(req)
+	//if err == io.EOF {
+	//	return nil
+	//} else if err != nil {
+	//	return err
+	//}
+	return nil
+}
+
+func (c *HiServer) ClientStream(clientStream hidot.HiDot_ClientStreamServer) error {
+	dot.Logger().Infoln("HiServer", zap.String(c.conf.Name, "ClientStream"))
+	count := int64(0)
+	for {
+		count++
+		ctx := clientStream.Context()
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-c.ctx.Done():
+			return nil
+		default:
+
+		}
+		req, err := clientStream.Recv()
+		if err == io.EOF {
+			clientStream.SendAndClose(&hidot.HelloResponse{Reply: req.Greeting + "  " + strconv.FormatInt(count, 10)})
+			return nil
+		} else if err != nil {
+			return err
+		}
+		res := &hidot.HelloResponse{Reply: req.Greeting + "  " + strconv.FormatInt(count, 10)}
+		clientStream.SendMsg(res)
+	}
+	return nil
+}
+
+func (c *HiServer) BothSides(server hidot.HiDot_BothSidesServer) error {
+	dot.Logger().Infoln("HiServer", zap.String(c.conf.Name, "BothSides"))
+	count := int64(0)
+	for {
+		count++
+		ctx := server.Context()
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-c.ctx.Done():
+			return nil
+		default:
+
+		}
+		req, err := server.Recv()
+		if err == io.EOF {
+			return nil
+		} else if err != nil {
+			return err
+		}
+
+		res := &hidot.HelloResponse{Reply: req.Greeting + "  " + strconv.FormatInt(count, 10)}
+		server.SendMsg(res)
+	}
+	return nil
+}
+
+func (c *HiServer) Start(ignore bool) error {
+	hidot.RegisterHiDotServer(c.ServerNobl.Server(), c)
 	return nil
 }
 

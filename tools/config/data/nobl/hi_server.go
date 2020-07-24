@@ -6,17 +6,19 @@ package nobl
 import (
 	"context"
 	"encoding/json"
-	"github.com/BurntSushi/toml"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/grpc/gserver"
-	"github.com/scryinfo/dot/tools/config/data/go_out"
-	"github.com/scryinfo/dot/tools/config/data/nobl/tool/findDot"
-	"github.com/scryinfo/dot/tools/config/data/nobl/tool/importConfig"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/BurntSushi/toml"
+	"gopkg.in/yaml.v2"
+
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/grpc/gserver"
+	"github.com/scryinfo/dot/tools/config/data/go_out"
+	"github.com/scryinfo/dot/tools/config/data/nobl/tool/find_dot"
+	"github.com/scryinfo/dot/tools/config/data/nobl/tool/import_config"
 )
 
 const (
@@ -27,7 +29,6 @@ type config struct {
 	Name string `json:"name"`
 }
 
-//todo 命名
 type RpcImplement struct {
 	ServerNobl gserver.ServerNobl `dot:""`
 	conf       config
@@ -73,7 +74,7 @@ func RpcImplementTypeLives() []*dot.TypeLives {
 
 func (serv *RpcImplement) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_out.ResDots, error) {
 	dirs := in.Dirs
-	bytes, invalidDirectory, e := findDot.FindDots(dirs)
+	bytes, invalidDirectory, e := find_dot.FindDots(dirs)
 	//删除运行时产生的中间文件
 	{
 		del := os.Remove("./run_out/callMethod.go")
@@ -109,7 +110,7 @@ func (serv *RpcImplement) ImportByDot(ctx context.Context, in *go_out.ReqImport)
 
 //支持三种格式json toml yaml
 func (serv *RpcImplement) ImportByConfig(con context.Context, im *go_out.ReqImport) (*go_out.ResImport, error) {
-	config := importConfig.New()
+	config := import_config.New()
 	_, err := config.ConfLoad(im.Filepath)
 	if err != nil {
 		resConfig := go_out.ResImport{

@@ -34,7 +34,7 @@ export function rpcimportByDot(filepath, callback) {
 //importByConfig
 export function rpcimportByConfig(filepath, callback) {
     var request = new ReqImport();
-    //var filepath = '/home/jayce/golangPath/src/dot/sample/grpc/http/server/server_http.json'; //文件路径
+    //var filepath = '/home/jayce/golangPath/src/dot/sample/grpc/http/server/gin.json'; //文件路径
     request.setFilepath(filepath);
     console.log("importbyconfig", request);
     rpcweb.importByConfig(request, {}, (err, response) => {

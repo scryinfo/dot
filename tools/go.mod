@@ -1,4 +1,4 @@
-module github.com/scryinfo/dot/tools/config
+module github.com/scryinfo/dot/tools
 
 go 1.14
 

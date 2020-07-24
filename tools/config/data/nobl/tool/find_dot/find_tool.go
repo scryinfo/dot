@@ -1,4 +1,4 @@
-package findDot
+package find_dot
 
 import (
 	"bytes"
@@ -363,7 +363,7 @@ func (p *packageInfo) findFuncNodeOnAst(isConfig bool) {
 //第二个代表返回值是否是数组
 func returnValueJudgment(ret *ast.Field) (bool, bool) {
 	retype, ok := (ret.Type).(*ast.StarExpr) //找到*
-	if ok { //是一个指针
+	if ok {                                  //是一个指针
 		x, ok1 := (retype.X).(*ast.SelectorExpr) //有选择器的表达式  a.b
 		if !ok1 {
 			return false, false //类似*xxx
@@ -405,7 +405,7 @@ func returnValueJudgment(ret *ast.Field) (bool, bool) {
 //第二个代表返回值是否是数组
 func returnValueJudgmentOfConfig(ret *ast.Field) (bool, bool) {
 	retype, ok := (ret.Type).(*ast.StarExpr) //找到*
-	if ok { //是一个指针
+	if ok {                                  //是一个指针
 		x, ok1 := (retype.X).(*ast.SelectorExpr) //有选择器的表达式  a.b
 		if !ok1 {
 			return false, false //类似*xxx
