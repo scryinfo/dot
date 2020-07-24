@@ -1,0 +1,67 @@
+{
+  "log": {
+    "file": "log.log",
+    "level": "debug"
+  },
+  "dots":[
+    {
+      "metaData":{
+        "name": "ServerNobl",
+        "typeId":"77a766e7-c288-413f-946b-bc9de6df3d70"
+      },
+      "lives":[
+        {
+          "liveId":"77a766e7-c288-413f-946b-bc9de6df3d70",
+          "json":{
+            "addrs":["localhost:5012"]
+          }
+        }
+      ]
+    },
+    {
+      "metaData": {
+        "typeId": "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+      },
+      "lives": [
+        {
+          "liveId": "4943e959-7ad7-42c6-84dd-8b24e9ed30bb",
+          "json": {
+            "addr": ":6868",
+            "keyFile": "",
+            "pemFile": ""
+          }
+        }
+      ]
+    },
+    {
+      "metaData": {
+        "typeId": "6be39d0b-3f5b-47b4-818c-642c049f3166"
+      },
+      "lives": [
+        {
+          "liveId": "6be39d0b-3f5b-47b4-818c-642c049f3166",
+          "relyLives": {
+            "GinDot_": "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+          },
+          "json": {
+            "relativePath": "/root"
+          }
+        }
+      ]
+    },
+    {
+      "metaData":{
+        "name": "server 1",
+        "typeId":"hiserver"
+      },
+      "lives":[
+        {
+          "liveId":"hiserver",
+          "json":{
+            "name":"server 1"
+          }
+        }
+      ]
+    }
+  ]
+}

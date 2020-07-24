@@ -100,7 +100,6 @@ func (c *HiServer) ClientStream(clientStream hidot.HiDot_ClientStreamServer) err
 		}
 		req, err := clientStream.Recv()
 		if err == io.EOF {
-			clientStream.SendAndClose(&hidot.HelloResponse{Reply: req.Greeting + "  " + strconv.FormatInt(count, 10)})
 			return nil
 		} else if err != nil {
 			return err
