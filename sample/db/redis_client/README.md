@@ -31,7 +31,8 @@
    ```
    后面一部分是`model`的`id`，如未初始化，则会自动生成一段随机`id`
 # see
-http://doc.redisfans.com
+[redis commands - offical](https://redis.io/commands)
+[redis commands - chinese](http://doc.redisfans.com)
 # redis 可视化工具
 [fastonosql](https://github.com/fastogt/fastonosql/releases)
 [RedisStudio window](https://github.com/cinience/RedisStudio/releases)
