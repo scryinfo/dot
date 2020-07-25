@@ -69,6 +69,7 @@ export class HiWrapper {
         req.setGreeting(data);
         let client = this.clientStream_ as grpc.Client<HelloRequest, HelloResponse>;
         if (!client) {
+            //{host:process.env.VUE_APP_BASE_API, transport: grpc.WebsocketTransport()}
             client = grpc.client<HelloRequest, HelloResponse, grpc.MethodDefinition<HelloRequest, HelloResponse> >(HiDot.ClientStream, {host:process.env.VUE_APP_BASE_API, transport: grpc.WebsocketTransport()});
             this.clientStream_ = client;
             client.start();
@@ -98,46 +99,47 @@ export class HiWrapper {
         const req = new HelloRequest();
         req.setGreeting(data);
 
-        // let client = this.serverStream_ as grpc.Client<HelloRequest, HelloResponse>;
-        // if (!client) {
-        //     client = grpc.client<HelloRequest, HelloResponse, grpc.MethodDefinition<HelloRequest, HelloResponse> >(HiDot.ServerStream, {host:process.env.VUE_APP_BASE_API, transport: grpc.WebsocketTransport()});
-        //     this.serverStream_ = client; //由于 HiDot.ServerStream.requestStream = false, 所以这个流只能发送一次
-        //     client.start();
-        // }
-        //
-        // return new Promise<HelloResponse>((resolve, reject)=>{
-        //     client.onMessage(msg =>{
-        //         if (msg.getReply().startsWith("close")) {
-        //             client.close();
-        //         }
-        //         this.serverStream_ = null;
-        //         resolve(msg);
-        //     });
-        //     client.onEnd((code,message,tra) =>{
-        //         client.close();
-        //         this.serverStream_ = null;
-        //         if(code != 0) {
-        //             reject(message);
-        //         }
-        //     });
-        //     client.send(req);
-        // })
+        let client = this.serverStream_ as grpc.Client<HelloRequest, HelloResponse>;
+        if (!client) {
+            //{host:process.env.VUE_APP_BASE_API, transport: grpc.WebsocketTransport()}
+            client = grpc.client<HelloRequest, HelloResponse, grpc.MethodDefinition<HelloRequest, HelloResponse> >(HiDot.ServerStream, {host:process.env.VUE_APP_BASE_API, transport: grpc.WebsocketTransport()});
+            this.serverStream_ = client; //由于 HiDot.ServerStream.requestStream = false, 所以这个流只能发送一次
+            client.start();
+        }
 
         return new Promise<HelloResponse>((resolve, reject)=>{
-            const stream = this.hiDot.serverStream(req);
-            stream.on("data", res => {
-                stream.cancel(); //it w
-                resolve(res);
+            client.onMessage(msg =>{
+                if (msg.getReply().startsWith("close")) {
+                    client.close();
+                    this.serverStream_ = null;
+                }
+                resolve(msg);
             });
-            stream.on("status", status => {
-               if (status.code != 0) {
-                   reject(status);
-               }
+            client.onEnd((code,message,tra) =>{
+                // client.close();
+                // this.serverStream_ = null;
+                if(code != 0) {
+                    reject(message);
+                }
             });
-            stream.on("end", status => {
-                stream.cancel()
-            })
+            client.send(req);
         })
+
+        // return new Promise<HelloResponse>((resolve, reject)=>{
+        //     const stream = this.hiDot.serverStream(req);
+        //     stream.on("data", res => {
+        //         stream.cancel(); //it w
+        //         resolve(res);
+        //     });
+        //     stream.on("status", status => {
+        //        if (status.code != 0) {
+        //            reject(status);
+        //        }
+        //     });
+        //     stream.on("end", status => {
+        //         stream.cancel()
+        //     })
+        // })
     }
 
     public bothSides(data: string) {
@@ -146,7 +148,9 @@ export class HiWrapper {
 
         let client = this.bothStream_ as grpc.Client<HelloRequest, HelloResponse>;
         if (!client) {
-            client = grpc.client<HelloRequest, HelloResponse, grpc.MethodDefinition<HelloRequest, HelloResponse> >(HiDot.BothSides, {host:process.env.VUE_APP_BASE_API, transport: grpc.WebsocketTransport()});
+            //{host:process.env.VUE_APP_BASE_API, transport: grpc.WebsocketTransport()}
+            //{host:process.env.VUE_APP_BASE_API}
+            client = grpc.client<HelloRequest, HelloResponse, grpc.MethodDefinition<HelloRequest, HelloResponse> >(HiDot.BothSides,{host:process.env.VUE_APP_BASE_API, transport: grpc.WebsocketTransport()} );
             this.bothStream_ = client;
             client.start();
         }

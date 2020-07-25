@@ -177,12 +177,14 @@ func (c *RedisClient) CleanVersion(category string, version string) error {
 			dot.Logger().Errorln("RedisClient CleanVersion", zap.NamedError("error", err))
 			return err
 		}
-		pipe := c.clientV8.TxPipeline()
-		pipe.Del(c.ctx, keys...)
-		_, err = pipe.Exec(c.ctx)
-		if err != nil {
-			dot.Logger().Errorln("RedisClient CleanVersion", zap.NamedError("error", err))
-			return err
+		if len(keys) > 0 {
+			pipe := c.clientV8.TxPipeline()
+			pipe.Del(c.ctx, keys...)
+			_, err = pipe.Exec(c.ctx)
+			if err != nil {
+				dot.Logger().Errorln("RedisClient CleanVersion", zap.NamedError("error", err))
+				return err
+			}
 		}
 		if cursor < 1 { //scan is over
 			break

@@ -22,3 +22,20 @@ protoc --plugin="protoc-gen-ts" --js_out=import_style=commonjs,binary:%out%/ --t
 ```ts
 export {HiDot, HiDotClient}
 ```
+
+# grpc stream
+[see](https://grpc.io/docs/languages/go/basics/)
+## server stream
+the client sends a request to the server and gets a stream to read a sequence of messages back. The client reads from the returned stream until there are no more messages. As you can see in our example, you specify a server-side streaming method by placing the stream keyword before the response type.
+## client stream
+ the client writes a sequence of messages and sends them to the server, again using a provided stream. Once the client has finished writing the messages, it waits for the server to read them all and return its response. You specify a client-side streaming method by placing the stream keyword before the request type
+## bidirectional stream
+both sides send a sequence of messages using a read-write stream. The two streams operate independently, so clients and servers can read and write in whatever order they like: for example, the server could wait to receive all the client messages before writing its responses, or it could alternately read a message then write a message, or some other combination of reads and writes. The order of messages in each stream is preserved. You specify this type of method by placing the stream keyword before both the request and the response
+
+## in web browser
+| | |  |
+| :----: | :----: |  :----:|
+|             | browser http| websocket|
+|server stream| 独立请求| 只能请求一次|
+|client stream| 独立请求| 多次|
+|bidirectional| 独立请求| 多次|
