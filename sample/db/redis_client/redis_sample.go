@@ -26,17 +26,6 @@ type RedisSample struct {
 	RedisClient *redis_client.RedisClient `dot:""`
 }
 
-func (c *RedisSample) Start(bool) (err error) {
-	c.RedisClient.ClientV8().FlushAll(c.RedisClient.ClientV8().Context())
-
-	go func() {
-		c.basicDemo()
-		c.versionControlDemo()
-	}()
-
-	return nil
-}
-
 func (c *RedisSample) basicDemo() {
 	// simulate query in cache first (no result)
 	v1, err := c.RedisClient.ClientV8().Get(c.RedisClient.ClientV8().Context(), basicDemoKey).Result()

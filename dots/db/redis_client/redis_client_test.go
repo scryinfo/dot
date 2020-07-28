@@ -3,6 +3,7 @@ package redis_client //nolint:golint
 import (
 	"encoding/json"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -23,6 +24,7 @@ func TestRedisClient_GetVersions(t *testing.T) {
 		getVersions, err := redisClient.GetVersions(category)
 		assert.Equal(t, nil, err)
 		assert.Equal(t, version, getVersions[0])
+		time.Sleep(2 * time.Second)
 	}
 
 	{
@@ -113,7 +115,6 @@ func GetRedisClient(versionFromRedis bool) *RedisClient {
 		Addr:                "127.0.0.1:6379",
 		KeepMaxVersionCount: 3,
 		VersionFromRedis:    versionFromRedis,
-		TrySeconds:          80,
 	}
 	bs, _ := json.Marshal(config)
 	return RedisClientTest(string(bs))

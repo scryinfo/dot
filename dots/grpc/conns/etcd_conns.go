@@ -83,6 +83,7 @@ func (c *EtcdConns) UnRegisterServer(name string, addr string) error {
 func (c *EtcdConns) Stop(ignore bool) error {
 	if c.etcdClient != nil {
 		c.etcdClient.Close()
+		//c.etcdClient = nil // maybe somewhere use the client, so do not set nil
 	}
 	return nil
 }

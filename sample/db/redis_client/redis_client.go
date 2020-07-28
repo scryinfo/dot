@@ -21,7 +21,8 @@ func main() {
 	{ // get redisSample client do something
 		redisSample := &RedisSample{}
 		l.ToInjecter().Inject(redisSample)
-		redisSample.Start(true)
+		redisSample.basicDemo()
+		redisSample.versionControlDemo()
 	}
 
 	ssignal.WaitCtrlC(func(s os.Signal) bool {

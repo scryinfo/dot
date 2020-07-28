@@ -22,7 +22,6 @@ type configRedis struct {
 	Addr                string `json:"addr"`
 	KeepMaxVersionCount int64  `json:"keepMaxVersionCount"` //分类中版本的最大数据量
 	VersionFromRedis    bool   `json:"versionFromRedis"`    //get version from redis or not
-	TrySeconds          int64  `json:"trySeconds"`          //订阅失败后，再次尝试的时间，单位秒， 默认为10秒
 }
 
 //RedisClient redis client dot
@@ -249,18 +248,17 @@ func (c *RedisClient) Create(dot.Line) error {
 	}
 
 	go func() {
+		//see https://redis.uptrace.dev/#pubsub the subscribe automatic reconnect
 		c.subscribe = c.clientV8.Subscribe(c.ctx, VersionControlChannelName)
 
-		// wait until subscribe success
-		_, err := c.subscribe.Receive(c.ctx)
-		if err != nil {
-			dot.Logger().Errorln("subscription redis failed", zap.NamedError("error", err))
-		}
 		for {
 			select {
 			case <-c.ctx.Done():
 				return
-			case msg := <-c.subscribe.Channel():
+			case msg, ok := <-c.subscribe.Channel(): //see
+				if !ok || msg == nil {
+					continue
+				}
 				vc := &VersionControl{}
 				vc, err := vc.Unmarshal(msg.Payload)
 				if err != nil {
@@ -308,9 +306,6 @@ func newRedisClient(conf []byte) (dot.Dot, error) {
 	}
 
 	d := &RedisClient{conf: *dconf}
-	if d.conf.TrySeconds < 1 {
-		d.conf.TrySeconds = 10
-	}
 
 	d.ctx, d.cancelFun = context.WithCancel(context.Background())
 
@@ -333,6 +328,7 @@ func RedisClientTest(jsonConfig string) *RedisClient {
 
 	redisClient := d.(*RedisClient)
 	_ = redisClient.Create(nil)
+	time.Sleep(2 * time.Second)
 	return redisClient
 }
 
