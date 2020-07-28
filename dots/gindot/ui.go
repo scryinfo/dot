@@ -179,7 +179,11 @@ func newUi(conf []byte) (*Ui, error) {
 		}
 
 		if len(ui.config.ResRelativePath) > 0 {
-			ui.relativePath = ui.ResAbsolutePath(ui.config.ResRelativePath)
+			////for dev
+			if !sfile.ExistFile(ui.ResAbsolutePath("dist")) {
+				dot.Logger().Debugln("UiPreAdd", zap.String("", ui.config.ResRelativePath))
+				ui.SetResRelativePath(ui.config.ResRelativePath)
+			}
 		}
 
 		err = nil
