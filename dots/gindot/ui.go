@@ -6,25 +6,13 @@ import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/scryg/sutils/sfile"
 	"go.uber.org/zap"
+	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 )
 
 const UiTypeID = "d9972be7-cef9-464c-9bbb-d1f11abea803" //type id of dot
-
-//todo 为了避免路径冲突以及使用方便，将如下功能以配置方式实现
-//d.Engine_.GinEngine().GET("/", func(ctx *gin.Context) {
-//	ctx.Redirect(http.StatusFound, d.UrlRelativePath()+"/home.html")
-//})
-//
-////for dev
-//{
-//if !sfile.ExistFile(d.ResAbsolutePath("dist")) {
-//dot.Logger().Debugln("UiPreAdd", zap.String("", "../../ui"))
-//d.SetResRelativePath("../../ui")
-//}
-//}
 
 type configUi struct {
 	UrlRelativePath string `json:"urlRelativePath"` //relative path of url
@@ -33,8 +21,9 @@ type configUi struct {
 		RelativePath string `json:"relativePath"`
 		Value        string `json:"value"` // the static resource of path, it is file or folder
 	} `json:"paths"`
-	NoCompress bool       `json:"noCompress"`
-	Encodings  []Encoding `json:"encodings"` //default are br-->gzip
+	MainHTMlName string     `json:"mainHTMlName"` //maybe home.html or index.html
+	NoCompress   bool       `json:"noCompress"`
+	Encodings    []Encoding `json:"encodings"` //default are br-->gzip
 }
 
 //Ui  add static resource into gin
@@ -54,6 +43,17 @@ func (c *Ui) Injected(l dot.Line) error {
 	c.router.Use(func(ctx *gin.Context) {
 		ctx.Handler()
 	})
+	if len(c.config.MainHTMlName) > 0 {
+		c.Engine_.GinEngine().GET("/", func(ctx *gin.Context) {
+			ctx.Redirect(http.StatusFound, c.UrlRelativePath()+"/"+c.config.MainHTMlName)
+		})
+		c.Engine_.GinEngine().GET("/home", func(ctx *gin.Context) {
+			ctx.Redirect(http.StatusFound, c.UrlRelativePath()+"/"+c.config.MainHTMlName)
+		})
+		c.Engine_.GinEngine().GET("/index", func(ctx *gin.Context) {
+			ctx.Redirect(http.StatusFound, c.UrlRelativePath()+"/"+c.config.MainHTMlName)
+		})
+	}
 	return nil
 }
 
@@ -179,7 +179,11 @@ func newUi(conf []byte) (*Ui, error) {
 		}
 
 		if len(ui.config.ResRelativePath) > 0 {
-			ui.relativePath = ui.ResAbsolutePath(ui.config.ResRelativePath)
+			////for dev
+			if !sfile.ExistFile(ui.ResAbsolutePath("dist")) {
+				dot.Logger().Debugln("UiPreAdd", zap.String("", ui.config.ResRelativePath))
+				ui.SetResRelativePath(ui.config.ResRelativePath)
+			}
 		}
 
 		err = nil
