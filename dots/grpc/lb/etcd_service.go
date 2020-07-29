@@ -1,7 +1,7 @@
 package lb
 
 import (
-	"go.etcd.io/etcd/embed"
+	"go.etcd.io/etcd/v3/embed"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/utils"

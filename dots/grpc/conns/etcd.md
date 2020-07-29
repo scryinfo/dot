@@ -1,5 +1,5 @@
 # etcd server
-the etcd 3.4.9 on default port 2379 , (2380 is for peer)
+the etcd 3.4.10 on default port 2379 , (2380 is for peer)
 
 [download](https://github.com/etcd-io/etcd/releases)
 
@@ -41,3 +41,7 @@ $ etcd --name etcdnode3 --initial-advertise-peer-urls http://10.0.1.12:2380 \
 1. [etcdkeeper](https://github.com/evildecay/etcdkeeper)
 2. [e3w](https://github.com/xiaowei520/e3w)
 3. [etcd-manager](https://www.npmjs.com/package/etcd-manager)
+
+# see 
+fixed grpc 1.30.0
+[see1](https://github.com/ozonru/etcd/tree/v3.3.0-rc.0-grpc1.30.0) [see2](https://github.com/pracucci/etcd/tree/upgrade-to-grpc-1.30)

@@ -7,8 +7,8 @@ import (
 	"github.com/pkg/errors"
 	"time"
 
-	"go.etcd.io/etcd/clientv3"
-	etcdnaming "go.etcd.io/etcd/clientv3/naming"
+	"go.etcd.io/etcd/v3/clientv3"
+	etcdnaming "go.etcd.io/etcd/v3/clientv3/naming"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/naming"
 
@@ -34,6 +34,8 @@ type EtcdConns struct {
 	grpcResolver *etcdnaming.GRPCResolver //ref the etcdClient
 	conns        map[string]*grpc.ClientConn
 	conf         configEtcdConns
+	ctx          context.Context
+	cancelFun    context.CancelFunc
 }
 
 func (c *EtcdConns) ClientConn(serviceName string) *grpc.ClientConn {
@@ -50,37 +52,48 @@ func (c *EtcdConns) EtcdClient() *clientv3.Client {
 	return c.etcdClient
 }
 
+func (c *EtcdConns) Context() context.Context {
+	return c.ctx
+}
+
+func (c *EtcdConns) CancelFun() context.CancelFunc {
+	return c.cancelFun
+}
+
 func (c *EtcdConns) GRPCResolver() *etcdnaming.GRPCResolver {
 	return c.grpcResolver
 }
-func (c *EtcdConns) RegisterServer(name string, addr string) error {
+func (c *EtcdConns) RegisterServer(ctx context.Context, name string, addr string) error {
 	if c.grpcResolver != nil {
-		return c.grpcResolver.Update(context.TODO(), name, naming.Update{Op: naming.Add, Addr: addr})
+		return c.grpcResolver.Update(ctx, name, naming.Update{Op: naming.Add, Addr: addr})
 	}
 	return errors.New("GRPC Resolver is null")
 }
-func (c *EtcdConns) UnRegisterServer(name string, addr string) error {
+func (c *EtcdConns) UnRegisterServer(ctx context.Context, name string, addr string) error {
 	if c.grpcResolver != nil {
-		return c.grpcResolver.Update(context.TODO(), name, naming.Update{Op: naming.Delete, Addr: addr})
+		return c.grpcResolver.Update(ctx, name, naming.Update{Op: naming.Delete, Addr: addr})
 	}
 	return errors.New("GRPC Resolver is null")
 }
 
 //func (c *EtcdConns) Create(l dot.Line) error {
-//	//todo add
+//
 //}
 //func (c *EtcdConns) Injected(l dot.Line) error {
-//	//todo add
+//
 //}
 //func (c *EtcdConns) AfterAllInject(l dot.Line) {
-//	//todo add
+//
 //}
 //
 //func (c *EtcdConns) Start(ignore bool) error {
-//	//todo add
+//
 //}
 
 func (c *EtcdConns) Stop(ignore bool) error {
+	if c.cancelFun != nil {
+		c.cancelFun()
+	}
 	if c.etcdClient != nil {
 		c.etcdClient.Close()
 		//c.etcdClient = nil // maybe somewhere use the client, so do not set nil
@@ -89,7 +102,7 @@ func (c *EtcdConns) Stop(ignore bool) error {
 }
 
 //func (c *EtcdConns) Destroy(ignore bool) error {
-//	//todo add
+//
 //}
 
 //construct dot
@@ -101,6 +114,7 @@ func newEtcdConns(conf []byte) (dot.Dot, error) {
 	}
 
 	d := &EtcdConns{conf: *dconf, conns: make(map[string]*grpc.ClientConn)}
+	d.ctx, d.cancelFun = context.WithCancel(context.Background())
 	{
 		var tlsConfig *tls.Config
 		{
@@ -117,6 +131,7 @@ func newEtcdConns(conf []byte) (dot.Dot, error) {
 			Endpoints:   d.conf.Endpoints,
 			DialTimeout: time.Duration(d.conf.DialTimeout) * time.Second,
 			TLS:         tlsConfig,
+			Context:     d.ctx,
 		})
 		if err != nil {
 			return nil, err

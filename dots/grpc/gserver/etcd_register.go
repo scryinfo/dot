@@ -4,6 +4,7 @@ import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/conns"
 	"go.uber.org/zap"
+	"runtime"
 )
 
 const EtcdRegisterTypeID = "c2c90392-ed06-4e7f-ac2a-662b0153ecb5"
@@ -76,31 +77,34 @@ func (c *EtcdRegister) AfterAllInject(l dot.Line) {
 
 //
 //func (c *EtcdRegister) Start(ignore bool) error {
-//	//todo add
+//
 //}
 
 func (c *EtcdRegister) AfterAllStart() {
 	logger := dot.Logger()
 	if c.EtcdConns != nil {
-		for i := range c.items {
-			item := &c.items[i]
-			for _, addr := range item.Addrs {
-				err := c.EtcdConns.RegisterServer(item.Name, addr)
-				if err != nil {
-					logger.Infoln("EtcdRegister", zap.Error(err))
+		go func() {
+			for i := range c.items {
+				item := &c.items[i]
+				for _, addr := range item.Addrs {
+					err := c.EtcdConns.RegisterServer(c.EtcdConns.Context(), item.Name, addr)
+					if err != nil {
+						logger.Infoln("EtcdRegister", zap.Error(err))
+					}
 				}
 			}
-		}
+		}()
+
+		runtime.Gosched() //给goroutine运行机会
 	}
 }
 
-//
 //func (c *EtcdRegister) Stop(ignore bool) error {
-//	//todo add
+//	return nil
 //}
 //
 //func (c *EtcdRegister) Destroy(ignore bool) error {
-//	//todo add
+//
 //}
 
 //construct dot
@@ -112,8 +116,16 @@ func newEtcdRegister(conf []byte) (dot.Dot, error) {
 	}
 
 	d := &EtcdRegister{conf: *dconf}
-
 	return d, nil
+}
+
+//NewEctcRegisterTest for test
+func NewEctcRegisterTest(config *ConfigEtcdRegister) *EtcdRegister {
+	if config == nil {
+		config = &ConfigEtcdRegister{}
+	}
+	d := &EtcdRegister{conf: *config}
+	return d
 }
 
 //EtcdRegisterTypeLives

@@ -8,7 +8,9 @@ import (
 	"github.com/scryinfo/dot/dots/line"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/naming"
+	"runtime"
 	"testing"
+	"time"
 )
 
 var controller *gomock.Controller
@@ -23,11 +25,16 @@ func TestEtcdConns_EtcdRegister(t *testing.T) {
 		addr = "127.0.0.1:100"
 		name = "test"
 	)
-	etcdConns := conns.NewEtcd([]string{"127.0.0.1:2379"}, []string{name})
+	var (
+		etcdConns = conns.NewEtcd([]string{"127.0.0.1:2379"}, []string{name})
+		l, err    = line.BuildAndStart(nil)
+		//ctx := context.Background()
+	)
 	{
-		l, err := line.BuildAndStart(nil)
+		runtime.GOMAXPROCS(4)
 		assert.Equal(t, nil, err)
 		l.ToInjecter().ReplaceOrAddByLiveID(etcdConns, conns.EtcdConnsTypeID)
+		l.ToInjecter().ReplaceOrAddByType(etcdConns)
 		{
 			controller := gomock.NewController(t)
 			s := NewMockServerNobl(controller)
@@ -39,10 +46,12 @@ func TestEtcdConns_EtcdRegister(t *testing.T) {
 			l.ToInjecter().ReplaceOrAddByLiveID(s, GinNoblTypeID)
 		}
 
-		etcdRegister := &EtcdRegister{EtcdConns: etcdConns}
+		etcdRegister := NewEctcRegisterTest(nil)
+		l.ToInjecter().Inject(etcdRegister)
 		l.ToInjecter().ReplaceOrAddByLiveID(etcdRegister, EtcdRegisterTypeID)
 		etcdRegister.AfterAllInject(l)
 		etcdRegister.AfterAllStart()
+		time.Sleep(2 * time.Second)
 	}
 
 	{
@@ -58,10 +67,10 @@ func TestEtcdConns_EtcdRegister(t *testing.T) {
 	}
 
 	{
-		err := etcdConns.UnRegisterServer(name, addr)
+		err := etcdConns.UnRegisterServer(context.TODO(), name, addr)
 		assert.Equal(t, nil, err)
 
-		etcdConns.RegisterServer(name, addr)
+		etcdConns.RegisterServer(context.TODO(), name, addr)
 		re, err := etcdConns.EtcdClient().Get(context.TODO(), name+"/"+addr)
 		assert.Equal(t, nil, err)
 		assert.Equal(t, true, len(re.Kvs) > 0)
@@ -71,8 +80,10 @@ func TestEtcdConns_EtcdRegister(t *testing.T) {
 		assert.Equal(t, addr, v.Addr)
 	}
 
+	line.StopAndDestroy(l, true)
 	if controller != nil {
 		controller.Finish()
 		controller = nil
 	}
+
 }

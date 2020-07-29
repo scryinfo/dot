@@ -109,11 +109,11 @@ func StopAndDestroy(l dot.Line, ignore bool) {
 	if builder.BeforeDestroy != nil {
 		builder.BeforeDestroy(l)
 	}
+
 	_ = l.ToLifer().Destroy(ignore)
 	if builder.AfterDestroy != nil {
 		builder.AfterDestroy(l)
 	}
-	dot.Logger().Infoln("dots Destroy")
-
-	//dot.Logger().Infoln("dots destroy") maybe no logger
+	dot.Logger().Infoln("dots will Destroy")
+	l.DestroyConfigLog()
 }

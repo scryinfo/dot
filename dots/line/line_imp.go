@@ -5,6 +5,7 @@ package line
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 	"strings"
 	"sync"
@@ -1272,31 +1273,6 @@ func (c *lineImp) Destroy(ignore bool) error {
 			it.AfterAllDestroy(c)
 		}
 	}
-
-	//Destroy log
-	if d, ok := c.logger.(dot.Destroyer); ok {
-		err2 := d.Destroy(ignore)
-		if err2 != nil {
-			logger.Debugln(fmt.Sprintf("lineImp, Destroy dot: %v", d))
-			if err != nil {
-				logger.Errorln("lineImp", zap.Error(err))
-			}
-			err = err2
-		}
-	}
-
-	//Destroy config
-	if d, ok := c.sConfig.(dot.Destroyer); ok {
-		err2 := d.Destroy(ignore)
-		if err2 != nil {
-			logger.Debugln(fmt.Sprintf("lineImp, Destroy dot: %v", d))
-			if err != nil {
-				logger.Errorln("lineImp", zap.Error(err))
-			}
-			err = err2
-		}
-	}
-
 	return err
 }
 
@@ -1335,6 +1311,27 @@ func (c *lineImp) EachLives(call func(live *dot.Live, meta *dot.Metadata) bool) 
 			}
 		}
 	}
+}
+
+func (c *lineImp) DestroyConfigLog() error {
+	var err error
+	//Destroy config
+	if d, ok := c.sConfig.(dot.Destroyer); ok {
+		err = d.Destroy(true)
+		if err != nil {
+			c.logger.Debugln(fmt.Sprintf("lineImp, Destroy dot: %v", d))
+		}
+	}
+	//Destroy log
+	if d, ok := c.logger.(dot.Destroyer); ok {
+		err2 := d.Destroy(true)
+		if err2 != nil {
+			log.Printf("lineImp, Destroy dot: %v", d) //no logger
+			err = err2
+		}
+	}
+
+	return err
 }
 
 ///////////////

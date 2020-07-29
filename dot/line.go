@@ -89,8 +89,10 @@ type Line interface {
 	GetLineBuilder() *Builder
 	//InfoAllTypeAdnLives just for debug, log info all types and lives
 	InfoAllTypeAdnLives()
-	//for each Lives, if the func return false, break the loop
+	//EachLives for each Lives, if the func return false, break the loop
 	EachLives(func(*Live, *Metadata) bool)
+	//DestroyConfigLog destroy config and log
+	DestroyConfigLog() error
 }
 
 //SetterLine If component need to know current line, then realize this API, and this API Will be called before component Create

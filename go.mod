@@ -21,9 +21,8 @@ require (
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/scryinfo/scryg v0.1.3
 	github.com/stretchr/testify v1.6.1
-	go.etcd.io/etcd v0.5.0-alpha.5.0.20200716221620-18dfb9cca345
+	go.etcd.io/etcd/v3 v3.3.0-rc.0.0.20200726182219-9006d8d4f9d8
 	go.uber.org/zap v1.15.0
-	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 	google.golang.org/grpc v1.29.1
 	google.golang.org/protobuf v1.23.0
 )

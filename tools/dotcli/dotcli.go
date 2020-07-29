@@ -27,31 +27,31 @@ type {{$.Name}} struct {
 	//todo add
 }
 //func (c *{{$.Name}}) Create(l dot.Line) error {
-//	//todo add
+//	
 //}
 //func (c *{{$.Name}}) Injected(l dot.Line) error {
-//	//todo add
+//	
 //}
 //func (c *{{$.Name}}) AfterAllInject(l dot.Line) {
-//	//todo add
+//	
 //}
 //
 //func (c *{{$.Name}}) Start(ignore bool) error {
-//	//todo add
+//	
 //}
 //
 //func (c *{{$.Name}}) Stop(ignore bool) error {
-//	//todo add
+//	
 //}
 //
 //func (c *{{$.Name}}) Destroy(ignore bool) error {
-//	//todo add
+//	
 //}
 
 //construct dot
 func new{{$.Name}}(conf []byte) (dot.Dot, error) {
 	dconf := &config{{$.Name}}{}
-	//todo
+	
 	//err := dot.UnMarshalConfig(conf, dconf)
 	//if err != nil {
 	//	return nil, err
