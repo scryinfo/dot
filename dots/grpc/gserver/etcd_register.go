@@ -99,10 +99,24 @@ func (c *EtcdRegister) AfterAllStart() {
 	}
 }
 
-//func (c *EtcdRegister) Stop(ignore bool) error {
-//	return nil
-//}
-//
+func (c *EtcdRegister) Stop(ignore bool) error {
+	logger := dot.Logger()
+	var err error
+	if c.EtcdConns != nil {
+		for i := range c.items {
+			item := &c.items[i]
+			for _, addr := range item.Addrs {
+				err2 := c.EtcdConns.UnRegisterServer(c.EtcdConns.Context(), item.Name, addr)
+				if err2 != nil {
+					err = err2
+					logger.Infoln("EtcdRegister", zap.Error(err))
+				}
+			}
+		}
+	}
+	return err
+}
+
 //func (c *EtcdRegister) Destroy(ignore bool) error {
 //
 //}
@@ -110,10 +124,10 @@ func (c *EtcdRegister) AfterAllStart() {
 //construct dot
 func newEtcdRegister(conf []byte) (dot.Dot, error) {
 	dconf := &ConfigEtcdRegister{}
-	err := dot.UnMarshalConfig(conf, dconf)
-	if err != nil {
-		return nil, err
-	}
+	_ = dot.UnMarshalConfig(conf, dconf)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	d := &EtcdRegister{conf: *dconf}
 	return d, nil
