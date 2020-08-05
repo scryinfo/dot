@@ -82,10 +82,10 @@ func {{$.Name}}TypeLives() []*dot.TypeLives {
 }
 
 //{{$.Name}}ConfigTypeLive
-func {{$.Name}}ConfigTypeLive() *dot.ConfigTypeLives {
+func {{$.Name}}ConfigTypeLive() *dot.ConfigTypeLive {
 	paths := make([]string, 0)
 	paths = append(paths, "")
-	return &dot.ConfigTypeLives{
+	return &dot.ConfigTypeLive{
 		TypeIDConfig: {{$.Name}}TypeID,
 		ConfigInfo: &config{{$.Name}}{
 			//todo
