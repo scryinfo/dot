@@ -47,6 +47,7 @@ type tData struct {
 	TypeName     string
 	TableName    string
 	PkgName      string
+	DbObjectName string
 	MapExcludes  map[string]bool
 	Fields       []DbField
 	StringFields []DbField
@@ -81,6 +82,7 @@ func parms(data *tData) {
 
 	data.TypeName = params.typeName
 	data.TableName = params.tableName
+	data.DbObjectName = pgs.Underscore(params.typeName)
 }
 
 //env:   GOPACKAGE=model;GOFILE=D:\peace\gopath\src\github.com\scryinfo\cashbox_site\shared\db\model\model_api.go
@@ -186,6 +188,7 @@ import (
 )
 	const (
 		{{$.TypeName}}_Table       = "{{$.TableName}}"
+		{{$.TypeName}}_Struct      = "{{$.DbObjectName}}"
 		{{range $.Fields}} {{$.TypeName}}_{{.Name}} = "{{.DbName}}"
 		{{end}}
 	)
@@ -207,7 +210,7 @@ import (
 	func (m *{{$.TypeName}}) ToUpsertSet() []string {
 		res := []string{
 		{{range $.Fields}}
-			{{if ne .Name "OptimisticLockVersion"}}fmt.Sprintf("%s = EXCLUDED.%s", {{$.TypeName}}_{{.Name}}, {{$.TypeName}}_{{.Name}}),{{else}}fmt.Sprintf("%s = EXCLUDED.%s+1", {{$.TypeName}}_OptimisticLockVersion, {{$.TypeName}}_OptimisticLockVersion),{{end}}{{end}}
+			fmt.Sprintf("%s = EXCLUDED.%s", {{$.TypeName}}_{{.Name}}, {{$.TypeName}}_{{.Name}}),{{end}}
 		}
 		return res
 	}

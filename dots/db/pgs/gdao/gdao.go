@@ -221,7 +221,7 @@ func (c *{{$.DaoName}}) GetByID(conn *pg.Conn, id string) (m *{{$.ModelPkgName}}
 
 //update before
 //you must get OptimisticLockVersion value
-func (c *{{$.DaoName}}) GetLockByID(conn *pg.Conn, ids []string) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+func (c *{{$.DaoName}}) GetLockByID(conn *pg.Conn, ids ...string) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	for i,_ := range ids {
 		m := &{{$.ModelPkgName}}.{{$.TypeName}}{ID: ids[i],}
 		ms=append(ms,m)
@@ -232,7 +232,7 @@ func (c *{{$.DaoName}}) GetLockByID(conn *pg.Conn, ids []string) (ms []*{{$.Mode
 	}
 	return
 }
-func (c *{{$.DaoName}}) GetLockByModelID(conn *pg.Conn, ms []*{{$.ModelPkgName}}.{{$.TypeName}}) error {
+func (c *{{$.DaoName}}) GetLockByModelID(conn *pg.Conn, ms ...*{{$.ModelPkgName}}.{{$.TypeName}}) error {
 	return conn.Model(&ms).WherePK().Column({{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion,{{$.ModelPkgName}}.{{$.TypeName}}_ID).For("UPDATE").Select()
 }
 
@@ -372,14 +372,21 @@ func (c *{{$.DaoName}}) Upsert(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.TypeName
 	} else if m.CreateTime == 0 {
 		m.CreateTime = m.UpdateTime
 	}
-	
-	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("{{$.TypeName}}."+{{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion+" = ?",m.OptimisticLockVersion)
+	m.OptimisticLockVersion++
+	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where({{$.ModelPkgName}}.{{$.TypeName}}_Struct+"."+{{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion+" = ?",m.OptimisticLockVersion-1)
 	for _, it := range m.ToUpsertSet() {
 		om.Set(it)
 	}
 	res, err := om.Insert()
 	if res.RowsAffected() == 0 {
-		err = pg.ErrNoRows
+		//err = pg.ErrNoRows
+		newm ,err:=c.GetLockByID(conn,m.ID)
+		if err != nil {
+			return err
+		}
+		m.OptimisticLockVersion =newm[0].OptimisticLockVersion
+		err =c.Update(conn,m)
+		return err
 	}
 	return err
 }
@@ -393,15 +400,21 @@ func (c *{{$.DaoName}}) UpsertReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 	} else if m.CreateTime == 0 {
 		m.CreateTime = m.UpdateTime
 	}
-
-	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("{{$.TypeName}}."+{{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion+" = ?",m.OptimisticLockVersion)
+	m.OptimisticLockVersion++
+	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where({{$.ModelPkgName}}.{{$.TypeName}}_Struct+"."+{{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion+" = ?",m.OptimisticLockVersion-1)
 	for _, it := range m.ToUpsertSet() {
 		om.Set(it)
 	}
 	mnew = &{{$.ModelPkgName}}.{{$.TypeName}}{}
 	_, err = om.Returning("*").Insert(mnew)
-	if err != nil {
-		mnew = nil
+	if err ==pg.ErrNoRows {
+		new_m ,err:=c.GetLockByID(conn,m.ID)
+		if err != nil {
+			return nil,err
+		}
+		m.OptimisticLockVersion =new_m[0].OptimisticLockVersion
+		mnew,err =c.UpdateReturn(conn,m)
+		return mnew,err
 	}
 	return
 }
@@ -478,7 +491,7 @@ func (c *{{$.DaoName}}) DeleteReturn(conn *pg.Conn, m *{{$.ModelPkgName}}.{{$.Ty
 //update designated column with Optimistic Lock
 func (c *{{$.DaoName}}) Update{{$.TypeName}}SomeColumn(conn *pg.Conn, ids []string,/*todo: update parameters*/) (err error) {
 
-	ms, err := c.GetLockByID(conn, ids)
+	ms, err := c.GetLockByID(conn, ids...)
 	if err != nil {
 		return
 	}
