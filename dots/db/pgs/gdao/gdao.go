@@ -310,6 +310,26 @@ func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, pageSize int, page int, conditi
 	return
 }
 
+// count counts valid records which after conditions filter, rather than whole table's count
+func (c *KIMCertDao) QueryPageWithCount(
+	conn *pg.Conn,
+	pageSize,
+	pageNum int,
+	condition string,
+	params ...interface{},
+) (ms []*model.KIMCert, count int, err error) {
+	if len(condition) < 1 {
+		count, err = conn.Model(&ms).Limit(pageSize).Offset((pageNum - 1) * pageSize).SelectAndCount()
+	} else {
+		count, err = conn.Model(&ms).Where(condition, params...).Limit(pageSize).Offset((pageNum - 1) * pageSize).SelectAndCount()
+	}
+
+	if err != nil { //be sure
+		ms = nil
+	}
+	return
+}
+
 // if find nothing, return pg.ErrNoRows
 func (c *{{$.DaoName}}) QueryOneWithLock(conn *pg.Conn, condition string, params ...interface{}) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
