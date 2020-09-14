@@ -311,13 +311,13 @@ func (c *{{$.DaoName}}) QueryPage(conn *pg.Conn, pageSize int, page int, conditi
 }
 
 // count counts valid records which after conditions filter, rather than whole table's count
-func (c *KIMCertDao) QueryPageWithCount(
+func (c *{{$.DaoName}}) QueryPageWithCount(
 	conn *pg.Conn,
 	pageSize,
 	pageNum int,
 	condition string,
 	params ...interface{},
-) (ms []*model.KIMCert, count int, err error) {
+) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, count int, err error) {
 	if len(condition) < 1 {
 		count, err = conn.Model(&ms).Limit(pageSize).Offset((pageNum - 1) * pageSize).SelectAndCount()
 	} else {
