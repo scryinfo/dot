@@ -15,17 +15,18 @@ var (
 	_ dot.SLogger = (*sLogger)(nil)
 )
 
+const funLog = "Fun Log"
+
 //NewSLogger new sConfig
 func NewSLogger(conf *dot.LogConfig, l dot.Line) dot.SLogger {
 	if conf == nil {
 		conf = &dot.LogConfig{
-			File:  "log.log",
-			Level: zapcore.InfoLevel.String(),
+			File: "log.log",
 		}
 	}
 
 	if len(conf.Level) < 1 {
-		conf.Level = zapcore.InfoLevel.String()
+		conf.Level = zapcore.DebugLevel.String()
 	}
 	if len(conf.File) < 1 {
 		conf.File = "log.log"
@@ -62,8 +63,8 @@ func (log *sLogger) Debugln(msg string, fields ...zap.Field) {
 
 //Debug debug
 func (log *sLogger) Debug(mstr dot.MakeStringer) {
-	if ce := log.Logger.Check(dot.DebugLevel, mstr()); ce != nil {
-		log.Logger.Debug(mstr())
+	if dot.DebugLevel <= log.GetLevel() {
+		log.Logger.Debug(funLog, zap.String("", mstr()))
 	}
 }
 
@@ -74,8 +75,8 @@ func (log *sLogger) Infoln(msg string, fields ...zap.Field) {
 
 //Info info
 func (log *sLogger) Info(mstr dot.MakeStringer) {
-	if ce := log.Logger.Check(dot.DebugLevel, mstr()); ce != nil {
-		log.Logger.Info(mstr())
+	if dot.InfoLevel <= log.GetLevel() {
+		log.Logger.Info(funLog, zap.String("", mstr()))
 	}
 }
 
@@ -86,8 +87,8 @@ func (log *sLogger) Warnln(msg string, fields ...zap.Field) {
 
 //Warn warn
 func (log *sLogger) Warn(mstr dot.MakeStringer) {
-	if ce := log.Logger.Check(dot.DebugLevel, mstr()); ce != nil {
-		log.Logger.Warn(mstr())
+	if dot.WarnLevel <= log.GetLevel() {
+		log.Logger.Warn(funLog, zap.String("", mstr()))
 	}
 }
 
@@ -98,8 +99,8 @@ func (log *sLogger) Errorln(msg string, fields ...zap.Field) {
 
 ////Error error
 func (log *sLogger) Error(mstr dot.MakeStringer) {
-	if ce := log.Logger.Check(dot.DebugLevel, mstr()); ce != nil {
-		log.Logger.Error(mstr())
+	if dot.ErrorLevel <= log.GetLevel() {
+		log.Logger.Error(funLog, zap.String("", mstr()))
 	}
 }
 
@@ -110,8 +111,8 @@ func (log *sLogger) Fatalln(msg string, fields ...zap.Field) {
 
 ////Fatal fatal
 func (log *sLogger) Fatal(mstr dot.MakeStringer) {
-	if ce := log.Logger.Check(dot.DebugLevel, mstr()); ce != nil {
-		log.Logger.Fatal(mstr())
+	if dot.FatalLevel <= log.GetLevel() {
+		log.Logger.Fatal(funLog, zap.String("", mstr()))
 	}
 }
 

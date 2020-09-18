@@ -90,3 +90,5 @@
 **/go.sum
 **/.idea
 **/*.exe
+/dots/db/pgs/gdao/gdao
+/update_email.sh

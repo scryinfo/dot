@@ -10,7 +10,7 @@ import (
 	"github.com/scryinfo/scryg/sutils/uuid"
 )
 
-const NoticeDaoTypeID = "c414bf81-1541-41c6-8f98-c7ab4b4f8179"
+const NoticeDaoTypeID = "08c1fbd6-a086-465a-af29-d16e1c0268aa"
 
 type NoticeDao struct {
 	*pgs.DaoBase `dot:""`
@@ -57,6 +57,23 @@ func (c *NoticeDao) GetByID(conn *pg.Conn, id string) (m *model.Notice, err erro
 		m = nil
 	}
 	return
+}
+
+//update before
+//you must get OptimisticLockVersion value
+func (c *NoticeDao) GetLockByID(conn *pg.Conn, ids ...string) (ms []*model.Notice, err error) {
+	for i, _ := range ids {
+		m := &model.Notice{ID: ids[i]}
+		ms = append(ms, m)
+	}
+	err = conn.Model(&ms).WherePK().Column(model.Notice_OptimisticLockVersion, model.Notice_ID).For("UPDATE").Select()
+	if err != nil {
+		ms = nil
+	}
+	return
+}
+func (c *NoticeDao) GetLockByModelID(conn *pg.Conn, ms ...*model.Notice) error {
+	return conn.Model(&ms).WherePK().Column(model.Notice_OptimisticLockVersion, model.Notice_ID).For("UPDATE").Select()
 }
 
 // if find nothing, return pg.ErrNoRows
@@ -194,14 +211,21 @@ func (c *NoticeDao) Upsert(conn *pg.Conn, m *model.Notice) (err error) {
 	} else if m.CreateTime == 0 {
 		m.CreateTime = m.UpdateTime
 	}
-
-	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("Notice."+model.Notice_OptimisticLockVersion+" = ?", m.OptimisticLockVersion)
+	m.OptimisticLockVersion++
+	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where(model.Notice_Struct+"."+model.Notice_OptimisticLockVersion+" = ?", m.OptimisticLockVersion-1)
 	for _, it := range m.ToUpsertSet() {
 		om.Set(it)
 	}
 	res, err := om.Insert()
 	if res.RowsAffected() == 0 {
-		err = pg.ErrNoRows
+		//err = pg.ErrNoRows
+		newm, err := c.GetLockByID(conn, m.ID)
+		if err != nil {
+			return err
+		}
+		m.OptimisticLockVersion = newm[0].OptimisticLockVersion
+		err = c.Update(conn, m)
+		return err
 	}
 	return err
 }
@@ -215,15 +239,21 @@ func (c *NoticeDao) UpsertReturn(conn *pg.Conn, m *model.Notice) (mnew *model.No
 	} else if m.CreateTime == 0 {
 		m.CreateTime = m.UpdateTime
 	}
-
-	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where("Notice."+model.Notice_OptimisticLockVersion+" = ?", m.OptimisticLockVersion)
+	m.OptimisticLockVersion++
+	om := conn.Model(m).OnConflict("(id) DO UPDATE").Where(model.Notice_Struct+"."+model.Notice_OptimisticLockVersion+" = ?", m.OptimisticLockVersion-1)
 	for _, it := range m.ToUpsertSet() {
 		om.Set(it)
 	}
 	mnew = &model.Notice{}
 	_, err = om.Returning("*").Insert(mnew)
-	if err != nil {
-		mnew = nil
+	if err == pg.ErrNoRows {
+		new_m, err := c.GetLockByID(conn, m.ID)
+		if err != nil {
+			return nil, err
+		}
+		m.OptimisticLockVersion = new_m[0].OptimisticLockVersion
+		mnew, err = c.UpdateReturn(conn, m)
+		return mnew, err
 	}
 	return
 }
@@ -293,6 +323,28 @@ func (c *NoticeDao) DeleteReturn(conn *pg.Conn, m *model.Notice) (mnew *model.No
 	_, err = conn.Model(m).WherePK().Returning("*").Delete(mnew)
 	if err != nil {
 		mnew = nil
+	}
+	return
+}
+
+//example,please edit it
+//update designated column with Optimistic Lock
+func (c *NoticeDao) UpdateNoticeSomeColumn(conn *pg.Conn, ids []string /*todo: update parameters*/) (err error) {
+
+	ms, err := c.GetLockByID(conn, ids...)
+	if err != nil {
+		return
+	}
+
+	for i, _ := range ms {
+		ms[i].UpdateTime = time.Now().Unix()
+		ms[i].OptimisticLockVersion++
+		//todo ms[i].xx=parameter
+		_, err = conn.Model(ms[i]).Where(model.Notice_ID+" = ? and "+model.Notice_OptimisticLockVersion+" = ?", ms[i].ID, ms[i].OptimisticLockVersion-1).Column( /*model.Notice_xx,*/ model.Notice_OptimisticLockVersion, model.Notice_UpdateTime).Update()
+		if err != nil {
+			dot.Logger().Debugln(err.Error())
+			return
+		}
 	}
 	return
 }
