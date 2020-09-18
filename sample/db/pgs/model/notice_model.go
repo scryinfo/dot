@@ -7,6 +7,7 @@ import (
 
 const (
 	Notice_Table                 = "notice"
+	Notice_Struct                = "notice"
 	Notice_ID                    = "id"
 	Notice_Status                = "status"
 	Notice_CreateTime            = "create_time"
@@ -35,7 +36,7 @@ func (m *Notice) ToUpsertSet() []string {
 		fmt.Sprintf("%s = EXCLUDED.%s", Notice_Status, Notice_Status),
 		fmt.Sprintf("%s = EXCLUDED.%s", Notice_CreateTime, Notice_CreateTime),
 		fmt.Sprintf("%s = EXCLUDED.%s", Notice_UpdateTime, Notice_UpdateTime),
-		fmt.Sprintf("%s = EXCLUDED.%s+1", Notice_OptimisticLockVersion, Notice_OptimisticLockVersion),
+		fmt.Sprintf("%s = EXCLUDED.%s", Notice_OptimisticLockVersion, Notice_OptimisticLockVersion),
 	}
 	return res
 }
