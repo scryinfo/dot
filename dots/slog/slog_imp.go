@@ -99,6 +99,7 @@ func (log *sLogger) Errorln(msg string, fields ...zap.Field) {
 
 ////Error error
 func (log *sLogger) Error(mstr dot.MakeStringer) {
+
 	if dot.ErrorLevel <= log.GetLevel() {
 		log.Logger.Error(funLog, zap.String("", mstr()))
 	}
