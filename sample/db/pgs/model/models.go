@@ -3,7 +3,7 @@ package model
 //go:generate gmodel -typeName=Notice -tableName=notice
 //go:generate gdao -typeName=Notice -tableName=notice -daoPackage=dao
 type Notice struct {
-	ID     string `pk`
+	ID     string `pg:",pk,type:varchar(36)"`
 	Status int
 
 	CreateTime            int64
