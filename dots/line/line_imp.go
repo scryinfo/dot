@@ -5,6 +5,7 @@ package line
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"log"
 	"reflect"
 	"strings"
@@ -554,6 +555,15 @@ func (c *lineImp) Inject(obj interface{}) error {
 			continue
 		}
 
+		//check the field type, #40
+		if typeField.Type.Kind() != reflect.Ptr && typeField.Type.Kind() != reflect.Interface {
+			err2 = errors.New("the field with dot tag must be point or interface")
+			logger.Debug(func() string {
+				return fmt.Sprintf("error: %s\ninstance: %v", err2.Error(), obj)
+			})
+			multiErr(&err, err2)
+		}
+
 		var d dot.Dot
 		{
 			if len(tagName) < 1 || tagName == dot.CanNull { //by type
@@ -625,6 +635,14 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 		tagName, ok := tField.Tag.Lookup(dot.TagDot)
 		if !ok {
 			continue
+		}
+		//check the field type, #40
+		if tField.Type.Kind() != reflect.Ptr && tField.Type.Kind() != reflect.Interface {
+			err2 = errors.New("the field with dot tag must be point or interface")
+			logger.Debug(func() string {
+				return fmt.Sprintf("error: %s\nlive: %v", err2.Error(), live)
+			})
+			multiErr(&err, err2)
 		}
 
 		var d dot.Dot
