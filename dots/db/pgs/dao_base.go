@@ -2,6 +2,7 @@ package pgs
 
 import (
 	"github.com/go-pg/pg/v9"
+	"github.com/go-pg/pg/v9/orm"
 	"github.com/scryinfo/dot/dot"
 )
 
@@ -21,7 +22,7 @@ func (c *DaoBase) getConn() *pg.Conn {
 }
 
 //WithTx with transaction, if return err != nil then rollback, or commit the transaction
-func (c *DaoBase) WithTx(task func(conn *pg.Conn) error) error {
+func (c *DaoBase) WithTx(task func(conn orm.DB) error) error {
 	var err error
 	if task != nil {
 		conn := c.getConn()
@@ -36,14 +37,14 @@ func (c *DaoBase) WithTx(task func(conn *pg.Conn) error) error {
 					err = tx.Rollback()
 				}
 			}()
-			err = task(conn)
+			err = task(tx)
 		}
 	}
 	return err
 }
 
 //WithNoTx no transaction
-func (c *DaoBase) WithNoTx(task func(conn *pg.Conn) error) error {
+func (c *DaoBase) WithNoTx(task func(conn orm.DB) error) error {
 	var err error
 	if task != nil {
 		conn := c.getConn()

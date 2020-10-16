@@ -4,13 +4,14 @@ import (
 	"time"
 
 	"github.com/go-pg/pg/v9"
+	"github.com/go-pg/pg/v9/orm"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/db/pgs"
 	"github.com/scryinfo/dot/sample/db/pgs/model"
 	"github.com/scryinfo/scryg/sutils/uuid"
 )
 
-const NoticeDaoTypeID = "08c1fbd6-a086-465a-af29-d16e1c0268aa"
+const NoticeDaoTypeID = "3720bb17-b010-4794-a4b9-4318d9083956"
 
 type NoticeDao struct {
 	*pgs.DaoBase `dot:""`
@@ -42,7 +43,7 @@ func NoticeDaoTypeLives() []*dot.TypeLives {
 }
 
 // if find nothing, return pg.ErrNoRows
-func (c *NoticeDao) GetByIDWithLock(conn *pg.Conn, id string) (m *model.Notice, err error) {
+func (c *NoticeDao) GetByIDWithLock(conn orm.DB, id string) (m *model.Notice, err error) {
 	m = &model.Notice{ID: id}
 	err = conn.Model(m).WherePK().For("UPDATE").Select()
 	if err != nil {
@@ -50,7 +51,7 @@ func (c *NoticeDao) GetByIDWithLock(conn *pg.Conn, id string) (m *model.Notice, 
 	}
 	return
 }
-func (c *NoticeDao) GetByID(conn *pg.Conn, id string) (m *model.Notice, err error) {
+func (c *NoticeDao) GetByID(conn orm.DB, id string) (m *model.Notice, err error) {
 	m = &model.Notice{ID: id}
 	err = conn.Model(m).WherePK().Select()
 	if err != nil {
@@ -61,7 +62,7 @@ func (c *NoticeDao) GetByID(conn *pg.Conn, id string) (m *model.Notice, err erro
 
 //update before
 //you must get OptimisticLockVersion value
-func (c *NoticeDao) GetLockByID(conn *pg.Conn, ids ...string) (ms []*model.Notice, err error) {
+func (c *NoticeDao) GetLockByID(conn orm.DB, ids ...string) (ms []*model.Notice, err error) {
 	for i, _ := range ids {
 		m := &model.Notice{ID: ids[i]}
 		ms = append(ms, m)
@@ -72,12 +73,12 @@ func (c *NoticeDao) GetLockByID(conn *pg.Conn, ids ...string) (ms []*model.Notic
 	}
 	return
 }
-func (c *NoticeDao) GetLockByModelID(conn *pg.Conn, ms ...*model.Notice) error {
+func (c *NoticeDao) GetLockByModelID(conn orm.DB, ms ...*model.Notice) error {
 	return conn.Model(&ms).WherePK().Column(model.Notice_OptimisticLockVersion, model.Notice_ID).For("UPDATE").Select()
 }
 
 // if find nothing, return pg.ErrNoRows
-func (c *NoticeDao) QueryWithLock(conn *pg.Conn, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+func (c *NoticeDao) QueryWithLock(conn orm.DB, condition string, params ...interface{}) (ms []*model.Notice, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).For("UPDATE").Select()
 	} else {
@@ -88,7 +89,7 @@ func (c *NoticeDao) QueryWithLock(conn *pg.Conn, condition string, params ...int
 	}
 	return
 }
-func (c *NoticeDao) Query(conn *pg.Conn, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+func (c *NoticeDao) Query(conn orm.DB, condition string, params ...interface{}) (ms []*model.Notice, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).Select()
 	} else {
@@ -101,14 +102,14 @@ func (c *NoticeDao) Query(conn *pg.Conn, condition string, params ...interface{}
 }
 
 // if find nothing, return pg.ErrNoRows
-func (c *NoticeDao) ListWithLock(conn *pg.Conn) (ms []*model.Notice, err error) {
+func (c *NoticeDao) ListWithLock(conn orm.DB) (ms []*model.Notice, err error) {
 	err = conn.Model(&ms).For("UPDATE").Select()
 	if err != nil { //be sure
 		ms = nil
 	}
 	return
 }
-func (c *NoticeDao) List(conn *pg.Conn) (ms []*model.Notice, err error) {
+func (c *NoticeDao) List(conn orm.DB) (ms []*model.Notice, err error) {
 	err = conn.Model(&ms).Select()
 	if err != nil { //be sure
 		ms = nil
@@ -116,7 +117,7 @@ func (c *NoticeDao) List(conn *pg.Conn) (ms []*model.Notice, err error) {
 	return
 }
 
-func (c *NoticeDao) Count(conn *pg.Conn, condition string, params ...interface{}) (count int, err error) {
+func (c *NoticeDao) Count(conn orm.DB, condition string, params ...interface{}) (count int, err error) {
 	if len(condition) < 1 {
 		count, err = conn.Model(&model.Notice{}).Count()
 	} else {
@@ -126,7 +127,7 @@ func (c *NoticeDao) Count(conn *pg.Conn, condition string, params ...interface{}
 }
 
 // if find nothing, return pg.ErrNoRows
-func (c *NoticeDao) QueryPageWithLock(conn *pg.Conn, pageSize int, page int, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+func (c *NoticeDao) QueryPageWithLock(conn orm.DB, pageSize int, page int, condition string, params ...interface{}) (ms []*model.Notice, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).For("UPDATE").Select()
 	} else {
@@ -137,7 +138,7 @@ func (c *NoticeDao) QueryPageWithLock(conn *pg.Conn, pageSize int, page int, con
 	}
 	return
 }
-func (c *NoticeDao) QueryPage(conn *pg.Conn, pageSize int, page int, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+func (c *NoticeDao) QueryPage(conn orm.DB, pageSize int, page int, condition string, params ...interface{}) (ms []*model.Notice, err error) {
 	if len(condition) < 1 {
 		err = conn.Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).Select()
 	} else {
@@ -149,8 +150,28 @@ func (c *NoticeDao) QueryPage(conn *pg.Conn, pageSize int, page int, condition s
 	return
 }
 
+// count counts valid records which after conditions filter, rather than whole table's count
+func (c *NoticeDao) QueryPageWithCount(
+	conn orm.DB,
+	pageSize,
+	pageNum int,
+	condition string,
+	params ...interface{},
+) (ms []*model.Notice, count int, err error) {
+	if len(condition) < 1 {
+		count, err = conn.Model(&ms).Limit(pageSize).Offset((pageNum - 1) * pageSize).SelectAndCount()
+	} else {
+		count, err = conn.Model(&ms).Where(condition, params...).Limit(pageSize).Offset((pageNum - 1) * pageSize).SelectAndCount()
+	}
+
+	if err != nil { //be sure
+		ms = nil
+	}
+	return
+}
+
 // if find nothing, return pg.ErrNoRows
-func (c *NoticeDao) QueryOneWithLock(conn *pg.Conn, condition string, params ...interface{}) (m *model.Notice, err error) {
+func (c *NoticeDao) QueryOneWithLock(conn orm.DB, condition string, params ...interface{}) (m *model.Notice, err error) {
 	m = &model.Notice{}
 	if len(condition) < 1 {
 		err = conn.Model(m).For("UPDATE").First()
@@ -162,7 +183,7 @@ func (c *NoticeDao) QueryOneWithLock(conn *pg.Conn, condition string, params ...
 	}
 	return
 }
-func (c *NoticeDao) QueryOne(conn *pg.Conn, condition string, params ...interface{}) (m *model.Notice, err error) {
+func (c *NoticeDao) QueryOne(conn orm.DB, condition string, params ...interface{}) (m *model.Notice, err error) {
 	m = &model.Notice{}
 	if len(condition) < 1 {
 		err = conn.Model(m).First()
@@ -176,7 +197,7 @@ func (c *NoticeDao) QueryOne(conn *pg.Conn, condition string, params ...interfac
 }
 
 //if insert nothing, then return pg.ErrNoRows
-func (c *NoticeDao) Insert(conn *pg.Conn, m *model.Notice) (err error) {
+func (c *NoticeDao) Insert(conn orm.DB, m *model.Notice) (err error) {
 	if len(m.ID) < 1 {
 		m.ID = uuid.GetUuid()
 	}
@@ -187,7 +208,7 @@ func (c *NoticeDao) Insert(conn *pg.Conn, m *model.Notice) (err error) {
 }
 
 //if insert nothing, then return pg.ErrNoRows
-func (c *NoticeDao) InsertReturn(conn *pg.Conn, m *model.Notice) (mnew *model.Notice, err error) {
+func (c *NoticeDao) InsertReturn(conn orm.DB, m *model.Notice) (mnew *model.Notice, err error) {
 	if len(m.ID) < 1 {
 		m.ID = uuid.GetUuid()
 	}
@@ -203,7 +224,7 @@ func (c *NoticeDao) InsertReturn(conn *pg.Conn, m *model.Notice) (mnew *model.No
 }
 
 //if update nothing, then return pg.ErrNoRows
-func (c *NoticeDao) Upsert(conn *pg.Conn, m *model.Notice) (err error) {
+func (c *NoticeDao) Upsert(conn orm.DB, m *model.Notice) (err error) {
 	m.UpdateTime = time.Now().Unix()
 	if len(m.ID) < 1 {
 		m.ID = uuid.GetUuid()
@@ -231,7 +252,7 @@ func (c *NoticeDao) Upsert(conn *pg.Conn, m *model.Notice) (err error) {
 }
 
 //if update nothing, then return pg.ErrNoRows
-func (c *NoticeDao) UpsertReturn(conn *pg.Conn, m *model.Notice) (mnew *model.Notice, err error) {
+func (c *NoticeDao) UpsertReturn(conn orm.DB, m *model.Notice) (mnew *model.Notice, err error) {
 	m.UpdateTime = time.Now().Unix()
 	if len(m.ID) < 1 {
 		m.ID = uuid.GetUuid()
@@ -259,7 +280,7 @@ func (c *NoticeDao) UpsertReturn(conn *pg.Conn, m *model.Notice) (mnew *model.No
 }
 
 //if update nothing, then return pg.ErrNoRows
-func (c *NoticeDao) Update(conn *pg.Conn, m *model.Notice) (err error) {
+func (c *NoticeDao) Update(conn orm.DB, m *model.Notice) (err error) {
 	m.UpdateTime = time.Now().Unix()
 	m.OptimisticLockVersion++
 	//err = conn.Update(m)
@@ -271,7 +292,7 @@ func (c *NoticeDao) Update(conn *pg.Conn, m *model.Notice) (err error) {
 }
 
 //if update nothing, then return pg.ErrNoRows
-func (c *NoticeDao) UpdateReturn(conn *pg.Conn, m *model.Notice) (mnew *model.Notice, err error) {
+func (c *NoticeDao) UpdateReturn(conn orm.DB, m *model.Notice) (mnew *model.Notice, err error) {
 	m.UpdateTime = time.Now().Unix()
 	m.OptimisticLockVersion++
 	mnew = &model.Notice{}
@@ -286,19 +307,19 @@ func (c *NoticeDao) UpdateReturn(conn *pg.Conn, m *model.Notice) (mnew *model.No
 }
 
 //if delete nothing, then return pg.ErrNoRows
-func (c *NoticeDao) Delete(conn *pg.Conn, m *model.Notice) (err error) {
+func (c *NoticeDao) Delete(conn orm.DB, m *model.Notice) (err error) {
 	err = conn.Delete(m)
 	return
 }
 
 //if delete nothing, then return pg.ErrNoRows
-func (c *NoticeDao) DeleteByID(conn *pg.Conn, id string) (err error) {
+func (c *NoticeDao) DeleteByID(conn orm.DB, id string) (err error) {
 	_, err = conn.Model((*model.Notice)(nil)).Where(model.Notice_ID+" = ?", id).Delete()
 	return
 }
 
 //if delete nothing, then return pg.ErrNoRows
-func (c *NoticeDao) DeleteByIDs(conn *pg.Conn, ids []string, oneMax int) (err error) {
+func (c *NoticeDao) DeleteByIDs(conn orm.DB, ids []string, oneMax int) (err error) {
 	m := (*model.Notice)(nil)
 	max := oneMax
 	times := len(ids) / max
@@ -318,7 +339,7 @@ func (c *NoticeDao) DeleteByIDs(conn *pg.Conn, ids []string, oneMax int) (err er
 }
 
 //if delete nothing, then return pg.ErrNoRows
-func (c *NoticeDao) DeleteReturn(conn *pg.Conn, m *model.Notice) (mnew *model.Notice, err error) {
+func (c *NoticeDao) DeleteReturn(conn orm.DB, m *model.Notice) (mnew *model.Notice, err error) {
 	mnew = &model.Notice{}
 	_, err = conn.Model(m).WherePK().Returning("*").Delete(mnew)
 	if err != nil {
@@ -329,7 +350,7 @@ func (c *NoticeDao) DeleteReturn(conn *pg.Conn, m *model.Notice) (mnew *model.No
 
 //example,please edit it
 //update designated column with Optimistic Lock
-func (c *NoticeDao) UpdateNoticeSomeColumn(conn *pg.Conn, ids []string /*todo: update parameters*/) (err error) {
+func (c *NoticeDao) UpdateNoticeSomeColumn(conn orm.DB, ids []string /*todo: update parameters*/) (err error) {
 
 	ms, err := c.GetLockByID(conn, ids...)
 	if err != nil {
