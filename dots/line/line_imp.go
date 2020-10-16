@@ -459,7 +459,10 @@ CreateLives:
 		err = nil
 		for _, it := range orderedDots {
 			if it.Dot != nil { //not success
-				_ = c.injectInLine(it.Dot, it)
+				err = c.injectInLine(it.Dot, it)
+				if err != nil {
+					break
+				}
 				if ed, ok := it.Dot.(dot.Injected); ok {
 					err = ed.Injected(c)
 					if err != nil {

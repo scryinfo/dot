@@ -5,6 +5,7 @@ package line
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"reflect"
 	"testing"
 )
 
@@ -166,6 +167,46 @@ func TestLineImp_Start(t *testing.T) {
 
 	if err == nil {
 		t.Error("error == nil, circle dependency")
+	}
+
+	_ = l.ToLifer().Stop(true)
+	_ = l.ToLifer().Destroy(true)
+}
+
+func TestLineImp_InterfaceOrPoint(t *testing.T) {
+	type Dot1 struct {
+
+	}
+
+	type Dot2 struct {
+		Dot1 Dot1 `dot:""`
+	}
+
+	l, err := BuildAndStart(func(l dot.Line) error {
+		_ = l.PreAdd(&dot.TypeLives{
+			Meta: dot.Metadata{
+				TypeID: "dot1",
+				NewDoter: func(conf []byte) (dot dot.Dot, err error) {
+					return &Dot1{}, nil
+				},
+			},
+			Lives: []dot.Live{
+				{
+					LiveID: "dot1",
+				},
+			},
+		},&dot.TypeLives{
+			Meta:  dot.Metadata{
+				TypeID:      "dot2",
+				RefType:     reflect.TypeOf((*Dot2)(nil)).Elem(),
+			},
+		})
+
+		return nil
+	})
+
+	if err == nil {
+		t.Error("the field is not pointer")
 	}
 
 	_ = l.ToLifer().Stop(true)
