@@ -78,7 +78,11 @@ func ToFirstLower(s string) string {
 	cs := []rune(s)
 	return strings.ToLower(string(cs[0])) + string(cs[1:])
 }
-
+//ToFirstUpper Uppercase for the first letter
+func ToFirstUpper(s string) string {
+	cs := []rune(s)
+	return strings.ToUpper(string(cs[0])) + string(cs[1:])
+}
 /////////////////////////////////////////////see github.com/go-pg/pg/internal
 func isUpper(c byte) bool {
 	return c >= 'A' && c <= 'Z'

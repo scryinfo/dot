@@ -41,6 +41,7 @@ pgs.CreateSchema result
 type DbField struct {
 	Name   string
 	DbName string
+	HasRelation bool //has one, has many, belong to
 }
 
 type tData struct {
@@ -224,10 +225,18 @@ func listFields(data *tData, st *ast.StructType, fields []DbField, pkg *packages
 			}
 		} else {
 			name := field.Names[0].Name
-			fields = append(fields, DbField{Name: name, DbName: pgs.Underscore(name)})
+			dbField := DbField{Name: name, DbName: pgs.Underscore(name)}
+			tag := ""
+			if field.Tag != nil {
+				tag = field.Tag.Value
+			}
+			if strings.Contains(tag,"rel:has-one") || strings.Contains(tag,"rel:has-many") || strings.Contains(tag,"rel:belongs-to") {
+				dbField.HasRelation = true
+			}
+			fields = append(fields, dbField)
 			ftype, ok := field.Type.(*ast.Ident)
 			if ok && ftype.Name == "string" {
-				data.StringFields = append(data.StringFields, DbField{Name: name, DbName: pgs.Underscore(name)})
+				data.StringFields = append(data.StringFields, dbField)
 			}
 		}
 		if subT != nil {
@@ -267,9 +276,11 @@ import (
 	}
 
 	func (m *{{$.TypeName}}) ToUpsertSet() []string {
-		res := []string{
-		{{range $.Fields}}
-			fmt.Sprintf("%s = EXCLUDED.%s", {{$.TypeName}}_{{.Name}}, {{$.TypeName}}_{{.Name}}),{{end}}
+		res := []string{ 
+			{{- range $.Fields}}
+			{{if .HasRelation}}{{else}}fmt.Sprintf("%s = EXCLUDED.%s", {{$.TypeName}}_{{.Name}}, {{$.TypeName}}_{{.Name}}),
+			{{- end}}
+			{{- end}}
 		}
 		return res
 	}
