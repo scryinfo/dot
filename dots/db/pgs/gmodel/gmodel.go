@@ -7,8 +7,8 @@ import (
 	"github.com/scryinfo/dot/dots/db/pgs"
 	"go/ast"
 	"go/format"
-	"go/parser"
 	"go/token"
+	"golang.org/x/tools/go/packages"
 	"io/ioutil"
 	"log"
 	"os"
@@ -85,7 +85,7 @@ func parms(data *tData) {
 	data.DbObjectName = pgs.Underscore(params.typeName)
 }
 
-//env:   GOPACKAGE=model;GOFILE=D:\peace\gopath\src\github.com\scryinfo\cashbox_site\shared\db\model\model_api.go
+//env:   GOPACKAGE=model;GOFILE=D:\gopath\src\github.com\scryinfo\dot\sample\db\pgs\model\models.go
 func main() {
 	log.Println("run gmodel")
 	data := &tData{}
@@ -126,12 +126,36 @@ func makeData(data *tData) {
 	data.PkgName = os.Getenv("GOPACKAGE")
 	file := os.Getenv("GOFILE")
 	fields := make([]DbField, 0)
+	var pkg *packages.Package
 	{
-		f, err := parser.ParseFile(token.NewFileSet(), file, nil, 0)
+		dir := filepath.Dir(file)
+		cfg := &packages.Config{
+			Mode:
+			packages.NeedName |
+				//packages.NeedFiles |
+				//packages.NeedCompiledGoFiles |
+				packages.NeedImports |
+				packages.NeedDeps |
+				//packages.NeedExportsFile |
+				//packages.NeedTypes |
+				packages.NeedSyntax,
+			//packages.NeedTypesInfo |
+			//packages.NeedTypesSizes ,
+			Dir:   dir,
+			Tests: true,
+			Env:   append(os.Environ(), "GO111MODULE=off", "GOPROXY=off"), //"GOPATH="+dir,
+		}
+		pkgs, err := packages.Load(cfg, file)
 		if err != nil {
 			log.Fatal(err)
 		}
-		//typ := ""
+		pkg = pkgs[0]
+		if len(pkg.Syntax) != 1 {
+			log.Fatal("parse file not " + file)
+		}
+	}
+	{
+		f := pkg.Syntax[0]
 		ast.Inspect(f, func(n ast.Node) bool {
 			if n != nil {
 				decl, ok := n.(*ast.GenDecl)
@@ -143,7 +167,7 @@ func makeData(data *tData) {
 					typeS, ok := spec.(*ast.TypeSpec)
 					if ok && typeS.Name.Name == data.TypeName {
 						structT := typeS.Type.(*ast.StructType)
-						fields, _ = listFields(data, structT, fields)
+						fields, _ = listFields(data, structT, fields, pkg)
 					}
 				}
 			}
@@ -154,25 +178,60 @@ func makeData(data *tData) {
 	}
 	data.Fields = fields
 }
-func listFields(data *tData, st *ast.StructType, fields []DbField) ([]DbField, error) {
-	for _, f := range st.Fields.List {
-		if f.Names == nil { //这个字段直接是类型，或者是组合
-			if ident, ok := f.Type.(*ast.Ident); ok {
+func listFields(data *tData, st *ast.StructType, fields []DbField, pkg *packages.Package) ([]DbField, error) {
+	for _, field := range st.Fields.List {
+		var subT *ast.StructType
+		//|| (field.Tag != nil && strings.Contains(field.Tag.Value,"composite"))
+		if field.Names == nil { //这个字段直接是类型，或者是组合
+			if ident, ok := field.Type.(*ast.Ident); ok {
 				if decl, ok := ident.Obj.Decl.(*ast.TypeSpec); ok {
-					if subT, ok := decl.Type.(*ast.StructType); ok {
-						fields, _ = listFields(data, subT, fields)
+					if subT, ok = decl.Type.(*ast.StructType); ok {
+						//fields, _ = listFields(data, subT, fields, pkg)
 					}
 				}
+			} else if expr, ok := field.Type.(*ast.SelectorExpr); ok {
+				//这个字段的类型是从import中导入的，
+				obj := expr.Sel.Obj
+				if obj == nil {
+					packageName := expr.X.(*ast.Ident).Name
+					objName := expr.Sel.Name
+				objLoop:
+					for _, importPackage := range pkg.Imports {
+						if importPackage.Name == packageName {
+							for _, importFile := range importPackage.Syntax {
+								if importFile.Scope != nil {
+									obj = importFile.Scope.Lookup(objName)
+									if obj != nil {
+										break objLoop
+									}
+								}
+							}
+						}
+					}
+				}
+				if obj == nil {
+					//todo 内部错误
+				} else {
+					if decl, ok := obj.Decl.(*ast.TypeSpec); ok {
+						if subT, ok = decl.Type.(*ast.StructType); ok {
+							//fields, _ = listFields(data, subT, fields, pkg)
+						}
+					}
+				}
+
 			} else { //todo 内部错误
 
 			}
 		} else {
-			n := f.Names[0].Name
-			fields = append(fields, DbField{Name: n, DbName: pgs.Underscore(n)})
-			ftype, ok := f.Type.(*ast.Ident)
+			name := field.Names[0].Name
+			fields = append(fields, DbField{Name: name, DbName: pgs.Underscore(name)})
+			ftype, ok := field.Type.(*ast.Ident)
 			if ok && ftype.Name == "string" {
-				data.StringFields = append(data.StringFields, DbField{Name: n, DbName: pgs.Underscore(n)})
+				data.StringFields = append(data.StringFields, DbField{Name: name, DbName: pgs.Underscore(name)})
 			}
+		}
+		if subT != nil {
+			fields, _ = listFields(data, subT, fields, pkg)
 		}
 	}
 	return fields, nil

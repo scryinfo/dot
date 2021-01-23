@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/scryinfo/dot/dots/db/pgs"
+	"github.com/scryinfo/scryg/sutils/sfile"
 	"github.com/scryinfo/scryg/sutils/uuid"
 	"go/ast"
 	"go/format"
@@ -93,7 +94,10 @@ func main() {
 	{
 		types := pgs.Underscore(data.DaoName)
 		baseName := fmt.Sprintf("%s.go", types)
-		outputName = filepath.Join(".", strings.ToLower(baseName))
+		outputName = filepath.Join("../", data.DaoPkgName, strings.ToLower(baseName))
+		if sfile.ExistFile(outputName) {
+			outputName = filepath.Join(".", strings.ToLower(baseName))
+		}
 	}
 
 	if _, err := os.Stat(outputName); os.IsNotExist(err) {
@@ -163,8 +167,8 @@ package {{$.DaoPkgName}}
 import (
 	"time"
 	
-	"github.com/go-pg/pg/v9"
-	"github.com/go-pg/pg/v9/orm"
+	"github.com/go-pg/pg/v10"
+	"github.com/go-pg/pg/v10/orm"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/db/pgs"
 	"github.com/scryinfo/scryg/sutils/uuid"
@@ -204,7 +208,8 @@ func {{$.DaoName}}TypeLives() []*dot.TypeLives {
 
 // if find nothing, return pg.ErrNoRows
 func (c *{{$.DaoName}}) GetByIDWithLock(conn orm.DB, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
-	m = &{{$.ModelPkgName}}.{{$.TypeName}}{ID: id,}
+	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
+	m.ID = id
 	err = conn.Model(m).WherePK().For("UPDATE").Select()
 	if err != nil {
 		m = nil
@@ -212,7 +217,8 @@ func (c *{{$.DaoName}}) GetByIDWithLock(conn orm.DB, id string) (m *{{$.ModelPkg
 	return
 }
 func (c *{{$.DaoName}}) GetByID(conn orm.DB, id string) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
-	m = &{{$.ModelPkgName}}.{{$.TypeName}}{ID: id,}
+	m = &{{$.ModelPkgName}}.{{$.TypeName}}{}
+	m.ID = id
 	err = conn.Model(m).WherePK().Select()
 	if err != nil {
 		m = nil
@@ -224,7 +230,8 @@ func (c *{{$.DaoName}}) GetByID(conn orm.DB, id string) (m *{{$.ModelPkgName}}.{
 //you must get OptimisticLockVersion value
 func (c *{{$.DaoName}}) GetLockByID(conn orm.DB, ids ...string) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
 	for i,_ := range ids {
-		m := &{{$.ModelPkgName}}.{{$.TypeName}}{ID: ids[i],}
+		m := &{{$.ModelPkgName}}.{{$.TypeName}}{}
+		m.ID = ids[i]
 		ms=append(ms,m)
 	}
 	err=conn.Model(&ms).WherePK().Column({{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion,{{$.ModelPkgName}}.{{$.TypeName}}_ID).For("UPDATE").Select()
@@ -364,7 +371,7 @@ func (c *{{$.DaoName}}) Insert(conn orm.DB, m *{{$.ModelPkgName}}.{{$.TypeName}}
 	}
 	m.CreateTime = time.Now().Unix()
 	m.UpdateTime = m.CreateTime
-	err = conn.Insert(m)
+	_, err = conn.Model(m).Insert()
 	return
 }
 //if insert nothing, then return pg.ErrNoRows
@@ -468,7 +475,7 @@ func (c *{{$.DaoName}}) UpdateReturn(conn orm.DB, m *{{$.ModelPkgName}}.{{$.Type
 
 //if delete nothing, then return pg.ErrNoRows
 func (c *{{$.DaoName}}) Delete(conn orm.DB, m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
-	err = conn.Delete(m)
+	_, err = conn.Model(m).Delete()
 	return
 }
 

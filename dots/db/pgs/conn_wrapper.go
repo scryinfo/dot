@@ -3,7 +3,7 @@ package pgs
 import (
 	"context"
 	"encoding/json"
-	"github.com/go-pg/pg/v9"
+	"github.com/go-pg/pg/v10"
 	"github.com/scryinfo/dot/dot"
 )
 
@@ -99,7 +99,7 @@ func (d pgLogger) BeforeQuery(c context.Context, _ *pg.QueryEvent) (context.Cont
 func (d pgLogger) AfterQuery(_ context.Context, q *pg.QueryEvent) error {
 	dot.Logger().Debug(func() string {
 		temp, _ := q.FormattedQuery()
-		return temp
+		return string(temp)
 	})
 	return nil
 }

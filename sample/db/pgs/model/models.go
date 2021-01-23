@@ -1,12 +1,16 @@
 package model
 
-//go:generate gmodel -typeName=Notice -tableName=notice
-//go:generate gdao -typeName=Notice -tableName=notice -daoPackage=dao
-type Notice struct {
-	ID     string `pg:",pk,type:varchar(36)"`
-	Status int
+import "github.com/scryinfo/dot/dots/db/pgs"
 
-	CreateTime            int64
-	UpdateTime            int64
-	OptimisticLockVersion int64 `pg:",use_zero"` //default 0 ，not null
+type Data struct {
+	Name  string
+	Count int64
+}
+
+//go:generate gmodel -typeName=Notice -tableName=notices
+//go:generate gdao -typeName=Notice -tableName=notices -daoPackage=dao
+type Notice struct {
+	pgs.ModelBase
+	Data   Data `pg:"composite:data"`
+	Status int
 }

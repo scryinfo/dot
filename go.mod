@@ -9,12 +9,11 @@ require (
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-kit/kit v0.10.0
-	github.com/go-pg/pg/v9 v9.1.6
+	github.com/go-pg/pg/v10 v10.7.4
 	github.com/go-redis/redis/v8 v8.0.0-beta.5
 	github.com/golang/gddo v0.0.0-20200715224205-051695c33a3f
 	github.com/golang/mock v1.4.3
-	github.com/golang/protobuf v1.4.2
-	github.com/google/go-cmp v0.5.0 // indirect
+	github.com/golang/protobuf v1.4.3
 	github.com/improbable-eng/grpc-web v0.13.0
 	github.com/jinzhu/gorm v1.9.15
 	github.com/pkg/errors v0.9.1
@@ -23,6 +22,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	go.etcd.io/etcd/v3 v3.3.0-rc.0.0.20200726182219-9006d8d4f9d8
 	go.uber.org/zap v1.15.0
+	golang.org/x/tools v0.0.0-20200103221440-774c71fcf114
 	google.golang.org/grpc v1.29.1
-	google.golang.org/protobuf v1.23.0
+	google.golang.org/protobuf v1.25.0
 )

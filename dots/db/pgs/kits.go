@@ -1,8 +1,8 @@
 package pgs
 
 import (
-	"github.com/go-pg/pg/v9"
-	"github.com/go-pg/pg/v9/orm"
+	"github.com/go-pg/pg/v10"
+	"github.com/go-pg/pg/v10/orm"
 	"reflect"
 	"strconv"
 	"strings"
@@ -11,7 +11,7 @@ import (
 //CreateSchema create tables
 func CreateSchema(db *pg.DB, ms []interface{}) error {
 	for _, model := range ms {
-		err := db.CreateTable(model, &orm.CreateTableOptions{Temp: false, IfNotExists: true})
+		err := db.Model(model).CreateTable(&orm.CreateTableOptions{Temp: false, IfNotExists: true})
 		if err != nil {
 			return err
 		}
