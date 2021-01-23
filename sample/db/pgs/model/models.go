@@ -13,6 +13,7 @@ type Notice struct {
 	pgs.ModelBase
 	Data   DataType `pg:"composite:data"`
 	Status int
+	No int `pg:"-"`
 }
 
 //go:generate gmodel -typeName=Sub -tableName=subs
