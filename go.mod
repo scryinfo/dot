@@ -10,7 +10,7 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-kit/kit v0.10.0
 	github.com/go-pg/pg/v10 v10.7.4
-	github.com/go-redis/redis/v8 v8.0.0-beta.5
+	github.com/go-redis/redis/v8 v8.4.11
 	github.com/golang/gddo v0.0.0-20200715224205-051695c33a3f
 	github.com/golang/mock v1.4.3
 	github.com/golang/protobuf v1.4.3
