@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot
 
-go 1.14
+go 1.16
 
 require (
 	github.com/benbjohnson/clock v1.0.3 // indirect
@@ -22,6 +22,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	go.etcd.io/etcd/v3 v3.3.0-rc.0.0.20200726182219-9006d8d4f9d8
 	go.uber.org/zap v1.15.0
+	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
 	golang.org/x/tools v0.0.0-20200103221440-774c71fcf114
 	google.golang.org/grpc v1.29.1
 	google.golang.org/protobuf v1.25.0
