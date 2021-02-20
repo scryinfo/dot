@@ -234,14 +234,14 @@ func (c *{{$.DaoName}}) GetLockByID(conn orm.DB, ids ...string) (ms []*{{$.Model
 		m.ID = ids[i]
 		ms=append(ms,m)
 	}
-	err=conn.Model(&ms).WherePK().Column({{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion,{{$.ModelPkgName}}.{{$.TypeName}}_ID).For("UPDATE").Select()
+	err=conn.Model(&ms).WherePK().Column({{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion,{{$.ModelPkgName}}.{{$.TypeName}}_Struct+"."+{{$.ModelPkgName}}.{{$.TypeName}}_ID).For("UPDATE").Select()
 	if err != nil {
 		ms=nil
 	}
 	return
 }
 func (c *{{$.DaoName}}) GetLockByModelID(conn orm.DB, ms ...*{{$.ModelPkgName}}.{{$.TypeName}}) error {
-	return conn.Model(&ms).WherePK().Column({{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion,{{$.ModelPkgName}}.{{$.TypeName}}_ID).For("UPDATE").Select()
+	return conn.Model(&ms).WherePK().Column({{$.ModelPkgName}}.{{$.TypeName}}_OptimisticLockVersion,{{$.ModelPkgName}}.{{$.TypeName}}_Struct+"."+{{$.ModelPkgName}}.{{$.TypeName}}_ID).For("UPDATE").Select()
 }
 
 // if find nothing, return pg.ErrNoRows
