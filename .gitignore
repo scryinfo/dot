@@ -92,3 +92,5 @@
 **/*.exe
 /dots/db/pgs/gdao/gdao
 /update_email.sh
+/tools/config/ui/package-lock.json
+/tools/config/ui_/package-lock.json
