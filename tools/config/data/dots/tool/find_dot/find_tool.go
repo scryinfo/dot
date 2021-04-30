@@ -49,7 +49,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 		//处理掉用户输入的不存在目录
 		yesDir, noDir := splitDir(dirs)
 		if len(yesDir) == 0 {
-			err = errors.New("Please enter a valid directory")
+			err = errors.New("please enter a valid directory")
 			return
 		}
 		paths = append(paths, yesDir...)
@@ -277,19 +277,19 @@ func RemoveRepByMap(slc []string) []string {
 
 //获取指定目录下的所有子目录
 func getAllSonDirs(dirpath string) ([]string, error) {
-	var dir_list []string
-	dir_err := filepath.Walk(dirpath,
+	var dirList []string
+	dirErr := filepath.Walk(dirpath,
 		func(path string, f os.FileInfo, err error) error {
 			if f == nil {
 				return err
 			}
 			if f.IsDir() && isTrueDir(path) {
-				dir_list = append(dir_list, path)
+				dirList = append(dirList, path)
 				return nil
 			}
 			return nil
 		})
-	return dir_list, dir_err
+	return dirList, dirErr
 }
 func isTrueDir(path string) bool {
 	if strings.Index(path, "node_modules") == -1 {

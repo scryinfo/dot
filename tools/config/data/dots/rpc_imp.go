@@ -1,11 +1,12 @@
 // Scry Info.  All rights reserved.
 // license that can be found in the license file.
 
-package nobl
+package dots
 
 import (
 	"context"
 	"encoding/json"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"log"
 	"os"
@@ -16,9 +17,9 @@ import (
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
-	"github.com/scryinfo/dot/tools/config/data/go_out"
-	"github.com/scryinfo/dot/tools/config/data/nobl/tool/find_dot"
-	"github.com/scryinfo/dot/tools/config/data/nobl/tool/import_config"
+	"github.com/scryinfo/dot/tools/config/data/dots/tool/find_dot"
+	"github.com/scryinfo/dot/tools/config/data/dots/tool/import_config"
+	"github.com/scryinfo/dot/tools/config/data/rpc"
 )
 
 const (
@@ -26,7 +27,6 @@ const (
 )
 
 type config struct {
-	Name string `json:"name"`
 }
 
 type RpcImplement struct {
@@ -36,20 +36,19 @@ type RpcImplement struct {
 
 func newRpcImplement(conf []byte) (dot.Dot, error) {
 	dconf := &config{}
-	err := dot.UnMarshalConfig(conf, dconf)
-	if err != nil {
-		return nil, err
-	}
-
+	//err := dot.UnMarshalConfig(conf, dconf)
+	//if err != nil {
+	//	return nil, err
+	//}
 	d := &RpcImplement{
 		conf: *dconf,
 	}
 
-	return d, err
+	return d, nil
 }
 
-func (serv *RpcImplement) Start(ignore bool) error {
-	go_out.RegisterDotConfigServer(serv.ServerNobl.Server(), serv)
+func (c *RpcImplement) Start(ignore bool) error {
+	rpc.RegisterDotConfigFaceServer(c.ServerNobl.Server(), c)
 	return nil
 }
 
@@ -72,69 +71,63 @@ func RpcImplementTypeLives() []*dot.TypeLives {
 
 //rpc implement
 
-func (serv *RpcImplement) FindDot(ctx context.Context, in *go_out.ReqDirs) (*go_out.ResDots, error) {
+func (c *RpcImplement) FindDot(ctx context.Context, in *rpc.FindReq) (*rpc.FindRes, error) {
+	res := &rpc.FindRes{}
+
 	dirs := in.Dirs
-	bytes, invalidDirectory, e := find_dot.FindDots(dirs)
+	bytes, invalidDirectory, err := find_dot.FindDots(dirs)
 	//删除运行时产生的中间文件
 	{
-		del := os.Remove("./run_out/callMethod.go")
-		del = os.Remove("./run_out/result.json")
-		if del != nil {
-			log.Println(del)
+		err := os.Remove("./run_out/callMethod.go")
+		err = os.Remove("./run_out/result.json")
+		if err != nil {
+			dot.Logger().Error(err.Error)
 		}
 	}
-	resDots := go_out.ResDots{
-		DotsInfo:    string(bytes),
-		NoExistDirs: invalidDirectory,
+	if err != nil {
+		res.Error = err.Error()
+	} else {
+		res.DotsInfo = string(bytes)
+		res.NoExistDirs = invalidDirectory
 	}
-	if e != nil {
-		resDots.Error = e.Error()
-	}
-	return &resDots, nil
+	return res, nil
 }
 
-func (serv *RpcImplement) ImportByDot(ctx context.Context, in *go_out.ReqImport) (*go_out.ResImport, error) {
-	var errStr string
+func (c *RpcImplement) ImportByDot(ctx context.Context, in *rpc.ImportReq) (*rpc.ImportRes, error) {
+
+	res := &rpc.ImportRes{}
 	data, err := ioutil.ReadFile(in.Filepath)
 	if err != nil {
-		errStr = err.Error()
-		log.Println("File reading error", err)
+		res.Error = err.Error()
+		dot.Logger().Errorln("File reading error", zap.Error(err))
+	} else {
+		res.Json = string(data)
 	}
-	res := go_out.ResImport{
-		Json:  string(data),
-		Error: errStr,
-	}
-	return &res, nil
-
+	return res, nil
 }
 
 //支持三种格式json toml yaml
-func (serv *RpcImplement) ImportByConfig(con context.Context, im *go_out.ReqImport) (*go_out.ResImport, error) {
+func (c *RpcImplement) ImportByConfig(con context.Context, im *rpc.ImportReq) (*rpc.ImportRes, error) {
+	res := &rpc.ImportRes{}
 	config := import_config.New()
 	_, err := config.ConfLoad(im.Filepath)
 	if err != nil {
-		resConfig := go_out.ResImport{
-			Error: err.Error(),
-		}
-		return &resConfig, nil
+		res.Error = err.Error()
+		return res, nil
 	}
 	value, err := config.GetJsonByte("")
 	if err != nil {
-		resConfig := go_out.ResImport{
-			Error: err.Error(),
-		}
-		return &resConfig, nil
+		res.Error = err.Error()
+		return res, nil
 	}
-	resConfig := go_out.ResImport{
-		Json: string(value),
-	}
-	return &resConfig, nil
+	res.Json = string(value)
+	return res, nil
 }
 
 //导出配置信息
 //支持三种格式json toml yaml
 //由文件名来区分不同格式
-func (serv *RpcImplement) ExportConfig(ctx context.Context, in *go_out.ReqExport) (*go_out.ResExport, error) {
+func (c *RpcImplement) ExportConfig(ctx context.Context, in *rpc.ExportReq) (*rpc.ExportRes, error) {
 	var data = in.Configdata
 	var target interface{}
 
@@ -155,39 +148,40 @@ func (serv *RpcImplement) ExportConfig(ctx context.Context, in *go_out.ReqExport
 			value = "./run_out/" + value
 			file, err := os.OpenFile(value, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 			if err != nil {
-				log.Println("An error occurred with file opening or creation\n")
+				dot.Logger().Errorln("an error occurred with file opening or creation")
 			}
-			defer file.Close()
-			if key == "json" {
+			switch key {
+			case "json":
 				enc := json.NewEncoder(file)
 				err := enc.Encode(target)
 				if err != nil {
 					log.Println("Error in encoding json")
 				}
-			}
-			if key == "yaml" {
+			case "yaml":
 				enc := yaml.NewEncoder(file)
 				err := enc.Encode(target)
 				if err != nil {
 					log.Println("Error in encoding yaml")
 				}
-			}
-			if key == "toml" {
+			case "toml":
 				enc := toml.NewEncoder(file)
 				err := enc.Encode(target)
 				if err != nil {
 					log.Println("Error in encoding toml")
 				}
 			}
+			if file != nil {
+				file.Close()
+			}
 		}
 	}
 
-	return &go_out.ResExport{}, nil
+	return &rpc.ExportRes{}, nil
 }
 
 //导出组件信息
 //json
-func (serv *RpcImplement) ExportDot(ctx context.Context, in *go_out.ReqExport) (*go_out.ResExport, error) {
+func (c *RpcImplement) ExportDot(ctx context.Context, in *rpc.ExportReq) (*rpc.ExportRes, error) {
 	var data = in.Dotdata
 	if in.Filename == nil {
 		in.Filename[0] = "./run_out/dots.json"
@@ -202,5 +196,5 @@ func (serv *RpcImplement) ExportDot(ctx context.Context, in *go_out.ReqExport) (
 	if err != nil {
 		panic("writeString err")
 	}
-	return &go_out.ResExport{}, nil
+	return &rpc.ExportRes{}, nil
 }

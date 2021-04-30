@@ -1,0 +1,41 @@
+syntax = "proto3";
+option optimize_for = LITE_RUNTIME;
+package rpc;
+
+//findDot
+message FindReq{
+  repeated string dirs = 1;  //目录集合
+}
+message FindRes{
+  string dotsInfo = 1;   //组件信息（json）
+  repeated string noExistDirs = 2;  //不存在的目录集合
+  string error = 3;   //错误信息
+
+}
+//importfile
+message ImportReq{
+  string filepath = 1;  //导入文件的路径
+}
+message ImportRes{
+  string json = 1;  //返回导入文件的内容
+  string error = 2;  //导入出错
+}
+//exportfile
+message ExportReq{
+  string configdata = 1; //配置数据信息
+  repeated string filename = 2;  //导出的文件名
+  string dotdata = 3; //组件数据信息
+}
+message ExportRes{
+  string error = 1;   //导出是否成功
+}
+//----------------------------------------------------------------------
+service DotConfigFace {
+  rpc FindDot(FindReq) returns(FindRes);  //find dots
+  //文件导入
+  rpc ImportByConfig(ImportReq) returns(ImportRes);
+  rpc ImportByDot(ImportReq) returns(ImportRes);
+  //导出文件
+  rpc ExportConfig(ExportReq) returns(ExportRes);
+  rpc ExportDot(ExportReq) returns(ExportRes);
+}

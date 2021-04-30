@@ -9,31 +9,16 @@ import (
 	"github.com/scryinfo/dot/dots/gindot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dot/dots/line"
-	"github.com/scryinfo/dot/tools/config/data/nobl"
+	"github.com/scryinfo/dot/tools/config/data/dots"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 	"go.uber.org/zap"
-	"net/http"
 	"os"
 	"os/exec"
 	"runtime"
 )
 
 func main() {
-	l, err := line.BuildAndStartBy(&dot.Builder{
-		Add: add,
-		AfterStart: func(l dot.Line) {
-			go func() {
-				switch runtime.GOOS {
-				case "windows":
-					windowsBrowser()
-				case "linux":
-					linuxBrowser()
-				default:
-					dot.Logger().Fatalln("无法识别的操作系统")
-				}
-			}()
-		},
-	})
+	l, err := line.BuildAndStart(add)
 	if err != nil {
 		dot.Logger().Errorln("", zap.Error(err))
 		return
@@ -43,23 +28,26 @@ func main() {
 	dot.Logger().Infoln("dot ok")
 	//second step ....
 
+	go func() {
+		switch runtime.GOOS {
+		case "windows":
+			windowsBrowser()
+		case "linux":
+			linuxBrowser()
+		default:
+			dot.Logger().Fatalln("无法识别的操作系统")
+		}
+	}()
+
 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
 	})
 }
 
 func add(l dot.Line) error {
-	lives := nobl.RpcImplementTypeLives()
+	lives := dots.RpcImplementTypeLives()
 	lives = append(lives, gserver.GinNoblTypeLives()...)
-	l.ToDotEventer().AddLiveEvents(dot.LiveID(gindot.EngineLiveID), &dot.LiveEvents{
-		AfterCreate: func(live *dot.Live, l dot.Line) {
-			if g, ok := live.Dot.(*gindot.Engine); ok {
-				g.GinEngine().StaticFS("/", http.Dir("../app/dist"))
-			}
-		},
-	})
-
-	//4943e959-7ad7-42c6-84dd-8b24e9ed30bb
+	lives = append(lives, gindot.UiTypeLives()...)
 
 	return l.PreAdd(lives...)
 }

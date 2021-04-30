@@ -1,0 +1,78 @@
+{
+  "log": {
+    "file": "log.log",
+    "level": "debug"
+  },
+  "dots": [
+    {
+      "metaData": {
+        "typeId": "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+      },
+      "lives": [
+        {
+          "liveId": "4943e959-7ad7-42c6-84dd-8b24e9ed30bb",
+          "json": {
+            "addr": ":8080",
+            "keyFile": "",
+            "pemFile": ""
+          }
+        }
+      ]
+    },
+    {
+      "metaData": {
+        "typeId": "6be39d0b-3f5b-47b4-818c-642c049f3166"
+      },
+      "lives": [
+        {
+          "liveId": "6be39d0b-3f5b-47b4-818c-642c049f3166",
+          "relyLives": {
+            "GinDot_": "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+          },
+          "json": {
+            "relativePath": "/data"
+          }
+        }
+      ]
+    },
+    {
+      "": "static ui",
+      "metaData": {
+        "name": "static ui",
+        "typeId": "d9972be7-cef9-464c-9bbb-d1f11abea803"
+      },
+      "lives": [
+        {
+          "liveId": "d9972be7-cef9-464c-9bbb-d1f11abea803",
+          "json": {
+            "urlRelativePath": "/ui",
+            "resRelativePath": "../ui",
+            "mainHTMlName": "index.html",
+            "paths": [
+              {
+                "relativePath": "",
+                "value": "dist"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "metaData": {
+        "name": "ServerNobl",
+        "typeId": "77a766e7-c288-413f-946b-bc9de6df3d70"
+      },
+      "lives": [
+        {
+          "liveId": "77a766e7-c288-413f-946b-bc9de6df3d70",
+          "json": {
+            "addrs": [
+              ":5012"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
