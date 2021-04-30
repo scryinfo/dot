@@ -97,7 +97,7 @@ func (c *ginNobl) startServer() {
 		// not allow handling gRPC requests for unknown endpoints (e.g. for proxying).
 		grpcweb.WithCorsForRegisteredEndpointsOnly(true),
 		grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}),
-	}
+	}//todo #49
 
 	c.wrappedGrpcServer = grpcweb.WrapServer(c.Server(), options...)
 
@@ -105,7 +105,7 @@ func (c *ginNobl) startServer() {
 		logger.Debugln("ginNobl", zap.String("", ctx.Request.RequestURI))
 
 		if c.wrappedGrpcServer.IsGrpcWebRequest(ctx.Request) {
-			if len(c.preUrl) > 0 { // because can not set the "endpointFunc" of WrapServer, do this so so
+			if len(c.preUrl) > 0 { //todo #49
 				old := ctx.Request.URL.Path
 				if strings.HasPrefix(old, c.preUrl) {
 					index := len(c.preUrl) - 1
