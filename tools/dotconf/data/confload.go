@@ -1,4 +1,4 @@
-package import_config
+package data
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ type Config struct {
 }
 
 //Configuring storage object instantiation
-func New() *Config {
+func NewConfig() *Config {
 	return &Config{config.New("default")}
 }
 

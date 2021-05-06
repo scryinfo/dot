@@ -2,11 +2,12 @@
 // license that can be found in the license file.
 package main
 import (
+    "encoding/json"
+    "github.com/scryinfo/dot/dot"
     "log"
     "os"
-    "encoding/json"
     "reflect"
-    "github.com/scryinfo/dot/dot"
+
     {{range $index, $element := .}}{{$element.Alias}} "{{$element.ImportDir}}"
     {{end}}
 )
@@ -17,9 +18,9 @@ type DotAndExtendConfig struct {
 	RequiredInfo map[string]interface{}	`json:"requiredInfo"`
 }
 type Live struct {
-	TypeId    dot.TypeId      `json:"typeId"`
-	LiveId    dot.LiveId      `json:"liveId"`
-	RelyLives map[string]dot.LiveId  `json:"relyLives"`
+	TypeID    dot.TypeID      `json:"TypeId"`
+	LiveID    dot.LiveID      `json:"LiveId"`
+	RelyLives map[string]dot.LiveID  `json:"relyLives"`
 	Dot       dot.Dot
 	Config interface{} 		 `json:"json"`  //扩展配置
 	Name        string       `json:"name"`  //实例别名
@@ -41,30 +42,30 @@ func main()  {
     			result[i].Lives = slice
     		}
     	}
-    //对于typeId相同的组件进行合并
+    //对于TypeID相同的组件进行合并
     var resultMerge = make([]*dot.TypeLives, 0)
 	{
 		//保存已经合并的组件
-		merge := make(map[dot.TypeId]byte)
+		merge := make(map[dot.TypeID]byte)
 		leni := len(result)
 		for i := 0; i < leni; i++ {
 			//判断这个组件是否已经合并完毕
-			_, ok := merge[result[i].Meta.TypeId]
+			_, ok := merge[result[i].Meta.TypeID]
 			if ok {
 				//跳过
 			} else {
 				for j := i + 1; j < leni; j++ {
 					//判断是否具备合并条件
-					if result[i].Meta.TypeId.String() == result[j].Meta.TypeId.String() {
+					if result[i].Meta.TypeID.String() == result[j].Meta.TypeID.String() {
 						//合并
 						//Meta部分
 						result[i].Meta.Merge(&result[j].Meta)
 						//lives部分
-						if len(result[i].Lives[0].TypeId) > 0 {
-							result[i].Lives[0].TypeId = result[j].Lives[0].TypeId
+						if len(result[i].Lives[0].TypeID) > 0 {
+							result[i].Lives[0].TypeID = result[j].Lives[0].TypeID
 						}
-						if len(result[i].Lives[0].LiveId) > 0 {
-							result[i].Lives[0].LiveId = result[j].Lives[0].LiveId
+						if len(result[i].Lives[0].LiveID) > 0 {
+							result[i].Lives[0].LiveID = result[j].Lives[0].LiveID
 						}
 						for k, v := range result[j].Lives[0].RelyLives {
 							if _, ok := result[i].Lives[0].RelyLives[k]; !ok {
@@ -74,13 +75,13 @@ func main()  {
 					}
 				}
 				//将这个id放入merge中
-				merge[result[i].Meta.TypeId] = 1
+				merge[result[i].Meta.TypeID] = 1
 				resultMerge = append(resultMerge, result[i])
 			}
 		}
 	}
     //获取组件特有的配置信息
-	var configInfo = make([]*dot.ConfigTypeLives, 0)
+	var configInfo = make([]*dot.ConfigTypeLive, 0)
 	{
 	    {{range $index, $element := .}}{{if $element.IsExistConfig}}
 	    {{range $index, $func := $element.ConfigFuncNames}}configInfo = append(configInfo,{{$element.Alias}}.{{$func}}())
@@ -98,15 +99,15 @@ func main()  {
     		//Lives
     		finalResult[i].Lives =make([]Live, len(resultMerge[i].Lives))
 			for key, value := range resultMerge[i].Lives {
-				finalResult[i].Lives[key].TypeId=value.TypeId
-				finalResult[i].Lives[key].LiveId=value.LiveId
+				finalResult[i].Lives[key].TypeID=value.TypeID
+				finalResult[i].Lives[key].LiveID=value.LiveID
 				finalResult[i].Lives[key].RelyLives=value.RelyLives
 				finalResult[i].Lives[key].Dot=value.Dot
 			}
 		}
     	//扩展配置
     	for j := range configInfo {
-    		if finalResult[i].Meta.TypeId.String() == configInfo[j].TypeIdConfig.String() {
+    		if finalResult[i].Meta.TypeID.String() == configInfo[j].TypeIDConfig.String() {
 				finalResult[i].Lives[0].Config = configInfo[j].ConfigInfo
     		}
     	}
@@ -122,7 +123,7 @@ func main()  {
     {
     	_, err := json.Marshal(finalResult)
     	if err != nil {
-    		log.Fatal("MarShal err:", err)
+    		log.Fatal("Marshal err:", err)
     	}
     	file, _ := os.OpenFile("./run_out/result.json", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
     	defer file.Close()

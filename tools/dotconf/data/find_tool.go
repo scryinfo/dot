@@ -1,4 +1,4 @@
-package find_dot
+package data
 
 import (
 	"bytes"
@@ -8,11 +8,9 @@ import (
 	"go/token"
 	"golang.org/x/tools/go/packages"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"text/template"
@@ -20,17 +18,15 @@ import (
 
 //保存返回的组件通用信息
 type packageInfo struct {
-	absDir      string //该目录\包的绝对路径
-	packageName string //正在扫描的包名，需要绝对路径
-	astFiles    []*ast.File
-	ImportDir   string //导入路径
-	Alias       string //别名
-
-	Funcs   []*FuncOfDot //返回组件普通信息的函数
-	isExist bool         //是否存在返回dot.TypeLives的函数
-
-	ConfigFuncNames []string //返回组件特有配置信息的函数
-	IsExistConfig   bool     //是否存在返回config的函数
+	absDir          string       //该目录\包的绝对路径
+	packageName     string       //正在扫描的包名，需要绝对路径
+	astFiles        []*ast.File  //
+	ImportDir       string       //导入路径
+	Alias           string       //别名
+	Funcs           []*FuncOfDot //返回组件普通信息的函数
+	isExist         bool         //是否存在返回dot.TypeLives的函数
+	ConfigFuncNames []string     //返回组件特有配置信息的函数
+	IsExistConfig   bool         //是否存在返回config的函数
 }
 type FuncOfDot struct {
 	FuncName string    //函数名
@@ -69,10 +65,10 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 		}
 	}
 
-	//处理重复的目录，原因是多个mod中可能会重复依赖多个项目
-	// 或者a\b\c和a\b这类目录也要处理
+	// 处理重复的目录，原因是多个mod中可能会重复依赖多个项目
+	// a\b\c和a\b这类目录不处理
 	{
-		paths = RemoveRepByMap(paths)
+		paths = removeRepByMap(paths)
 	}
 
 	// 对于每个子目录通过package.config获取包名，以及当前位置的所有ast.file
@@ -92,7 +88,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 				Mode: packages.LoadSyntax, //不包含依赖,尝试下面这个
 				Dir:  paths[i],            //设置当前目录
 			}
-			var pkginfos []*packages.Package = nil
+			var pkginfos []*packages.Package
 			pkginfos, err = packages.Load(cfg, dirs...)
 			if err != nil {
 				fmt.Println("packages.Load err:", err)
@@ -197,21 +193,19 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 			} else {
 				p.IsExistConfig = true
 			}
-
 		}
 	}
 
 	//生成代码文件
 	{
-		buildCodeFromTemplate(exitFuncInfos)
-
+		buildCode(exitFuncInfos)
 	}
 
 	//调用执行callMethod生成序列化的json文件
 	{
 		//运行生成的代码文件
 		{
-			cmd := exec.Command(getGOROOTBin(), "run", "./run_out/callMethod.go")
+			cmd := exec.Command("go", "run", "./run_out/callMethod.go")
 			err = cmd.Run()
 			if err != nil {
 				fmt.Printf("Error %v executing command!", err)
@@ -262,12 +256,12 @@ func isDirExist(paths string) bool {
 }
 
 //解决重复目录
-func RemoveRepByMap(slc []string) []string {
-	result := []string{}
-	tempMap := map[string]byte{} // 存放不重复主键
+func removeRepByMap(slc []string) []string {
+	var result []string
+	tempMap := map[string]struct{}{} // 存放不重复主键
 	for i := range slc {
 		l := len(tempMap)
-		tempMap[slc[i]] = 0
+		tempMap[slc[i]] = struct{}{}
 		if len(tempMap) != l { // 加入map后，map长度变化，则元素不重复
 			result = append(result, slc[i])
 		}
@@ -291,6 +285,7 @@ func getAllSonDirs(dirpath string) ([]string, error) {
 		})
 	return dirList, dirErr
 }
+
 func isTrueDir(path string) bool {
 	if strings.Index(path, "node_modules") == -1 {
 		if strings.Index(path, ".git") == -1 {
@@ -413,7 +408,7 @@ func returnValueJudgmentOfConfig(ret *ast.Field) (bool, bool) {
 		xx := x.X.(*ast.Ident)
 		xsel := x.Sel.Name
 		if xx.Name == "dot" {
-			if xsel == "ConfigTypeLives" {
+			if xsel == "ConfigTypeLive" {
 				return true, false //返回值是*dot.ConfigTypelives
 			}
 		}
@@ -422,37 +417,11 @@ func returnValueJudgmentOfConfig(ret *ast.Field) (bool, bool) {
 	return false, false //返回值类型错误
 }
 
-//
-func getGOPATHsrc() string {
-	gopath := os.Getenv("GOPATH")
-	switch runtime.GOOS {
-	case "windows":
-		gopath = gopath + "\\src\\"
-	case "linux":
-		gopath = gopath + "/src/"
-	default:
-		log.Fatal("无法识别的操作系统")
-	}
-	return gopath
-}
-func getGOROOTBin() string {
-	gopath := os.Getenv("GOROOT")
-	switch runtime.GOOS {
-	case "windows":
-		gopath = gopath + "\\bin\\go.exe"
-	case "linux":
-		gopath = gopath + "/bin/go"
-	default:
-		log.Fatal("无法识别的操作系统")
-	}
-	return gopath
-}
-
 //模板生成
-func buildCodeFromTemplate(e []*packageInfo) {
+func buildCode(e []*packageInfo) {
 	buf := bytes.Buffer{}
 	//使用模板
-	var filepaths = "./nobl/tool/findDot/file1.tmpl"
+	var filepaths = "./data/file.tmpl"
 	filepaths = filepath.FromSlash(filepaths)
 	t, err := template.ParseFiles(filepaths)
 	if err != nil {

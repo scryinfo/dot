@@ -1,7 +1,7 @@
 // Scry Info.  All rights reserved.
 // license that can be found in the license file.
 
-package dots
+package data
 
 import (
 	"context"
@@ -17,34 +17,15 @@ import (
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
-	"github.com/scryinfo/dot/tools/config/data/dots/tool/find_dot"
-	"github.com/scryinfo/dot/tools/config/data/dots/tool/import_config"
-	"github.com/scryinfo/dot/tools/config/data/rpc"
+	"github.com/scryinfo/dot/tools/dotconf/data/rpc"
 )
 
 const (
 	ServerTypeID = "rpcImplement"
 )
 
-type config struct {
-}
-
 type RpcImplement struct {
 	ServerNobl gserver.ServerNobl `dot:""`
-	conf       config
-}
-
-func newRpcImplement(conf []byte) (dot.Dot, error) {
-	dconf := &config{}
-	//err := dot.UnMarshalConfig(conf, dconf)
-	//if err != nil {
-	//	return nil, err
-	//}
-	d := &RpcImplement{
-		conf: *dconf,
-	}
-
-	return d, nil
 }
 
 func (c *RpcImplement) Start(ignore bool) error {
@@ -56,7 +37,7 @@ func (c *RpcImplement) Start(ignore bool) error {
 func RpcImplementTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: ServerTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
-			return newRpcImplement(conf)
+			return &RpcImplement{}, nil
 		}},
 		Lives: []dot.Live{
 			dot.Live{
@@ -71,11 +52,11 @@ func RpcImplementTypeLives() []*dot.TypeLives {
 
 //rpc implement
 
-func (c *RpcImplement) FindDot(ctx context.Context, in *rpc.FindReq) (*rpc.FindRes, error) {
+func (c *RpcImplement) FindDot(_ context.Context, in *rpc.FindReq) (*rpc.FindRes, error) {
 	res := &rpc.FindRes{}
 
 	dirs := in.Dirs
-	bytes, invalidDirectory, err := find_dot.FindDots(dirs)
+	bytes, invalidDirectory, err := FindDots(dirs)
 	//删除运行时产生的中间文件
 	{
 		err := os.Remove("./run_out/callMethod.go")
@@ -93,7 +74,7 @@ func (c *RpcImplement) FindDot(ctx context.Context, in *rpc.FindReq) (*rpc.FindR
 	return res, nil
 }
 
-func (c *RpcImplement) ImportByDot(ctx context.Context, in *rpc.ImportReq) (*rpc.ImportRes, error) {
+func (c *RpcImplement) ImportByDot(_ context.Context, in *rpc.ImportReq) (*rpc.ImportRes, error) {
 
 	res := &rpc.ImportRes{}
 	data, err := ioutil.ReadFile(in.Filepath)
@@ -107,9 +88,9 @@ func (c *RpcImplement) ImportByDot(ctx context.Context, in *rpc.ImportReq) (*rpc
 }
 
 //支持三种格式json toml yaml
-func (c *RpcImplement) ImportByConfig(con context.Context, im *rpc.ImportReq) (*rpc.ImportRes, error) {
+func (c *RpcImplement) ImportByConfig(_ context.Context, im *rpc.ImportReq) (*rpc.ImportRes, error) {
 	res := &rpc.ImportRes{}
-	config := import_config.New()
+	config := NewConfig()
 	_, err := config.ConfLoad(im.Filepath)
 	if err != nil {
 		res.Error = err.Error()
@@ -127,7 +108,7 @@ func (c *RpcImplement) ImportByConfig(con context.Context, im *rpc.ImportReq) (*
 //导出配置信息
 //支持三种格式json toml yaml
 //由文件名来区分不同格式
-func (c *RpcImplement) ExportConfig(ctx context.Context, in *rpc.ExportReq) (*rpc.ExportRes, error) {
+func (c *RpcImplement) ExportConfig(_ context.Context, in *rpc.ExportReq) (*rpc.ExportRes, error) {
 	var data = in.Configdata
 	var target interface{}
 
@@ -181,7 +162,7 @@ func (c *RpcImplement) ExportConfig(ctx context.Context, in *rpc.ExportReq) (*rp
 
 //导出组件信息
 //json
-func (c *RpcImplement) ExportDot(ctx context.Context, in *rpc.ExportReq) (*rpc.ExportRes, error) {
+func (c *RpcImplement) ExportDot(_ context.Context, in *rpc.ExportReq) (*rpc.ExportRes, error) {
 	var data = in.Dotdata
 	if in.Filename == nil {
 		in.Filename[0] = "./run_out/dots.json"

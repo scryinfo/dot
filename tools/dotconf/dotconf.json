@@ -46,7 +46,7 @@
           "liveId": "d9972be7-cef9-464c-9bbb-d1f11abea803",
           "json": {
             "urlRelativePath": "/ui",
-            "resRelativePath": "../ui",
+            "resRelativePath": "./ui",
             "mainHTMlName": "index.html",
             "paths": [
               {
@@ -69,7 +69,8 @@
           "json": {
             "addrs": [
               ":5012"
-            ]
+            ],
+            "name": "conf"
           }
         }
       ]

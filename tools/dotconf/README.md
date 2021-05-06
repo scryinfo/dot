@@ -1,5 +1,5 @@
 
-## tool/config
+## tool/dotconf
 ---
 ### 组件配置工具
 ---
@@ -17,15 +17,7 @@
 
 ### 使用方式
 ```
-./config.sh  or   config.bat
-```
-　若修改了vue代码,请按以下方式重新打包
-```
-cd dot/tools/config/app
-
-npm install
-
-npm run build
+go run dotConf.go 
 ```
 注：若浏览器未成功弹出，请手动打开浏览器访问http://localhost:8080  
 提示：本工具将会占用5012以及8080端口，关闭终端时释放所有资源

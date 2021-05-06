@@ -1,4 +1,4 @@
-package import_config
+package data
 
 import (
 	"fmt"

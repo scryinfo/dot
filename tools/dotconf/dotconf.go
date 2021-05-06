@@ -9,12 +9,11 @@ import (
 	"github.com/scryinfo/dot/dots/gindot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dot/dots/line"
-	"github.com/scryinfo/dot/tools/config/data/dots"
+	"github.com/scryinfo/dot/tools/dotconf/data"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 	"go.uber.org/zap"
 	"os"
 	"os/exec"
-	"runtime"
 )
 
 func main() {
@@ -28,16 +27,16 @@ func main() {
 	dot.Logger().Infoln("dot ok")
 	//second step ....
 
-	go func() {
-		switch runtime.GOOS {
-		case "windows":
-			windowsBrowser()
-		case "linux":
-			linuxBrowser()
-		default:
-			dot.Logger().Fatalln("无法识别的操作系统")
-		}
-	}()
+	//go func() {
+	//	switch runtime.GOOS {
+	//	case "windows":
+	//		windowsBrowser()
+	//	case "linux":
+	//		linuxBrowser()
+	//	default:
+	//		dot.Logger().Fatalln("无法识别的操作系统")
+	//	}
+	//}()
 
 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
@@ -45,7 +44,7 @@ func main() {
 }
 
 func add(l dot.Line) error {
-	lives := dots.RpcImplementTypeLives()
+	lives := data.RpcImplementTypeLives()
 	lives = append(lives, gserver.GinNoblTypeLives()...)
 	lives = append(lives, gindot.UiTypeLives()...)
 
