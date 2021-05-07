@@ -1,18 +1,16 @@
 <template>
     <el-collapse>
-        <el-button id="updateLiveNum" @click="updateLvNum()" style="margin-bottom: 5px;">Live Num</el-button>
-        <el-button id="removeAllDot" @click="removeAllDots()" style="margin-bottom: 5px;">Remove All</el-button>
-        <el-row v-for="(v,index) in this.$store.state.Dots">
+        <el-button @click="updateLvNum()">Live Num</el-button>
+        <el-button @click="removeAllDots()">Remove All</el-button>
+        <el-row v-for="(v,index) in this.dots">
             <el-col :span="3">
-                <div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{livesNum[index]}}
-                </div>
+                <div class="grid-content bg-purple">{{livesNum[index]}}</div>
             </el-col>
             <el-col :span="3">
-                <div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">{{v.metaData.name}}
-                </div>
+                <div class="grid-content bg-purple">{{v.metaData.name}}</div>
             </el-col>
             <el-col :span="10">
-                <el-collapse-item v-bind:title="v.metaData.typeId" v-bind:name="index">
+                <el-collapse-item :title="v.metaData.typeId" :name="index">
                     <el-row v-for="(a,b,c) in v.metaData">
                         <el-col :span="6">
                             <div>{{b}}</div>
@@ -24,108 +22,112 @@
                 </el-collapse-item>
             </el-col>
             <el-col :span="2">
-                <div style="margin-left: 6px">
-                    <el-button v-on:click="open(index)">Name</el-button>
-                </div>
+                <el-button @click="open(index)">Name</el-button>
             </el-col>
             <el-col :span="3">
-                <div>
-                    <el-button v-on:click="addConf(index)">Add Config</el-button>
-                </div>
+                <el-button @click="addConf(index)">Add Config</el-button>
             </el-col>
             <el-col :span="3">
-                <el-button id="delDot" @click="delDot(index)" style="margin-left: 2%">remove</el-button>
+                <el-button @click="delDot(index)">remove</el-button>
             </el-col>
         </el-row>
     </el-collapse>
 </template>
-<script>
+<script lang="ts">
     import {checkType, removeAllType} from "../components/utils/checkType";
+    import {Dot, state} from "@/views/home/store";
+    import {Component, Vue} from "vue-property-decorator";
 
-    export default {
-        data() {
-            return {
-                livesNum: [],
-                table: this.store.state.Dots,
-                activeNames: ['1']
-            };
-        },
-        methods: {
-            updateLvNum() {
-                let l = this.store.state.Dots.length;
-                for (let i = 0; i < l; i++) {
-                    this.livesNum[i] = 0;
-                    let tId = this.store.state.Dots[i].metaData.typeId;
-                    for (let j = 0; j < this.store.state.Configs.length; j++) {
-                        if (this.store.state.Configs[j].metaData.typeId === tId) {
-                            let livesLen = this.store.state.Configs[j].lives.length;
-                            for (let k = 0; k < livesLen; k++) {
-                                if (this.store.state.Configs[j].lives[k].liveId !== '') {
-                                    this.livesNum[i]++;
-                                }
+    @Component
+    export default class DotList extends Vue {
+
+        private livesNum = new Array<number>();
+        private activeNames = ['1'];
+        private dots = new Array<Dot>();
+
+        private updateLvNum() {
+            let l = this.dots.length;
+            for (let i = 0; i < l; i++) {
+                this.livesNum[i] = 0;
+                let tId = this.dots[i].metaData.typeId;
+                for (let j = 0; j < state.Configs.length; j++) {
+                    if (state.Configs[j].metaData.typeId === tId) {
+                        let livesLen = state.Configs[j].lives.length;
+                        for (let k = 0; k < livesLen; k++) {
+                            if (state.Configs[j].lives[k].liveId !== '') {
+                                this.livesNum[i]++;
                             }
-                            break;
                         }
+                        break;
                     }
                 }
-                this.$forceUpdate();
+            }
+            this.$forceUpdate();
+            this.$message({
+                type: "success",
+                message: "update LivesNumber Success",
+            });
+        }
+
+        private open(index: number) {
+            this.$prompt('输入组件名', 'Dot name', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then((value:any) => {
                 this.$message({
-                    type: "success",
-                    message: "updata LivesNumber Success",
+                    type: 'success',
+                    message: '该组件名更改为: ' + value,
                 });
-            },
-            open(index) {
-                this.$prompt('输入组件名', 'Dot name', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                }).then(({value}) => {
-                    this.$message({
-                        type: 'success',
-                        message: '该组件名更改为: ' + value,
-                    });
-                    this.store.state.Dots[index].metaData.name = value;
-                    let id = this.store.state.Dots[index].metaData.typeId;
-                    for (let i = 0; i < this.store.state.Configs.length; i++) {
-                        if (this.store.state.Configs[i].metaData.typeId === id) {
-                            this.store.state.Configs[i].metaData.name = value;
-                            break;
-                        }
-                    }
-                    ;
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '取消输入'
-                    });
-                });
-            },
-            addConf(index) {
-                let tId = this.store.state.Dots[index].metaData.typeId;
-                let confNum = this.store.state.Configs.length;
-                for (let i = 0; i < confNum; i++) {
-                    if (this.store.state.Configs[i].metaData.typeId === tId) {
-                        this.$message({
-                            type: "warning",
-                            message: "Add default,Exist!",
-                        });
-                        return
+                this.dots[index].metaData.name = value;
+                let id = this.dots[index].metaData.typeId;
+                for (let i = 0; i < state.Configs.length; i++) {
+                    if (state.Configs[i].metaData.typeId === id) {
+                        state.Configs[i].metaData.name = value;
+                        break;
                     }
                 }
-                this.store.state.Configs.push(JSON.parse(JSON.stringify(this.store.state.Dots[index])));
+            }).catch(() => {
                 this.$message({
-                    type: "success",
-                    message: "Add Config success",
+                    type: 'info',
+                    message: '取消输入'
                 });
-            },
-            removeAllDots() {
-                this.store.state.Dots = [];
-                removeAllType(this.store.state.Configs);
-            },
-            delDot(index) {
-                this.store.state.Dots.splice(index, 1);
-                checkType(this.store.state.Dots, this.store.state.Configs);
-            },
-        },
+            });
+        }
+
+        private addConf(index: number) {
+            let tId = this.dots[index].metaData.typeId;
+            let confNum = state.Configs.length;
+            for (let i = 0; i < confNum; i++) {
+                if (state.Configs[i].metaData.typeId === tId) {
+                    this.$message({
+                        type: "warning",
+                        message: "Add default,Exist!",
+                    });
+                    return
+                }
+            }
+            state.Configs.push(this.dots[index]);
+            this.$message({
+                type: "success",
+                message: "Add Config success",
+            });
+        }
+
+        private removeAllDots() {
+            this.dots = [];
+            removeAllType(state.Configs);
+        }
+
+        private delDot(index: number) {
+            this.dots.splice(index, 1);
+            checkType(this.dots, state.Configs);
+        }
+
+        private mounted() {
+            this.dots = state.Dots;
+            // console.log(this.dots);
+            // console.log(state.Configs);
+        }
     }
 
 </script>

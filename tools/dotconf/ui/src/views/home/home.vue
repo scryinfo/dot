@@ -1,6 +1,6 @@
 <template>
     <el-row type="flex">
-        <el-col :span="2">
+        <el-col :span="3">
             <ul>
                 <li>
                     <router-link :to="{name:'findDot'}">组件查找</router-link>
@@ -15,7 +15,7 @@
                     <router-link :to="{name:'export'}">导出</router-link>
                 </li>
                 <li>
-                    <router-link :to="{name:'Config'}">配置</router-link>
+                    <router-link :to="{name:'config'}">配置</router-link>
                 </li>
             </ul>
         </el-col>
@@ -46,12 +46,14 @@
         Tooltip,
         Upload
     } from "element-ui";
+    import 'element-ui/lib/theme-chalk/index.css';
 
     Vue.use(Row).use(Col).use(Menu).use(Submenu).use(Button).use(Tooltip).use(Select).use(Option).use(Table).use(TableColumn).use(Pagination).use(Form).use(FormItem).use(Input).use(Upload).use(DatePicker).use(Radio).use(Loading);
 
 
     @Component
     export default class Home extends Vue {
+        private mounted(){}
     }
 
 </script>

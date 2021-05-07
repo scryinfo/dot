@@ -63,8 +63,7 @@ export let jsonParse = function (jsonStr: any) {
 
     // --
     const parseBody = (json: any) => {
-        const r = parseJson(json);
-        return r;
+        return parseJson(json);
     };
 
     return parseBody(jsonStr);
@@ -120,8 +119,7 @@ export let makeJson = function (dataArr: any) {
     };
 
     const revertMain = function (data: any) {
-        const r = revertWithObj(data);
-        return r;
+        return revertWithObj(data);
     };
 
     return revertMain(dataArr);

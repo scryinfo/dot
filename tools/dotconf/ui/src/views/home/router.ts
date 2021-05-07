@@ -40,13 +40,13 @@ const routes: Array<RouteConfig> = [
                 component: Export,
             },
             {
-                path: '/Config',
+                path: '/config',
                 name: 'config',
                 component: Config,
             },
         ]
     }
-]
+];
 
 const router = new VueRouter({
     mode: "hash",

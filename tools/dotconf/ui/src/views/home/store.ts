@@ -3,8 +3,9 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex);
 export const state = {
-    Dots: [],
-    Configs: [],
+    Loading: false,
+    Dots: new Array<Dot>(),
+    Configs: new Array<Dot>(),
 };
 export default new Vuex.Store({
     state: state,
@@ -12,3 +13,24 @@ export default new Vuex.Store({
     actions: {},
     modules: {}
 })
+
+export class Dot {
+    metaData = {
+        typeId: "",
+        version: "",
+        name: "",
+        showName: "",
+        single: false,
+        relyTypeIds: null,
+        flag:""
+    };
+    lives = [{
+        typeId: "",
+        liveId: "",
+        relyLives: null,
+        Dot: null,
+        json: {},
+        name: ""
+    }];
+    requiredInfo = null
+}

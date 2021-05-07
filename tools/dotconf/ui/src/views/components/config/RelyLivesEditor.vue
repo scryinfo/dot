@@ -19,7 +19,7 @@
             Select<i class="el-icon-arrow-down el-icon--right"/>
       </span>
                     <el-dropdown-menu slot="dropdown">
-                        <div v-for="config in $root.Configs">
+                        <div v-for="config in $store.state.Configs">
                             <div v-for="live in config.lives">
                                 <el-dropdown-item @click.native="changeItem(ob,live)">{{live.name}}:{{live.liveId}}
                                 </el-dropdown-item>
