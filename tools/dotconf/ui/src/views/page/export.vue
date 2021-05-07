@@ -91,7 +91,7 @@
                 }
                 //判断liveid
                 let conf = state.Configs; //config页面数据
-                let resultDot = []; //处理掉空配置
+                let resultDot = new Array<Dot>(); //处理掉空配置
                 {
                     let liveIds = [];
                     for (let i = 0; i < conf.length; i++) {
@@ -113,21 +113,13 @@
                                 liveIds.push(conf[i].lives[j].liveId);
                             }
                         }
-                        resultDot.push(JSON.parse(JSON.stringify(conf[i])));
+                        resultDot.push(conf[i]);
                     }
                 }
                 if (!this.configRequire(resultDot)) {
                     return false
                 }
-                let result = {
-                    log: {
-                        file: "log.log",
-                        level: "debug"
-                    },
-                    dots: {},
-                };
-                result.dots = resultDot;
-                DotWrapper.exportConfig(JSON.stringify(result), confFileList).then(data => {
+                DotWrapper.exportConfig(resultDot, confFileList).then(data => {
                     if (!data.getError()) {
                         alert("导出文件成功，文件位置tools/dotconf/run_out目录下");
                     } else {

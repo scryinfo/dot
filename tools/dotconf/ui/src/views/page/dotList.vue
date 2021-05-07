@@ -73,16 +73,16 @@
             this.$prompt('输入组件名', 'Dot name', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
-            }).then((value:any) => {
+            }).then((data:any) => {
                 this.$message({
                     type: 'success',
-                    message: '该组件名更改为: ' + value,
+                    message: '该组件名更改为: ' + data.value,
                 });
-                this.dots[index].metaData.name = value;
+                this.dots[index].metaData.name = data.value;
                 let id = this.dots[index].metaData.typeId;
                 for (let i = 0; i < state.Configs.length; i++) {
                     if (state.Configs[i].metaData.typeId === id) {
-                        state.Configs[i].metaData.name = value;
+                        state.Configs[i].metaData.name = data.value;
                         break;
                     }
                 }

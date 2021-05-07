@@ -14,6 +14,7 @@ import (
 	"go.uber.org/zap"
 	"os"
 	"os/exec"
+	"runtime"
 )
 
 func main() {
@@ -27,16 +28,16 @@ func main() {
 	dot.Logger().Infoln("dot ok")
 	//second step ....
 
-	//go func() {
-	//	switch runtime.GOOS {
-	//	case "windows":
-	//		windowsBrowser()
-	//	case "linux":
-	//		linuxBrowser()
-	//	default:
-	//		dot.Logger().Fatalln("无法识别的操作系统")
-	//	}
-	//}()
+	go func() {
+		switch runtime.GOOS {
+		case "windows":
+			windowsBrowser()
+		case "linux":
+			linuxBrowser()
+		default:
+			dot.Logger().Fatalln("无法识别的操作系统")
+		}
+	}()
 
 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false

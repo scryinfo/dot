@@ -18,10 +18,10 @@ type DotAndExtendConfig struct {
 	RequiredInfo map[string]interface{}	`json:"requiredInfo"`
 }
 type Live struct {
-	TypeID    dot.TypeID      `json:"TypeId"`
-	LiveID    dot.LiveID      `json:"LiveId"`
+	TypeID    dot.TypeID      `json:"typeId"`
+	LiveID    dot.LiveID      `json:"liveId"`
 	RelyLives map[string]dot.LiveID  `json:"relyLives"`
-	Dot       dot.Dot
+	dot       dot.Dot
 	Config interface{} 		 `json:"json"`  //扩展配置
 	Name        string       `json:"name"`  //实例别名
 
@@ -102,7 +102,7 @@ func main()  {
 				finalResult[i].Lives[key].TypeID=value.TypeID
 				finalResult[i].Lives[key].LiveID=value.LiveID
 				finalResult[i].Lives[key].RelyLives=value.RelyLives
-				finalResult[i].Lives[key].Dot=value.Dot
+				finalResult[i].Lives[key].dot=value.Dot
 			}
 		}
     	//扩展配置

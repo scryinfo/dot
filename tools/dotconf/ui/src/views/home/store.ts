@@ -28,7 +28,6 @@ export class Dot {
         typeId: "",
         liveId: "",
         relyLives: null,
-        Dot: null,
         json: {},
         name: ""
     }];

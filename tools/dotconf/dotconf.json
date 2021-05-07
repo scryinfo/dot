@@ -47,7 +47,7 @@
           "json": {
             "urlRelativePath": "/ui",
             "resRelativePath": "./ui",
-            "mainHTMlName": "index.html",
+            "mainHTMlName": "home.html",
             "paths": [
               {
                 "relativePath": "",
