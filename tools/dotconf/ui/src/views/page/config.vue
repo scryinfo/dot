@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-collapse v-model="activeTypes">
-            <el-row v-for="(config,index) in $store.state.Configs">
+            <el-row v-for="(config,index) in $store.state.Configs" :key="index">
                 <div v-if="config.metaData.flag==='not-exist'">
                     <el-col :span="1">
                         <el-tooltip effect="dark" content="This typeId is not exist in dots!" placement="bottom-start">
@@ -20,7 +20,7 @@
                 <check-live-id :metaName="config.metaData.name" :lives="config.lives"/>
                 <el-col :span="18">
                     <el-collapse-item v-bind:title="config.metaData.typeId" v-bind:name="index">
-                        <el-row v-for="(live,index2) in config.lives">
+                        <el-row v-for="(live,index2) in config.lives" :key="index2">
                             <el-col :span="2">
                                 <div class="grid-content bg-purple" style="text-align: center;line-height: 46px;">
                                     {{live.name}}
@@ -40,7 +40,9 @@
                                             <el-input type="text" v-model="live.liveId" placeholder="LiveId"/>
                                         </el-col>
                                         <el-col :span="4">
-                                            <el-button @click="uuidGenerator(live)">Generate Live Id</el-button>
+                                            <el-button @click="uuidGenerator(live,index2,config.metaData.typeId)">
+                                                Generate Live Id
+                                            </el-button>
                                         </el-col>
                                     </el-row>
 
@@ -158,8 +160,12 @@
             config.lives.splice(index, 1);
         }
 
-        private uuidGenerator(live: any) {
-            live.liveId = uuidv1()
+        private uuidGenerator(live: any, index: number, typeId: string) {
+            if (index == 0) {
+                live.liveId = typeId
+            } else {
+                live.liveId = uuidv1()
+            }
         }
 
         private shallowCopy(src: any): any {

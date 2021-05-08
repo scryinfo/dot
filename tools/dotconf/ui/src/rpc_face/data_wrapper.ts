@@ -26,6 +26,10 @@ export class _DotWrapper {
         request.setFilepath(path);
         return this.client.importByDot(request);
     }
+    public initImportDot() {
+        const request = new ImportReq();
+        return this.client.initImport(request);
+    }
 
     public exportConfig(data: Dot[], fileName: string[]) {
         const request = new ExportReq();

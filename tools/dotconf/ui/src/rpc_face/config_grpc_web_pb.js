@@ -313,6 +313,86 @@ proto.rpc.DotConfigFacePromiseClient.prototype.importByDot =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.rpc.ImportReq,
+ *   !proto.rpc.ImportRes>}
+ */
+const methodDescriptor_DotConfigFace_InitImport = new grpc.web.MethodDescriptor(
+  '/rpc.DotConfigFace/InitImport',
+  grpc.web.MethodType.UNARY,
+  proto.rpc.ImportReq,
+  proto.rpc.ImportRes,
+  /**
+   * @param {!proto.rpc.ImportReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.rpc.ImportRes.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.rpc.ImportReq,
+ *   !proto.rpc.ImportRes>}
+ */
+const methodInfo_DotConfigFace_InitImport = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.rpc.ImportRes,
+  /**
+   * @param {!proto.rpc.ImportReq} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.rpc.ImportRes.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.rpc.ImportReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.rpc.ImportRes)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.rpc.ImportRes>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.rpc.DotConfigFaceClient.prototype.initImport =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/rpc.DotConfigFace/InitImport',
+      request,
+      metadata || {},
+      methodDescriptor_DotConfigFace_InitImport,
+      callback);
+};
+
+
+/**
+ * @param {!proto.rpc.ImportReq} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.rpc.ImportRes>}
+ *     A native promise that resolves to the response
+ */
+proto.rpc.DotConfigFacePromiseClient.prototype.initImport =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/rpc.DotConfigFace/InitImport',
+      request,
+      metadata || {},
+      methodDescriptor_DotConfigFace_InitImport);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.rpc.ExportReq,
  *   !proto.rpc.ExportRes>}
  */

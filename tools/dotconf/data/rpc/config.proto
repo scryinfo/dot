@@ -35,6 +35,7 @@ service DotConfigFace {
   //文件导入
   rpc ImportByConfig(ImportReq) returns(ImportRes);
   rpc ImportByDot(ImportReq) returns(ImportRes);
+  rpc InitImport(ImportReq) returns (ImportRes);
   //导出文件
   rpc ExportConfig(ExportReq) returns(ExportRes);
   rpc ExportDot(ExportReq) returns(ExportRes);

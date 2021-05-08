@@ -7,7 +7,10 @@
                     <span>fileName :</span>
                     <el-input type="text" v-model="dotFileName"/>
                 </div>
-                <el-button @click="ExportDot">Export Dot</el-button>
+                <div style="width: 100%;display: flex;justify-content: space-around;margin-top: 5px">
+                    <el-button @click="ExportDot">Export Dot</el-button>
+                    <el-button @click="ExportInitDot" type="warning">Preset Init Dot</el-button>
+                </div>
             </el-main>
         </el-container>
         <el-container>
@@ -77,6 +80,20 @@
                     alert("导出文件失败" + err);
                 });
             }
+        }
+
+        private ExportInitDot() {
+            let filename = new Array<string>();
+            DotWrapper.exportDot(JSON.stringify(state.Dots), filename).then(data => {
+                if (!data.getError()) {
+                    alert("预置组件成功，文件位置tools/dotconf目录下");
+                } else {
+                    alert("预置组件失败" + data.getError());
+                }
+            }).catch(err => {
+                alert("预置组件失败" + err);
+            });
+
         }
 
         private ExportConf() {

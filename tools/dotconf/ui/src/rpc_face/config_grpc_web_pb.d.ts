@@ -34,6 +34,13 @@ export class DotConfigFaceClient {
                response: ImportRes) => void
   ): grpcWeb.ClientReadableStream<ImportRes>;
 
+  initImport(
+    request: ImportReq,
+    metadata: grpcWeb.Metadata | undefined,
+    callback: (err: grpcWeb.Error,
+               response: ImportRes) => void
+  ): grpcWeb.ClientReadableStream<ImportRes>;
+
   exportConfig(
     request: ExportReq,
     metadata: grpcWeb.Metadata | undefined,
@@ -66,6 +73,11 @@ export class DotConfigFacePromiseClient {
   ): Promise<ImportRes>;
 
   importByDot(
+    request: ImportReq,
+    metadata?: grpcWeb.Metadata
+  ): Promise<ImportRes>;
+
+  initImport(
     request: ImportReq,
     metadata?: grpcWeb.Metadata
   ): Promise<ImportRes>;

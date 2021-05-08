@@ -47,13 +47,53 @@
         Upload
     } from "element-ui";
     import 'element-ui/lib/theme-chalk/index.css';
+    import DotWrapper from "@/rpc_face/data_wrapper";
+    import {state} from "@/views/home/store";
+    import {checkType} from "@/views/components/utils/checkType";
 
     Vue.use(Row).use(Col).use(Menu).use(Submenu).use(Button).use(Tooltip).use(Select).use(Option).use(Table).use(TableColumn).use(Pagination).use(Form).use(FormItem).use(Input).use(Upload).use(DatePicker).use(Radio).use(Loading);
 
 
     @Component
     export default class Home extends Vue {
-        private mounted(){}
+        private mounted(){
+            DotWrapper.initImportDot().then(data => {
+                if (data.getError() !== '') {
+                    let err = data.getError();
+                    this.$message({
+                        type: 'warning',
+                        message: err
+                    })
+                } else {
+                    let dots = [];
+                    dots = JSON.parse(data.getJson());
+                    //todo 判断类型是数组而且含有metaData.typeId字段
+                    if (!(Array.isArray(dots) && dots[0].metaData.typeId != null)) {
+                        alert("loading preset dot fail");
+                        return false
+                    }
+                    for (let i = 0; i < dots.length; i++) {
+                        let bo = true;
+                        for (let j = 0, len = state.Dots.length; j < len; j++) {
+                            if (dots[i].metaData.typeId === state.Dots[j].metaData.typeId) {
+                                bo = false;
+                                break
+                            }
+                        }
+                        if (bo) {
+                            state.Dots.push(dots[i]);
+                        }
+
+                    }
+                    checkType(state.Dots, state.Configs);
+                }
+            }).catch(err => {
+                this.$message({
+                    type: 'warning',
+                    message: err.toString()
+                })
+            });
+        }
     }
 
 </script>

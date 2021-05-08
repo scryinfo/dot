@@ -105,6 +105,19 @@ func (c *RpcImplement) ImportByConfig(_ context.Context, im *rpc.ImportReq) (*rp
 	return res, nil
 }
 
+//获取预置组件
+func (c *RpcImplement) InitImport(_ context.Context, im *rpc.ImportReq) (*rpc.ImportRes, error) {
+	res := &rpc.ImportRes{}
+	data, err := ioutil.ReadFile("./dots.json")
+	if err != nil {
+		res.Error = err.Error()
+		dot.Logger().Errorln("File reading error", zap.Error(err))
+	} else {
+		res.Json = string(data)
+	}
+	return res, nil
+}
+
 //导出配置信息
 //支持三种格式json toml yaml
 //由文件名来区分不同格式
@@ -164,10 +177,14 @@ func (c *RpcImplement) ExportConfig(_ context.Context, in *rpc.ExportReq) (*rpc.
 //json
 func (c *RpcImplement) ExportDot(_ context.Context, in *rpc.ExportReq) (*rpc.ExportRes, error) {
 	var data = in.Dotdata
-	if in.Filename == nil {
-		in.Filename[0] = "./run_out/dots.json"
+	name := ""
+	if in.Filename == nil || len(in.Filename) < 1 {
+		//export init dot
+		name = "./dots.json"
+	} else {
+		//normal export
+		name = "./run_out/" + in.Filename[0]
 	}
-	name := "./run_out/" + in.Filename[0]
 	file, err := os.OpenFile(name, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
 	if err != nil {
 		panic("An error occurred with file opening or creation\n")

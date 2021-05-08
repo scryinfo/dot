@@ -2,16 +2,16 @@
     <el-collapse>
         <el-button @click="updateLvNum()">Live Num</el-button>
         <el-button @click="removeAllDots()">Remove All</el-button>
-        <el-row v-for="(v,index) in this.dots">
-            <el-col :span="3">
-                <div class="grid-content bg-purple">{{livesNum[index]}}</div>
+        <el-row v-for="(v,index) in this.dots" :key="index">
+            <el-col :span="1">
+                <div class="grid-content bg-purple el-dialog--center">{{livesNum[index]}}</div>
             </el-col>
             <el-col :span="3">
-                <div class="grid-content bg-purple">{{v.metaData.name}}</div>
+                <div class="grid-content bg-purple ">{{v.metaData.name}}</div>
             </el-col>
             <el-col :span="10">
                 <el-collapse-item :title="v.metaData.typeId" :name="index">
-                    <el-row v-for="(a,b,c) in v.metaData">
+                    <el-row v-for="(a,b) in v.metaData" :key="a">
                         <el-col :span="6">
                             <div>{{b}}</div>
                         </el-col>
