@@ -332,6 +332,14 @@ func RedisClientTest(jsonConfig string) *RedisClient {
 	return redisClient
 }
 
+//RedisClientConfigTypeLive return config
+func RedisClientConfigTypeLive() *dot.ConfigTypeLive {
+	return &dot.ConfigTypeLive{
+		TypeIDConfig: RedisClientTypeID,
+		ConfigInfo:   &configRedis{},
+	}
+}
+
 //GenerateKey generate key for redis
 func GenerateKey(keys ...string) string {
 	return strings.Join(keys, KeySplitChar)
