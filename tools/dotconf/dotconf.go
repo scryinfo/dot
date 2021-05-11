@@ -18,6 +18,21 @@ import (
 )
 
 func main() {
+
+	{
+		path := "./run_out"
+		_, err := os.Stat(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				err = os.Mkdir(path, os.ModePerm)
+				if err != nil {
+					dot.Logger().Errorln("", zap.Error(err))
+					return
+				}
+			}
+		}
+	}
+
 	l, err := line.BuildAndStart(add)
 	if err != nil {
 		dot.Logger().Errorln("", zap.Error(err))
