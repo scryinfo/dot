@@ -11,7 +11,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	_toml "github.com/BurntSushi/toml"
 	"github.com/bitly/go-simplejson"
+	"github.com/ghodss/yaml"
+	"github.com/pelletier/go-toml"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
@@ -39,13 +42,16 @@ var (
 type sConfig struct {
 	confPath   string           //Config path
 	file       string           //File name
+	fileType   string           //json,yaml,toml
 	simpleJSON *simplejson.Json //All config
 }
 
 const (
-	extensionName = ".json" //extension name of config file 配置文件的扩展名
-	separator     = "_"     //Separator
-	conf          = "conf"
+	extensionNameJson = ".json" //extension name of config file 配置文件的扩展名
+	extensionNameYaml = ".yaml" //extension name of config file 配置文件的扩展名
+	extensionNameToml = ".toml" //extension name of config file 配置文件的扩展名
+	separator         = "_"     //Separator
+	conf              = "conf"
 )
 
 //NewConfig new sConfig
@@ -79,10 +85,25 @@ func (c *sConfig) RootPath() {
 
 		if file := filepath.Join(c.confPath, dot.GCmd.ConfigFile); len(dot.GCmd.ConfigFile) > 0 && sfile.ExistFile(file) {
 			c.file = dot.GCmd.ConfigFile
-		} else if file := filepath.Join(c.confPath, exName+extensionName); sfile.ExistFile(file) {
-			c.file = exName + extensionName
-		} else if file := filepath.Join(c.confPath, conf+extensionName); sfile.ExistFile(file) {
-			c.file = conf + extensionName
+			c.getFileType()
+		} else if file := filepath.Join(c.confPath, exName+extensionNameJson); sfile.ExistFile(file) {
+			c.file = exName + extensionNameJson
+			c.fileType = extensionNameJson
+		} else if file := filepath.Join(c.confPath, conf+extensionNameJson); sfile.ExistFile(file) {
+			c.file = conf + extensionNameJson
+			c.fileType = extensionNameJson
+		} else if file := filepath.Join(c.confPath, exName+extensionNameToml); sfile.ExistFile(file) {
+			c.file = exName + extensionNameToml
+			c.fileType = extensionNameToml
+		} else if file := filepath.Join(c.confPath, conf+extensionNameToml); sfile.ExistFile(file) {
+			c.file = conf + extensionNameToml
+			c.fileType = extensionNameToml
+		} else if file := filepath.Join(c.confPath, exName+extensionNameYaml); sfile.ExistFile(file) {
+			c.file = exName + extensionNameYaml
+			c.fileType = extensionNameYaml
+		} else if file := filepath.Join(c.confPath, conf+extensionNameYaml); sfile.ExistFile(file) {
+			c.file = conf + extensionNameYaml
+			c.fileType = extensionNameYaml
 		}
 	}
 
@@ -113,7 +134,25 @@ func (c *sConfig) Create(l dot.Line) error {
 		return nil
 	}
 	defer f.Close()
-	c.simpleJSON, err = simplejson.NewFromReader(f)
+	switch c.fileType {
+	case extensionNameJson:
+		c.simpleJSON, err = simplejson.NewFromReader(f)
+	case extensionNameToml:
+		t, err := toml.LoadReader(f)
+		if err == nil {
+			jsonStr, err := json.Marshal(t.ToMap())
+			if err == nil {
+				c.simpleJSON, err = simplejson.NewJson(jsonStr)
+			}
+		}
+	case extensionNameYaml:
+		var yamlBytes, jsonBytes []byte
+		yamlBytes, err = ioutil.ReadAll(f)
+		jsonBytes, err = yaml.YAMLToJSON(yamlBytes)
+		if err == nil {
+			c.simpleJSON, err = simplejson.NewJson(jsonBytes)
+		}
+	}
 	return err
 }
 
@@ -172,15 +211,20 @@ func (c *sConfig) Unmarshal(s interface{}) error {
 	f := filepath.Join(c.ConfigPath(), c.ConfigFile())
 	var data []byte
 	var err error
-	if c.simpleJSON != nil {
-		data, err = c.simpleJSON.MarshalJSON()
-	} else if sfile.ExistFile(f) {
+	if sfile.ExistFile(f) {
 		data, err = ioutil.ReadFile(filepath.Join(c.ConfigPath(), c.ConfigFile()))
+		if err == nil {
+			switch c.fileType {
+			case extensionNameJson:
+				err = json.Unmarshal(data, s)
+			case extensionNameToml:
+				err = _toml.Unmarshal(data, s)
+			case extensionNameYaml:
+				err = yaml.Unmarshal(data, s)
+			}
+		}
 	}
 
-	if err == nil {
-		err = json.Unmarshal(data, s)
-	}
 	return err
 }
 
@@ -488,4 +532,18 @@ func (c *sConfig) keys(k string) []string {
 		re = []string{}
 	}
 	return re
+}
+
+func (c *sConfig) getFileType() {
+	re := strings.Split(c.file, ".")
+	if l := len(re); l >= 2 {
+		switch re[l-1] {
+		case "json":
+			c.fileType = extensionNameJson
+		case "yaml":
+			c.fileType = extensionNameYaml
+		case "toml":
+			c.fileType = extensionNameToml
+		}
+	}
 }

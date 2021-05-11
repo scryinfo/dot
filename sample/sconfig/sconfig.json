@@ -1,0 +1,46 @@
+{
+  "log": {
+    "file": "log.log",
+    "level": "debug"
+  },
+  "dots": [
+    {
+      "metaData": {
+        "typeId": "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+      },
+      "lives": [
+        {
+          "liveId": "4943e959-7ad7-42c6-84dd-8b24e9ed30bb",
+          "json": {
+            "addr": ":8080",
+            "keyFile": "",
+            "pemFile": ""
+          }
+        }
+      ]
+    },
+    {
+      "": "static ui",
+      "metaData": {
+        "name": "static ui",
+        "typeId": "d9972be7-cef9-464c-9bbb-d1f11abea803"
+      },
+      "lives": [
+        {
+          "liveId": "d9972be7-cef9-464c-9bbb-d1f11abea803",
+          "json": {
+            "urlRelativePath": "/ui",
+            "resRelativePath": "../../tools/dotconf/ui",
+            "mainHTMlName": "home.html",
+            "paths": [
+              {
+                "relativePath": "",
+                "value": "dist"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+dots:
+- lives:
+  - json:
+      addr: :8080
+      keyFile: ""
+      logSkipPaths:
+      - ""
+      pemFile: ""
+    liveId: 4943e959-7ad7-42c6-84dd-8b24e9ed30bb
+    relyLives: null
+  metaData:
+    name: Engine
+    typeId: 4943e959-7ad7-42c6-84dd-8b24e9ed30bb
+- lives:
+  - json:
+      encodings: null
+      mainHTMlName: home.html
+      noCompress: false
+      paths:
+      - relativePath: ""
+        value: dist
+      resRelativePath: ../../tools/dotconf/ui
+      urlRelativePath: /ui
+    liveId: d9972be7-cef9-464c-9bbb-d1f11abea803
+    relyLives:
+      Engine_: 4943e959-7ad7-42c6-84dd-8b24e9ed30bb
+  metaData:
+    name: UI
+    typeId: d9972be7-cef9-464c-9bbb-d1f11abea803
+log:
+  file: log.log
+  level: debug

@@ -5,7 +5,6 @@ package dot
 
 import (
 	"encoding/json"
-
 	"github.com/scryinfo/scryg/sutils/skit"
 )
 
@@ -68,8 +67,8 @@ func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
 	err = nil
 
 	if lconf != nil {
-		if !skit.IsNil(lconf.JSON) {
-			conf, err = lconf.JSON.MarshalJSON()
+		if !skit.IsNil(lconf.Config) {
+			return json.Marshal(lconf.Config)
 		}
 	}
 	return conf, err

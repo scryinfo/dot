@@ -3,30 +3,27 @@
 
 package dot
 
-import (
-	"encoding/json"
-)
-
 //LiveConfig live config
 type LiveConfig struct {
 	//LiveID
-	LiveID LiveID `json:"liveId"`
+	LiveID LiveID `json:"liveId" toml:"liveId" yaml:"liveId"`
 	//RelyLives rely lives， If cannot confirm key value then key value is livid value
-	RelyLives map[string]LiveID `json:"relyLives"`
-	//Json json
-	JSON *json.RawMessage `json:"json"`
+	RelyLives map[string]LiveID `json:"relyLives" toml:"relyLives" yaml:"relyLives"`
+	//dot config
+	//todo tag
+	Config interface{} `json:"json" toml:"json" yaml:"json"`
 }
 
 //MetaLivesConfig dot config
 type MetaLivesConfig struct {
-	MetaData Metadata     `json:"metaData"`
-	Lives    []LiveConfig `json:"lives"`
+	MetaData Metadata     `json:"metaData" toml:"metaData" yaml:"metaData"`
+	Lives    []LiveConfig `json:"lives" toml:"lives" yaml:"lives"`
 }
 
 //Config config
 type Config struct {
-	Log  LogConfig         `json:"log"`
-	Dots []MetaLivesConfig `json:"dots"`
+	Log  LogConfig         `json:"log" toml:"log" yaml:"log"`
+	Dots []MetaLivesConfig `json:"dots" toml:"dots" yaml:"dots"`
 }
 
 //FindConfig find config

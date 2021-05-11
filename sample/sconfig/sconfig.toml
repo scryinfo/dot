@@ -1,0 +1,35 @@
+[[dots]]
+
+  [[dots.lives]]
+    liveId = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+    [dots.lives.json]
+      addr = ":8080"
+      keyFile = ""
+      logSkipPaths = [""]
+      pemFile = ""
+  [dots.metaData]
+    name = "Engine"
+    typeId = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+
+[[dots]]
+
+  [[dots.lives]]
+    liveId = "d9972be7-cef9-464c-9bbb-d1f11abea803"
+    [dots.lives.json]
+      mainHTMlName = "home.html"
+      noCompress = false
+      resRelativePath = "../../tools/dotconf/ui"
+      urlRelativePath = "/ui"
+
+      [[dots.lives.json.paths]]
+        relativePath = ""
+        value = "dist"
+    [dots.lives.relyLives]
+      Engine_ = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
+  [dots.metaData]
+    name = "UI"
+    typeId = "d9972be7-cef9-464c-9bbb-d1f11abea803"
+
+[log]
+  file = "log.log"
+  level = "debug"

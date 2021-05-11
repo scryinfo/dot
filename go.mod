@@ -7,6 +7,7 @@ require (
 	github.com/bitly/go-simplejson v0.5.0
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
+	github.com/ghodss/yaml v1.0.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-kit/kit v0.10.0
 	github.com/go-pg/pg/v10 v10.7.4
@@ -17,6 +18,7 @@ require (
 	github.com/gookit/config v1.1.0
 	github.com/improbable-eng/grpc-web v0.13.0
 	github.com/jinzhu/gorm v1.9.15
+	github.com/pelletier/go-toml v1.0.1-0.20170904195809-1d6b12b7cb29
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/scryinfo/scryg v0.1.3
