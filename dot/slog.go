@@ -92,6 +92,7 @@ type SLogger interface {
 type LogConfig struct {
 	File  string `json:"file" toml:"file" yaml:"file"`
 	Level string `json:"level" toml:"level" yaml:"level"`
+	Time  string `json:"time" toml:"time" yaml:"time"` //hour,h,day,d,month,m,y,year
 }
 
 //Initialize one default log, let program use log at first, output to “before.log” file, all log will be output

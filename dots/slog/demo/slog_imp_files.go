@@ -19,7 +19,7 @@ var (
 )
 
 func (log *sLogger) updateLogFile() {
-	timer := time.NewTimer(time.Minute * 1)
+	timer := time.NewTimer(log.interval)
 	for {
 
 		select {
@@ -58,7 +58,7 @@ func (log *sLogger) updateLogFile() {
 					Development:      true,
 					Encoding:         "console",
 					EncoderConfig:    encoderCfg,
-					OutputPaths:      []string{"stderr", time.Now().Format("2006-01-02") + log.conf.File},
+					OutputPaths:      []string{"stderr", time.Now().Format(log.formatPrefix) + log.conf.File},
 					ErrorOutputPaths: []string{"stderr"},
 				}
 
@@ -72,7 +72,7 @@ func (log *sLogger) updateLogFile() {
 			}
 			m.Unlock()
 		}
-		timer.Reset(time.Minute * 1)
+		timer.Reset(log.interval)
 	}
 
 }
@@ -96,15 +96,34 @@ func NewSLogger(conf *dot.LogConfig, l dot.Line) dot.SLogger {
 	re := &sLogger{
 		conf: *conf,
 	}
+	switch conf.Time {
+	case "h", "H", "hour", "HOUR":
+		re.interval = time.Hour
+		re.formatPrefix = "2006-01-02 15 "
+	case "d", "D", "day", "DAY":
+		re.interval = time.Hour * 24
+		re.formatPrefix = "2006-01-02 "
+	case "m", "M", "month", "MONTH":
+		re.interval = time.Hour * 24 * 31
+		re.formatPrefix = "2006-01 "
+	case "y", "Y", "year", "YEAR":
+		re.interval = time.Hour * 24 * 31 * 12
+		re.formatPrefix = "2006 "
+	default:
+		re.interval = time.Hour * 24 * 31 * 12
+		re.formatPrefix = "2006 "
+	}
 	_ = re.Create(l)
 	return re
 }
 
 type sLogger struct {
-	cancel chan bool
-	level  zap.AtomicLevel
-	Logger *zap.Logger
-	conf   dot.LogConfig
+	cancel       chan bool
+	level        zap.AtomicLevel
+	Logger       *zap.Logger
+	conf         dot.LogConfig
+	interval     time.Duration
+	formatPrefix string
 }
 
 func (log *sLogger) GetLevel() dot.Level {
@@ -182,12 +201,25 @@ func (log *sLogger) Fatal(mstr dot.MakeStringer) {
 
 //NewLogger return new logger
 func (log *sLogger) NewLogger(callerSkip int) dot.SLogger {
-	n := &sLogger{
-		conf:   log.conf,
-		level:  log.level,
-		Logger: log.Logger.WithOptions(zap.AddCallerSkip(callerSkip)),
-	}
-	return n
+	//top
+	//n := &sLogger{
+	//	conf:   log.conf,
+	//	level:  log.level,
+	//	Logger: log.Logger.WithOptions(zap.AddCallerSkip(callerSkip)),
+	//}
+	//return n
+
+	//bottom
+	log.Logger = log.Logger.WithOptions(zap.AddCallerSkip(callerSkip))
+	return log
+	/*
+			top result:
+			INFO	sconfig/sconfig.go:23	dot ok
+			bottom result:
+			INFO	runtime/proc.go:225	dot ok
+		Other logs are printed the same,but in the top the output log is in the same file ,
+		because n is not log,so log.updateLogFile()!=n.updateLogFile()
+	*/
 }
 
 //Create
@@ -218,7 +250,7 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 		Development:      true,
 		Encoding:         "console",
 		EncoderConfig:    encoderCfg,
-		OutputPaths:      []string{"stderr", time.Now().Format("2006-01-02") + log.conf.File},
+		OutputPaths:      []string{"stderr", time.Now().Format(log.formatPrefix) + log.conf.File},
 		ErrorOutputPaths: []string{"stderr"},
 	}
 
