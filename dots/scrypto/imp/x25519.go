@@ -1,9 +1,10 @@
-package scrypto
+package imp
 
 import (
 	"crypto"
 	"crypto/rand"
 	"github.com/pkg/errors"
+	"github.com/scryinfo/dot/dots/scrypto"
 	"golang.org/x/crypto/curve25519"
 	"io"
 )
@@ -11,12 +12,12 @@ import (
 //see: https://github.com/aead/ecdh
 type ecdh25519 struct{}
 
-var curve25519Params = CurveParameters{
+var curve25519Params = scrypto.CurveParameters{
 	Name:    "Curve25519",
 	BitSize: 255,
 }
 
-func X25519() Ecdh {
+func X25519() scrypto.Ecdh {
 	return ecdh25519{}
 }
 
@@ -43,7 +44,7 @@ func (ecdh25519) GenerateKey(random io.Reader) (privateKey crypto.PrivateKey, pu
 	return
 }
 
-func (ecdh25519) Parameters() CurveParameters { return curve25519Params }
+func (ecdh25519) Parameters() scrypto.CurveParameters { return curve25519Params }
 
 func (ecdh25519) PublicKey(private crypto.PrivateKey) (publicKey crypto.PublicKey, err error) {
 	var pri, pub [32]byte

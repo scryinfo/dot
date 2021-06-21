@@ -1,4 +1,4 @@
-package scrypto
+package imp
 
 import (
 	"encoding/hex"
