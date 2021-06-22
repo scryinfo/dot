@@ -83,6 +83,22 @@ func (ecdh25519) ComputeSecret(privateKey crypto.PrivateKey, peersPublic crypto.
 	return
 }
 
+func (ecdh25519) PublicKeyToBytes(publicKey crypto.PublicKey) (key []byte, err error) {
+	var bytes [32]byte
+	if ok := checkType(&bytes, publicKey); !ok {
+		err = errors.New("unexpected type of public key")
+	}
+	return bytes[:], nil
+}
+
+func (ecdh25519) PrivateKeyToBytes(privateKey crypto.PrivateKey) (key []byte, err error) {
+	var bytes [32]byte
+	if ok := checkType(&bytes, privateKey); !ok {
+		err = errors.New("unexpected type of private key")
+	}
+	return bytes[:], nil
+}
+
 func checkType(key *[32]byte, typeToCheck interface{}) (ok bool) {
 	switch t := typeToCheck.(type) {
 	case [32]byte:
