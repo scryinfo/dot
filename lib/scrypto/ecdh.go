@@ -10,6 +10,11 @@ type CurveParameters struct {
 	BitSize int    // the size of the underlying field
 }
 
+//以下值只会在init中进行修改，所以认为是安全的
+var (
+	Ecdhs = make(map[string]Ecdh, 2)
+)
+
 // Ecdh is the interface defining all functions
 // necessary for ECDH.
 type Ecdh interface {
@@ -35,8 +40,17 @@ type Ecdh interface {
 	PublicKeyToBytes(publicKey crypto.PublicKey) (key []byte, err error)
 
 	PrivateKeyToBytes(privateKey crypto.PrivateKey) (key []byte, err error)
-	//
-	//BytesToPublicKey(keyBytes []byte) (publicKey crypto.PublicKey, err error)
-	//
-	//BytesToPrivateKey(keyBytes []byte) (privateKey crypto.PrivateKey, err error)
+
+	BytesToPublicKey(keyBytes []byte) (publicKey crypto.PublicKey, err error)
+
+	BytesToPrivateKey(keyBytes []byte) (privateKey crypto.PrivateKey, err error)
+}
+
+func GetEcdh(data *EndeData) Ecdh {
+	var re Ecdh = nil
+	//还没有专门为ecdh设置类型，暂时使用endeType类型作为， ecdh的类型
+	if v, ok := Ecdhs[string(data.EndeType)]; ok {
+		re = v
+	}
+	return re
 }

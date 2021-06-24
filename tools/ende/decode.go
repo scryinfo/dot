@@ -1,18 +1,21 @@
 package ende
 
 import (
+	"crypto"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/scrypto"
-	"github.com/scryinfo/dot/dots/scrypto/ende25519"
-	"github.com/scryinfo/dot/dots/scrypto/sx25519"
-	"github.com/scryinfo/dot/utils"
-	"github.com/scryinfo/scryg/sutils/sfile"
-	"go.uber.org/zap"
 	"io/ioutil"
 	"syscall"
+
+	"go.uber.org/zap"
+
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/lib/scrypto"
+	_ "github.com/scryinfo/dot/lib/scrypto/ende25519"
+	_ "github.com/scryinfo/dot/lib/scrypto/sx25519"
+	"github.com/scryinfo/dot/utils"
+	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
 const DecodeTypeID = "7e592fd2-6cd8-4953-8fae-8c3a9915bef7"
@@ -23,6 +26,7 @@ type configDecode struct {
 	File     string `json:"file"`
 	OutFile  string `json:"outFile"`
 
+	//EndeType string `json:"endeType"` //加密的实现，现支持X25519
 	Ed25519PublicKey    string `json:"ed25519PublicKey"`    //用于签名的公钥, hex
 	X25519PrivateKeyKey string `json:"x25519PrivateKeyKey"` //解密用的x25519的私钥， hex
 }
@@ -142,17 +146,26 @@ func (c *Decode) parseEnParameter() bool {
 		}
 	}
 	{ //decode
-		var privateKey sx25519.PrivateKey
+		ecdh := scrypto.GetEcdh(&data)
+		decoder := scrypto.GetAsymmetricDecoder(&data)
+		if decoder == nil {
+			logger.Errorln("the EndeType is not support: " + string(data.EndeType))
+			return false
+		}
+		var privateKey crypto.PrivateKey
 		{
 			bytes, err := hex.DecodeString(c.conf.X25519PrivateKeyKey)
 			if err != nil {
 				logger.Errorln("", zap.Error(err))
 				return false
 			}
-			privateKey = bytes
+			privateKey, err = ecdh.BytesToPrivateKey(bytes)
+			if err != nil {
+				logger.Errorln("", zap.Error(err))
+				return false
+			}
 		}
 		var err error
-		decoder := ende25519.EcdhDecoder25519()
 		data, err = decoder.EcdhDecode(privateKey, data)
 		if err != nil {
 			logger.Errorln("", zap.Error(err))

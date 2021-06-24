@@ -1,8 +1,8 @@
 package ende25519
 
 import (
-	"github.com/scryinfo/dot/dots/scrypto"
-	"github.com/scryinfo/dot/dots/scrypto/sx25519"
+	scrypto2 "github.com/scryinfo/dot/lib/scrypto"
+	sx255192 "github.com/scryinfo/dot/lib/scrypto/sx25519"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -10,7 +10,7 @@ import (
 func TestEnde25519(t *testing.T) {
 	plaintext := []byte("test data")
 
-	ecdh := sx25519.X25519()
+	ecdh := sx255192.X25519()
 	privateA, publicA, err := ecdh.GenerateKey(nil)
 	assert.Equal(t, nil, err)
 	privateB, publicB, err := ecdh.GenerateKey(nil)
@@ -29,7 +29,7 @@ func TestEnde25519(t *testing.T) {
 
 func TestEnde25519_EcdhDecode(t *testing.T) {
 
-	ecdh := sx25519.X25519()
+	ecdh := sx255192.X25519()
 	privateA, publicA, err := ecdh.GenerateKey(nil)
 	assert.Equal(t, nil, err)
 	privateB, publicB, err := ecdh.GenerateKey(nil)
@@ -37,7 +37,7 @@ func TestEnde25519_EcdhDecode(t *testing.T) {
 
 	ende := ende25519{}
 
-	planData := scrypto.EndeData{
+	planData := scrypto2.EndeData{
 		PublicKey: nil,
 		EndeType:  "",
 		Signature: nil,

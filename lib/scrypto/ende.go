@@ -8,24 +8,32 @@ import (
 	"encoding/json"
 )
 
-type EcdhDecoder interface {
+type AsymmetricDecoder interface {
 	// EcdhDecode
 	// EndeData中已经包含peersKey，所以没有出现在参数中
 	EcdhDecode(privateKey crypto.PrivateKey, cipher EndeData) (plain EndeData, err error)
 }
 
-type EcdhEncoder interface {
+type AsymmetricEncoder interface {
 	EcdhEncode(privateKey crypto.PrivateKey, peersKey crypto.PublicKey, plain EndeData) (cipher EndeData, err error)
 }
 
+type EndeType string
+
 const (
-	EndeType_X25519 = "X25519"
+	EndeType_X25519 EndeType = "x25519"
+)
+
+//以下值只会在init中进行修改，所以认为是安全的
+var (
+	Encoders = make(map[EndeType]AsymmetricEncoder, 2)
+	Decoders = make(map[EndeType]AsymmetricDecoder, 2)
 )
 
 type EndeData struct {
 	//加密时使用的公钥
 	PublicKey []byte
-	EndeType  string
+	EndeType  EndeType
 	//对Body的签名，
 	Signature []byte
 	//ed25519不能从签名出计算出公钥，所以需要来验证签名。在使用中双方也可以约定公钥，并不一定要存放在字段中
@@ -72,7 +80,7 @@ func (c *EndeData) toSigningHash() []byte {
 
 func toJsonEndeData(data *EndeData) (to endeData) {
 	to.PublicKey = hex.EncodeToString(data.PublicKey)
-	to.EndeType = data.EndeType
+	to.EndeType = string(data.EndeType)
 	to.Signature = hex.EncodeToString(data.Signature)
 	to.SignedPublicKey = hex.EncodeToString(data.SignedPublicKey)
 	to.EnData = data.EnData
@@ -85,7 +93,7 @@ func (c *EndeData) toEndeData(data *endeData) (err error) {
 	if err != nil {
 		return
 	}
-	c.EndeType = data.EndeType
+	c.EndeType = EndeType(data.EndeType)
 	if err != nil {
 		return
 	}
@@ -103,4 +111,20 @@ func (c *EndeData) toEndeData(data *endeData) (err error) {
 		return
 	}
 	return
+}
+
+func GetAsymmetricDecoder(data *EndeData) AsymmetricDecoder {
+	var re AsymmetricDecoder = nil
+	if v, ok := Decoders[data.EndeType]; ok {
+		re = v
+	}
+	return re
+}
+
+func GetAsymmetricEncoder(data *EndeData) AsymmetricEncoder {
+	var re AsymmetricEncoder = nil
+	if v, ok := Encoders[data.EndeType]; ok {
+		re = v
+	}
+	return re
 }

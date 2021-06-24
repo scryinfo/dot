@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"github.com/scryinfo/dot/dots/scrypto/sx25519"
+	sx255192 "github.com/scryinfo/dot/lib/scrypto/sx25519"
 	"io"
 	"log"
 )
@@ -20,8 +20,8 @@ func GenerateEd25519Key(rand io.Reader) (privateKey ed25519.PrivateKey, publicKe
 	return
 }
 
-func GenerateX25519Key(rand io.Reader) (privateKey sx25519.PrivateKey, publicKey sx25519.PublicKey, err error) {
-	x := sx25519.X25519()
+func GenerateX25519Key(rand io.Reader) (privateKey sx255192.PrivateKey, publicKey sx255192.PublicKey, err error) {
+	x := sx255192.X25519()
 	privateKey2, publicKey2, err := x.GenerateKey(rand)
 	if err != nil {
 		return

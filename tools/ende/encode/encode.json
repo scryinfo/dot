@@ -19,6 +19,8 @@
             "file": "encode.json",
             "?outFile": "加密后输出的文件",
             "outFile": "",
+            "?endeType": "加解密类型，现支持x25519",
+            "endeType": "x25519",
             "?ed25519PrivateKey": "签名数据的私钥，因为解密数据的私钥是随机生成的，所以需要签名来说明这个数据是来自那里",
             "ed25519PrivateKey": "a2e4dc4fbeeb6c6504c695f8a1c9ed97b9c1f7acdee923c6802230a1a1403f2af3896b1ce890dc78e0e212e67f48f3aba619d8615acd80848ce8c9b3decda9ed",
             "?x25519PeerKey": "对方解密数据时使用的公钥",

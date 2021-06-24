@@ -4,8 +4,8 @@ import (
 	"crypto"
 	"crypto/sha256"
 	"github.com/pkg/errors"
-	"github.com/scryinfo/dot/dots/scrypto"
-	"github.com/scryinfo/dot/dots/scrypto/sx25519"
+	"github.com/scryinfo/dot/lib/scrypto"
+	"github.com/scryinfo/dot/lib/scrypto/sx25519"
 	"golang.org/x/crypto/chacha20poly1305"
 	"golang.org/x/crypto/hkdf"
 	"io"
@@ -13,11 +13,11 @@ import (
 
 type ende25519 struct{}
 
-func EcdhDecoder25519() scrypto.EcdhDecoder {
+func EcdhDecoder25519() scrypto.AsymmetricDecoder {
 	return &ende25519{}
 }
 
-func EcdhEncoder25519() scrypto.EcdhEncoder {
+func EcdhEncoder25519() scrypto.AsymmetricEncoder {
 	return &ende25519{}
 }
 
@@ -30,12 +30,17 @@ var (
 	endeType = scrypto.EndeType_X25519
 )
 
+func init() {
+	scrypto.Encoders[scrypto.EndeType_X25519] = EcdhEncoder25519()
+	scrypto.Decoders[scrypto.EndeType_X25519] = EcdhDecoder25519()
+}
+
 func (c *ende25519) EcdhDecode(privateKey crypto.PrivateKey, cipher scrypto.EndeData) (plain scrypto.EndeData, err error) {
 	if !cipher.EnData {
 		return cipher, nil
 	}
 	if cipher.EndeType != endeType {
-		err = errors.New("the ende type is not " + endeType)
+		err = errors.New("the ende type is not " + string(endeType))
 		return
 	}
 

@@ -1,19 +1,22 @@
 package ende
 
 import (
+	"crypto"
 	"crypto/ed25519"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/scrypto"
-	"github.com/scryinfo/dot/dots/scrypto/ende25519"
-	"github.com/scryinfo/dot/dots/scrypto/sx25519"
-	"github.com/scryinfo/dot/utils"
-	"github.com/scryinfo/scryg/sutils/sfile"
-	"go.uber.org/zap"
 	"io/ioutil"
 	"syscall"
+
+	"go.uber.org/zap"
+
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/lib/scrypto"
+	_ "github.com/scryinfo/dot/lib/scrypto/ende25519"
+	_ "github.com/scryinfo/dot/lib/scrypto/sx25519"
+	"github.com/scryinfo/dot/utils"
+	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
 const EncodeTypeID = "4f0d40c6-9822-4346-ae23-3a54b866b96a"
@@ -24,6 +27,7 @@ type configEncode struct {
 	File     string `json:"file"`
 	OutFile  string `json:"outFile"`
 
+	EndeType          string `json:"endeType"`          //加密的实现，现支持X25519
 	Ed25519PrivateKey string `json:"ed25519PrivateKey"` //用于签名的key, hex
 	X25519PeerKey     string `json:"x25519PeerKey"`     //对方的x25519的公钥， hex
 }
@@ -114,6 +118,11 @@ func (c *Encode) parseEnParameter() bool {
 		return false
 	}
 
+	if c.conf.EndeType != string(scrypto.EndeType_X25519) {
+		logger.Errorln("the EndeType is not support: " + c.conf.EndeType)
+		return false
+	}
+
 	if len(c.conf.File) < 1 {
 		logger.Errorln("请入要加密的文件")
 		return false
@@ -137,12 +146,13 @@ func (c *Encode) parseEnParameter() bool {
 
 	data := scrypto.EndeData{
 		PublicKey:       nil,
-		EndeType:        "",
+		EndeType:        scrypto.EndeType(c.conf.EndeType),
 		Signature:       nil,
 		SignedPublicKey: nil,
 		EnData:          false,
 		Body:            body,
 	}
+
 	{
 		var skey ed25519.PrivateKey
 		{
@@ -156,22 +166,32 @@ func (c *Encode) parseEnParameter() bool {
 		hash := ToSigningHash(data.Body)
 		data.Signature, data.SignedPublicKey = SignEd25519(skey, hash)
 	}
+
 	{ //encode
-		privateKey, _, err := GenerateX25519Key(nil)
+		ecdh := scrypto.GetEcdh(&data)
+		encoder := scrypto.GetAsymmetricEncoder(&data)
+		if encoder == nil {
+			logger.Errorln("the EndeType is not support: " + string(data.EndeType))
+			return false
+		}
+		privateKey, _, err := ecdh.GenerateKey(nil)
 		if err != nil {
 			logger.Errorln("", zap.Error(err))
 			return false
 		}
-		var peerKey sx25519.PublicKey
+		var peerKey crypto.PublicKey
 		{
 			bytes, err := hex.DecodeString(c.conf.X25519PeerKey)
 			if err != nil {
 				logger.Errorln("", zap.Error(err))
 				return false
 			}
-			peerKey = bytes
+			peerKey, err = ecdh.BytesToPublicKey(bytes)
+			if err != nil {
+				logger.Errorln("", zap.Error(err))
+				return false
+			}
 		}
-		encoder := ende25519.EcdhEncoder25519()
 		data, err = encoder.EcdhEncode(privateKey, peerKey, data)
 		if err != nil {
 			logger.Errorln("", zap.Error(err))

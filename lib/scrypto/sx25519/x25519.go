@@ -4,10 +4,14 @@ import (
 	"crypto"
 	"crypto/rand"
 	"github.com/pkg/errors"
-	"github.com/scryinfo/dot/dots/scrypto"
+	"github.com/scryinfo/dot/lib/scrypto"
 	"golang.org/x/crypto/curve25519"
 	"io"
 )
+
+func init() {
+	scrypto.Ecdhs[string(scrypto.EndeType_X25519)] = X25519()
+}
 
 type PrivateKey []byte
 
@@ -129,16 +133,40 @@ func (ecdh25519) PublicKeyToBytes(publicKey crypto.PublicKey) (key []byte, err e
 	var bytes [32]byte
 	if ok := checkType(&bytes, publicKey); !ok {
 		err = errors.New("unexpected type of public key")
+	} else {
+		key = bytes[:]
 	}
-	return bytes[:], nil
+	return
 }
 
 func (ecdh25519) PrivateKeyToBytes(privateKey crypto.PrivateKey) (key []byte, err error) {
 	var bytes [32]byte
 	if ok := checkType(&bytes, privateKey); !ok {
 		err = errors.New("unexpected type of private key")
+	} else {
+		key = bytes[:]
 	}
-	return bytes[:], nil
+	return
+}
+
+func (e ecdh25519) BytesToPublicKey(keyBytes []byte) (publicKey crypto.PublicKey, err error) {
+	var bytes [32]byte
+	if ok := checkType(&bytes, keyBytes); !ok {
+		err = errors.New("unexpected type of public key")
+	} else {
+		publicKey = bytes[:]
+	}
+	return
+}
+
+func (e ecdh25519) BytesToPrivateKey(keyBytes []byte) (privateKey crypto.PrivateKey, err error) {
+	var bytes [32]byte
+	if ok := checkType(&bytes, keyBytes); !ok {
+		err = errors.New("unexpected type of private key")
+	} else {
+		privateKey = bytes[:]
+	}
+	return
 }
 
 func checkType(key *[32]byte, typeToCheck interface{}) (ok bool) {
