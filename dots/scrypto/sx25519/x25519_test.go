@@ -1,4 +1,4 @@
-package imp
+package sx25519
 
 import (
 	"encoding/hex"

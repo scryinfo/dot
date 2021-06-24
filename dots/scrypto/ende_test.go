@@ -8,12 +8,12 @@ import (
 
 func TestEndeData(t *testing.T) {
 	data := EndeData{
-		PublicKey: []byte{1},
-		EndeType:  "test",
-		Hash:      []byte{2},
-		Signature: []byte{3},
-		EnData:    false,
-		Body:      []byte{10},
+		PublicKey:       []byte{1},
+		EndeType:        "test",
+		Signature:       []byte{3},
+		SignedPublicKey: []byte{},
+		EnData:          false,
+		Body:            []byte{10},
 	}
 
 	{

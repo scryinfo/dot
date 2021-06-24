@@ -26,10 +26,10 @@ type EndeData struct {
 	//加密时使用的公钥
 	PublicKey []byte
 	EndeType  string
-	//签名的hash256
-	Hash []byte
-	//对没有加密的数据签名，
+	//对Body的签名，
 	Signature []byte
+	//ed25519不能从签名出计算出公钥，所以需要来验证签名。在使用中双方也可以约定公钥，并不一定要存放在字段中
+	SignedPublicKey []byte
 	//true数据已加密
 	EnData bool
 	//数据
@@ -37,13 +37,12 @@ type EndeData struct {
 }
 
 type endeData struct {
-	PublicKey string //hex
-	EndeType  string
-	//签名的hash256
-	Hash      string //hex
-	Signature string //hex
-	EnData    bool
-	Body      string //base64
+	PublicKey       string //hex
+	EndeType        string
+	Signature       string //hex
+	SignedPublicKey string //hex
+	EnData          bool
+	Body            string //base64
 }
 
 func (c *EndeData) UnmarshalJSON(b []byte) error {
@@ -60,14 +59,8 @@ func (c EndeData) MarshalJSON() ([]byte, error) {
 }
 
 //生成hash，并记录下来
-func (c *EndeData) toHash() []byte {
+func (c *EndeData) toSigningHash() []byte {
 	h251 := sha256.New()
-	if len(c.PublicKey) > 0 {
-		h251.Write(c.PublicKey)
-	}
-	if len(c.EndeType) > 0 {
-		h251.Write([]byte(c.EndeType))
-	}
 	if len(c.Body) > 0 {
 		h251.Write(c.Body)
 	}
@@ -80,8 +73,8 @@ func (c *EndeData) toHash() []byte {
 func toJsonEndeData(data *EndeData) (to endeData) {
 	to.PublicKey = hex.EncodeToString(data.PublicKey)
 	to.EndeType = data.EndeType
-	to.Hash = hex.EncodeToString(data.Hash)
 	to.Signature = hex.EncodeToString(data.Signature)
+	to.SignedPublicKey = hex.EncodeToString(data.SignedPublicKey)
 	to.EnData = data.EnData
 	to.Body = base64.StdEncoding.EncodeToString(data.Body)
 	return
@@ -93,11 +86,14 @@ func (c *EndeData) toEndeData(data *endeData) (err error) {
 		return
 	}
 	c.EndeType = data.EndeType
-	c.Hash, err = hex.DecodeString(data.Hash)
 	if err != nil {
 		return
 	}
 	c.Signature, err = hex.DecodeString(data.Signature)
+	if err != nil {
+		return
+	}
+	c.SignedPublicKey, err = hex.DecodeString(data.SignedPublicKey)
 	if err != nil {
 		return
 	}

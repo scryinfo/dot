@@ -16,3 +16,6 @@
 **/dist
 
 /tools/dotconf/run_out/
+/tools/ende/decode/encode.json
+/tools/ende/decode/encode.json_en
+/tools/ende/encode/encode.json_en

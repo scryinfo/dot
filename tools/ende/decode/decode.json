@@ -1,0 +1,31 @@
+{
+  "log": {
+    "file": "log.log",
+    "level": "debug"
+  },
+  "dots": [
+    {
+      "metaData": {
+        "typeId": "7e592fd2-6cd8-4953-8fae-8c3a9915bef7"
+      },
+      "lives": [
+        {
+          "liveId": "7e592fd2-6cd8-4953-8fae-8c3a9915bef7",
+          "json": {
+            "?help": "用于输出帮助信息的，现在不支持",
+            "?generate": "生成公私钥的，可以是ed25519或x25519",
+            "generate": "",
+            "?file": "需要解密的文件",
+            "file": "encode.json_en",
+            "?outFile": "解密后输出的文件",
+            "outFile": "encode.json",
+            "?ed25519PublicKey": "签名数据的公钥，因为解密数据的私钥是随机生成的，所以需要签名来说明这个数据是来自那里",
+            "ed25519PublicKey": "f3896b1ce890dc78e0e212e67f48f3aba619d8615acd80848ce8c9b3decda9ed",
+            "?x25519PrivateKeyKey": "解密数据时使用的私钥",
+            "x25519PrivateKeyKey": "70ca0217bbbef282af0cc9706534f88d5a551d1b9cffe115ad4d2b8db7056c71"
+          }
+        }
+      ]
+    }
+  ]
+}

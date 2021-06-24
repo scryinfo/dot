@@ -1,0 +1,13 @@
+# 测试使用的key
+
+## 签名
+
+ed25519 keys  
+private:
+a2e4dc4fbeeb6c6504c695f8a1c9ed97b9c1f7acdee923c6802230a1a1403f2af3896b1ce890dc78e0e212e67f48f3aba619d8615acd80848ce8c9b3decda9ed  
+public: f3896b1ce890dc78e0e212e67f48f3aba619d8615acd80848ce8c9b3decda9ed
+
+## 解密 peer
+
+x25519 keys private: 70ca0217bbbef282af0cc9706534f88d5a551d1b9cffe115ad4d2b8db7056c71 public:
+6c99f0ecbe3702088b2cf9f130a0980cb9eab2d2f45f83ee2cf819ac88e68e25

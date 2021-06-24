@@ -35,4 +35,8 @@ type Ecdh interface {
 	PublicKeyToBytes(publicKey crypto.PublicKey) (key []byte, err error)
 
 	PrivateKeyToBytes(privateKey crypto.PrivateKey) (key []byte, err error)
+	//
+	//BytesToPublicKey(keyBytes []byte) (publicKey crypto.PublicKey, err error)
+	//
+	//BytesToPrivateKey(keyBytes []byte) (privateKey crypto.PrivateKey, err error)
 }

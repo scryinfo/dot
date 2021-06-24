@@ -1,10 +1,11 @@
-package imp
+package ende25519
 
 import (
 	"crypto"
 	"crypto/sha256"
 	"github.com/pkg/errors"
 	"github.com/scryinfo/dot/dots/scrypto"
+	"github.com/scryinfo/dot/dots/scrypto/sx25519"
 	"golang.org/x/crypto/chacha20poly1305"
 	"golang.org/x/crypto/hkdf"
 	"io"
@@ -25,7 +26,7 @@ var (
 	hash     = sha256.New
 	info     = []byte("scry info")
 	nonce    = make([]byte, chacha20poly1305.NonceSize)
-	ecdh     = X25519()
+	ecdh     = sx25519.X25519()
 	endeType = scrypto.EndeType_X25519
 )
 
@@ -74,7 +75,7 @@ func (c *ende25519) EcdhEncode(privateKey crypto.PrivateKey, peersKey crypto.Pub
 }
 
 // EcdhDecode
-// privateKey x25519, peersKey x25519
+// privateKey sx25519, peersKey sx25519
 //
 func (c *ende25519) _ecdhDecode(privateKey crypto.PrivateKey, peersKey crypto.PublicKey, ciphertext []byte) (plaintext []byte, err error) {
 
@@ -96,9 +97,9 @@ func (c *ende25519) _ecdhDecode(privateKey crypto.PrivateKey, peersKey crypto.Pu
 }
 
 // EcdhEncode
-// privateKey x25519, peersKey x25519
+// privateKey sx25519, peersKey sx25519
 func (c *ende25519) _ecdhEncode(privateKey crypto.PrivateKey, peersKey crypto.PublicKey, plaintext []byte) (ciphertext []byte, err error) {
-	echg := X25519()
+	echg := sx25519.X25519()
 	key, err := echg.ComputeSecret(privateKey, peersKey)
 	if err != nil {
 		return

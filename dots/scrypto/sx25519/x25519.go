@@ -1,4 +1,4 @@
-package imp
+package sx25519
 
 import (
 	"crypto"
@@ -8,6 +8,48 @@ import (
 	"golang.org/x/crypto/curve25519"
 	"io"
 )
+
+type PrivateKey []byte
+
+func (c PrivateKey) ToBytes(key []byte, err error) {
+	var bytes [32]byte
+	if ok := checkType(&bytes, c); !ok {
+		err = errors.New("unexpected type of public key")
+	}
+	key = bytes[:]
+	return
+}
+
+func (c *PrivateKey) ToPrivateKey(keyBytes []byte) (err error) {
+	var bytes [32]byte
+	if ok := checkType(&bytes, keyBytes); !ok {
+		err = errors.New("unexpected type of private keyBytes")
+	} else {
+		*c = bytes[:]
+	}
+	return
+}
+
+type PublicKey []byte
+
+func (c PublicKey) ToBytes() (key []byte, err error) {
+	var bytes [32]byte
+	if ok := checkType(&bytes, c); !ok {
+		err = errors.New("unexpected type of private key")
+	}
+	key = bytes[:]
+	return
+}
+
+func (c *PublicKey) ToPublicKey(keyBytes []byte) (err error) {
+	var bytes [32]byte
+	if ok := checkType(&bytes, keyBytes); !ok {
+		err = errors.New("unexpected type of public keyBytes")
+	} else {
+		*c = bytes[:]
+	}
+	return
+}
 
 //see: https://github.com/aead/ecdh
 type ecdh25519 struct{}
@@ -39,8 +81,8 @@ func (ecdh25519) GenerateKey(random io.Reader) (privateKey crypto.PrivateKey, pu
 
 	curve25519.ScalarBaseMult(&pub, &pri)
 
-	privateKey = pri
-	publicKey = pub
+	privateKey = pri[:]
+	publicKey = pub[:]
 	return
 }
 
@@ -107,6 +149,16 @@ func checkType(key *[32]byte, typeToCheck interface{}) (ok bool) {
 	case *[32]byte:
 		copy(key[:], t[:])
 		ok = true
+	case PublicKey:
+		if len(t) == 32 {
+			copy(key[:], t)
+			ok = true
+		}
+	case PrivateKey:
+		if len(t) == 32 {
+			copy(key[:], t)
+			ok = true
+		}
 	case []byte:
 		if len(t) == 32 {
 			copy(key[:], t)
