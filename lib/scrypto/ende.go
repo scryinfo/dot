@@ -2,20 +2,22 @@ package scrypto
 
 import (
 	"crypto"
+	"crypto/ed25519"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"github.com/pkg/errors"
 )
 
 type AsymmetricDecoder interface {
 	// EcdhDecode
 	// EndeData中已经包含peersKey，所以没有出现在参数中
-	EcdhDecode(privateKey crypto.PrivateKey, cipher EndeData) (plain EndeData, err error)
+	EcdhDecode(privateKey crypto.PrivateKey, cipher *EndeData) (plain EndeData, err error)
 }
 
 type AsymmetricEncoder interface {
-	EcdhEncode(privateKey crypto.PrivateKey, peersKey crypto.PublicKey, plain EndeData) (cipher EndeData, err error)
+	EcdhEncode(privateKey crypto.PrivateKey, peersKey crypto.PublicKey, plain *EndeData) (cipher EndeData, err error)
 }
 
 type EndeType string
@@ -64,18 +66,6 @@ func (c *EndeData) UnmarshalJSON(b []byte) error {
 func (c EndeData) MarshalJSON() ([]byte, error) {
 	to := toJsonEndeData(&c)
 	return json.Marshal(to)
-}
-
-//生成hash，并记录下来
-func (c *EndeData) toSigningHash() []byte {
-	h251 := sha256.New()
-	if len(c.Body) > 0 {
-		h251.Write(c.Body)
-	}
-	first := h251.Sum(nil)
-	h251.Reset()
-	h251.Write(first) //两次hash
-	return h251.Sum(nil)
 }
 
 func toJsonEndeData(data *EndeData) (to endeData) {
@@ -127,4 +117,58 @@ func GetAsymmetricEncoder(data *EndeData) AsymmetricEncoder {
 		re = v
 	}
 	return re
+}
+
+func ToSigningHash(data []byte) (hash []byte) {
+	h251 := sha256.New()
+	if len(data) > 0 {
+		h251.Write(data)
+	}
+	first := h251.Sum(nil)
+	h251.Reset()
+	h251.Write(first) //两次hash
+	return h251.Sum(nil)
+}
+
+func SignEd25519(privateKey ed25519.PrivateKey, hash []byte) (signature []byte, publicBytes []byte) {
+	signature = ed25519.Sign(privateKey, hash)
+	publicBytes = privateKey.Public().(ed25519.PublicKey)
+	return
+}
+
+func EncodeData(plain *EndeData, peerKey crypto.PublicKey, signedKey ed25519.PrivateKey) (cipher EndeData, err error) {
+	cipher = *plain
+	if signedKey != nil {
+		cipher.Signature, cipher.SignedPublicKey = SignEd25519(signedKey, ToSigningHash(plain.Body))
+	}
+	ecdh := GetEcdh(&cipher)
+	privateKey, _, err := ecdh.GenerateKey(nil)
+	if err != nil {
+		return
+	}
+	encoder := GetAsymmetricEncoder(&cipher)
+	cipher, err = encoder.EcdhEncode(privateKey, peerKey, &cipher)
+	if err != nil {
+		return
+	}
+
+	return
+}
+func DecodeData(cipher *EndeData, privateKey crypto.PrivateKey, signedPublicKey ed25519.PublicKey) (plain EndeData, err error) {
+	plain = *cipher
+	encoder := GetAsymmetricDecoder(&plain)
+	plain, err = encoder.EcdhDecode(privateKey, &plain)
+	if err != nil {
+		return
+	}
+
+	if signedPublicKey != nil { //verify
+		hash := ToSigningHash(plain.Body)
+		if !signedPublicKey.Equal(ed25519.PublicKey(plain.SignedPublicKey)) || !ed25519.Verify(plain.SignedPublicKey, hash, plain.Signature) {
+			err = errors.New("failed to verify signature")
+			return
+		}
+	}
+
+	return
 }

@@ -35,47 +35,47 @@ func init() {
 	scrypto.Decoders[scrypto.EndeType_X25519] = EcdhDecoder25519()
 }
 
-func (c *ende25519) EcdhDecode(privateKey crypto.PrivateKey, cipher scrypto.EndeData) (plain scrypto.EndeData, err error) {
-	if !cipher.EnData {
-		return cipher, nil
+func (c *ende25519) EcdhDecode(privateKey crypto.PrivateKey, _cipher *scrypto.EndeData) (plain scrypto.EndeData, err error) {
+	plain = *_cipher
+	if !plain.EnData {
+		return
 	}
-	if cipher.EndeType != endeType {
+	if plain.EndeType != endeType {
 		err = errors.New("the ende type is not " + string(endeType))
 		return
 	}
 
-	var peersKey crypto.PublicKey = cipher.PublicKey
+	var peersKey crypto.PublicKey = plain.PublicKey
 
-	cipher.Body, err = c._ecdhDecode(privateKey, peersKey, cipher.Body)
+	plain.Body, err = c._ecdhDecode(privateKey, peersKey, plain.Body)
 	if err != nil {
 		return
 	}
-	cipher.EnData = false //decode data
-	plain = cipher
+	plain.EnData = false //decode data
 
 	return
 }
 
-func (c *ende25519) EcdhEncode(privateKey crypto.PrivateKey, peersKey crypto.PublicKey, plain scrypto.EndeData) (cipher scrypto.EndeData, err error) {
+func (c *ende25519) EcdhEncode(privateKey crypto.PrivateKey, peersKey crypto.PublicKey, _plain *scrypto.EndeData) (cipher scrypto.EndeData, err error) {
+	cipher = *_plain
 	if cipher.EnData {
 		return cipher, nil
 	}
-	plain.EndeType = endeType
+	cipher.EndeType = endeType
 	publicKey, err := ecdh.PublicKey(privateKey)
 	if err != nil {
 		return
 	}
-	plain.PublicKey, err = ecdh.PublicKeyToBytes(publicKey)
+	cipher.PublicKey, err = ecdh.PublicKeyToBytes(publicKey)
 	if err != nil {
 		return
 	}
 
-	plain.Body, err = c._ecdhEncode(privateKey, peersKey, plain.Body)
+	cipher.Body, err = c._ecdhEncode(privateKey, peersKey, cipher.Body)
 	if err != nil {
 		return
 	}
-	plain.EnData = true
-	cipher = plain
+	cipher.EnData = true
 	return
 }
 

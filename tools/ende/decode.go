@@ -2,6 +2,7 @@ package ende
 
 import (
 	"crypto"
+	"crypto/ed25519"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -146,12 +147,6 @@ func (c *Decode) parseEnParameter() bool {
 		}
 	}
 	{ //decode
-		ecdh := scrypto.GetEcdh(&data)
-		decoder := scrypto.GetAsymmetricDecoder(&data)
-		if decoder == nil {
-			logger.Errorln("the EndeType is not support: " + string(data.EndeType))
-			return false
-		}
 		var privateKey crypto.PrivateKey
 		{
 			bytes, err := hex.DecodeString(c.conf.X25519PrivateKeyKey)
@@ -159,22 +154,21 @@ func (c *Decode) parseEnParameter() bool {
 				logger.Errorln("", zap.Error(err))
 				return false
 			}
-			privateKey, err = ecdh.BytesToPrivateKey(bytes)
+			privateKey = bytes
+		}
+		var signedPublicKey ed25519.PublicKey
+		{
+			bytes, err := hex.DecodeString(c.conf.Ed25519PublicKey)
 			if err != nil {
 				logger.Errorln("", zap.Error(err))
 				return false
 			}
+			signedPublicKey = bytes
 		}
 		var err error
-		data, err = decoder.EcdhDecode(privateKey, data)
+		data, err = scrypto.DecodeData(&data, privateKey, signedPublicKey)
 		if err != nil {
 			logger.Errorln("", zap.Error(err))
-			return false
-		}
-	}
-	{ //verify
-		hash := ToSigningHash(data.Body)
-		if !VerifyEd25519(data.SignedPublicKey, hash, data.Signature) {
 			return false
 		}
 	}

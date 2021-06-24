@@ -153,32 +153,7 @@ func (c *Encode) parseEnParameter() bool {
 		Body:            body,
 	}
 
-	{
-		var skey ed25519.PrivateKey
-		{
-			bytes, err := hex.DecodeString(c.conf.Ed25519PrivateKey)
-			if err != nil {
-				logger.Errorln("", zap.Error(err))
-				return false
-			}
-			skey = bytes
-		}
-		hash := ToSigningHash(data.Body)
-		data.Signature, data.SignedPublicKey = SignEd25519(skey, hash)
-	}
-
 	{ //encode
-		ecdh := scrypto.GetEcdh(&data)
-		encoder := scrypto.GetAsymmetricEncoder(&data)
-		if encoder == nil {
-			logger.Errorln("the EndeType is not support: " + string(data.EndeType))
-			return false
-		}
-		privateKey, _, err := ecdh.GenerateKey(nil)
-		if err != nil {
-			logger.Errorln("", zap.Error(err))
-			return false
-		}
 		var peerKey crypto.PublicKey
 		{
 			bytes, err := hex.DecodeString(c.conf.X25519PeerKey)
@@ -186,13 +161,20 @@ func (c *Encode) parseEnParameter() bool {
 				logger.Errorln("", zap.Error(err))
 				return false
 			}
-			peerKey, err = ecdh.BytesToPublicKey(bytes)
+			peerKey = bytes
+		}
+		var signedPrivateKey ed25519.PrivateKey
+		{
+			bytes, err := hex.DecodeString(c.conf.Ed25519PrivateKey)
 			if err != nil {
 				logger.Errorln("", zap.Error(err))
 				return false
 			}
+			if len(bytes) > 0 {
+				signedPrivateKey = bytes
+			}
 		}
-		data, err = encoder.EcdhEncode(privateKey, peerKey, data)
+		data, err = scrypto.EncodeData(&data, peerKey, signedPrivateKey)
 		if err != nil {
 			logger.Errorln("", zap.Error(err))
 			return false
