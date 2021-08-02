@@ -39,8 +39,8 @@ pgs.CreateSchema result
 
 //DbField do not use the map, we need the order
 type DbField struct {
-	Name   string
-	DbName string
+	Name        string
+	DbName      string
 	HasRelation bool //has one, has many, belong to
 }
 
@@ -107,8 +107,9 @@ func main() {
 
 	outputName := ""
 	{
-		types := strings.Split(params.typeName, ",")
-		baseName := fmt.Sprintf("%s_model.go", types[0])
+		//types := strings.Split(params.typeName, ",")
+		types := pgs.Underscore(data.TypeName)
+		baseName := fmt.Sprintf("%s_model.go", types)
 		outputName = filepath.Join(".", strings.ToLower(baseName))
 	}
 
@@ -131,8 +132,7 @@ func makeData(data *tData) {
 	{
 		dir := filepath.Dir(file)
 		cfg := &packages.Config{
-			Mode:
-			packages.NeedName |
+			Mode: packages.NeedName |
 				//packages.NeedFiles |
 				//packages.NeedCompiledGoFiles |
 				packages.NeedImports |
@@ -230,7 +230,7 @@ func listFields(data *tData, st *ast.StructType, fields []DbField, pkg *packages
 			if field.Tag != nil {
 				tag = field.Tag.Value
 			}
-			if strings.Contains(tag,`pg:"-"`) || strings.Contains(tag,"rel:has-one") || strings.Contains(tag,"rel:has-many") || strings.Contains(tag,"rel:belongs-to") {
+			if strings.Contains(tag, `pg:"-"`) || strings.Contains(tag, "rel:has-one") || strings.Contains(tag, "rel:has-many") || strings.Contains(tag, "rel:belongs-to") {
 				dbField.HasRelation = true
 			}
 			fields = append(fields, dbField)
