@@ -10,7 +10,7 @@ import (
 	"go.etcd.io/etcd/v3/clientv3"
 	etcdnaming "go.etcd.io/etcd/v3/clientv3/naming"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/naming"
+	//"google.golang.org/grpc/naming"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/utils"

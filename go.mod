@@ -28,7 +28,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
 	golang.org/x/tools v0.0.0-20200103221440-774c71fcf114
-	google.golang.org/grpc v1.29.1
+	google.golang.org/grpc v1.39.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0
 )
