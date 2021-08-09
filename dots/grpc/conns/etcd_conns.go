@@ -4,16 +4,16 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"github.com/pkg/errors"
 	"time"
 
-	"go.etcd.io/etcd/v3/clientv3"
-	etcdnaming "go.etcd.io/etcd/v3/clientv3/naming"
-	"google.golang.org/grpc"
-	//"google.golang.org/grpc/naming"
-
+	"github.com/pkg/errors"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/utils"
+	clientv3 "go.etcd.io/etcd/client/v3"
+	"go.etcd.io/etcd/client/v3/naming/endpoints"
+	"go.etcd.io/etcd/client/v3/naming/resolver"
+	"google.golang.org/grpc"
+	gresolver "google.golang.org/grpc/resolver"
 )
 
 const EtcdConnsTypeID = "c91c8c68-281a-4949-8e55-3516664e80c7"
@@ -31,7 +31,8 @@ type configEtcdConns struct {
 //etcd client
 type EtcdConns struct {
 	etcdClient   *clientv3.Client
-	grpcResolver *etcdnaming.GRPCResolver //ref the etcdClient
+	grpcManager  endpoints.Manager //ref the etcdClient
+	grpcResolver gresolver.Builder
 	conns        map[string]*grpc.ClientConn
 	conf         configEtcdConns
 	ctx          context.Context
@@ -60,18 +61,31 @@ func (c *EtcdConns) CancelFun() context.CancelFunc {
 	return c.cancelFun
 }
 
-func (c *EtcdConns) GRPCResolver() *etcdnaming.GRPCResolver {
+func (c *EtcdConns) Manager() endpoints.Manager {
+	return c.grpcManager
+}
+func (c *EtcdConns) Builder() gresolver.Builder {
 	return c.grpcResolver
 }
 func (c *EtcdConns) RegisterServer(ctx context.Context, name string, addr string) error {
-	if c.grpcResolver != nil {
-		return c.grpcResolver.Update(ctx, name, naming.Update{Op: naming.Add, Addr: addr})
+	if c.grpcManager != nil {
+		opt := make([]*endpoints.UpdateWithOpts, 1)
+		opt[0] = endpoints.NewAddUpdateOpts(name, endpoints.Endpoint{
+			Addr:     addr,
+			Metadata: nil,
+		})
+		return c.grpcManager.Update(ctx, opt)
 	}
 	return errors.New("GRPC Resolver is null")
 }
 func (c *EtcdConns) UnRegisterServer(ctx context.Context, name string, addr string) error {
-	if c.grpcResolver != nil {
-		return c.grpcResolver.Update(ctx, name, naming.Update{Op: naming.Delete, Addr: addr})
+	if c.grpcManager != nil {
+		opt := make([]*endpoints.UpdateWithOpts, 1)
+		opt[0] = endpoints.NewAddUpdateOpts(name, endpoints.Endpoint{
+			Addr:     addr,
+			Metadata: nil,
+		})
+		return c.grpcManager.DeleteEndpoint(ctx, name)
 	}
 	return errors.New("GRPC Resolver is null")
 }
@@ -137,14 +151,19 @@ func newEtcdConns(conf []byte) (dot.Dot, error) {
 			return nil, err
 		}
 	}
-	d.grpcResolver = &etcdnaming.GRPCResolver{
-		Client: d.etcdClient,
+	//todo target
+	d.grpcManager, err = endpoints.NewManager(d.etcdClient, "")
+	if err != nil {
+		return nil, err
+	}
+	d.grpcResolver, err = resolver.NewBuilder(d.etcdClient)
+	if err != nil {
+		return nil, err
 	}
 	if len(d.conf.Names) > 0 {
-		b := grpc.RoundRobin(d.grpcResolver)
 
 		for _, n := range d.conf.Names {
-			conn, err := grpc.Dial(n, grpc.WithBalancer(b), grpc.WithInsecure())
+			conn, err := grpc.Dial(n, grpc.WithResolvers(d.grpcResolver), grpc.WithInsecure())
 			if err != nil {
 				return nil, err
 			}

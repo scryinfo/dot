@@ -23,7 +23,7 @@ require (
 	github.com/rs/cors v1.7.0 // indirect
 	github.com/scryinfo/scryg v0.1.3
 	github.com/stretchr/testify v1.6.1
-	go.etcd.io/etcd/v3 v3.3.0-rc.0.0.20200726182219-9006d8d4f9d8
+	go.etcd.io/etcd/v3 v3.5.0
 	go.uber.org/zap v1.15.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
