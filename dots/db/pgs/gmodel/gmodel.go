@@ -151,6 +151,12 @@ func makeData(data *tData) {
 			log.Fatal(err)
 		}
 		pkg = pkgs[0]
+		{
+			if pkg.Name == "" {
+				list := strings.Split(pkg.PkgPath, `/`)
+				pkg.Name = list[len(list)-1]
+			}
+		}
 		if len(pkg.Syntax) != 1 {
 			log.Fatal("parse file not " + file)
 		}

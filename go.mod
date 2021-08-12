@@ -26,8 +26,8 @@ require (
 	//go.etcd.io/etcd/v3 v3.5.0
 	go.uber.org/zap v1.15.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
-	golang.org/x/tools v0.0.0-20200103221440-774c71fcf114
+	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
+	golang.org/x/tools v0.1.6-0.20210806193852-d529aec52f04
 	google.golang.org/grpc v1.39.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0
