@@ -48,12 +48,12 @@ func (mr *MockServerNoblMockRecorder) Server() *gomock.Call {
 }
 
 // ServerItem mocks base method
-func (m *MockServerNobl) ServerItem() ServerItem {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ServerItem")
-	ret0, _ := ret[0].(ServerItem)
-	return ret0
-}
+//func (m *MockServerNobl) ServerItem() ServerItem {
+//	m.ctrl.T.Helper()
+//	ret := m.ctrl.Call(m, "ServerItem")
+//	ret0, _ := ret[0].(ServerItem)
+//	return ret0
+//}
 
 // ServerItem indicates an expected call of ServerItem
 func (mr *MockServerNoblMockRecorder) ServerItem() *gomock.Call {
