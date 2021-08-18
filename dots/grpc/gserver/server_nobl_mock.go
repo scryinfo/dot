@@ -56,7 +56,7 @@ func (mr *MockServerNoblMockRecorder) Server() *gomock.Call {
 //}
 
 // ServerItem indicates an expected call of ServerItem
-func (mr *MockServerNoblMockRecorder) ServerItem() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ServerItem", reflect.TypeOf((*MockServerNobl)(nil).ServerItem))
-}
+//func (mr *MockServerNoblMockRecorder) ServerItem() *gomock.Call {
+//	mr.mock.ctrl.T.Helper()
+//	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ServerItem", reflect.TypeOf((*MockServerNobl)(nil).ServerItem))
+//}
