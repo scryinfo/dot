@@ -22,7 +22,7 @@ const (
 
 type ServerNobl interface {
 	Server() *grpc.Server
-	ServerItem() ServerItem
+	//ServerItem() ServerItem
 }
 
 type ConfigNobl struct {
@@ -42,18 +42,18 @@ func (c *serverNoblImp) Server() *grpc.Server {
 	return c.server
 }
 
-func (c *serverNoblImp) ServerItem() ServerItem {
-	serverItem := ServerItem{Name: c.conf.Name}
-
-	for i, _ := range c.listeners {
-		l := c.listeners[i]
-		if l != nil {
-			serverItem.Addrs = append(serverItem.Addrs, l.Addr().String())
-		}
-	}
-
-	return serverItem
-}
+//func (c *serverNoblImp) ServerItem() ServerItem {
+//	serverItem := ServerItem{Name: c.conf.Name}
+//
+//	for i, _ := range c.listeners {
+//		l := c.listeners[i]
+//		if l != nil {
+//			serverItem.Addrs = append(serverItem.Addrs, l.Addr().String())
+//		}
+//	}
+//
+//	return serverItem
+//}
 
 func (c *serverNoblImp) startServer() {
 	for _, lis := range c.listeners {
