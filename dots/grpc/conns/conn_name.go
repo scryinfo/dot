@@ -17,8 +17,8 @@ const (
 type ConnName struct {
 	serviceName string
 	conn        *grpc.ClientConn
-	Conns_      Conns      `dot:"?"` //可选组件，优先使用etcd
-	EtcdConns   *EtcdConns `dot:"?"` //可选组件，优先使用etcd
+	Conns_      Conns `dot:"?"` //可选组件，优先使用etcd
+	//EtcdConns   *EtcdConns `dot:"?"` //可选组件，优先使用etcd
 }
 
 type configName struct {
@@ -68,7 +68,8 @@ func ConnNameConfigTypeLive() *dot.ConfigTypeLive {
 }
 
 func (c *ConnName) Injected(dot.Line) error {
-	if c.Conns_ == nil && c.EtcdConns == nil {
+	//if c.Conns_ == nil && c.EtcdConns == nil {
+	if c.Conns_ == nil {
 		return errors.New("no conn is checked")
 	}
 	return nil
@@ -76,12 +77,13 @@ func (c *ConnName) Injected(dot.Line) error {
 
 func (c *ConnName) AfterAllInject(l dot.Line) {
 	if c.conn == nil {
-		if c.EtcdConns != nil { //优先使用 etcd中的名字
-			c.conn = c.EtcdConns.ClientConn(c.serviceName)
-		}
-		if c.conn == nil {
-			c.conn = c.Conns_.ClientConn(c.serviceName)
-		}
+		c.conn = c.Conns_.ClientConn(c.serviceName)
+		//if c.EtcdConns != nil { //优先使用 etcd中的名字
+		//	c.conn = c.EtcdConns.ClientConn(c.serviceName)
+		//}
+		//if c.conn == nil {
+		//	c.conn = c.Conns_.ClientConn(c.serviceName)
+		//}
 	}
 }
 
