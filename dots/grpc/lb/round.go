@@ -17,7 +17,7 @@ const Name = Round
 
 // newBuilder creates a new roundrobin balancer builder.
 func newBuilder() balancer.Builder {
-	return base.NewBalancerBuilderV2(Name, &rrPickerBuilder{r: rand.New(rand.NewSource(time.Now().UnixNano()))}, base.Config{HealthCheck: true})
+	return base.NewBalancerBuilder(Name, &rrPickerBuilder{r: rand.New(rand.NewSource(time.Now().UnixNano()))}, base.Config{HealthCheck: true})
 }
 
 func init() {
@@ -37,7 +37,7 @@ func (c *rrPickerBuilder) Intn(n int) int {
 	return res
 }
 
-func (c *rrPickerBuilder) Build(info base.PickerBuildInfo) balancer.V2Picker {
+func (c *rrPickerBuilder) Build(info base.PickerBuildInfo) balancer.Picker {
 	grpclog.Infof("roundrobinPicker: newPicker called with readySCs: %v", info)
 	if len(info.ReadySCs) == 0 {
 		return base.NewErrPickerV2(balancer.ErrNoSubConnAvailable)
