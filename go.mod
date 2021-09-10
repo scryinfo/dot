@@ -18,6 +18,7 @@ require (
 	github.com/gookit/config v1.1.0
 	github.com/improbable-eng/grpc-web v0.13.0
 	github.com/jinzhu/gorm v1.9.15
+	github.com/jinzhu/inflection v1.0.0
 	github.com/pelletier/go-toml v1.0.1-0.20170904195809-1d6b12b7cb29
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.7.0 // indirect

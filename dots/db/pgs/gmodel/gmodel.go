@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"github.com/jinzhu/inflection"
 	"github.com/scryinfo/dot/dots/db/pgs"
 	"go/ast"
 	"go/format"
@@ -56,13 +57,11 @@ type tData struct {
 
 var params struct {
 	typeName    string
-	tableName   string
 	mapExcludes string
 }
 
 func parms(data *tData) {
 	flag.StringVar(&params.typeName, "typeName", "", "")
-	flag.StringVar(&params.tableName, "tableName", "", "")
 	flag.StringVar(&params.mapExcludes, "mapExcludes", "", "split ','")
 	flag.Parse()
 
@@ -77,14 +76,11 @@ func parms(data *tData) {
 		data.MapExcludes = make(map[string]bool, 0)
 	}
 
-	if len(params.tableName) < 1 {
-		params.tableName = pgs.Underscore(params.typeName)
-	}
-
 	data.TypeName = params.typeName
-	data.TableName = params.tableName
-	data.DbObjectName = pgs.Underscore(params.typeName)
+	data.DbObjectName = tableNameInflector(pgs.Underscore(params.typeName))
 }
+
+var tableNameInflector = inflection.Plural
 
 //env:   GOPACKAGE=model;GOFILE=D:\gopath\src\github.com\scryinfo\dot\sample\db\pgs\model\models.go
 func main() {
@@ -93,10 +89,6 @@ func main() {
 	parms(data)
 	if len(params.typeName) < 1 {
 		log.Fatal("type name is null")
-	}
-
-	if len(params.tableName) < 1 {
-		log.Fatal("table name is null")
 	}
 
 	var src []byte = nil
