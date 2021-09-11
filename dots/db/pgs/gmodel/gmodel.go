@@ -77,7 +77,8 @@ func parms(data *tData) {
 	}
 
 	data.TypeName = params.typeName
-	data.DbObjectName = tableNameInflector(pgs.Underscore(params.typeName))
+	data.DbObjectName = pgs.Underscore(params.typeName)
+	data.TableName = tableNameInflector(data.DbObjectName)
 }
 
 var tableNameInflector = inflection.Plural
