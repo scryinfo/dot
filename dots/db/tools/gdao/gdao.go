@@ -44,6 +44,7 @@ var params struct {
 	daoPackage string
 	suffix     string
 	useLock    bool
+	useGorm    bool
 }
 
 func parms(data *tData) {
@@ -51,6 +52,7 @@ func parms(data *tData) {
 	flag.StringVar(&params.tableName, "tableName", "", "")
 	flag.StringVar(&params.daoPackage, "daoPackage", "", "")
 	flag.StringVar(&params.suffix, "suffix", "Dao", "")
+	flag.BoolVar(&params.useGorm, "useGorm", false, "")
 	flag.Parse()
 
 	if len(params.tableName) < 1 {
@@ -87,7 +89,7 @@ func main() {
 	var src []byte = nil
 	{
 		makeData(data)
-		src = gmodel(data)
+		src = gmodel(data, params.useGorm)
 	}
 
 	outputName := ""
@@ -160,9 +162,212 @@ func makeData(data *tData) {
 	//data.Fields = fields
 }
 
-func gmodel(data *tData) []byte {
+func gmodel(data *tData, supportGorm bool) []byte {
 
-	temp := `
+	temp := ""
+	if supportGorm {
+		temp = `
+package gorms
+
+import (
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/dots/db/gorms"
+	"github.com/scryinfo/dot/dots/db/pgs"
+	"github.com/scryinfo/dot/sample/db/tools/model"
+	"{{$.ImportModelPkgName}}"
+	"gorm.io/gorm/clause"
+)
+
+const {{$.DaoName}}TypeID = "{{$.ID}}"
+
+type {{$.DaoName}} struct {
+	*gorms.DaoBase {{$.BackQuote}}dot:""{{$.BackQuote}}
+}
+
+//{{$.DaoName}}TypeLives
+func {{$.DaoName}}TypeLives() []*dot.TypeLives {
+	tl := &dot.TypeLives{
+		Meta: dot.Metadata{TypeID: {{$.DaoName}}TypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
+			return &{{$.DaoName}}{}, nil
+		}},
+		Lives: []dot.Live{
+			{
+				LiveID: {{$.DaoName}}TypeID,
+				RelyLives: map[string]dot.LiveID{
+					"DaoBase": pgs.DaoBaseTypeID,
+				},
+			},
+		},
+	}
+
+	lives := gorms.DaoBaseTypeLives()
+	lives = append(lives, tl)
+
+	return lives
+}
+
+func (c *{{$.DaoName}}) GetByID(id uint) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	result := c.Wrapper.GetDb().First(&m, id)
+	if result.RowsAffected == 1 {
+		return m, nil
+	}
+	return nil, result.Error
+}
+
+func (c *{{$.DaoName}}) Query(condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+
+	db := c.Wrapper.GetDb()
+	if len(condition) < 1 {
+		db = db.Find(&ms)
+	} else {
+		db = db.Where(condition, params...).Find(&ms)
+	}
+	err = db.Error
+	if err != nil {
+		ms = nil
+	}
+	return
+}
+
+func (c *{{$.DaoName}}) List() (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	db := c.Wrapper.GetDb().Find(&ms)
+	if db.Error != nil {
+		ms = nil
+	}
+	return ms, db.Error
+}
+
+func (c *{{$.DaoName}}) Count(condition string, params ...interface{}) (count int64, err error) {
+
+	var ms []*{{$.ModelPkgName}}.{{$.TypeName}}
+	db := c.Wrapper.GetDb()
+	if len(condition) < 1 {
+		db = db.Find(&ms)
+	} else {
+		db = db.Where(condition, params...).Find(&ms)
+	}
+	err = db.Error
+	if err != nil {
+		count = 0
+	}
+	count=db.RowsAffected
+	return
+}
+
+func (c *{{$.DaoName}}) QueryPage(pageSize int, page int, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	db := c.Wrapper.GetDb()
+	if len(condition) < 1 {
+		db = db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&ms)
+	} else {
+		db = db.Limit(pageSize).Offset((page-1)*pageSize).Where(condition, params...).Find(&ms)
+	}
+	if db.Error != nil { //be sure
+		ms = nil
+	}
+	return ms, db.Error
+}
+
+func (c *{{$.DaoName}}) QueryPageWithCount(pageSize int, page int, condition string, params ...interface{}) (ms []*{{$.ModelPkgName}}.{{$.TypeName}}, count int64, err error) {
+	db := c.Wrapper.GetDb()
+	if len(condition) < 1 {
+		db = db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&ms)
+	} else {
+		db = db.Limit(pageSize).Offset((page-1)*pageSize).Where(condition, params...).Find(&ms)
+	}
+	if db.Error != nil { //be sure
+		ms = nil
+	}
+	return ms, db.RowsAffected, db.Error
+}
+
+func (c *{{$.DaoName}}) QueryOne(condition string, params ...interface{}) (m *{{$.ModelPkgName}}.{{$.TypeName}}, err error) {
+	db := c.Wrapper.GetDb()
+	if len(condition) < 1 {
+		db = db.First(&m)
+	} else {
+		db = db.Where(condition, params...).First(&m)
+	}
+	err = db.Error
+	if err != nil {
+		m = nil
+	}
+	return
+}
+
+//insert = insertReturn
+func (c *{{$.DaoName}}) Insert(m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
+	//because id auto increment
+	//m.ID = 0
+	err = c.Wrapper.GetDb().Create(&m).Error
+	return
+}
+
+func (c *{{$.DaoName}}) Inserts(ms []*{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
+	//because id auto increment
+	//m.ID = 0
+	err = c.Wrapper.GetDb().Create(&ms).Error
+	return
+}
+
+//update everything except ID
+func (c *{{$.DaoName}}) Upsert(m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
+	//because id auto increment
+	//m.ID = 0
+	err = c.Wrapper.GetDb().Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&m).Error
+	return
+}
+
+func (c *{{$.DaoName}}) Upserts(ms []*{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
+	//because id auto increment
+	//m.ID = 0
+	err = c.Wrapper.GetDb().Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&ms).Error
+	return
+}
+
+//Updates 方法支持 struct 和 map[string]interface{} 参数
+//当使用 struct 更新时，默认情况下，GORM 只会更新非零值的字段
+func (c *{{$.DaoName}}) Update(m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
+	err = c.Wrapper.GetDb().Updates(&m).Error
+	return
+}
+
+//Save 会保存所有的字段，即使字段是零值
+//todo CreateTime=0
+func (c *{{$.DaoName}}) Save(m *{{$.ModelPkgName}}.{{$.TypeName}}) (err error) {
+	err = c.Wrapper.GetDb().Save(&m).Error
+	return
+}
+
+//default where id=m.ID
+func (c *{{$.DaoName}}) UpdateColumn(m *{{$.ModelPkgName}}.{{$.TypeName}}, columnName string, value interface{}) (err error) {
+	err = c.Wrapper.GetDb().Model(&m).Update(columnName, value).Error
+	return
+}
+//soft delete
+func (c *{{$.DaoName}}) DeleteById(id uint) error {
+	return c.Wrapper.GetDb().Delete(&{{$.ModelPkgName}}.{{$.TypeName}}{}, id).Error
+}
+//soft delete
+func (c *{{$.DaoName}}) DeleteByIds(ids []uint) error {
+	return c.Wrapper.GetDb().Delete(&{{$.ModelPkgName}}.{{$.TypeName}}{}, ids).Error
+}
+//soft delete
+func (c *{{$.DaoName}}) Delete(condition string, params ...interface{}) error {
+	return c.Wrapper.GetDb().Where(condition, params...).Delete(&{{$.ModelPkgName}}.{{$.TypeName}}{}).Error
+}
+
+//Delete permanently
+func (c *{{$.DaoName}}) DeleteByIdUnscoped(id uint) error {
+	return c.Wrapper.GetDb().Unscoped().Delete(&{{$.ModelPkgName}}.{{$.TypeName}}{}, id).Error
+}
+
+`
+	} else {
+		temp = `
 package {{$.DaoPkgName}}
 import (
 	"time"
@@ -537,6 +742,8 @@ func (c *{{$.DaoName}}) Update{{$.TypeName}}SomeColumn(conn orm.DB, ids []string
 	return
 }
 `
+	}
+
 	var src []byte = nil
 	{
 		t, err := template.New("").Parse(temp)

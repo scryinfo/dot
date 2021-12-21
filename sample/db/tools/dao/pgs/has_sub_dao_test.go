@@ -1,11 +1,11 @@
-package dao
+package pgs
 
 import (
 	"fmt"
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
 	"github.com/scryinfo/dot/dots/db/pgs"
-	"github.com/scryinfo/dot/sample/db/pgs/model"
+	"github.com/scryinfo/dot/sample/db/tools/model"
 	"github.com/scryinfo/scryg/sutils/uuid"
 	"github.com/stretchr/testify/assert"
 	"log"

@@ -17,7 +17,6 @@ require (
 	github.com/golang/protobuf v1.4.3
 	github.com/gookit/config v1.1.0
 	github.com/improbable-eng/grpc-web v0.13.0
-	github.com/jinzhu/gorm v1.9.15
 	github.com/jinzhu/inflection v1.0.0
 	github.com/pelletier/go-toml v1.0.1-0.20170904195809-1d6b12b7cb29
 	github.com/pkg/errors v0.9.1
@@ -32,4 +31,6 @@ require (
 	google.golang.org/grpc v1.39.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.3.0
+	gorm.io/driver/mysql v1.2.1
+	gorm.io/gorm v1.22.4
 )

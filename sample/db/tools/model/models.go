@@ -1,6 +1,8 @@
 package model
 
-import "github.com/scryinfo/dot/dots/db/pgs"
+import (
+	"github.com/scryinfo/dot/dots/db"
+)
 
 type DataType struct {
 	Name  string
@@ -10,24 +12,32 @@ type DataType struct {
 //go:generate gmodel -typeName=Notice -tableName=notices
 //go:generate gdao -typeName=Notice -tableName=notices -daoPackage=dao
 type Notice struct {
-	pgs.ModelBase
+	db.ModelBase
 	Data   DataType `pg:"composite:data"`
 	Status int
-	No int `pg:"-"`
+	No     int `pg:"-"`
 }
 
 //go:generate gmodel -typeName=Sub -tableName=subs
 //go:generate gdao -typeName=Sub -tableName=subs -daoPackage=dao
 type Sub struct {
-	pgs.ModelBase
+	db.ModelBase
 	Name string
 }
 
 //go:generate gmodel -typeName=HasSub -tableName=has_subs
 //go:generate gdao -typeName=HasSub -tableName=has_subs -daoPackage=dao
 type HasSub struct {
-	pgs.ModelBase
+	db.ModelBase
 	SubId   string
 	Count   int
 	SubData *Sub `pg:"rel:has-one"`
+}
+
+//go:generate gmodel -typeName=AutoData -tableName=auto_datas
+//go:generate gdao -typeName=AutoData -tableName=auto_datas -daoPackage=dao -useGorm=true
+type AutoData struct {
+	db.AutoModelBase
+	Name string
+	Age  int8
 }
