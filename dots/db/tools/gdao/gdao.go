@@ -173,7 +173,6 @@ import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/db/gorms"
 	"github.com/scryinfo/dot/dots/db/pgs"
-	"github.com/scryinfo/dot/sample/db/tools/model"
 	"{{$.ImportModelPkgName}}"
 	"gorm.io/gorm/clause"
 )
