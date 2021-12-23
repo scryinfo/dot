@@ -167,7 +167,7 @@ func gmodel(data *tData, supportGorm bool) []byte {
 	temp := ""
 	if supportGorm {
 		temp = `
-package gorms
+package dao
 
 import (
 	"github.com/scryinfo/dot/dot"
