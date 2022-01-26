@@ -36,7 +36,7 @@ func DaoBaseTypeLives() []*dot.TypeLives {
 	}
 
 	lives := []*dot.TypeLives{tl}
-
+	lives = append(lives, GormsTypeLives()...)
 	return lives
 }
 
