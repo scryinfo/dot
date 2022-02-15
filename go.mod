@@ -25,6 +25,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	//go.etcd.io/etcd/v3 v3.5.0
 	go.uber.org/zap v1.15.0
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
 	golang.org/x/tools v0.1.6-0.20210806193852-d529aec52f04

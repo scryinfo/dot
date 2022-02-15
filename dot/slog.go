@@ -90,9 +90,14 @@ type SLogger interface {
 
 //LogConfig log config
 type LogConfig struct {
-	File  string `json:"file" toml:"file" yaml:"file"`
-	Level string `json:"level" toml:"level" yaml:"level"`
-	Time  string `json:"time" toml:"time" yaml:"time"` //hour,h,day,d,month,m,y,year
+	DirPath       string `json:"dirPath" toml:"dirPath" yaml:"dirPath"` // 文件夹路径
+	File          string `json:"file" toml:"file" yaml:"file"`          // 日志文件名
+	Level         string `json:"level" toml:"level" yaml:"level"`
+	Time          string `json:"time" toml:"time" yaml:"time"`                            //hour,h,day,d,month,m,y,year
+	MaxSize       int    `json:"maxSize" toml:"maxSize" yaml:"maxSize"`                   // 日志单文件,大小上限     最少：120M
+	MaxBackups    int    `json:"maxBackups" toml:"maxBackups" yaml:"maxBackups"`          // 日志文件，最多有多少个   default：10
+	MaxAge        int    `json:"maxAge" toml:"maxAge" yaml:"maxAge"`                      // 日志文件保存时长        最少：30days
+	IsOpenConsole bool   `json:"isOpenConsole" toml:"isOpenConsole" yaml:"isOpenConsole"` // 是否输出到控制台
 }
 
 //Initialize one default log, let program use log at first, output to “before.log” file, all log will be output

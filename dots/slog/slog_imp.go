@@ -4,6 +4,9 @@
 package slog
 
 import (
+	"gopkg.in/natefinch/lumberjack.v2"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/scryinfo/dot/dot"
@@ -129,6 +132,26 @@ func (log *sLogger) NewLogger(callerSkip int) dot.SLogger {
 
 //Create
 func (log *sLogger) Create(l dot.Line) (err error) {
+	var maxAge = 30 // default : 30 days
+	if log.conf.MaxAge > maxAge {
+		maxAge = log.conf.MaxAge
+	}
+	var maxSize = 120 // default : 120M
+	if log.conf.MaxSize > maxSize {
+		maxSize = log.conf.MaxSize
+	}
+	var maxBackups = 10 // default : 10
+	if log.conf.MaxBackups > maxBackups {
+		maxBackups = log.conf.MaxBackups
+	}
+	hook := lumberjack.Logger{
+		Filename:   filepath.Join(log.conf.DirPath, log.conf.File), // 日志文件路径
+		MaxSize:    maxSize,                                        // 每个日志文件保存的最大尺寸 单位：M
+		MaxBackups: maxBackups,                                     // 日志文件最多保存多少个备份
+		MaxAge:     maxAge,                                         // 文件最多保存多少天
+		Compress:   true,                                           // 是否压缩
+	}
+
 	encoderCfg := zapcore.EncoderConfig{
 		// Keys can be anything except the empty string.
 		TimeKey:        "T",
@@ -150,20 +173,31 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 
 	log.level = atom
 
-	customCfg := zap.Config{
-		Level:            log.level,
-		Development:      true,
-		Encoding:         "console",
-		EncoderConfig:    encoderCfg,
-		OutputPaths:      []string{log.conf.File},
-		ErrorOutputPaths: []string{"stderr"},
+	// 设置日志级别
+	atomicLevel := zap.NewAtomicLevel()
+	atomicLevel.SetLevel(zap.InfoLevel)
+	var core zapcore.Core
+	if log.conf.IsOpenConsole { // 打印到控制台和文件
+		core = zapcore.NewCore(
+			zapcore.NewJSONEncoder(encoderCfg),                                              // 编码器配置
+			zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(&hook)), // 打印到控制台和文件
+			atomicLevel,                                                                     // 日志级别
+		)
+	} else { // 打印到 文件
+		core = zapcore.NewCore(
+			zapcore.NewJSONEncoder(encoderCfg),                  // 编码器配置
+			zapcore.NewMultiWriteSyncer(zapcore.AddSync(&hook)), // 打印到 文件
+			atomicLevel,                                         // 日志级别
+		)
 	}
 
-	logger, err := customCfg.Build(zap.AddCallerSkip(1))
+	// 开启开发模式，堆栈跟踪
+	caller := zap.AddCaller()
+	// 开启文件及行号
+	development := zap.Development()
+	logger := zap.New(core, caller, zap.AddCallerSkip(1), development)
+	log.Logger = logger
 
-	if err == nil {
-		log.Logger = logger
-	}
 	return err
 }
 
