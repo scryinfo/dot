@@ -9,19 +9,39 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
+
+	yml "gopkg.in/yaml.v3"
 
 	_toml "github.com/BurntSushi/toml"
 	"github.com/bitly/go-simplejson"
-	"github.com/ghodss/yaml"
 	"github.com/pelletier/go-toml"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/scryg/sutils/sfile"
+	"github.com/scryinfo/yaml"
 )
 
 var (
 	_ dot.SConfig = (*sConfig)(nil) //just static check implemet the interface
 )
+
+var reVar = regexp.MustCompile(`^\${(\w+)}$`)
+
+type StringFromEnv string
+
+func (e *StringFromEnv) UnmarshalYAML(value *yml.Node) error {
+	var s string
+	if err := value.Decode(&s); err != nil {
+		return err
+	}
+	if match := reVar.FindStringSubmatch(s); len(match) > 0 {
+		*e = StringFromEnv(os.Getenv(match[1]))
+	} else {
+		*e = StringFromEnv(s)
+	}
+	return nil
+}
 
 //sConfig implement SConfig
 //Run executable file content expath，xecutable file name exname (without extension name),expath same content, conf content exconf， config file content confpath
