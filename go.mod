@@ -28,10 +28,12 @@ require (
 	google.golang.org/grpc v1.39.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
-	gopkg.in/yaml.v2 v2.3.0
+	//gopkg.in/yaml.v2 v2.3.0
 	gorm.io/driver/mysql v1.2.1
 	gorm.io/gorm v1.22.4
 )
+
+require gopkg.in/yaml.v3 v3.0.1
 
 require (
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
@@ -70,6 +72,6 @@ require (
 	golang.org/x/text v0.3.3 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gopkg.in/yaml.v2 v2.3.0 // indirect
 	mellium.im/sasl v0.2.1 // indirect
 )

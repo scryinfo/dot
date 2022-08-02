@@ -829,6 +829,10 @@ func (c *lineImp) Create(l dot.Line) error {
 		return err
 	}
 
+	//data, err := yml.Marshal(&c.config)
+	//if err == nil {
+	//	err = ioutil.WriteFile("config.yaml", data, 0)
+	//}
 	//create log
 	createLog(c)
 	return err

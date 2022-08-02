@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -14,6 +15,18 @@ import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
+
+var reVar = regexp.MustCompile(`^\${(\w+)}$`)
+
+func UnmarshalENV(value string) (s string) {
+
+	if match := reVar.FindStringSubmatch(value); len(match) > 0 {
+		s = os.Getenv(match[1])
+	} else {
+		s = value
+	}
+	return s
+}
 
 func GetFullPathFile(file string) string {
 	if filepath.IsAbs(file) {

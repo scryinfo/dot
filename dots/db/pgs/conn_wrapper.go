@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/go-pg/pg/v10"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/utils"
 )
 
 const (
@@ -65,6 +66,10 @@ func newConnWrapper(conf []byte) (dot.Dot, error) {
 	if err != nil {
 		return nil, err
 	}
+	dconf.Database = utils.UnmarshalENV(dconf.Database)
+	dconf.Addr = utils.UnmarshalENV(dconf.Addr)
+	dconf.User = utils.UnmarshalENV(dconf.User)
+	dconf.Password = utils.UnmarshalENV(dconf.Password)
 	d := &ConnWrapper{conf: *dconf}
 	return d, err
 }

@@ -6,14 +6,15 @@ package data
 import (
 	"context"
 	"encoding/json"
-	"go.uber.org/zap"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
 
+	"go.uber.org/zap"
+
 	"github.com/BurntSushi/toml"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
