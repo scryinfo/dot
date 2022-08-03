@@ -13,7 +13,8 @@ const (
 )
 
 type config struct {
-	Addr     dot.StringFromEnv `json:"addr"`
+	Host     dot.StringFromEnv `json:"host"`
+	Port     dot.StringFromEnv `json:"port"`
 	User     dot.StringFromEnv `json:"user"`
 	Password dot.StringFromEnv `json:"password"`
 	Database dot.StringFromEnv `json:"database"`
@@ -28,7 +29,7 @@ type ConnWrapper struct {
 
 func (c *ConnWrapper) Create(dot.Line) error {
 	c.db = pg.Connect(&pg.Options{
-		Addr:     string(c.conf.Addr),
+		Addr:     string(c.conf.Host) + ":" + string(c.conf.Port),
 		User:     string(c.conf.User),
 		Password: string(c.conf.Password),
 		Database: string(c.conf.Database),
@@ -65,10 +66,6 @@ func newConnWrapper(conf []byte) (dot.Dot, error) {
 	if err != nil {
 		return nil, err
 	}
-	//dconf.Database = utils.UnmarshalENV(dconf.Database)
-	//dconf.Addr = utils.UnmarshalENV(dconf.Addr)
-	//dconf.User = utils.UnmarshalENV(dconf.User)
-	//dconf.Password = utils.UnmarshalENV(dconf.Password)
 	d := &ConnWrapper{conf: *dconf}
 	return d, err
 }
