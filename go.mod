@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/bitly/go-simplejson v0.5.0
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.0
 	github.com/go-kit/kit v0.10.0
 	github.com/go-pg/pg/v10 v10.7.4
 	github.com/go-redis/redis/v8 v8.4.11
@@ -50,7 +50,7 @@ require (
 	github.com/go-pg/zerochecker v0.2.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
-	github.com/go-playground/validator/v10 v10.2.0 // indirect
+	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/gorilla/websocket v0.0.0-20170926233335-4201258b820c // indirect
