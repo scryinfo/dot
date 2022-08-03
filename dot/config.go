@@ -11,7 +11,7 @@ type LiveConfig struct {
 	RelyLives map[string]LiveID `json:"relyLives" toml:"relyLives" yaml:"relyLives"`
 	//dot config
 	//todo tag
-	Config interface{} `json:"json" toml:"json" yaml:"json"`
+	Config interface{} `json:"json" toml:"json" yaml:"json" mapstructure:"json"`
 }
 
 //MetaLivesConfig dot config

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/go-pg/pg/v10"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/utils"
 )
 
 const (
@@ -14,11 +13,11 @@ const (
 )
 
 type config struct {
-	Addr     string `json:"addr"`
-	User     string `json:"user"`
-	Password string `json:"password"`
-	Database string `json:"database"`
-	ShowSQL  bool   `json:"showSql"`
+	Addr     dot.StringFromEnv `json:"addr"`
+	User     dot.StringFromEnv `json:"user"`
+	Password dot.StringFromEnv `json:"password"`
+	Database dot.StringFromEnv `json:"database"`
+	ShowSQL  bool              `json:"showSql"`
 }
 
 //ConnWrapper connect wrapper
@@ -29,10 +28,10 @@ type ConnWrapper struct {
 
 func (c *ConnWrapper) Create(dot.Line) error {
 	c.db = pg.Connect(&pg.Options{
-		Addr:     c.conf.Addr,
-		User:     c.conf.User,
-		Password: c.conf.Password,
-		Database: c.conf.Database,
+		Addr:     string(c.conf.Addr),
+		User:     string(c.conf.User),
+		Password: string(c.conf.Password),
+		Database: string(c.conf.Database),
 	})
 	if c.conf.ShowSQL {
 		c.db.AddQueryHook(pgLogger{})
@@ -66,10 +65,10 @@ func newConnWrapper(conf []byte) (dot.Dot, error) {
 	if err != nil {
 		return nil, err
 	}
-	dconf.Database = utils.UnmarshalENV(dconf.Database)
-	dconf.Addr = utils.UnmarshalENV(dconf.Addr)
-	dconf.User = utils.UnmarshalENV(dconf.User)
-	dconf.Password = utils.UnmarshalENV(dconf.Password)
+	//dconf.Database = utils.UnmarshalENV(dconf.Database)
+	//dconf.Addr = utils.UnmarshalENV(dconf.Addr)
+	//dconf.User = utils.UnmarshalENV(dconf.User)
+	//dconf.Password = utils.UnmarshalENV(dconf.Password)
 	d := &ConnWrapper{conf: *dconf}
 	return d, err
 }

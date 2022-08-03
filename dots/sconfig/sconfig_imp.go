@@ -9,12 +9,10 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
-	yml "gopkg.in/yaml.v3"
+	"github.com/spf13/viper"
 
-	_toml "github.com/BurntSushi/toml"
 	"github.com/bitly/go-simplejson"
 	"github.com/pelletier/go-toml"
 	"github.com/scryinfo/dot/dot"
@@ -25,23 +23,6 @@ import (
 var (
 	_ dot.SConfig = (*sConfig)(nil) //just static check implemet the interface
 )
-
-var reVar = regexp.MustCompile(`^\${(\w+)}$`)
-
-type StringFromEnv string
-
-func (e *StringFromEnv) UnmarshalYAML(value *yml.Node) error {
-	var s string
-	if err := value.Decode(&s); err != nil {
-		return err
-	}
-	if match := reVar.FindStringSubmatch(s); len(match) > 0 {
-		*e = StringFromEnv(os.Getenv(match[1]))
-	} else {
-		*e = StringFromEnv(s)
-	}
-	return nil
-}
 
 //sConfig implement SConfig
 //Run executable file content expath，xecutable file name exname (without extension name),expath same content, conf content exconf， config file content confpath
@@ -64,6 +45,7 @@ type sConfig struct {
 	file       string           //File name
 	fileType   string           //json,yaml,toml
 	simpleJSON *simplejson.Json //All config
+	simpleConf *viper.Viper
 }
 
 const (
@@ -76,7 +58,9 @@ const (
 
 //NewConfig new sConfig
 func NewConfig() *sConfig {
-	return &sConfig{}
+	return &sConfig{
+		simpleConf: viper.New(),
+	}
 }
 
 func (c *sConfig) RootPath() {
@@ -125,6 +109,9 @@ func (c *sConfig) RootPath() {
 			c.file = conf + extensionNameYaml
 			c.fileType = extensionNameYaml
 		}
+		c.simpleConf.SetConfigFile(c.file)
+		//c.simpleConf.SetConfigType(c.fileType)
+		c.simpleConf.AddConfigPath(c.confPath)
 	}
 
 	if len(c.confPath) > 0 && !sfile.ExistFile(c.confPath) {
@@ -173,6 +160,9 @@ func (c *sConfig) Create(l dot.Line) error {
 			c.simpleJSON, err = simplejson.NewJson(jsonBytes)
 		}
 	}
+
+	err = c.simpleConf.ReadInConfig()
+
 	return err
 }
 
@@ -189,6 +179,7 @@ func (c *sConfig) Create(l dot.Line) error {
 //Destroy  implement
 func (c *sConfig) Destroy(ignore bool) error {
 	c.simpleJSON = nil
+	c.simpleConf = nil
 	return nil
 }
 
@@ -223,27 +214,31 @@ func (c *sConfig) Key(key string) bool {
 
 //Map  implement
 func (c *sConfig) Map() (m map[string]interface{}, err error) {
+	c.simpleConf.AllSettings()
 	return c.simpleJSON.Map()
 }
 
 //Unmarshal implement
 func (c *sConfig) Unmarshal(s interface{}) error {
-	f := filepath.Join(c.ConfigPath(), c.ConfigFile())
-	var data []byte
+	//f := filepath.Join(c.ConfigPath(), c.ConfigFile())
+	//var data []byte
 	var err error
-	if sfile.ExistFile(f) {
-		data, err = ioutil.ReadFile(filepath.Join(c.ConfigPath(), c.ConfigFile()))
-		if err == nil {
-			switch c.fileType {
-			case extensionNameJson:
-				err = json.Unmarshal(data, s)
-			case extensionNameToml:
-				err = _toml.Unmarshal(data, s)
-			case extensionNameYaml:
-				err = yaml.Unmarshal(data, s)
-			}
-		}
-	}
+
+	err = c.simpleConf.Unmarshal(s)
+
+	//if sfile.ExistFile(f) {
+	//	data, err = ioutil.ReadFile(filepath.Join(c.ConfigPath(), c.ConfigFile()))
+	//	if err == nil {
+	//		switch c.fileType {
+	//		case extensionNameJson:
+	//			err = json.Unmarshal(data, s)
+	//		case extensionNameToml:
+	//			err = _toml.Unmarshal(data, s)
+	//		case extensionNameYaml:
+	//			err = yaml.Unmarshal(data, s)
+	//		}
+	//	}
+	//}
 
 	return err
 }

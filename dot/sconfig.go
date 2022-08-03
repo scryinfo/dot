@@ -4,7 +4,10 @@
 package dot
 
 import (
-	"encoding/json"
+	"gopkg.in/yaml.v3"
+	"os"
+	"regexp"
+
 	"github.com/scryinfo/scryg/sutils/skit"
 )
 
@@ -13,6 +16,23 @@ const (
 	//SconfigTypeID scofig dot type id
 	SconfigTypeID = "484ef01d-3c04-4517-a643-2d776a9ae758"
 )
+
+var reVar = regexp.MustCompile(`^\${(\w+)}$`)
+
+type StringFromEnv string
+
+func (e *StringFromEnv) UnmarshalYAML(value *yaml.Node) error {
+	var s string
+	if err := value.Decode(&s); err != nil {
+		return err
+	}
+	if match := reVar.FindStringSubmatch(s); len(match) > 0 {
+		*e = StringFromEnv(os.Getenv(match[1]))
+	} else {
+		*e = StringFromEnv(s)
+	}
+	return nil
+}
 
 //SConfig config belongs to one component Dot, but it is so basic, every Dot need it, so define it in dot.go file
 //S represents scryinfo config this name is used frequently, so add s to distinguish it
@@ -54,7 +74,8 @@ type SConfig interface {
 func UnMarshalConfig(conf []byte, obj interface{}) (err error) {
 	err = nil
 	if conf != nil {
-		err = json.Unmarshal(conf, obj)
+		err = yaml.Unmarshal(conf, obj)
+		//err = json.Unmarshal(conf, obj)
 	} else {
 		err = SError.Parameter
 	}
@@ -68,7 +89,8 @@ func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
 
 	if lconf != nil {
 		if !skit.IsNil(lconf.Config) {
-			return json.Marshal(lconf.Config)
+			return yaml.Marshal(lconf.Config)
+			//return json.Marshal(lconf.Config)
 		}
 	}
 	return conf, err
