@@ -4,9 +4,17 @@
 package dot
 
 import (
+	"context"
+	"fmt"
+	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
+	"io"
 	"os"
 	"regexp"
+	"strings"
+
+	vault "github.com/hashicorp/vault/api"
+	auth "github.com/hashicorp/vault/api/auth/approle"
 
 	"github.com/scryinfo/scryg/sutils/skit"
 )
@@ -70,6 +78,89 @@ type SConfig interface {
 	DefFloat64(key string, def float64) float64
 }
 
+func readIDFromFile(file string) (string, error) {
+	secretIDFile, err := os.Open(file)
+	if err != nil {
+		return "", fmt.Errorf("unable to open file containing secret ID: %w", err)
+	}
+	defer secretIDFile.Close()
+
+	limitedReader := io.LimitReader(secretIDFile, 1000)
+	secretIDBytes, err := io.ReadAll(limitedReader)
+	if err != nil {
+		return "", fmt.Errorf("unable to read secret ID: %w", err)
+	}
+
+	secretIDValue := strings.TrimSuffix(string(secretIDBytes), "\n")
+
+	return secretIDValue, nil
+}
+
+// Fetches a key-value secret (kv-v2) after authenticating via AppRole.
+func getSecretWithAppRole(keypath string, vaultAdd string) (map[string]interface{}, error) {
+	config := vault.DefaultConfig() // modify for more granular configuration
+
+	config.Address = vaultAdd
+
+	client, err := vault.NewClient(config)
+	if err != nil {
+		return nil, fmt.Errorf("unable to initialize Vault client: %w", err)
+	}
+	// A combination of a Role ID and Secret ID is required to log in to Vault
+	// with an AppRole.
+	// First, let's get the role ID given to us by our Vault administrator.
+	//roleID := os.Getenv("APPROLE_ROLE_ID")
+	//roleIdFile := os.Getenv("VAULT_ROLE_ID_FILE")
+	roleID, err := readIDFromFile(".vault_role_id")
+	if err != nil {
+		roleID, err = readIDFromFile("/run/secrets/vault_role_id")
+		if err != nil {
+			return nil, fmt.Errorf("no role ID was provided in APPROLE_ROLE_ID env var")
+		}
+	}
+
+	// The Secret ID is a value that needs to be protected, so instead of the
+	// app having knowledge of the secret ID directly, we have a trusted orchestrator (https://learn.hashicorp.com/tutorials/vault/secure-introduction?in=vault/app-integration#trusted-orchestrator)
+	// give the app access to a short-lived response-wrapping token (https://www.vaultproject.io/docs/concepts/response-wrapping).
+	// Read more at: https://learn.hashicorp.com/tutorials/vault/approle-best-practices?in=vault/auth-methods#secretid-delivery-best-practices
+	//secretIdFile := os.Getenv("VAULT_SECRET_ID_FILE")
+	secretIdFile := ".vault_secret_id"
+	_, err = readIDFromFile(secretIdFile)
+	if err != nil {
+		secretIdFile = "/run/secrets/vault_secret_id"
+		_, err = readIDFromFile(secretIdFile)
+		if err != nil {
+			return nil, fmt.Errorf("no role ID was provided in APPROLE_SECRET_ID ")
+		}
+	}
+	secretID := &auth.SecretID{FromFile: secretIdFile}
+
+	appRoleAuth, err := auth.NewAppRoleAuth(
+		roleID,
+		secretID,
+		//auth.WithWrappingToken(), // Only required if the secret ID is response-wrapped.
+	)
+	if err != nil {
+		return nil, fmt.Errorf("unable to initialize AppRole auth method: %w", err)
+	}
+
+	authInfo, err := client.Auth().Login(context.Background(), appRoleAuth)
+	if err != nil {
+		return nil, fmt.Errorf("unable to login to AppRole auth method: %w", err)
+	}
+	if authInfo == nil {
+		return nil, fmt.Errorf("no auth info was returned after login")
+	}
+
+	// get secret from the default mount path for KV v2 in dev mode, "secret"
+	secret, err := client.KVv2("secret").Get(context.Background(), keypath)
+	if err != nil {
+		return nil, fmt.Errorf("unable to read secret: %w", err)
+	}
+
+	return secret.Data, nil
+}
+
 //UnMarshalConfig unmarshal config
 func UnMarshalConfig(conf []byte, obj interface{}) (err error) {
 	err = nil
@@ -89,6 +180,35 @@ func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
 
 	if lconf != nil {
 		if !skit.IsNil(lconf.Config) {
+			conf, ok := lconf.Config.(map[string]interface{})
+			if ok {
+				keypath, ok := conf["keypath"].(string)
+				if ok {
+					if keypath != "" {
+						VAULT_ADDR := os.Getenv("VAULT_ADDR")
+						if VAULT_ADDR != "" {
+							//Logger().Infoln("marshal ", zap.String("keypath", keypath))
+							keys, err := getSecretWithAppRole(keypath, VAULT_ADDR)
+							if err == nil {
+								for key, value := range keys {
+									if value == "true" || value == "false" {
+										switch value {
+										case "true":
+											conf[key] = true
+										case "false":
+											conf[key] = false
+										}
+									} else {
+										conf[key] = value
+									}
+								}
+							}
+						}
+						Logger().Infoln("marshal ok", zap.String("keypath", keypath))
+					}
+				}
+			}
+
 			return yaml.Marshal(lconf.Config)
 			//return json.Marshal(lconf.Config)
 		}

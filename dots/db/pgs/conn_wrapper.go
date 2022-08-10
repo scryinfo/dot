@@ -13,12 +13,12 @@ const (
 )
 
 type config struct {
-	Host     dot.StringFromEnv `json:"host"`
-	Port     dot.StringFromEnv `json:"port"`
-	User     dot.StringFromEnv `json:"user"`
-	Password dot.StringFromEnv `json:"password"`
-	Database dot.StringFromEnv `json:"database"`
-	ShowSQL  bool              `json:"showSql"`
+	Host     dot.StringFromEnv `json:"host" yaml:"host" mapstructure:"host"`
+	Port     dot.StringFromEnv `json:"port" yaml:"port" mapstructure:"port"`
+	User     dot.StringFromEnv `json:"user" yaml:"user" mapstructure:"user"`
+	Password dot.StringFromEnv `json:"password" yaml:"password" mapstructure:"password"`
+	Database dot.StringFromEnv `json:"database" yaml:"database" mapstructure:"database"`
+	ShowSQL  bool              `json:"showSql" yaml:"showSql" mapstructure:"showSql"`
 }
 
 //ConnWrapper connect wrapper
