@@ -3,6 +3,8 @@ package pgs
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+
 	"github.com/go-pg/pg/v10"
 	"github.com/scryinfo/dot/dot"
 )
@@ -62,6 +64,9 @@ func (c *ConnWrapper) TestConn() bool {
 //construct dot
 func newConnWrapper(conf []byte) (dot.Dot, error) {
 	dconf := &config{}
+
+	dot.Logger().Infoln(fmt.Sprintf("database connect conf %+v", string(conf)))
+
 	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
 		return nil, err
