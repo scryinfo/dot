@@ -97,7 +97,7 @@ func readIDFromFile(file string) (string, error) {
 }
 
 // Fetches a key-value secret (kv-v2) after authenticating via AppRole.
-func getSecretWithAppRole(keypath string, vaultAdd string) (map[string]interface{}, error) {
+func GetSecretWithAppRole(keypath string, vaultAdd string) (map[string]interface{}, error) {
 	config := vault.DefaultConfig() // modify for more granular configuration
 
 	config.Address = vaultAdd
@@ -188,7 +188,7 @@ func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
 						VAULT_ADDR := os.Getenv("VAULT_ADDR")
 						if VAULT_ADDR != "" {
 							//Logger().Infoln("marshal ", zap.String("keypath", keypath))
-							keys, err := getSecretWithAppRole(keypath, VAULT_ADDR)
+							keys, err := GetSecretWithAppRole(keypath, VAULT_ADDR)
 							if err == nil {
 								for key, value := range keys {
 									if value == "true" || value == "false" {
