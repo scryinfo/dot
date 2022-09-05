@@ -27,6 +27,8 @@ const (
 
 var reVar = regexp.MustCompile(`^\${(\w+)}$`)
 
+var envMap map[string]interface{}
+
 type StringFromEnv string
 
 func (e *StringFromEnv) UnmarshalYAML(value *yaml.Node) error {
@@ -35,7 +37,13 @@ func (e *StringFromEnv) UnmarshalYAML(value *yaml.Node) error {
 		return err
 	}
 	if match := reVar.FindStringSubmatch(s); len(match) > 0 {
-		*e = StringFromEnv(os.Getenv(match[1]))
+		if envMap != nil {
+			if value, ok := envMap[match[1]].(string); ok {
+				*e = StringFromEnv(value)
+			}
+		} else {
+			*e = StringFromEnv(os.Getenv(match[1]))
+		}
 	} else {
 		*e = StringFromEnv(s)
 	}
@@ -190,18 +198,19 @@ func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
 							//Logger().Infoln("marshal ", zap.String("keypath", keypath))
 							keys, err := GetSecretWithAppRole(keypath, VAULT_ADDR)
 							if err == nil {
-								for key, value := range keys {
-									if value == "true" || value == "false" {
-										switch value {
-										case "true":
-											conf[key] = true
-										case "false":
-											conf[key] = false
-										}
-									} else {
-										conf[key] = value
-									}
-								}
+								envMap = keys
+								//for key, value := range keys {
+								//	if value == "true" || value == "false" {
+								//		switch value {
+								//		case "true":
+								//			conf[key] = true
+								//		case "false":
+								//			conf[key] = false
+								//		}
+								//	} else {
+								//		conf[key] = value
+								//	}
+								//}
 							}
 						}
 						Logger().Infoln("marshal ok", zap.String("keypath", keypath))
