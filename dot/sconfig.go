@@ -211,6 +211,8 @@ func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
 								//		conf[key] = value
 								//	}
 								//}
+							} else {
+								Logger().Errorln("Get keypath failed", zap.String("keypath", keypath))
 							}
 						}
 						Logger().Infoln("marshal ok", zap.String("keypath", keypath))

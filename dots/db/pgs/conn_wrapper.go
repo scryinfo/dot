@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/scryinfo/dot/dot"
@@ -65,12 +66,14 @@ func (c *ConnWrapper) TestConn() bool {
 func newConnWrapper(conf []byte) (dot.Dot, error) {
 	dconf := &config{}
 
-	dot.Logger().Infoln(fmt.Sprintf("database connect conf %+v", string(conf)))
+	dot.Logger().Infoln(fmt.Sprintf("database connect conf before UnMarshall %+v", string(conf)))
 
 	err := dot.UnMarshalConfig(conf, dconf)
 	if err != nil {
+		dot.Logger().Errorln("database connect conf ", zap.Error(err))
 		return nil, err
 	}
+	dot.Logger().Infoln(fmt.Sprintf("database connect conf %+v", string(conf)))
 	d := &ConnWrapper{conf: *dconf}
 	return d, err
 }
@@ -85,7 +88,11 @@ func ConnWrapperTypeLives() []*dot.TypeLives {
 //GenerateConnWrapper this func is for test
 func GenerateConnWrapper(conf string) *ConnWrapper {
 	conn := &ConnWrapper{}
-	_ = json.Unmarshal([]byte(conf), &conn.conf)
+	err := json.Unmarshal([]byte(conf), &conn.conf)
+	if err != nil {
+		dot.Logger().Errorln("database connect conf ", zap.Error(err))
+		return nil
+	}
 	_ = conn.Create(nil)
 	return conn
 }
