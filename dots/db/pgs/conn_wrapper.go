@@ -73,7 +73,7 @@ func newConnWrapper(conf []byte) (dot.Dot, error) {
 		dot.Logger().Errorln("database connect conf ", zap.Error(err))
 		return nil, err
 	}
-	dot.Logger().Infoln(fmt.Sprintf("database connect conf %+v", string(conf)))
+	dot.Logger().Infoln(fmt.Sprintf("database connect conf %+v", dconf))
 	d := &ConnWrapper{conf: *dconf}
 	return d, err
 }
