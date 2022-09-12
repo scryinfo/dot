@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/go-pg/pg/v10"
 	"go.uber.org/zap"
 
-	"github.com/go-pg/pg/v10"
 	"github.com/scryinfo/dot/dot"
 )
 
@@ -73,7 +73,7 @@ func newConnWrapper(conf []byte) (dot.Dot, error) {
 		dot.Logger().Errorln("database connect conf ", zap.Error(err))
 		return nil, err
 	}
-	dot.Logger().Infoln(fmt.Sprintf("database connect conf %+v", dconf))
+	//dot.Logger().Infoln(fmt.Sprintf("database connect conf %+v", dconf))
 	d := &ConnWrapper{conf: *dconf}
 	return d, err
 }

@@ -199,7 +199,7 @@ func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
 							keys, err := GetSecretWithAppRole(keypath, VAULT_ADDR)
 							if err == nil {
 								envMap = keys
-								Logger().Infoln("envMap ", zap.Any("envMap", envMap))
+								//Logger().Infoln("envMap ", zap.Any("envMap", envMap))
 								//for key, value := range keys {
 								//	if value == "true" || value == "false" {
 								//		switch value {
