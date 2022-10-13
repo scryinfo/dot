@@ -24,10 +24,10 @@ const (
 )
 
 type configEngine struct {
-	Addr         string   `json:"addr"`         // addr smaple:  ":8080"
-	KeyFile      string   `json:"keyFile"`      //if it is not abs path, preferred to use the executable path
-	PemFile      string   `json:"pemFile"`      //if it is not abs path, preferred to use the executable path
-	LogSkipPaths []string `json:"logSkipPaths"` // not write info log, sample: ["/tt", "/other"]
+	Addr         string   `json:"addr" yaml:"addr"`                 // addr smaple:  ":8080"
+	KeyFile      string   `json:"keyFile" yaml:"keyFile"`           //if it is not abs path, preferred to use the executable path
+	PemFile      string   `json:"pemFile" yaml:"pemFile"`           //if it is not abs path, preferred to use the executable path
+	LogSkipPaths []string `json:"logSkipPaths" yaml:"logSkipPaths"` // not write info log, sample: ["/tt", "/other"]
 }
 
 //GinEngine  gin dot
