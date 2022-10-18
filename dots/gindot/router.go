@@ -16,7 +16,7 @@ const (
 )
 
 type configRouter struct {
-	RelativePath string `json:"relativePath"`
+	RelativePath string `json:"relativePath" yaml:"relativePath"`
 }
 
 //Router  gin router
