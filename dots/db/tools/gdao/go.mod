@@ -1,4 +1,4 @@
-module github.com/scryinfo/scryinfo-dot/dots/db/tools/gdao
+module github.com/scryinfo/dot/dots/db/tools/gdao
 
 go 1.18
 
