@@ -4,18 +4,19 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"github.com/jinzhu/inflection"
-	"github.com/scryinfo/dot/dots/db/pgs"
 	"go/ast"
 	"go/format"
 	"go/token"
-	"golang.org/x/tools/go/packages"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/jinzhu/inflection"
+	"github.com/scryinfo/dot/dots/db/pgs"
+	"golang.org/x/tools/go/packages"
 )
 
 //todo bug说明 类似如下情况
@@ -53,16 +54,19 @@ type tData struct {
 	MapExcludes  map[string]bool
 	Fields       []DbField
 	StringFields []DbField
+	ModelFile    string
 }
 
 var params struct {
 	typeName    string
 	mapExcludes string
+	model       string
 }
 
 func parms(data *tData) {
 	flag.StringVar(&params.typeName, "typeName", "", "")
 	flag.StringVar(&params.mapExcludes, "mapExcludes", "", "split ','")
+	flag.StringVar(&params.model, "model", "models.go", "")
 	flag.Parse()
 
 	if len(params.mapExcludes) > 0 {
@@ -79,18 +83,22 @@ func parms(data *tData) {
 	data.TypeName = params.typeName
 	data.DbObjectName = pgs.Underscore(params.typeName)
 	data.TableName = tableNameInflector(data.DbObjectName)
+	data.ModelFile = params.model
 }
 
 var tableNameInflector = inflection.Plural
 
 //env:   GOPACKAGE=model;GOFILE=D:\gopath\src\github.com\scryinfo\dot\sample\db\pgs\model\models.go
 func main() {
+
 	log.Println("run gmodel")
 	data := &tData{}
 	parms(data)
 	if len(params.typeName) < 1 {
 		log.Fatal("type name is null")
 	}
+	os.Setenv("GOPACKAGE", "model")
+	os.Setenv("GOFILE", data.ModelFile)
 
 	var src []byte = nil
 	{
@@ -100,7 +108,6 @@ func main() {
 
 	outputName := ""
 	{
-		//types := strings.Split(params.typeName, ",")
 		types := pgs.Underscore(data.TypeName)
 		baseName := fmt.Sprintf("%s_model.go", types)
 		outputName = filepath.Join(".", strings.ToLower(baseName))
@@ -138,6 +145,10 @@ func makeData(data *tData) {
 			Dir:   dir,
 			Tests: true,
 			Env:   append(os.Environ(), "GO111MODULE=off", "GOPROXY=off"), //"GOPATH="+dir,
+		}
+		file, err := filepath.Abs(file)
+		if err != nil {
+			log.Fatal(err)
 		}
 		pkgs, err := packages.Load(cfg, file)
 		if err != nil {

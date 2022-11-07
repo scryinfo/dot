@@ -6,12 +6,13 @@ package dot
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 	"io"
 	"os"
 	"regexp"
 	"strings"
+
+	"go.uber.org/zap"
+	"gopkg.in/yaml.v3"
 
 	vault "github.com/hashicorp/vault/api"
 	auth "github.com/hashicorp/vault/api/auth/approle"

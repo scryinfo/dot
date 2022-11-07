@@ -15,15 +15,15 @@ import (
 const UiTypeID = "d9972be7-cef9-464c-9bbb-d1f11abea803" //type id of dot
 
 type configUi struct {
-	UrlRelativePath string `json:"urlRelativePath" yaml:"urlRelativePath"` //relative path of url
-	ResRelativePath string `json:"resRelativePath" yaml:"resRelativePath"` //relative path of resource， The order of locating files is: absolute path, relative path，executable path，current path，user path
+	UrlRelativePath string `json:"urlRelativePath"` //relative path of url
+	ResRelativePath string `json:"resRelativePath"` //relative path of resource， The order of locating files is: absolute path, relative path，executable path，current path，user path
 	Paths           []struct {
-		RelativePath string `json:"relativePath" yaml:"relativePath"`
-		Value        string `json:"value" yaml:"value"` // the static resource of path, it is file or folder
+		RelativePath string `json:"relativePath"`
+		Value        string `json:"value"` // the static resource of path, it is file or folder
 	} `json:"paths"`
-	MainHTMlName string     `json:"mainHTMlName" yaml:"mainHTMlName"` //maybe home.html or index.html
-	NoCompress   bool       `json:"noCompress" yaml:"noCompress"`
-	Encodings    []Encoding `json:"encodings" yaml:"encodings"` //default are br-->gzip
+	MainHTMlName string     `json:"mainHTMlName"` //maybe home.html or index.html
+	NoCompress   bool       `json:"noCompress"`
+	Encodings    []Encoding `json:"encodings"` //default are br-->gzip
 }
 
 //Ui  add static resource into gin
