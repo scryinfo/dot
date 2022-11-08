@@ -62,6 +62,26 @@ func (c *ConnWrapper) GetDb() *bun.DB {
 	return c.db
 }
 
+func (c *ConnWrapper) RunInTx(task func(db bun.IDB) error) error {
+	var err error
+	if task != nil {
+		err = c.db.RunInTx(context.TODO(), nil, func(ctx context.Context, tx bun.Tx) error {
+			err = task(tx)
+			return err
+		})
+	}
+	return err
+}
+
+func (c *ConnWrapper) RunInNoTx(task func(db bun.IDB) error) error {
+	var err error
+	if task != nil {
+		err = task(c.db)
+	}
+
+	return err
+}
+
 // TestConn test the connect
 func (c *ConnWrapper) TestConn() bool {
 	n := -1
