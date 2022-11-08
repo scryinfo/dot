@@ -3,7 +3,6 @@ package pgd
 import (
 	"context"
 	"database/sql"
-
 	"github.com/scryinfo/dot/dot"
 	"github.com/uptrace/bun"
 )
@@ -23,13 +22,18 @@ func (c *DaoBase) getConn() *bun.Conn {
 	return &conn
 }
 
+func (c *DaoBase) getDB() *bun.DB {
+	return c.Wrapper.db
+}
+
 // WithTx with transaction, if return err != nil then rollback, or commit the transaction
-func (c *DaoBase) WithTx(task func(conn *bun.Tx) error) error {
+func (c *DaoBase) WithTx(task func(conn bun.IDB) error) error {
 	var err error
 	if task != nil {
-		conn := c.getConn()
-		defer conn.Close()
-		tx, err := conn.BeginTx(context.TODO(), &sql.TxOptions{})
+		db := c.getDB()
+		con, _ := db.Conn(context.TODO())
+		defer con.Close()
+		tx, err := con.BeginTx(context.TODO(), &sql.TxOptions{})
 		if err == nil {
 			defer func() {
 				if err == nil {
@@ -45,10 +49,14 @@ func (c *DaoBase) WithTx(task func(conn *bun.Tx) error) error {
 }
 
 // WithNoTx no transaction
-func (c *DaoBase) WithNoTx(task func(conn *bun.DB) error) error {
-	// todo
+func (c *DaoBase) WithNoTx(task func(conn bun.IDB) error) error {
+	var err error
+	if task != nil {
+		db := c.Wrapper.db
+		err = task(db)
+	}
 
-	return nil
+	return err
 }
 
 // DaoBaseTypeLives make all type lives
