@@ -58,7 +58,7 @@ func parms(data *tData) {
 	flag.StringVar(&params.daoPackage, "daoPackage", "", "")
 	flag.StringVar(&params.suffix, "suffix", "Dao", "")
 	flag.StringVar(&params.ormMode, "ormMode", "bun", "")
-	flag.StringVar(&params.model, "model", "models.go", "")
+	flag.StringVar(&params.model, "model", "model.go", "")
 	flag.BoolVar(&params.useGorm, "useGorm", false, "")
 	flag.Parse()
 
@@ -1079,7 +1079,7 @@ func (c *{{$.DaoName}}) Delete(conn bun.IDB, m *{{$.ModelPkgName}}.{{$.TypeName}
 	return c.DeleteByID(conn, m.ID)
 }
 
-func (c *{{$.DaoName}}) DeleteByID(conn *bun.DB, id string) (err error) {
+func (c *{{$.DaoName}}) DeleteByID(conn bun.IDB, id string) (err error) {
 	_, err = conn.NewDelete().Model((*{{$.ModelPkgName}}.{{$.TypeName}})(nil)).Where({{$.ModelPkgName}}.{{$.TypeName}}_ID+" = ?", id).Exec(context.TODO())
 	return
 }

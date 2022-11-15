@@ -8,7 +8,7 @@ import (
 
 const (
 	//DaoBaseTypeID type id
-	DaoBaseTypeID = "4d6adee7-7c10-4471-8885-a589688bac93"
+	DaoBaseTypeID = "4e6bfee7-7c10-4471-8885-a589688bac96"
 )
 
 // DaoBase doa base

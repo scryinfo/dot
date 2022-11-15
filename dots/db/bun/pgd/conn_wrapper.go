@@ -16,7 +16,7 @@ import (
 
 const (
 	//ConnWrapperTypeID type id
-	ConnWrapperTypeID = "ffc08507-dd5f-456c-84ea-cdae00b220bf"
+	ConnWrapperTypeID = "ffc08507-dd5f-456c-84ea-cdbf00b220b0"
 )
 
 type config struct {
