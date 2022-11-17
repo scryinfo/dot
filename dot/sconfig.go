@@ -50,8 +50,8 @@ func (e *StringFromEnv) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
-//SConfig config belongs to one component Dot, but it is so basic, every Dot need it, so define it in dot.go file
-//S represents scryinfo config this name is used frequently, so add s to distinguish it
+// SConfig config belongs to one component Dot, but it is so basic, every Dot need it, so define it in dot.go file
+// S represents scryinfo config this name is used frequently, so add s to distinguish it
 type SConfig interface {
 	//RootPath root path
 	RootPath()
@@ -169,7 +169,7 @@ func GetSecretWithAppRole(keypath string, vaultAdd string) (map[string]interface
 	return secret.Data, nil
 }
 
-//UnMarshalConfig unmarshal config
+// UnMarshalConfig unmarshal config
 func UnMarshalConfig(conf []byte, obj interface{}) (err error) {
 	err = nil
 	if conf != nil {
@@ -181,7 +181,7 @@ func UnMarshalConfig(conf []byte, obj interface{}) (err error) {
 	return err
 }
 
-//MarshalConfig marshal config
+// MarshalConfig marshal config
 func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
 	conf = nil
 	err = nil

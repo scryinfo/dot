@@ -14,7 +14,7 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/gookit/config v1.1.0
 	github.com/improbable-eng/grpc-web v0.13.0
-	github.com/jinzhu/inflection v1.0.0
+	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/errors v0.9.1
 	github.com/scryinfo/scryg v0.1.3
@@ -36,6 +36,7 @@ require (
 require (
 	github.com/hashicorp/vault/api v1.7.2
 	github.com/hashicorp/vault/api/auth/approle v0.2.0
+	github.com/shopspring/decimal v1.3.1
 	github.com/spf13/viper v1.12.0
 	github.com/uptrace/bun v1.1.8
 	github.com/uptrace/bun/dialect/pgdialect v1.1.8

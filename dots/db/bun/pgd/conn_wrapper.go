@@ -44,7 +44,7 @@ func (c *ConnWrapper) Create(dot.Line) error {
 	)
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 	db := bun.NewDB(sqldb, pgdialect.New(), bun.WithDiscardUnknownColumns())
-	db.AddQueryHook(bundebug.NewQueryHook())
+	db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(c.conf.ShowSQL)))
 	c.db = db
 
 	return nil
