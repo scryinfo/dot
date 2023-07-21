@@ -4,10 +4,11 @@
 package slog
 
 import (
-	"gopkg.in/natefinch/lumberjack.v2"
 	"os"
 	"path/filepath"
 	"time"
+
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/scryinfo/dot/dot"
 	"go.uber.org/zap"
@@ -20,7 +21,7 @@ var (
 
 const funLog = "Fun Log"
 
-//NewSLogger new sConfig
+// NewSLogger new sConfig
 func NewSLogger(conf *dot.LogConfig, l dot.Line) dot.SLogger {
 	if conf == nil {
 		conf = &dot.LogConfig{
@@ -53,54 +54,54 @@ func (log *sLogger) GetLevel() dot.Level {
 	return l
 }
 
-//SetLevel set level
+// SetLevel set level
 func (log *sLogger) SetLevel(levels dot.Level) {
 	log.conf.Level = levels.String()
 	log.level.SetLevel(levels)
 }
 
-//Debugln debug
+// Debugln debug
 func (log *sLogger) Debugln(msg string, fields ...zap.Field) {
 	log.Logger.Debug(msg, fields...)
 }
 
-//Debug debug
+// Debug debug
 func (log *sLogger) Debug(mstr dot.MakeStringer) {
 	if dot.DebugLevel <= log.GetLevel() {
 		log.Logger.Debug(funLog, zap.String("", mstr()))
 	}
 }
 
-//Infoln info
+// Infoln info
 func (log *sLogger) Infoln(msg string, fields ...zap.Field) {
 	log.Logger.Info(msg, fields...)
 }
 
-//Info info
+// Info info
 func (log *sLogger) Info(mstr dot.MakeStringer) {
 	if dot.InfoLevel <= log.GetLevel() {
 		log.Logger.Info(funLog, zap.String("", mstr()))
 	}
 }
 
-////Warnln warn
+// //Warnln warn
 func (log *sLogger) Warnln(msg string, fields ...zap.Field) {
 	log.Logger.Warn(msg, fields...)
 }
 
-//Warn warn
+// Warn warn
 func (log *sLogger) Warn(mstr dot.MakeStringer) {
 	if dot.WarnLevel <= log.GetLevel() {
 		log.Logger.Warn(funLog, zap.String("", mstr()))
 	}
 }
 
-////Errorln error
+// //Errorln error
 func (log *sLogger) Errorln(msg string, fields ...zap.Field) {
 	log.Logger.Error(msg, fields...)
 }
 
-////Error error
+// //Error error
 func (log *sLogger) Error(mstr dot.MakeStringer) {
 
 	if dot.ErrorLevel <= log.GetLevel() {
@@ -108,19 +109,19 @@ func (log *sLogger) Error(mstr dot.MakeStringer) {
 	}
 }
 
-////Fatalln fatal
+// //Fatalln fatal
 func (log *sLogger) Fatalln(msg string, fields ...zap.Field) {
 	log.Logger.Fatal(msg, fields...)
 }
 
-////Fatal fatal
+// //Fatal fatal
 func (log *sLogger) Fatal(mstr dot.MakeStringer) {
 	if dot.FatalLevel <= log.GetLevel() {
 		log.Logger.Fatal(funLog, zap.String("", mstr()))
 	}
 }
 
-//NewLogger return new logger
+// NewLogger return new logger
 func (log *sLogger) NewLogger(callerSkip int) dot.SLogger {
 	n := &sLogger{
 		conf:   log.conf,
@@ -130,7 +131,7 @@ func (log *sLogger) NewLogger(callerSkip int) dot.SLogger {
 	return n
 }
 
-//Create
+// Create
 func (log *sLogger) Create(l dot.Line) (err error) {
 	var maxAge = 30 // default : 30 days
 	if log.conf.MaxAge > maxAge {
@@ -167,27 +168,22 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 
-	atom := zap.NewAtomicLevel()
+	logLevel := zap.NewAtomicLevel()
+	logLevel.SetLevel(log.GetLevel())
+	log.level = logLevel
 
-	atom.SetLevel(log.GetLevel())
-
-	log.level = atom
-
-	// 设置日志级别
-	atomicLevel := zap.NewAtomicLevel()
-	atomicLevel.SetLevel(zap.InfoLevel)
 	var core zapcore.Core
 	if log.conf.IsOpenConsole { // 打印到控制台和文件
 		core = zapcore.NewCore(
 			zapcore.NewJSONEncoder(encoderCfg),                                              // 编码器配置
 			zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(&hook)), // 打印到控制台和文件
-			atomicLevel,                                                                     // 日志级别
+			logLevel, // 日志级别
 		)
 	} else { // 打印到 文件
 		core = zapcore.NewCore(
 			zapcore.NewJSONEncoder(encoderCfg),                  // 编码器配置
 			zapcore.NewMultiWriteSyncer(zapcore.AddSync(&hook)), // 打印到 文件
-			atomicLevel,                                         // 日志级别
+			logLevel, // 日志级别
 		)
 	}
 
@@ -201,8 +197,8 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 	return err
 }
 
-//Destroy Destroy Dot
-//ignore When calling other Lifer, if true erred then continue, if false erred then return directly
+// Destroy Destroy Dot
+// ignore When calling other Lifer, if true erred then continue, if false erred then return directly
 func (log *sLogger) Destroy(ignore bool) error {
 	if log.Logger != nil {
 		_ = log.Logger.Sync() //no log
