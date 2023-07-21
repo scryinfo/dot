@@ -6,23 +6,26 @@ package line
 import (
 	"encoding/json"
 	"flag"
+	"os"
+
 	"github.com/scryinfo/dot/dot"
 	"go.uber.org/zap"
 )
 
-//BuildAndStart Construct line and call create rely create dots start
-//add will be called before reply, after create
+// BuildAndStart Construct line and call create rely create dots start
+// add will be called before reply, after create
 func BuildAndStart(add dot.BuildNewer) (l dot.Line, err error) {
 	builder := &dot.Builder{Add: add, LineLiveID: "default"}
 	l, err = BuildAndStartBy(builder)
 	return l, err
 }
 
-//BuildAndStartBy Construct line and call create rely create dots start
+// BuildAndStartBy Construct line and call create rely create dots start
 func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 	if !flag.Parsed() {
 		flag.Parse()
 	}
+	os.Args = []string{os.Args[0]}
 	err = nil
 
 	if len(builder.LineLiveID) < 1 {
@@ -93,7 +96,7 @@ func BuildAndStartBy(builder *dot.Builder) (l dot.Line, err error) {
 	return l, err
 }
 
-//StopAndDestroy stop and destroy
+// StopAndDestroy stop and destroy
 func StopAndDestroy(l dot.Line, ignore bool) {
 	builder := l.GetLineBuilder()
 
