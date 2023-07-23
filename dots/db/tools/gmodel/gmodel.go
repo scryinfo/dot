@@ -8,7 +8,6 @@ import (
 	"go/ast"
 	"go/format"
 	"go/token"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -97,8 +96,8 @@ func main() {
 	if len(params.typeName) < 1 {
 		log.Fatal("type name is null")
 	}
-	os.Setenv("GOPACKAGE", "model")
-	os.Setenv("GOFILE", data.ModelFile)
+	_ = os.Setenv("GOPACKAGE", "model")
+	_ = os.Setenv("GOFILE", data.ModelFile)
 
 	var src []byte = nil
 	{
@@ -114,7 +113,7 @@ func main() {
 	}
 
 	if _, err := os.Stat(outputName); os.IsNotExist(err) {
-		err := ioutil.WriteFile(outputName, src, 0644)
+		err := os.WriteFile(outputName, src, 0644)
 		if err != nil {
 			log.Fatalf("writing output: %s", err)
 		}

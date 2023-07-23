@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"github.com/scryinfo/dot/dots/db/pgs"
+	"github.com/scryinfo/dot/dots/db/tools"
 	"github.com/scryinfo/scryg/sutils/uuid"
 	"go/format"
 	"io/ioutil"
@@ -142,7 +142,7 @@ func main() {
 
 	outputName := ""
 	{
-		types := pgs.Underscore(data.Name)
+		types := tools.Underscore(data.Name)
 		baseName := fmt.Sprintf("%s.go", types)
 		outputName = filepath.Join(".", strings.ToLower(baseName))
 	}

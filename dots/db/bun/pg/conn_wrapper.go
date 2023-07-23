@@ -1,4 +1,4 @@
-package pgd
+package pg
 
 import (
 	"context"
@@ -85,7 +85,7 @@ func (c *ConnWrapper) RunInNoTx(task func(db bun.IDB) error) error {
 // TestConn test the connect
 func (c *ConnWrapper) TestConn() bool {
 	n := -1
-	c.db.NewSelect().ColumnExpr("1 AS n").Scan(context.TODO(), &n)
+	_ = c.db.NewSelect().ColumnExpr("1 AS n").Scan(context.TODO(), &n)
 	return n == 1
 }
 

@@ -33,11 +33,3 @@ type HasSub struct {
 	Count   int
 	SubData *Sub `pg:"rel:has-one"`
 }
-
-//go:generate gmodel -typeName=AutoData -tableName=auto_datas
-//go:generate gdao -typeName=AutoData -tableName=auto_datas -daoPackage=dao -useGorm=true
-type AutoData struct {
-	db.AutoModelBase
-	Name string
-	Age  int8
-}
