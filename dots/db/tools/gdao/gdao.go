@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"github.com/scryinfo/dot/dots/db/bun/pg"
 	"go/ast"
 	"go/format"
 	"go/parser"
@@ -15,7 +14,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/scryinfo/dot/dots/db/bun"
+	"github.com/scryinfo/dot/dots/db/buns"
 	"github.com/scryinfo/dot/dots/db/tools"
 	"github.com/scryinfo/scryg/sutils/uuid"
 )
@@ -30,7 +29,6 @@ type tData struct {
 	DaoName            string
 	TypeName           string
 	TableName          string
-	OrmMode            string
 	ModelFile          string
 	ModelPkgName       string
 	ImportModelPkgName string
@@ -47,7 +45,6 @@ var params struct {
 	model      string
 	daoPackage string
 	suffix     string
-	ormMode    string // default: bun
 	useLock    bool
 }
 
@@ -56,18 +53,16 @@ func parms(data *tData) {
 	flag.StringVar(&params.tableName, "tableName", "", "")
 	flag.StringVar(&params.daoPackage, "daoPackage", "", "")
 	flag.StringVar(&params.suffix, "suffix", "Dao", "")
-	flag.StringVar(&params.ormMode, "ormMode", "bun", "")
 	flag.StringVar(&params.model, "model", "models.go", "")
 	flag.Parse()
 
 	if len(params.tableName) < 1 {
-		params.tableName = bun.Underscore(params.typeName)
+		params.tableName = buns.Underscore(params.typeName)
 	}
 
 	data.TypeName = params.typeName
 	data.TableName = params.tableName
 	data.DaoPkgName = params.daoPackage
-	data.OrmMode = params.ormMode
 	data.ModelFile = params.model
 	if len(data.DaoPkgName) < 1 {
 		data.DaoPkgName = "dao"
@@ -89,13 +84,11 @@ func main() {
 	if len(params.typeName) < 1 {
 		log.Fatal("type name is null")
 	}
+	log.Println(params.typeName)
 
 	if len(params.tableName) < 1 {
 		log.Fatal("table name is null")
 	}
-
-	_ = os.Setenv("GOPACKAGE", "model")
-	_ = os.Setenv("GOFILE", data.ModelFile)
 
 	var src []byte = nil
 	{
@@ -167,13 +160,7 @@ func makeData(data *tData) {
 }
 
 func gmodel(data *tData) []byte {
-	temp := ""
-
-	switch data.OrmMode {
-	case "bun":
-		temp = pg.GetDaoData()
-	}
-
+	temp := buns.GetDaoData()
 	var src []byte = nil
 	{
 		t, err := template.New("").Parse(temp)

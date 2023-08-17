@@ -1,4 +1,4 @@
-package pg
+package buns
 
 func GetDaoData() string {
 	return pgDaoData
@@ -12,7 +12,7 @@ import (
 	"time"
 	
     "github.com/scryinfo/dot/dot"
-    "github.com/scryinfo/dot/dots/db/bun/pgd"
+    "github.com/scryinfo/dot/dots/db/buns"
 	"github.com/scryinfo/scryg/sutils/uuid"
 	"github.com/uptrace/bun"
 	"{{$.ImportModelPkgName}}"
@@ -21,7 +21,7 @@ import (
 const {{$.DaoName}}TypeID = "{{$.ID}}"
 
 type {{$.DaoName}} struct {
-	*pgd.DaoBase {{$.BackQuote}}dot:""{{$.BackQuote}}
+	*buns.DaoBase {{$.BackQuote}}dot:""{{$.BackQuote}}
 }
 
 //{{$.DaoName}}TypeLives
@@ -38,13 +38,13 @@ func {{$.DaoName}}TypeLives() []*dot.TypeLives {
 			{
 				LiveID: {{$.DaoName}}TypeID,
 				RelyLives: map[string]dot.LiveID{
-					"DaoBase": pgd.DaoBaseTypeID,
+					"DaoBase": buns.DaoBaseTypeID,
 				},
 			},
 		},
 	}
 
-	lives := pgd.DaoBaseTypeLives()
+	lives := buns.DaoBaseTypeLives()
 	lives = append(lives, tl)
 	return lives
 }
@@ -308,7 +308,7 @@ func (c *{{$.DaoName}}) Delete(conn bun.IDB, m *{{$.ModelPkgName}}.{{$.TypeName}
 	return c.DeleteByID(conn, m.ID)
 }
 
-func (c *{{$.DaoName}}) DeleteByID(conn *bun.DB, id string) (err error) {
+func (c *{{$.DaoName}}) DeleteByID(conn bun.IDB, id string) (err error) {
 	_, err = conn.NewDelete().Model((*{{$.ModelPkgName}}.{{$.TypeName}})(nil)).Where({{$.ModelPkgName}}.{{$.TypeName}}_ID+" = ?", id).Exec(context.TODO())
 	return
 }

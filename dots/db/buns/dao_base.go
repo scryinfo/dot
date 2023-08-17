@@ -1,7 +1,8 @@
-package pg
+package buns
 
 import (
 	"context"
+
 	"github.com/scryinfo/dot/dot"
 	"github.com/uptrace/bun"
 )

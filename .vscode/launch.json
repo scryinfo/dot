@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "gmodel",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}/dots/db/tools/gmodel/gmodel.go",
+            "args": ["-typeName=Notice"],
+            "cwd": "${workspaceRoot}/sample/db/tools/model",
+            "env": {
+                "GOPACKAGE":"model",
+                "GOFILE":"models_s.go"
+            }
+          },
+    ]
+}

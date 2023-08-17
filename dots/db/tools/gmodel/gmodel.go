@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"github.com/scryinfo/dot/dots/db/bun"
 	"go/ast"
 	"go/format"
 	"go/token"
@@ -15,6 +14,7 @@ import (
 	"text/template"
 
 	"github.com/jinzhu/inflection"
+	"github.com/scryinfo/dot/dots/db/buns"
 	"golang.org/x/tools/go/packages"
 )
 
@@ -64,6 +64,7 @@ var params struct {
 
 func parms(data *tData) {
 	flag.StringVar(&params.typeName, "typeName", "", "")
+	flag.StringVar(&data.TableName, "tableName", "", "")
 	flag.StringVar(&params.mapExcludes, "mapExcludes", "", "split ','")
 	flag.StringVar(&params.model, "model", "models.go", "")
 	flag.Parse()
@@ -72,7 +73,7 @@ func parms(data *tData) {
 		exes := strings.Split(params.mapExcludes, ",")
 		data.MapExcludes = make(map[string]bool, len(exes))
 		for i := range exes {
-			it := bun.CamelCased(exes[i])
+			it := buns.CamelCased(exes[i])
 			data.MapExcludes[it] = true
 		}
 	} else {
@@ -80,14 +81,16 @@ func parms(data *tData) {
 	}
 
 	data.TypeName = params.typeName
-	data.DbObjectName = bun.Underscore(params.typeName)
-	data.TableName = tableNameInflector(data.DbObjectName)
+	data.DbObjectName = buns.Underscore(params.typeName)
+	if len(data.TableName) < 1 {
+		data.TableName = tableNameInflector(data.DbObjectName)
+	}
 	data.ModelFile = params.model
 }
 
 var tableNameInflector = inflection.Plural
 
-// env:   GOPACKAGE=model;GOFILE=D:\gopath\src\github.com\scryinfo\dot\sample\db\pgs\model\models.go
+// env:   GOPACKAGE=model;GOFILE=D:\gopath\src\github.com\scryinfo\dot\sample\db\tools\model\models_s.go
 func main() {
 
 	log.Println("run gmodel")
@@ -96,8 +99,7 @@ func main() {
 	if len(params.typeName) < 1 {
 		log.Fatal("type name is null")
 	}
-	_ = os.Setenv("GOPACKAGE", "model")
-	_ = os.Setenv("GOFILE", data.ModelFile)
+	log.Println(params.typeName)
 
 	var src []byte = nil
 	{
@@ -107,7 +109,7 @@ func main() {
 
 	outputName := ""
 	{
-		types := bun.Underscore(data.TypeName)
+		types := buns.Underscore(data.TypeName)
 		baseName := fmt.Sprintf("%s_model.go", types)
 		outputName = filepath.Join(".", strings.ToLower(baseName))
 	}
@@ -129,18 +131,18 @@ func makeData(data *tData) {
 	fields := make([]DbField, 0)
 	var pkg *packages.Package
 	{
-		dir := filepath.Dir(file)
+		dir, _ := filepath.Abs(filepath.Dir(file))
 		cfg := &packages.Config{
 			Mode: packages.NeedName |
-				//packages.NeedFiles |
-				//packages.NeedCompiledGoFiles |
+				packages.NeedFiles |
+				packages.NeedCompiledGoFiles |
 				packages.NeedImports |
 				packages.NeedDeps |
-				//packages.NeedExportsFile |
-				//packages.NeedTypes |
-				packages.NeedSyntax,
-			//packages.NeedTypesInfo |
-			//packages.NeedTypesSizes ,
+				packages.NeedExportFile |
+				packages.NeedTypes |
+				packages.NeedSyntax |
+				packages.NeedTypesInfo |
+				packages.NeedTypesSizes,
 			Dir:   dir,
 			Tests: true,
 			Env:   append(os.Environ(), "GO111MODULE=off", "GOPROXY=off"), //"GOPATH="+dir,
@@ -172,6 +174,7 @@ func makeData(data *tData) {
 					if ok && typeS.Name.Name == data.TypeName {
 						structT := typeS.Type.(*ast.StructType)
 						fields, _ = listFields(data, structT, fields, pkg)
+						break
 					}
 				}
 			}
@@ -228,7 +231,7 @@ func listFields(data *tData, st *ast.StructType, fields []DbField, pkg *packages
 			}
 		} else {
 			name := field.Names[0].Name
-			dbField := DbField{Name: name, DbName: bun.Underscore(name)}
+			dbField := DbField{Name: name, DbName: buns.Underscore(name)}
 			tag := ""
 			if field.Tag != nil {
 				tag = field.Tag.Value
@@ -255,7 +258,7 @@ func gmodel(data *tData) []byte {
 package {{.PkgName}}
 import (
 	"fmt"
-	"github.com/scryinfo/dot/dots/db/bun/pgd"
+	"github.com/scryinfo/dot/dots/db/buns"
 )
 	const (
 		{{$.TypeName}}_Table       = "{{$.TableName}}"
@@ -274,7 +277,7 @@ import (
 	}
 
 	func (m *{{$.TypeName}}) ToMap() map[string]string {
-		res := pgs.ToMap(m, map[string]bool{ {{range $k,$v := $.MapExcludes}}"{{$k}}":{{$v}} {{end}} })
+		res := buns.ToMap(m, map[string]bool{ {{range $k,$v := $.MapExcludes}}"{{$k}}":{{$v}} {{end}} })
 		return res
 	}
 

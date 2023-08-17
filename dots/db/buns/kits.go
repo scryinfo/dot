@@ -1,7 +1,8 @@
-package bun
+package buns
 
 import (
 	"context"
+
 	"github.com/uptrace/bun"
 
 	"reflect"

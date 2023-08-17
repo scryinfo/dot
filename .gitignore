@@ -19,3 +19,7 @@
 /tools/ende/decode/encode.json
 /tools/ende/decode/encode.json_en
 /tools/ende/decode/encode.json_en
+sample/db/tools/dao/
+sample/db/tools/model/has_sub_model.go
+sample/db/tools/model/notice_model.go
+sample/db/tools/model/sub_model.go

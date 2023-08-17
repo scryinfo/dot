@@ -9,7 +9,9 @@ type DataType struct {
 	Count int64
 }
 
-//go:generate gmodel -typeName=Notice -tableName=notices
+//-tableName=notices
+
+//go:generate gmodel -typeName=Notice
 //go:generate gdao -typeName=Notice -tableName=notices -daoPackage=dao
 type Notice struct {
 	db.ModelBase
