@@ -16,6 +16,7 @@ import (
 
 	"github.com/scryinfo/dot/dots/db/buns"
 	"github.com/scryinfo/dot/dots/db/tools"
+	"github.com/scryinfo/scryg/sutils/sfile"
 	"github.com/scryinfo/scryg/sutils/uuid"
 )
 
@@ -98,9 +99,21 @@ func main() {
 
 	outputName := ""
 	{
+		//check the package dir, if not exist, then create it
+		daoDir := "../" + data.DaoPkgName
+		{
+			// dapDir = filepath.Re
+			if !sfile.ExistFile(daoDir) {
+				err := os.Mkdir(daoDir, os.ModePerm)
+				if err != nil {
+					log.Fatal(err)
+					return
+				}
+			}
+		}
 		types := tools.Underscore(data.DaoName)
 		baseName := fmt.Sprintf("%s.go", types)
-		outputName = filepath.Join(".", strings.ToLower(baseName))
+		outputName = filepath.Join(daoDir, strings.ToLower(baseName))
 	}
 
 	if _, err := os.Stat(outputName); os.IsNotExist(err) {
