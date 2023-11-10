@@ -20,6 +20,8 @@ import (
 	"github.com/scryinfo/scryg/sutils/uuid"
 )
 
+const appVersion = "v0.4.6"
+
 // DbField do not use the map, we need the order
 //type DbField struct {
 //	Name   string
@@ -55,7 +57,14 @@ func parms(data *tData) {
 	flag.StringVar(&params.daoPackage, "daoPackage", "", "")
 	flag.StringVar(&params.suffix, "suffix", "Dao", "")
 	flag.StringVar(&params.model, "model", "models.go", "")
+	v := false
+	flag.BoolVar(&v, "v", false, "show version")
+	flag.BoolVar(&v, "version", false, "show version")
 	flag.Parse()
+	if v {
+		fmt.Println("version: ", appVersion)
+		os.Exit(0)
+	}
 
 	if len(params.tableName) < 1 {
 		params.tableName = buns.Underscore(params.typeName)

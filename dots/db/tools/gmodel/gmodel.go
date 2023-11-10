@@ -18,6 +18,8 @@ import (
 	"golang.org/x/tools/go/packages"
 )
 
+const appVersion = "v0.4.6"
+
 //todo bug说明 类似如下情况
 /*type Token struct {
 	ID string `pg:",pk,type:varchar(36)"`
@@ -67,7 +69,14 @@ func parms(data *tData) {
 	flag.StringVar(&data.TableName, "tableName", "", "")
 	flag.StringVar(&params.mapExcludes, "mapExcludes", "", "split ','")
 	flag.StringVar(&params.model, "model", "models.go", "")
+	v := false
+	flag.BoolVar(&v, "v", false, "show version")
+	flag.BoolVar(&v, "version", false, "show version")
 	flag.Parse()
+	if v {
+		fmt.Println("version: ", appVersion)
+		os.Exit(0)
+	}
 
 	if len(params.mapExcludes) > 0 {
 		exes := strings.Split(params.mapExcludes, ",")
