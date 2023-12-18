@@ -22,7 +22,7 @@ const appVersion = "v0.4.6"
 
 //todo bug说明 类似如下情况
 /*type Token struct {
-	ID string `pg:",pk,type:varchar(36)"`
+	ID string `bun:",pk,type:varchar(36)"`
 	DefaultToken
 }
 
@@ -245,7 +245,7 @@ func listFields(data *tData, st *ast.StructType, fields []DbField, pkg *packages
 			if field.Tag != nil {
 				tag = field.Tag.Value
 			}
-			if strings.Contains(tag, `pg:"-"`) || strings.Contains(tag, "rel:has-one") || strings.Contains(tag, "rel:has-many") || strings.Contains(tag, "rel:belongs-to") {
+			if strings.Contains(tag, `bun:"-"`) || strings.Contains(tag, "rel:has-one") || strings.Contains(tag, "rel:has-many") || strings.Contains(tag, "rel:belongs-to") {
 				dbField.HasRelation = true
 			}
 			fields = append(fields, dbField)

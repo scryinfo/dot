@@ -15,9 +15,9 @@ type DataType struct {
 //go:generate gdao -typeName=Notice -tableName=notices -daoPackage=dao
 type Notice struct {
 	db.ModelBase
-	Data   DataType `pg:"composite:data"`
+	Data   DataType `bun:"composite:data"`
 	Status int
-	No     int `pg:"-"`
+	No     int `bun:"-"`
 }
 
 //go:generate gmodel -typeName=Sub -tableName=subs
@@ -33,5 +33,5 @@ type HasSub struct {
 	db.ModelBase
 	SubId   string
 	Count   int
-	SubData *Sub `pg:"rel:has-one"`
+	SubData *Sub `bun:"rel:has-one"`
 }
