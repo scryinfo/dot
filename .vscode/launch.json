@@ -14,5 +14,13 @@
                 "GOFILE":"models_s.go"
             }
           },
+          {
+            "name": "wait_conn",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}/demo/wait_conn/main.go",
+            "cwd": "${workspaceRoot}/demo/wait_conn/",
+          },
     ]
 }
