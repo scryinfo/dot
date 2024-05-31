@@ -23,3 +23,4 @@ sample/db/tools/dao/
 sample/db/tools/model/has_sub_model.go
 sample/db/tools/model/notice_model.go
 sample/db/tools/model/sub_model.go
+demo/wait_conn/wait_conn
