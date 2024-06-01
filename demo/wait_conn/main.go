@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
@@ -21,18 +22,33 @@ func main() {
 	sqldb.SetMaxOpenConns(2)
 	db := bun.NewDB(sqldb, pgdialect.New(), bun.WithDiscardUnknownColumns())
 	var txs []bun.Tx
-	ctx := context.Background()
-	for range 3 {
-		// this will dead wait until the connect is valid
-		tx, err := db.BeginTx(ctx, nil)
-		if err != nil {
-			fmt.Println(err)
-		} else {
+	if tx, err := db.BeginTx(context.Background(), nil); err == nil {
+		fmt.Println("begin tx ok")
+		txs = append(txs, tx)
+	}
+	if tx, err := db.BeginTx(context.Background(), nil); err == nil {
+		fmt.Println("begin tx ok")
+		txs = append(txs, tx)
+	}
+
+	// this will dead wait until the connect is valid
+	ctxTimeout, c := context.WithTimeout(context.Background(), 5*time.Second)
+	tx, err := db.BeginTx(ctxTimeout, nil)
+	if err != nil {
+		fmt.Println("begin tx error : ", err)
+		fmt.Println("time out : ", ctxTimeout.Err())
+	} else {
+		select {
+		case <-ctxTimeout.Done():
+			fmt.Println("---- timeout no error --- ")
+		default:
+			fmt.Println("begin tx ok")
 			txs = append(txs, tx)
 		}
 	}
+	c()
 	for _, tx := range txs {
 		tx.Commit()
 	}
-
+	db.Close()
 }
