@@ -133,16 +133,16 @@ func (log *sLogger) NewLogger(callerSkip int) dot.SLogger {
 
 // Create
 func (log *sLogger) Create(l dot.Line) (err error) {
-	var maxAge = 30 // default : 30 days
-	if log.conf.MaxAge > maxAge {
+	var maxAge = 0 //
+	if log.conf.MaxAge > 0 {
 		maxAge = log.conf.MaxAge
 	}
-	var maxSize = 120 // default : 120M
-	if log.conf.MaxSize > maxSize {
+	var maxSize = 10 // default : 10M
+	if log.conf.MaxSize > 0 {
 		maxSize = log.conf.MaxSize
 	}
-	var maxBackups = 10 // default : 10
-	if log.conf.MaxBackups > maxBackups {
+	var maxBackups = 0
+	if log.conf.MaxBackups > 0 {
 		maxBackups = log.conf.MaxBackups
 	}
 	hook := lumberjack.Logger{

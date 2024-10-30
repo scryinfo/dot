@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-//Level level of log
+// Level level of log
 type Level = zapcore.Level
 
 const (
@@ -31,18 +31,18 @@ const (
 	FatalLevel = zapcore.FatalLevel
 )
 
-//Default log, if not created, then returned log will be output to “before.log” file，all log will be returned
+// Default log, if not created, then returned log will be output to “before.log” file，all log will be returned
 var logger SLogger = nil
 
-//Logger Return default log, this API is used to call log easily
-//This method does not consider thread security, Adjusting value is not suggested after program initialization
-//Note: Default log, if log is not created, then returned log will be output to control panel, all log will be output
+// Logger Return default log, this API is used to call log easily
+// This method does not consider thread security, Adjusting value is not suggested after program initialization
+// Note: Default log, if log is not created, then returned log will be output to control panel, all log will be output
 func Logger() SLogger {
 	return logger
 }
 
-//SetLogger Set default log,
-//This method does not consider thread security, Adjusting value is not suggested after program initialization
+// SetLogger Set default log,
+// This method does not consider thread security, Adjusting value is not suggested after program initialization
 func SetLogger(log SLogger) {
 	if logger != nil {
 		if d, ok := logger.(Destroyer); ok {
@@ -53,12 +53,12 @@ func SetLogger(log SLogger) {
 	logger = log
 }
 
-//MakeStringer Generate log string
+// MakeStringer Generate log string
 type MakeStringer func() string
 
-//SLogger log belongs to one component Dot, but it is too basic, most Dot need it, so defined it to dot.go file
-//All log calling should not call function in parameters, function run priorly than log, if must call function, you should use callback(must run normally)
-//S represents scry info, log name used frequently so add s to distinguish it
+// SLogger log belongs to one component Dot, but it is too basic, most Dot need it, so defined it to dot.go file
+// All log calling should not call function in parameters, function run priorly than log, if must call function, you should use callback(must run normally)
+// S represents scry info, log name used frequently so add s to distinguish it
 type SLogger interface {
 	//GetLevel get level
 	GetLevel() Level
@@ -88,7 +88,7 @@ type SLogger interface {
 	NewLogger(callerSkip int) SLogger
 }
 
-//LogConfig log config
+// LogConfig log config
 type LogConfig struct {
 	DirPath       string `json:"dirPath" toml:"dirPath" yaml:"dirPath"` // 文件夹路径
 	File          string `json:"file" toml:"file" yaml:"file"`          // 日志文件名
@@ -100,7 +100,7 @@ type LogConfig struct {
 	IsOpenConsole bool   `json:"isOpenConsole" toml:"isOpenConsole" yaml:"isOpenConsole"` // 是否输出到控制台
 }
 
-//Initialize one default log, let program use log at first, output to “before.log” file, all log will be output
+// Initialize one default log, let program use log at first, output to “before.log” file, all log will be output
 func init() {
-	SetLogger(newBlog())
+	//SetLogger(newBlog())
 }
