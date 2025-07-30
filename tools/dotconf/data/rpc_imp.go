@@ -180,7 +180,7 @@ func (c *RpcImplement) ExportConfig(_ context.Context, in *rpc.ExportReq) (*rpc.
 func (c *RpcImplement) ExportDot(_ context.Context, in *rpc.ExportReq) (*rpc.ExportRes, error) {
 	var data = in.Dotdata
 	name := ""
-	if in.Filename == nil || len(in.Filename) < 1 {
+	if len(in.Filename) < 1 {
 		//export init dot
 		name = "./dots.json"
 	} else {

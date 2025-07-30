@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
-	"golang.org/x/tools/go/packages"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -14,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+
+	"golang.org/x/tools/go/packages"
 )
 
 // 保存返回的组件通用信息
@@ -97,9 +98,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 			for ix := range dirs {
 				pkg := pkginfos[ix]
 				astFiles := make([]*ast.File, len(pkg.Syntax))
-				for i, file := range pkg.Syntax {
-					astFiles[i] = file
-				}
+				copy(astFiles, pkg.Syntax)
 				p := packageInfo{
 					absDir:      dirs[ix],
 					packageName: pkg.Name,
@@ -159,14 +158,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 		//赋值
 		{
 			for _, p := range exitFuncInfos {
-				//该包是否已经放入
-				if _, ok := map1[p.packageName]; ok {
-					//已有
-					map1[p.packageName]++
-				} else {
-					//没有
-					map1[p.packageName] = 1
-				}
+				map1[p.packageName]++
 			}
 		}
 		//利用map1构建别名，只出现一次别名默认为包名
@@ -287,8 +279,8 @@ func getAllSonDirs(dirpath string) ([]string, error) {
 }
 
 func isTrueDir(path string) bool {
-	if strings.Index(path, "node_modules") == -1 {
-		if strings.Index(path, ".git") == -1 {
+	if !strings.Contains(path, "node_modules") {
+		if !strings.Contains(path, ".git") {
 			return true
 		} else {
 			return false
@@ -306,7 +298,7 @@ func (p *packageInfo) findFuncNodeOnAst(isConfig bool) {
 			break
 		}
 		ast.Inspect(astFile, func(node ast.Node) bool {
-			for {
+			do {
 				//must be a func
 				funcNode, ok := node.(*ast.FuncDecl)
 				if !ok {
@@ -346,8 +338,8 @@ func (p *packageInfo) findFuncNodeOnAst(isConfig bool) {
 					}
 					p.Funcs = append(p.Funcs, funcInfo)
 				}
-				return true
-			}
+				break
+			}while(false)
 			return true
 		})
 	}

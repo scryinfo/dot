@@ -2,14 +2,15 @@ package gindot
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/golang/gddo/httputil/header"
 	"net/http"
 	"os"
 	"path"
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang/gddo/httputil/header"
 )
 
 const (
@@ -74,7 +75,7 @@ func (c *FileServer) Handler(ctx *gin.Context) {
 
 	ctx.Status(http.StatusNotFound)
 	ctx.Abort()
-	return
+	// return
 }
 
 // Encoding represents an Accept-Encoding. All of these fields are pre-populated
