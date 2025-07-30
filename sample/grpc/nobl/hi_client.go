@@ -26,7 +26,7 @@ func (c *HiClient) AfterAllInject(l dot.Line) {
 	c.hiclient = hidot.NewHiDotClient(c.Conn.Conn())
 }
 
-//HiClientTypeLives make all type lives
+// HiClientTypeLives make all type lives
 func HiClientTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: HiClientTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {

@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/resolver"
 )
 
-//ClientV8 load balancing
+// ClientV8 load balancing
 type clientBuilder struct {
 	scheme       string
 	serviceAddrs map[string][]string //key service name, value service corresponding address(such as 12.23.23.23：909）
@@ -44,7 +44,7 @@ func (c clientResolver) Close() {
 }
 
 func (c *clientResolver) start() {
-	addrStrs := c.addrsStore[c.target.Endpoint]
+	addrStrs := c.addrsStore[c.target.Endpoint()]
 	addrs := make([]resolver.Address, len(addrStrs))
 	for i, s := range addrStrs {
 		addrs[i] = resolver.Address{Addr: s}

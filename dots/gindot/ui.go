@@ -26,7 +26,7 @@ type configUi struct {
 	Encodings    []Encoding `json:"encodings" yaml:"encodings"` //default are br-->gzip
 }
 
-//Ui  add static resource into gin
+// Ui  add static resource into gin
 type Ui struct {
 	Engine_ *Engine `dot:""`
 
@@ -57,7 +57,7 @@ func (c *Ui) Injected(l dot.Line) error {
 	return nil
 }
 
-//Start start the gin
+// Start start the gin
 func (c *Ui) Start(ignore bool) error {
 	logger := dot.Logger()
 	for _, it := range c.config.Paths {
@@ -109,8 +109,8 @@ func (c *Ui) SetResRelativePath(relativePath string) {
 	c.relativePath = c.ResAbsolutePath(relativePath)
 }
 
-//ResAbsolutePath the order of locating files is: absolute path, relative path，executable path，current path，user path
-//if do not find, then return ""
+// ResAbsolutePath the order of locating files is: absolute path, relative path，executable path，current path，user path
+// if do not find, then return ""
 func (c *Ui) ResAbsolutePath(res string) string {
 	if filepath.IsAbs(res) {
 		if sfile.ExistFile(res) {
@@ -149,7 +149,7 @@ func (c *Ui) ResAbsolutePath(res string) string {
 	return ""
 }
 
-//construct dot
+// construct dot
 func newUi(conf []byte) (*Ui, error) {
 	dconf := &configUi{}
 	err := dot.UnMarshalConfig(conf, dconf)
@@ -192,7 +192,7 @@ func newUi(conf []byte) (*Ui, error) {
 	return d, err
 }
 
-//UiTypeLives generate data for structural  dot,  include gindot.Engine
+// UiTypeLives generate data for structural  dot,  include gindot.Engine
 func UiTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: UiTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
@@ -210,7 +210,7 @@ func UiTypeLives() []*dot.TypeLives {
 	return lives
 }
 
-//return config of Ui
+// return config of Ui
 func UiConfigTypeLive() *dot.ConfigTypeLive {
 	return &dot.ConfigTypeLive{
 		TypeIDConfig: UiTypeID,

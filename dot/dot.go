@@ -7,26 +7,26 @@ import (
 	"reflect"
 )
 
-//TypeID dot type guid
+// TypeID dot type guid
 type TypeID string
 
-//LiveID dot live guid
+// LiveID dot live guid
 type LiveID string
 
-//String convert typeid to string
+// String convert typeid to string
 func (c *TypeID) String() string {
 	return string(*c)
 }
 
-//String convert liveid to string
+// String convert liveid to string
 func (c *LiveID) String() string {
 	return string(*c)
 }
 
-//Event dot event
+// Event dot event
 type Event = func(live *Live, l Line)
 
-//Events dot events
+// Events dot events
 type Events struct {
 	//Before the dot create
 	BeforeCreate Event
@@ -46,13 +46,13 @@ type Events struct {
 	AfterDestroy Event
 }
 
-//TypeEvents dot events for type
+// TypeEvents dot events for type
 type TypeEvents = Events
 
-//LiveEvents dot events for live
+// LiveEvents dot events for live
 type LiveEvents = Events
 
-//Eventer event interface
+// Eventer event interface
 type Eventer interface {
 	//
 	ReSetLiveEvents(lid LiveID, liveEvents *LiveEvents)
@@ -68,7 +68,7 @@ type Eventer interface {
 	TypeEvents(tid TypeID) []TypeEvents
 }
 
-//Metadata dot metadata
+// Metadata dot metadata
 type Metadata struct {
 	TypeID      TypeID       `json:"typeId"`
 	Version     string       `json:"version"`
@@ -80,7 +80,7 @@ type Metadata struct {
 	RefType     reflect.Type `json:"-"` //if the dot is interface, set the type of interface
 }
 
-//Live live/instance
+// Live live/instance
 type Live struct {
 	TypeID    TypeID            `json:"typeId"`
 	LiveID    LiveID            `json:"liveId"`
@@ -88,14 +88,14 @@ type Live struct {
 	Dot       Dot               `json:"-"`
 }
 
-//Clone clone Metadata
+// Clone clone Metadata
 func (m *Metadata) Clone() *Metadata {
 	c := *m
 	c.RelyTypeIDs = append(m.RelyTypeIDs[:0:0], m.RelyTypeIDs...)
 	return &c
 }
 
-//Merge merge metadata
+// Merge merge metadata
 func (m *Metadata) Merge(m2 *Metadata) {
 	if len(m2.TypeID) > 0 {
 		m.TypeID = m2.TypeID
@@ -134,7 +134,7 @@ func (m *Metadata) Merge(m2 *Metadata) {
 	}
 }
 
-//NewDot new a dot
+// NewDot new a dot
 func (m *Metadata) NewDot(args []byte) (dot Dot, err error) {
 	dot = nil
 	err = nil
@@ -147,13 +147,13 @@ func (m *Metadata) NewDot(args []byte) (dot Dot, err error) {
 	return
 }
 
-//Newer instance for new dot
+// Newer instance for new dot
 type Newer = func(args []byte) (dot Dot, err error)
 
-//Dot component
+// Dot component
 type Dot interface{}
 
-//Lifer life cycle
+// Lifer life cycle
 // Create, Start,Stop,Destroy
 // Create and Start are separate, in order to resolve the dependencies between different dot instances,
 // if there is no problem with the dependencies, then you can directly null in Start
@@ -165,38 +165,38 @@ type Lifer interface {
 	Destroyer
 }
 
-//Creator create interface
+// Creator create interface
 type Creator interface {
 	//Create When this method is initializing, running or monitoring same content, better to realize it in Start method
 	Create(l Line) error
 }
 
-//Injected inject interface
+// Injected inject interface
 type Injected interface {
 	//Injected call the function after inject
 	Injected(l Line) error
 }
 
-//Starter start interface
+// Starter start interface
 type Starter interface {
 	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
 	Start(ignore bool) error
 }
 
-//Stopper stop interface
+// Stopper stop interface
 type Stopper interface {
 	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
 	Stop(ignore bool) error
 }
 
-//Destroyer destroy interface
+// Destroyer destroy interface
 type Destroyer interface {
 	//Destroy Dot
 	//ignore When calling other Lifer, if true erred will continue, if false erred will return directly
 	Destroy(ignore bool) error
 }
 
-//Tager dot signature data, used by dot
+// Tager dot signature data, used by dot
 type Tager interface {
 	//SetTag set tag
 	SetTag(tag interface{})
@@ -204,27 +204,27 @@ type Tager interface {
 	GetTag() (tag interface{})
 }
 
-//GetInterfaceType return the interface of dot
+// GetInterfaceType return the interface of dot
 type GetInterfaceType interface {
 	//get interface type
 	GetInterfaceType() reflect.Type
 }
 
-//StatusType status type
+// StatusType status type
 type StatusType int
 
-//Statuser Status
+// Statuser Status
 type Statuser interface {
 	Status() StatusType
 }
 
-//HotConfig hot change config
+// HotConfig hot change config
 type HotConfig interface {
 	//Update Update config info, return true means successful
 	HotConfig(newConf SConfig) bool
 }
 
-//Checker Check dot，run some verification or test data, return the result
+// Checker Check dot，run some verification or test data, return the result
 type Checker interface {
 	Check(args interface{}) interface{}
 }

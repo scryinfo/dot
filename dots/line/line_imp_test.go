@@ -175,7 +175,6 @@ func TestLineImp_Start(t *testing.T) {
 
 func TestLineImp_InterfaceOrPoint(t *testing.T) {
 	type Dot1 struct {
-
 	}
 
 	type Dot2 struct {
@@ -195,10 +194,10 @@ func TestLineImp_InterfaceOrPoint(t *testing.T) {
 					LiveID: "dot1",
 				},
 			},
-		},&dot.TypeLives{
-			Meta:  dot.Metadata{
-				TypeID:      "dot2",
-				RefType:     reflect.TypeOf((*Dot2)(nil)).Elem(),
+		}, &dot.TypeLives{
+			Meta: dot.Metadata{
+				TypeID:  "dot2",
+				RefType: reflect.TypeOf((*Dot2)(nil)).Elem(),
 			},
 		})
 

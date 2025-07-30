@@ -30,15 +30,15 @@ type configEngine struct {
 	LogSkipPaths []string `json:"logSkipPaths" yaml:"logSkipPaths"` // not write info log, sample: ["/tt", "/other"]
 }
 
-//GinEngine  gin dot
+// GinEngine  gin dot
 type Engine struct {
 	ginEngine     *gin.Engine
 	config        configEngine
 	loggerOnlyGin dot.SLogger
 }
 
-//DefaultGinEngine return the default gin dot,
-//it have to call after the line ceated
+// DefaultGinEngine return the default gin dot,
+// it have to call after the line ceated
 func DefaultGinEngine() *gin.Engine {
 	logger := dot.Logger()
 	l := dot.GetDefaultLine()
@@ -60,7 +60,7 @@ func DefaultGinEngine() *gin.Engine {
 	return nil
 }
 
-//construct dot
+// construct dot
 func newGinDot(conf []byte) (dot.Dot, error) {
 	dconf := &configEngine{}
 	err := dot.UnMarshalConfig(conf, dconf)
@@ -73,7 +73,7 @@ func newGinDot(conf []byte) (dot.Dot, error) {
 	return d, err
 }
 
-//GinDotTypeLives generate data for structural  dot
+// GinDotTypeLives generate data for structural  dot
 func GinDotTypeLives() []*dot.TypeLives {
 	return []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: EngineTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
@@ -82,8 +82,8 @@ func GinDotTypeLives() []*dot.TypeLives {
 	}
 }
 
-//jayce edit
-//return config of GinDot
+// jayce edit
+// return config of GinDot
 func GinDotConfigTypeLive() *dot.ConfigTypeLive {
 	paths := make([]string, 0)
 	paths = append(paths, "")
@@ -95,7 +95,7 @@ func GinDotConfigTypeLive() *dot.ConfigTypeLive {
 	}
 }
 
-//Create create the gin
+// Create create the gin
 func (c *Engine) Create(l dot.Line) error {
 	c.ginEngine = gin.New()
 	c.loggerOnlyGin = dot.Logger().NewLogger(1)
@@ -103,7 +103,7 @@ func (c *Engine) Create(l dot.Line) error {
 	return nil
 }
 
-//AfterAllStart run the function after start
+// AfterAllStart run the function after start
 func (c *Engine) AfterAllStart(l dot.Line) {
 	go c.startServer()
 }
@@ -112,7 +112,7 @@ func (c *Engine) GinEngine() *gin.Engine {
 	return c.ginEngine
 }
 
-//all post
+// all post
 func (c *Engine) RouterPost(h interface{}, pre string) {
 	post := reflect.ValueOf(c.ginEngine).MethodByName("POST")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {
@@ -121,7 +121,7 @@ func (c *Engine) RouterPost(h interface{}, pre string) {
 	})
 }
 
-//all get
+// all get
 func (c *Engine) RouterGet(h interface{}, pre string) {
 	get := reflect.ValueOf(c.ginEngine).MethodByName("GET")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {

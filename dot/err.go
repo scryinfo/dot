@@ -9,7 +9,7 @@ var (
 	_ Errorer = (*sError)(nil)
 )
 
-//Errorer dot error interface
+// Errorer dot error interface
 type Errorer interface {
 	error
 	Code() string
@@ -21,7 +21,7 @@ type sError struct {
 	code string
 }
 
-//Code error id
+// Code error id
 func (c *sError) Code() string {
 	return c.code
 }
@@ -30,18 +30,18 @@ func (c *sError) AddNewError(info string) Errorer {
 	return NewError(c.Code(), c.Error()+info)
 }
 
-//SError return error info
+// SError return error info
 func (c *sError) Error() string {
 	return c.err.Error()
 }
 
-//NewError new Errorer
+// NewError new Errorer
 func NewError(code string, info string) Errorer {
 	err := sError{err: errors.New(info), code: code}
 	return &err
 }
 
-//Error dot error
+// Error dot error
 type Error struct {
 	NilParameter     Errorer
 	Existed          Errorer
@@ -55,7 +55,7 @@ type Error struct {
 	DotInvalid       Errorer
 }
 
-//SError error object frequently used by dot
+// SError error object frequently used by dot
 var SError = &Error{}
 
 func init() {

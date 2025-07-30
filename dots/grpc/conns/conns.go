@@ -25,7 +25,7 @@ const (
 	ConnsTypeID = "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
 )
 
-//grpc connection, support one Scheme, multi services are below, every service can have multi address(ClientConn load balancing)
+// grpc connection, support one Scheme, multi services are below, every service can have multi address(ClientConn load balancing)
 type Conns interface {
 	//Return default connection, only one connection
 	DefaultClientConn() *grpc.ClientConn
@@ -62,7 +62,7 @@ type connsImp struct {
 	config ConnsConfig
 }
 
-//Construction component
+// Construction component
 func newConns(conf []byte) (dot.Dot, error) {
 	dconf := &ConnsConfig{}
 	err := dot.UnMarshalConfig(conf, dconf)
@@ -77,7 +77,7 @@ func newConns(conf []byte) (dot.Dot, error) {
 	return d, err
 }
 
-//Data structure needed when generating newer component
+// Data structure needed when generating newer component
 func ConnsTypeLives() []*dot.TypeLives {
 	return []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: ConnsTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
@@ -86,8 +86,8 @@ func ConnsTypeLives() []*dot.TypeLives {
 	}}
 }
 
-//jayce edit
-//return config of Conn
+// jayce edit
+// return config of Conn
 func ConnsConfigTypeLive() *dot.ConfigTypeLive {
 	slice1 := make([]ServiceConfig, 0)
 	slice2 := make([]string, 0)
@@ -234,7 +234,6 @@ func (c *connsImp) Stop(ignore bool) error {
 
 	//todo This function is for testing only,
 	resolver.UnregisterForTesting(c.config.Scheme)
-
 	return err
 }
 

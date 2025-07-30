@@ -11,8 +11,8 @@ import (
 	"github.com/scryinfo/dot/dot"
 )
 
-//for each funcs that like “gin.HandlerFunc”
-//sampe pre = "scry", and  "func (c * SampleCtroller) Hello(cxt *gin.Context) {}", the url is "/scry/hello"
+// for each funcs that like “gin.HandlerFunc”
+// sampe pre = "scry", and  "func (c * SampleCtroller) Hello(cxt *gin.Context) {}", the url is "/scry/hello"
 func RouterSelf(h interface{}, pre string, call func(url string, gmethod reflect.Value)) {
 	hf := reflect.TypeOf(gin.HandlerFunc(nil))
 	vr := reflect.ValueOf(h)
@@ -41,7 +41,7 @@ func RouterSelf(h interface{}, pre string, call func(url string, gmethod reflect
 	}
 }
 
-//all post
+// all post
 func RouterPost(g *gin.RouterGroup, h interface{}, pre string) {
 	post := reflect.ValueOf(g).MethodByName("POST")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {
@@ -50,7 +50,7 @@ func RouterPost(g *gin.RouterGroup, h interface{}, pre string) {
 	})
 }
 
-//all get
+// all get
 func RouterGet(g *gin.RouterGroup, h interface{}, pre string) {
 	get := reflect.ValueOf(g).MethodByName("GET")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {
@@ -59,8 +59,8 @@ func RouterGet(g *gin.RouterGroup, h interface{}, pre string) {
 	})
 }
 
-//GinDotTypeLives generate data for structural  dot
-//routerID: is the liveid of  gindot/router component
+// GinDotTypeLives generate data for structural  dot
+// routerID: is the liveid of  gindot/router component
 func PreAddControlDot(ctype reflect.Type, routerID dot.LiveID) *dot.TypeLives {
 	tl := &dot.TypeLives{
 		Meta: dot.Metadata{TypeID: dot.TypeID(ctype.Name()), RefType: ctype, NewDoter: nil},

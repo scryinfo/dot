@@ -34,7 +34,7 @@ func (c *RpcImplement) Start(ignore bool) error {
 	return nil
 }
 
-//RpcImplementTypeLives make all type lives
+// RpcImplementTypeLives make all type lives
 func RpcImplementTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: ServerTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
@@ -88,7 +88,7 @@ func (c *RpcImplement) ImportByDot(_ context.Context, in *rpc.ImportReq) (*rpc.I
 	return res, nil
 }
 
-//支持三种格式json toml yaml
+// 支持三种格式json toml yaml
 func (c *RpcImplement) ImportByConfig(_ context.Context, im *rpc.ImportReq) (*rpc.ImportRes, error) {
 	res := &rpc.ImportRes{}
 	config := NewConfig()
@@ -106,7 +106,7 @@ func (c *RpcImplement) ImportByConfig(_ context.Context, im *rpc.ImportReq) (*rp
 	return res, nil
 }
 
-//获取预置组件
+// 获取预置组件
 func (c *RpcImplement) InitImport(_ context.Context, im *rpc.ImportReq) (*rpc.ImportRes, error) {
 	res := &rpc.ImportRes{}
 	data, err := ioutil.ReadFile("./dots.json")
@@ -119,9 +119,9 @@ func (c *RpcImplement) InitImport(_ context.Context, im *rpc.ImportReq) (*rpc.Im
 	return res, nil
 }
 
-//导出配置信息
-//支持三种格式json toml yaml
-//由文件名来区分不同格式
+// 导出配置信息
+// 支持三种格式json toml yaml
+// 由文件名来区分不同格式
 func (c *RpcImplement) ExportConfig(_ context.Context, in *rpc.ExportReq) (*rpc.ExportRes, error) {
 	var data = in.Configdata
 	var target interface{}
@@ -174,8 +174,8 @@ func (c *RpcImplement) ExportConfig(_ context.Context, in *rpc.ExportReq) (*rpc.
 	return &rpc.ExportRes{}, nil
 }
 
-//导出组件信息
-//json
+// 导出组件信息
+// json
 func (c *RpcImplement) ExportDot(_ context.Context, in *rpc.ExportReq) (*rpc.ExportRes, error) {
 	var data = in.Dotdata
 	name := ""

@@ -3,7 +3,7 @@
 
 package dot
 
-//LiveConfig live config
+// LiveConfig live config
 type LiveConfig struct {
 	//LiveID
 	LiveID LiveID `json:"liveId" toml:"liveId" yaml:"liveId"`
@@ -14,19 +14,19 @@ type LiveConfig struct {
 	Config interface{} `json:"json" toml:"json" yaml:"json" mapstructure:"json"`
 }
 
-//MetaLivesConfig dot config
+// MetaLivesConfig dot config
 type MetaLivesConfig struct {
 	MetaData Metadata     `json:"metaData" toml:"metaData" yaml:"metaData"`
 	Lives    []LiveConfig `json:"lives" toml:"lives" yaml:"lives"`
 }
 
-//Config config
+// Config config
 type Config struct {
 	Log  LogConfig         `json:"log" toml:"log" yaml:"log"`
 	Dots []MetaLivesConfig `json:"dots" toml:"dots" yaml:"dots"`
 }
 
-//FindConfig find config
+// FindConfig find config
 func (c *Config) FindConfig(typeID TypeID, liveID LiveID) *LiveConfig {
 	var lcon *LiveConfig = nil
 

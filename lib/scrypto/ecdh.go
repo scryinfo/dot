@@ -10,7 +10,7 @@ type CurveParameters struct {
 	BitSize int    // the size of the underlying field
 }
 
-//以下值只会在init中进行修改，所以认为是安全的
+// 以下值只会在init中进行修改，所以认为是安全的
 var (
 	Ecdhs = make(map[string]Ecdh, 2)
 )

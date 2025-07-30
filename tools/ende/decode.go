@@ -60,7 +60,7 @@ func (c *Decode) Start(ignore bool) error {
 //
 //}
 
-//construct dot
+// construct dot
 func newDecode(conf []byte) (dot.Dot, error) {
 	dconf := &configDecode{}
 
@@ -74,7 +74,7 @@ func newDecode(conf []byte) (dot.Dot, error) {
 	return d, nil
 }
 
-//DecodeTypeLives
+// DecodeTypeLives
 func DecodeTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
 		Meta: dot.Metadata{TypeID: DecodeTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
@@ -93,19 +93,19 @@ func DecodeTypeLives() []*dot.TypeLives {
 	return lives
 }
 
-//DecodeConfigTypeLive
+// DecodeConfigTypeLive
 func DecodeConfigTypeLive() *dot.ConfigTypeLive {
 	paths := make([]string, 0)
 	paths = append(paths, "")
 	return &dot.ConfigTypeLive{
 		TypeIDConfig: DecodeTypeID,
-		ConfigInfo: &configDecode{
+		ConfigInfo:   &configDecode{
 			//todo
 		},
 	}
 }
 
-//返回值为true 接着运行
+// 返回值为true 接着运行
 func (c *Decode) parseEnParameter() bool {
 	logger := dot.Logger()
 	if c.conf.Help {

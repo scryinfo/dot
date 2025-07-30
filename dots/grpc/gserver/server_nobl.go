@@ -31,7 +31,7 @@ type ConfigNobl struct {
 	Tls   utils.TlsConfig `json:"tls"`
 }
 
-//grpc server component, without bl; one server can monitor in multi address or API at the same time,support tls
+// grpc server component, without bl; one server can monitor in multi address or API at the same time,support tls
 type serverNoblImp struct {
 	conf      ConfigNobl
 	server    *grpc.Server
@@ -68,7 +68,7 @@ func (c *serverNoblImp) startServer() {
 	}
 }
 
-//Construct component
+// Construct component
 func newServerNobl(conf []byte) (dot.Dot, error) {
 	dconf := &ConfigNobl{}
 	err := dot.UnMarshalConfig(conf, dconf)
@@ -90,7 +90,7 @@ func newServerNobl(conf []byte) (dot.Dot, error) {
 	return d, err
 }
 
-//Data structure needed when generating newer component
+// Data structure needed when generating newer component
 func ServerNoblTypeLives() []*dot.TypeLives {
 	return []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: ServerNoblTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
@@ -99,8 +99,8 @@ func ServerNoblTypeLives() []*dot.TypeLives {
 	}}
 }
 
-//jayce edit
-//return config of ServerNobl
+// jayce edit
+// return config of ServerNobl
 func ServerNoblConfigTypeLive() *dot.ConfigTypeLive {
 	addrs := make([]string, 0)
 	addrs = append(addrs, "")
@@ -225,12 +225,12 @@ func (c *serverNoblImp) Create(l dot.Line) error {
 	return err
 }
 
-//Run after every component finished start, this can ensure all service has been registered on grpc server
+// Run after every component finished start, this can ensure all service has been registered on grpc server
 func (c *serverNoblImp) AfterAllStart(l dot.Line) {
 	c.startServer()
 }
 
-//Stop stop dot
+// Stop stop dot
 func (c *serverNoblImp) Stop(ignore bool) error {
 	if c.server != nil {
 		c.server.GracefulStop()

@@ -18,8 +18,8 @@ var (
 	_ SLogger = (*blog)(nil)
 )
 
-//This is to solve the problem that log output before log initialization
-//blog == before log
+// This is to solve the problem that log output before log initialization
+// blog == before log
 type blog struct {
 	logger *zap.Logger
 }

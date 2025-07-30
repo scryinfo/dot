@@ -58,8 +58,8 @@ func ConnNameTypeLives() []*dot.TypeLives {
 	return lives
 }
 
-//jayce edit
-//return config of ConnName
+// jayce edit
+// return config of ConnName
 func ConnNameConfigTypeLive() *dot.ConfigTypeLive {
 	return &dot.ConfigTypeLive{
 		TypeIDConfig: ConnNameTypeID,

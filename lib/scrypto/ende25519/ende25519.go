@@ -81,7 +81,6 @@ func (c *ende25519) EcdhEncode(privateKey crypto.PrivateKey, peersKey crypto.Pub
 
 // EcdhDecode
 // privateKey sx25519, peersKey sx25519
-//
 func (c *ende25519) _ecdhDecode(privateKey crypto.PrivateKey, peersKey crypto.PublicKey, ciphertext []byte) (plaintext []byte, err error) {
 
 	key, err := ecdh.ComputeSecret(privateKey, peersKey)

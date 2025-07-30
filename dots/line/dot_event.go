@@ -26,7 +26,6 @@ func (c *dotEventerImp) Init() {
 	c.mutex.Unlock()
 }
 
-//
 func (c *dotEventerImp) ReSetLiveEvents(lid dot.LiveID, liveEvents *dot.LiveEvents) {
 	c.mutex.Lock()
 	c.liveEvents[lid] = []dot.LiveEvents{*liveEvents}

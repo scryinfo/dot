@@ -44,7 +44,7 @@ type lineImp struct {
 	dotEvent dotEventerImp
 }
 
-//newLine new
+// newLine new
 func newLine(builder *dot.Builder) *lineImp {
 	a := &lineImp{metas: NewMetas(),
 		lives: NewLives(), types: make(map[reflect.Type]dot.Dot),
@@ -65,7 +65,7 @@ func (c *lineImp) ID() string {
 	return c.lineBuilder.LineLiveID
 }
 
-//AddNewerByLiveID add new for live id
+// AddNewerByLiveID add new for live id
 func (c *lineImp) AddNewerByLiveID(liveID dot.LiveID, newDot dot.Newer) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -79,7 +79,7 @@ func (c *lineImp) AddNewerByLiveID(liveID dot.LiveID, newDot dot.Newer) error {
 	return nil
 }
 
-//AddNewerByTypeID add new for type
+// AddNewerByTypeID add new for type
 func (c *lineImp) AddNewerByTypeID(typeID dot.TypeID, newDot dot.Newer) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -92,7 +92,7 @@ func (c *lineImp) AddNewerByTypeID(typeID dot.TypeID, newDot dot.Newer) error {
 	return nil
 }
 
-//RemoveNewerByLiveID remove
+// RemoveNewerByLiveID remove
 func (c *lineImp) RemoveNewerByLiveID(liveID dot.LiveID) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -100,7 +100,7 @@ func (c *lineImp) RemoveNewerByLiveID(liveID dot.LiveID) {
 	delete(c.newerLives, liveID)
 }
 
-//RemoveNewerByTypeID remove
+// RemoveNewerByTypeID remove
 func (c *lineImp) RemoveNewerByTypeID(typeID dot.TypeID) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -108,7 +108,7 @@ func (c *lineImp) RemoveNewerByTypeID(typeID dot.TypeID) {
 	delete(c.newerTypes, typeID)
 }
 
-//PreAdd the dot is nil, do not create it
+// PreAdd the dot is nil, do not create it
 func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 	logger := dot.Logger()
 	c.mutex.Lock()
@@ -150,9 +150,10 @@ func (c *lineImp) PreAdd(typeLives ...*dot.TypeLives) error {
 	return err
 }
 
-//order the dots by relay relation
-//first return, ordered dots
-//second return, circle relay dots
+// order the dots by relay relation
+// first return, ordered dots
+// second return, circle relay dots
+//
 //nolint:funlen
 func (c *lineImp) relyOrder() ([]*dot.Live, []*dot.Live) {
 
@@ -277,7 +278,7 @@ func (c *lineImp) relyOrder() ([]*dot.Live, []*dot.Live) {
 	return order, circle
 }
 
-//CreateDots create dots
+// CreateDots create dots
 func (c *lineImp) CreateDots(orderedDots []*dot.Live) error {
 	logger := dot.Logger()
 	createDotFun := func(it *dot.Live) error {
@@ -508,7 +509,7 @@ func (c *lineImp) ToLifer() dot.Lifer {
 	return c
 }
 
-//ToInjecter to injecter
+// ToInjecter to injecter
 func (c *lineImp) ToInjecter() dot.Injecter {
 	return c
 }
@@ -524,8 +525,8 @@ func (c *lineImp) GetDotConfig(liveID dot.LiveID) *dot.LiveConfig {
 	return co
 }
 
-/////injecter
-//Inject see https://github.com/facebookgo/inject
+// ///injecter
+// Inject see https://github.com/facebookgo/inject
 func (c *lineImp) Inject(obj interface{}) error {
 	logger := dot.Logger()
 	var err error
@@ -696,7 +697,7 @@ func (c *lineImp) injectInLine(obj interface{}, live *dot.Live) error {
 	return err
 }
 
-//GetByType get by type
+// GetByType get by type
 func (c *lineImp) GetByType(t reflect.Type) (d dot.Dot, err error) {
 	d = nil
 	err = nil
@@ -714,7 +715,7 @@ func (c *lineImp) GetByType(t reflect.Type) (d dot.Dot, err error) {
 	return
 }
 
-//GetByLiveID get by live id
+// GetByLiveID get by live id
 func (c *lineImp) GetByLiveID(liveID dot.LiveID) (d dot.Dot, err error) {
 	d = nil
 	err = nil
@@ -733,7 +734,7 @@ func (c *lineImp) GetByLiveID(liveID dot.LiveID) (d dot.Dot, err error) {
 	return
 }
 
-//ReplaceOrAddByType update
+// ReplaceOrAddByType update
 func (c *lineImp) ReplaceOrAddByType(d dot.Dot) error {
 	var err error
 	typeDot := reflect.TypeOf(d)
@@ -746,7 +747,7 @@ func (c *lineImp) ReplaceOrAddByType(d dot.Dot) error {
 	return err
 }
 
-//ReplaceOrAddByParamType update
+// ReplaceOrAddByParamType update
 func (c *lineImp) ReplaceOrAddByParamType(d dot.Dot, rType reflect.Type) error {
 	var err error
 	//for rType.Kind() == reflect.Ptr || rType.Kind() == reflect.Interface {
@@ -758,7 +759,7 @@ func (c *lineImp) ReplaceOrAddByParamType(d dot.Dot, rType reflect.Type) error {
 	return err
 }
 
-//ReplaceOrAddByLiveID update
+// ReplaceOrAddByLiveID update
 func (c *lineImp) ReplaceOrAddByLiveID(d dot.Dot, liveID dot.LiveID) error {
 	var err error
 	c.mutex.Lock()
@@ -771,7 +772,7 @@ func (c *lineImp) ReplaceOrAddByLiveID(d dot.Dot, liveID dot.LiveID) error {
 	return err
 }
 
-//RemoveByType remove
+// RemoveByType remove
 func (c *lineImp) RemoveByType(rType reflect.Type) error {
 	var err error
 	c.mutex.Lock()
@@ -780,7 +781,7 @@ func (c *lineImp) RemoveByType(rType reflect.Type) error {
 	return err
 }
 
-//RemoveByLiveID remove
+// RemoveByLiveID remove
 func (c *lineImp) RemoveByLiveID(liveID dot.LiveID) error {
 	var err error
 	c.mutex.Lock()
@@ -789,21 +790,21 @@ func (c *lineImp) RemoveByLiveID(liveID dot.LiveID) error {
 	return err
 }
 
-//SetParent set parent injecter
+// SetParent set parent injecter
 func (c *lineImp) SetParent(parent dot.Injecter) {
 	c.parent = parent
 }
 
-//GetParent get parent injecter
+// GetParent get parent injecter
 func (c *lineImp) GetParent() dot.Injecter {
 	return c.parent
 }
 
 ////injecter end
 
-//Create create
-//If live id is empty， directly assign type id
-//If live id repeated，directly return dot.SError.ErrExistedLiveID
+// Create create
+// If live id is empty， directly assign type id
+// If live id repeated，directly return dot.SError.ErrExistedLiveID
 func (c *lineImp) Create(l dot.Line) error {
 	var err error
 
@@ -887,7 +888,7 @@ ForConfigDots: //handle config
 	return err
 }
 
-//case #17
+// case #17
 func (c *lineImp) autoMakeLiveID() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -908,10 +909,10 @@ func (c *lineImp) autoMakeLiveID() {
 	}
 }
 
-//get relay from the tag
-//merge type relay
-//merge live relay
-//verify the key of relay lives(the name have to eq the field name)
+// get relay from the tag
+// merge type relay
+// merge live relay
+// verify the key of relay lives(the name have to eq the field name)
 func (c *lineImp) makeRelays() {
 	var setExists = struct{}{} //only for set value
 	c.mutex.Lock()
@@ -1007,7 +1008,7 @@ func createLog(c *lineImp) {
 	dot.SetLogger(c.logger)
 }
 
-//Start
+// Start
 func (c *lineImp) Start(ignore bool) error {
 	var err error
 	logger := dot.Logger()
@@ -1111,7 +1112,7 @@ func (c *lineImp) Start(ignore bool) error {
 	return err
 }
 
-//Stop
+// Stop
 func (c *lineImp) Stop(ignore bool) error {
 	var err error
 	logger := dot.Logger()
@@ -1221,7 +1222,7 @@ func (c *lineImp) Stop(ignore bool) error {
 	return err
 }
 
-//Destroy Destroy Dot
+// Destroy Destroy Dot
 func (c *lineImp) Destroy(ignore bool) error {
 	var err error
 	logger := dot.Logger()

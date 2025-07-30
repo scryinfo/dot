@@ -16,7 +16,7 @@ import (
 	"text/template"
 )
 
-//保存返回的组件通用信息
+// 保存返回的组件通用信息
 type packageInfo struct {
 	absDir          string       //该目录\包的绝对路径
 	packageName     string       //正在扫描的包名，需要绝对路径
@@ -34,8 +34,8 @@ type FuncOfDot struct {
 	location token.Pos //函数位置
 }
 
-//dirs用户传入的数据
-//返回组件数据、不存在的目录信息包括mod依赖目录、错误信息
+// dirs用户传入的数据
+// 返回组件数据、不存在的目录信息包括mod依赖目录、错误信息
 func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 
 	var paths []string //保存有效的目录数据
@@ -223,7 +223,7 @@ func FindDots(dirs []string) (data []byte, notExistDir []string, err error) {
 	}
 }
 
-//将目录集合分为两部分，分别是存在的目录和不存在的目录
+// 将目录集合分为两部分，分别是存在的目录和不存在的目录
 func splitDir(dirs []string) (existDir, notExistDir []string) {
 	for _, dir := range dirs {
 		if isDirectory(dir) {
@@ -237,7 +237,7 @@ func splitDir(dirs []string) (existDir, notExistDir []string) {
 	return
 }
 
-//是目录还是文件
+// 是目录还是文件
 func isDirectory(name string) bool {
 	if isDirExist(name) {
 		info, err := os.Stat(name) //return fileinfo
@@ -249,13 +249,13 @@ func isDirectory(name string) bool {
 	return false
 }
 
-//存不存在
+// 存不存在
 func isDirExist(paths string) bool {
 	_, err := os.Stat(paths)
 	return err == nil || os.IsExist(err)
 }
 
-//解决重复目录
+// 解决重复目录
 func removeRepByMap(slc []string) []string {
 	var result []string
 	tempMap := map[string]struct{}{} // 存放不重复主键
@@ -269,7 +269,7 @@ func removeRepByMap(slc []string) []string {
 	return result
 }
 
-//获取指定目录下的所有子目录
+// 获取指定目录下的所有子目录
 func getAllSonDirs(dirpath string) ([]string, error) {
 	var dirList []string
 	dirErr := filepath.Walk(dirpath,
@@ -298,7 +298,7 @@ func isTrueDir(path string) bool {
 	}
 }
 
-//查找满足条件的函数节点
+// 查找满足条件的函数节点
 func (p *packageInfo) findFuncNodeOnAst(isConfig bool) {
 	///var FuncNames []string
 	for _, astFile := range p.astFiles {
@@ -353,9 +353,9 @@ func (p *packageInfo) findFuncNodeOnAst(isConfig bool) {
 	}
 }
 
-//查找通用组件信息
-//第一个代表函数的返回值是否符合条件
-//第二个代表返回值是否是数组
+// 查找通用组件信息
+// 第一个代表函数的返回值是否符合条件
+// 第二个代表返回值是否是数组
 func returnValueJudgment(ret *ast.Field) (bool, bool) {
 	retype, ok := (ret.Type).(*ast.StarExpr) //找到*
 	if ok {                                  //是一个指针
@@ -395,9 +395,9 @@ func returnValueJudgment(ret *ast.Field) (bool, bool) {
 	return false, false //返回值类型错误
 }
 
-//查找特有组件信息
-//第一个代表函数的返回值是否符合条件
-//第二个代表返回值是否是数组
+// 查找特有组件信息
+// 第一个代表函数的返回值是否符合条件
+// 第二个代表返回值是否是数组
 func returnValueJudgmentOfConfig(ret *ast.Field) (bool, bool) {
 	retype, ok := (ret.Type).(*ast.StarExpr) //找到*
 	if ok {                                  //是一个指针
@@ -417,7 +417,7 @@ func returnValueJudgmentOfConfig(ret *ast.Field) (bool, bool) {
 	return false, false //返回值类型错误
 }
 
-//模板生成
+// 模板生成
 func buildCode(e []*packageInfo) {
 	buf := bytes.Buffer{}
 	//使用模板

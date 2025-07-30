@@ -30,14 +30,14 @@ type httpNoblConf struct {
 	Tls    utils.TlsConfig `json:"tls"`
 }
 
-//support the http and tcp
+// support the http and tcp
 type httpNobl struct {
 	conf       httpNoblConf
 	ServerNobl ServerNobl `dot:""`
 	httpServer *http.Server
 }
 
-//Construct component
+// Construct component
 func newHttpNobl(conf []byte) (dot.Dot, error) {
 	dconf := &httpNoblConf{}
 	err := dot.UnMarshalConfig(conf, dconf)
@@ -60,7 +60,7 @@ func newHttpNobl(conf []byte) (dot.Dot, error) {
 	return d, err
 }
 
-//HttpNoblTypeLives Data structure needed when generating newer component
+// HttpNoblTypeLives Data structure needed when generating newer component
 func HttpNoblTypeLives() []*dot.TypeLives {
 
 	lives := []*dot.TypeLives{{
@@ -78,8 +78,8 @@ func HttpNoblTypeLives() []*dot.TypeLives {
 	return lives
 }
 
-//jayce edit
-//return config of HttpNobl
+// jayce edit
+// return config of HttpNobl
 func HttpNoblConfigTypeLive() *dot.ConfigTypeLive {
 	return &dot.ConfigTypeLive{
 		TypeIDConfig: httpNoblTypeID,
@@ -87,12 +87,12 @@ func HttpNoblConfigTypeLive() *dot.ConfigTypeLive {
 	}
 }
 
-//Run after every component finished start, this can ensure all service has been registered on grpc server
+// Run after every component finished start, this can ensure all service has been registered on grpc server
 func (c *httpNobl) AfterAllStart(l dot.Line) {
 	c.startServer()
 }
 
-//Stop stop dot
+// Stop stop dot
 func (c *httpNobl) Stop(ignore bool) error {
 	if c.httpServer != nil {
 		_ = c.httpServer.Shutdown(context.Background())

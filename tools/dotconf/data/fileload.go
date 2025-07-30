@@ -11,14 +11,14 @@ import (
 	"path/filepath"
 )
 
-//By default, the configuration file is loaded from the path
+// By default, the configuration file is loaded from the path
 // where the executable is located.
-//It is also possible to load the configuration
+// It is also possible to load the configuration
 // according to the configPaths parameter passed in by the user.
-//The configPaths passed by the user can be an absolute path
+// The configPaths passed by the user can be an absolute path
 // or a path relative to the path of the executable file.
-//Support for incoming multiple paths.
-//The priority of the configuration files loading is json > toml > yaml
+// Support for incoming multiple paths.
+// The priority of the configuration files loading is json > toml > yaml
 func (sc *Config) LoadConfigFile(configPaths ...string) (map[string]interface{}, error) {
 	allFilesAbs := make([]string, 0)
 	{
@@ -86,7 +86,7 @@ func (sc *Config) LoadConfigFile(configPaths ...string) (map[string]interface{},
 	return configdata, nil
 }
 
-//Process the path entered by the user.
+// Process the path entered by the user.
 // If it is a relative path,
 // convert it to an absolute path
 // corresponding to the relative path

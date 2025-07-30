@@ -19,7 +19,7 @@ type configRouter struct {
 	RelativePath string `json:"relativePath" yaml:"relativePath"`
 }
 
-//Router  gin router
+// Router  gin router
 type Router struct {
 	Engine_ *Engine `dot:""`
 	router  *gin.RouterGroup
@@ -27,7 +27,7 @@ type Router struct {
 	liveID  dot.LiveID
 }
 
-//construct dot
+// construct dot
 func newRouter(conf []byte) (*Router, error) {
 	dconf := &configRouter{}
 	err := dot.UnMarshalConfig(conf, dconf)
@@ -40,7 +40,7 @@ func newRouter(conf []byte) (*Router, error) {
 	return d, err
 }
 
-//RouterTypeLives generate data for structural  dot,  include gindot.Engine
+// RouterTypeLives generate data for structural  dot,  include gindot.Engine
 func RouterTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: RouterTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
@@ -57,8 +57,8 @@ func RouterTypeLives() []*dot.TypeLives {
 	return lives
 }
 
-//jayce edit
-//return config of Router
+// jayce edit
+// return config of Router
 func RouterConfigTypeLive() *dot.ConfigTypeLive {
 	return &dot.ConfigTypeLive{
 		TypeIDConfig: RouterTypeID,
@@ -74,7 +74,7 @@ func (c *Router) AfterAllInject(l dot.Line) {
 	c.router = c.Engine_.GinEngine().Group(c.config.RelativePath)
 }
 
-//Start start the gin
+// Start start the gin
 func (c *Router) Start(ignore bool) error {
 
 	return nil
@@ -88,7 +88,7 @@ func (c *Router) RelativePath() string {
 	return c.config.RelativePath
 }
 
-//all post
+// all post
 func (c *Router) RouterPost(h interface{}, pre string) {
 	post := reflect.ValueOf(c.router).MethodByName("POST")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {
@@ -97,7 +97,7 @@ func (c *Router) RouterPost(h interface{}, pre string) {
 	})
 }
 
-//all get
+// all get
 func (c *Router) RouterGet(h interface{}, pre string) {
 	get := reflect.ValueOf(c.router).MethodByName("GET")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {

@@ -7,32 +7,32 @@ import (
 	"github.com/scryinfo/dot/dot"
 )
 
-//Metas metas of dot
+// Metas metas of dot
 type Metas struct {
 	metas map[dot.TypeID]*dot.Metadata
 }
 
-//NewMetas new metas
+// NewMetas new metas
 func NewMetas() *Metas {
 	m := &Metas{}
 	m.metas = make(map[dot.TypeID]*dot.Metadata)
 	return m
 }
 
-//Lives lives of dot
+// Lives lives of dot
 type Lives struct {
 	// typeIDMap map[dot.TypeID][]*dot.Live
 	LiveIDMap map[dot.LiveID]*dot.Live
 }
 
-//NewLives new lives
+// NewLives new lives
 func NewLives() *Lives {
 	l := &Lives{}
 	l.LiveIDMap = make(map[dot.LiveID]*dot.Live)
 	return l
 }
 
-//Add add meta data to metas
+// Add add meta data to metas
 func (ms *Metas) Add(m *dot.Metadata) error {
 	if m == nil || m.TypeID.String() == "" {
 		return dot.SError.NilParameter
@@ -47,7 +47,7 @@ func (ms *Metas) Add(m *dot.Metadata) error {
 	return nil
 }
 
-//UpdateOrAdd if the meta exist then update, or add it
+// UpdateOrAdd if the meta exist then update, or add it
 func (ms *Metas) UpdateOrAdd(m *dot.Metadata) error {
 	if m == nil || m.TypeID.String() == "" {
 		return dot.SError.NilParameter
@@ -62,13 +62,13 @@ func (ms *Metas) UpdateOrAdd(m *dot.Metadata) error {
 	return nil
 }
 
-//RemoveByID remove meta data from metas
+// RemoveByID remove meta data from metas
 func (ms *Metas) RemoveByID(typeID dot.TypeID) error {
 	delete(ms.metas, typeID)
 	return nil
 }
 
-//Get get meta by type id
+// Get get meta by type id
 func (ms *Metas) Get(typeID dot.TypeID) (meta *dot.Metadata, err error) {
 	meta = nil
 	err = nil
@@ -80,7 +80,7 @@ func (ms *Metas) Get(typeID dot.TypeID) (meta *dot.Metadata, err error) {
 	return
 }
 
-//NewDot new dot
+// NewDot new dot
 func (ms *Metas) NewDot(t dot.TypeID) (dot dot.Dot, err error) {
 	dot = nil
 	err = nil
@@ -92,7 +92,7 @@ func (ms *Metas) NewDot(t dot.TypeID) (dot dot.Dot, err error) {
 	return
 }
 
-//Add add live
+// Add add live
 func (ms *Lives) Add(m *dot.Live) error {
 	if m == nil || m.LiveID.String() == "" {
 		return dot.SError.NilParameter
@@ -107,7 +107,7 @@ func (ms *Lives) Add(m *dot.Live) error {
 	return nil
 }
 
-//UpdateOrAdd if the live exist then update, or add it
+// UpdateOrAdd if the live exist then update, or add it
 func (ms *Lives) UpdateOrAdd(m *dot.Live) error {
 	if m == nil || m.LiveID.String() == "" {
 		return dot.SError.NilParameter
@@ -132,13 +132,13 @@ func (ms *Lives) UpdateOrAdd(m *dot.Live) error {
 	return nil
 }
 
-//RemoveByID remove the dot by live id
+// RemoveByID remove the dot by live id
 func (ms *Lives) RemoveByID(id dot.LiveID) error {
 	delete(ms.LiveIDMap, id)
 	return nil
 }
 
-//Get get dot by live id
+// Get get dot by live id
 func (ms *Lives) Get(liveID dot.LiveID) (meta *dot.Live, err error) {
 	var ok bool
 	meta, ok = ms.LiveIDMap[liveID]

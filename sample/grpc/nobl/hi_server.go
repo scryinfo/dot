@@ -5,13 +5,16 @@ package nobl
 
 import (
 	"context"
+	"io"
+	"strconv"
+
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/gserver"
 	"github.com/scryinfo/dot/sample/grpc/go_out/hidot"
 	"go.uber.org/zap"
-	"io"
-	"strconv"
 )
+
+var _ hidot.HiDotServer = (*HiServer)(nil)
 
 const (
 	HiServerTypeID = "hiserver"
@@ -22,6 +25,7 @@ type config struct {
 }
 
 type HiServer struct {
+	hidot.UnimplementedHiDotServer
 	ServerNobl gserver.ServerNobl `dot:""`
 	conf       config
 
@@ -107,7 +111,6 @@ func (c *HiServer) ClientStream(clientStream hidot.HiDot_ClientStreamServer) err
 		res := &hidot.HelloResponse{Reply: req.Greeting + "  " + strconv.FormatInt(count, 10)}
 		clientStream.SendMsg(res)
 	}
-	return nil
 }
 
 func (c *HiServer) BothSides(server hidot.HiDot_BothSidesServer) error {
@@ -134,7 +137,6 @@ func (c *HiServer) BothSides(server hidot.HiDot_BothSidesServer) error {
 		res := &hidot.HelloResponse{Reply: req.Greeting + "  " + strconv.FormatInt(count, 10)}
 		server.SendMsg(res)
 	}
-	return nil
 }
 
 func (c *HiServer) Start(ignore bool) error {
@@ -142,7 +144,7 @@ func (c *HiServer) Start(ignore bool) error {
 	return nil
 }
 
-//HiServerTypeLives make all type lives
+// HiServerTypeLives make all type lives
 func HiServerTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: HiServerTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {

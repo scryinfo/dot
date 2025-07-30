@@ -7,7 +7,7 @@ import (
 	"reflect"
 )
 
-//Injecter inject interface
+// Injecter inject interface
 type Injecter interface {
 	//Inject inject
 	//obj only support structure
@@ -43,7 +43,7 @@ type Injecter interface {
 	GetParent() Injecter
 }
 
-//Line line
+// Line line
 type Line interface {
 	//Return unique Line name
 	ID() string
@@ -95,56 +95,56 @@ type Line interface {
 	DestroyConfigLog() error
 }
 
-//SetterLine If component need to know current line, then realize this API, and this API Will be called before component Create
+// SetterLine If component need to know current line, then realize this API, and this API Will be called before component Create
 type SetterLine interface {
 	SetLine(l Line)
 }
 
-//SetterTypeAndLiveID If component need to know current TypeID or LiveID, then realize this API, and this API Will be called before component Create
+// SetterTypeAndLiveID If component need to know current TypeID or LiveID, then realize this API, and this API Will be called before component Create
 type SetterTypeAndLiveID interface {
 	SetTypeID(typeID TypeID, liveID LiveID)
 }
 
-//AfterAllStarter After all start, before builder AfterStart
+// AfterAllStarter After all start, before builder AfterStart
 type AfterAllStarter interface {
 	AfterAllStart(l Line)
 }
 
-//AfterAllInjecter After all inject, before builder AfterStart
+// AfterAllInjecter After all inject, before builder AfterStart
 type AfterAllInjecter interface {
 	AfterAllInject(l Line)
 }
 
-//AfterAllDestroyer After all destroy, before builder AfterDestroy
+// AfterAllDestroyer After all destroy, before builder AfterDestroy
 type AfterAllDestroyer interface {
 	AfterAllDestroy(l Line)
 }
 
-//BeforeAllStopper Call before all stop, after Builder BeforeStop
+// BeforeAllStopper Call before all stop, after Builder BeforeStop
 type BeforeAllStopper interface {
 	BeforeAllStop(l Line)
 }
 
-//TypeLives living
+// TypeLives living
 type TypeLives struct {
 	Meta  Metadata
 	Lives []Live
 }
 
-//ConfigTypeLive config json
+// ConfigTypeLive config json
 type ConfigTypeLive struct {
 	TypeIDConfig TypeID      `json:"typeId"`
 	ConfigInfo   interface{} `json:"json"`
 }
 
-//BuildNewer Add typeid, newer for dot in config file
-//This function is run after line create, also you can add other initialized content
+// BuildNewer Add typeid, newer for dot in config file
+// This function is run after line create, also you can add other initialized content
 type BuildNewer func(l Line) error
 
-//AllEvent all event
+// AllEvent all event
 type AllEvent func(l Line)
 
-//Builder builder line dot
+// Builder builder line dot
 type Builder struct {
 	Add BuildNewer
 
@@ -160,14 +160,14 @@ type Builder struct {
 	LineLiveID string //line unique id， default value is “default”
 }
 
-//NewTypeLives new living
+// NewTypeLives new living
 func NewTypeLives() *TypeLives {
 	live := &TypeLives{}
 	live.Lives = make([]Live, 0)
 	return live
 }
 
-//Clone the TypeLives, do not clone dot
+// Clone the TypeLives, do not clone dot
 func (c *TypeLives) Clone() *TypeLives {
 	cc := *c
 	cc.Lives = make([]Live, len(c.Lives))

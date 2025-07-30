@@ -7,7 +7,7 @@ import (
 	"flag"
 )
 
-//Cmd type general command line parameters
+// Cmd type general command line parameters
 type Cmd struct {
 	//ConfigPath config file path
 	ConfigPath string
@@ -15,17 +15,17 @@ type Cmd struct {
 	ConfigFile string
 }
 
-//GCmd Global variables general command line parameters
+// GCmd Global variables general command line parameters
 var GCmd Cmd
 
-//CmdParameterName Command line parameter name
+// CmdParameterName Command line parameter name
 type CmdParameterName string
 
 func (c CmdParameterName) String() string {
 	return string(c)
 }
 
-//Command line parameters
+// Command line parameters
 const (
 	//Config file path, add Cmd to show relations with struct cmd
 	CmdConfigPath CmdParameterName = "configpath"
@@ -33,7 +33,7 @@ const (
 	CmdConfigFile CmdParameterName = "configfile"
 )
 
-//FlagDefines General command parameter initialization
+// FlagDefines General command parameter initialization
 func FlagDefines() {
 	flag.StringVar(&GCmd.ConfigPath, CmdConfigPath.String(), "", "config path")
 	flag.StringVar(&GCmd.ConfigFile, CmdConfigFile.String(), "", "config file, not include path")

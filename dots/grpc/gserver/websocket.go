@@ -28,7 +28,7 @@ type WebSocket struct {
 	wrappedServer *grpcweb.WrappedGrpcServer
 }
 
-//WebSocketTypeLives
+// WebSocketTypeLives
 func WebSocketTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{{
 		Meta: dot.Metadata{TypeID: WebSocketTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {

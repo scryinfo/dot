@@ -41,7 +41,7 @@ func add(l dot.Line) error {
 	return err
 }
 
-//Generate ca certificate, generate serve and client certificate under ca certificate
+// Generate ca certificate, generate serve and client certificate under ca certificate
 func makeSample(cs *certificate.Ecdsa) error {
 
 	caPri, err := certificate.MakePriKey()

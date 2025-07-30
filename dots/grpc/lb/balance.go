@@ -14,7 +14,7 @@ const (
 	First = "first"
 )
 
-//If not found, then return Round Balance
+// If not found, then return Round Balance
 func Balance(bname string) grpc.DialOption {
 	var do grpc.DialOption = nil
 	switch strings.ToLower(bname) {

@@ -60,7 +60,7 @@ func (c *Encode) Start(ignore bool) error {
 //
 //}
 
-//construct dot
+// construct dot
 func newEncode(conf []byte) (dot.Dot, error) {
 	dconf := &configEncode{}
 
@@ -74,7 +74,7 @@ func newEncode(conf []byte) (dot.Dot, error) {
 	return d, nil
 }
 
-//EncodeTypeLives
+// EncodeTypeLives
 func EncodeTypeLives() []*dot.TypeLives {
 	tl := &dot.TypeLives{
 		Meta: dot.Metadata{TypeID: EncodeTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
@@ -93,19 +93,19 @@ func EncodeTypeLives() []*dot.TypeLives {
 	return lives
 }
 
-//EncodeConfigTypeLive
+// EncodeConfigTypeLive
 func EncodeConfigTypeLive() *dot.ConfigTypeLive {
 	paths := make([]string, 0)
 	paths = append(paths, "")
 	return &dot.ConfigTypeLive{
 		TypeIDConfig: EncodeTypeID,
-		ConfigInfo: &configEncode{
+		ConfigInfo:   &configEncode{
 			//todo
 		},
 	}
 }
 
-//返回值为true 接着运行
+// 返回值为true 接着运行
 func (c *Encode) parseEnParameter() bool {
 	logger := dot.Logger()
 	if c.conf.Help {

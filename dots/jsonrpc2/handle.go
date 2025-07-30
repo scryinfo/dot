@@ -42,12 +42,12 @@ func NewHandles(servives map[string]interface{}) http.Handler {
 	return h
 }
 
-//json rpc的解码函数
+// json rpc的解码函数
 func nopDecoder(ctx context.Context, j json.RawMessage) (interface{}, error) {
 	return j, nil
 }
 
-//json rpc的编码函数
+// json rpc的编码函数
 func nopEncoder(ctx context.Context, req interface{}) (json.RawMessage, error) {
 	bs, err := json.Marshal(req)
 	return bs, err

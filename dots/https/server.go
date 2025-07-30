@@ -36,7 +36,7 @@ func (c *Server) Stop(ignore bool) (err error) {
 	return
 }
 
-//construct dot
+// construct dot
 func newServer(conf []byte) (dot.Dot, error) {
 	dconf := &config{}
 	err := json.Unmarshal(conf, dconf)
@@ -49,7 +49,7 @@ func newServer(conf []byte) (dot.Dot, error) {
 	return d, err
 }
 
-//ServerTypeLives
+// ServerTypeLives
 func ServerTypeLives() []*dot.TypeLives {
 	lives := []*dot.TypeLives{
 		{
@@ -91,7 +91,7 @@ func (c *Server) RegisterHandle(pattern string, handle http.Handler) error {
 	return nil
 }
 
-//AfterAllStart run the function after start
+// AfterAllStart run the function after start
 func (c *Server) AfterAllStart(l dot.Line) {
 	go c.startServer()
 }

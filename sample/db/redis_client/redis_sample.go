@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 
 	"go.uber.org/zap"
 
@@ -28,17 +29,17 @@ type RedisSample struct {
 
 func (c *RedisSample) basicDemo() {
 	// simulate query in cache first (no result)
-	v1, err := c.RedisClient.ClientV8().Get(c.RedisClient.ClientV8().Context(), basicDemoKey).Result()
+	v1, err := c.RedisClient.ClientV9().Get(c.RedisClient.Context(), basicDemoKey).Result()
 	if err != redis.Nil {
 		fmt.Println("Example: get value not run as suppose, error:", err)
 		os.Exit(-1)
 	}
 
 	// skip query in db, only simulate update cache
-	checkError("Example: set value failed", c.RedisClient.ClientV8().Set(c.RedisClient.ClientV8().Context(), basicDemoKey, basicDemoValue, 0).Err())
+	checkError("Example: set value failed", c.RedisClient.ClientV9().Set(c.RedisClient.Context(), basicDemoKey, basicDemoValue, 0).Err())
 
 	// suppose a request comes now, query in cache (has result)
-	v2, err := c.RedisClient.ClientV8().Get(c.RedisClient.ClientV8().Context(), basicDemoKey).Result()
+	v2, err := c.RedisClient.ClientV9().Get(c.RedisClient.Context(), basicDemoKey).Result()
 	checkError("Example: get value failed", err)
 
 	time.Sleep(time.Second)
@@ -48,7 +49,6 @@ func (c *RedisSample) basicDemo() {
 	fmt.Println("Node: Basic demo passed.")
 	fmt.Println("-------")
 
-	return
 }
 
 func (c *RedisSample) versionControlDemo() {
@@ -86,7 +86,6 @@ func (c *RedisSample) versionControlDemo() {
 	fmt.Println("Node: version control demo passed.")
 	fmt.Println("-------")
 
-	return
 }
 
 func checkError(msg string, err error) {
@@ -94,6 +93,4 @@ func checkError(msg string, err error) {
 		dot.Logger().Errorln(msg, zap.NamedError("error", err))
 		os.Exit(-1)
 	}
-
-	return
 }

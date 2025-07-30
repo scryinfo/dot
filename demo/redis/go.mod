@@ -2,4 +2,4 @@ module github.com/scryinfo/diamond/demo/go_redis
 
 go 1.21
 
-require github.com/go-redis/redis/v8 v8.0.0-beta.6
+require github.com/redis/go-redis/v9 v9.11.0

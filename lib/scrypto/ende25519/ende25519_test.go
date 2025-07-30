@@ -1,10 +1,11 @@
 package ende25519
 
 import (
+	"testing"
+
 	scrypto2 "github.com/scryinfo/dot/lib/scrypto"
 	sx255192 "github.com/scryinfo/dot/lib/scrypto/sx25519"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestEnde25519(t *testing.T) {
@@ -44,7 +45,7 @@ func TestEnde25519_EcdhDecode(t *testing.T) {
 		EnData:    false,
 		Body:      []byte("test struct"),
 	}
-	cipher, err := ende.EcdhEncode(privateA, publicB, planData)
+	cipher, err := ende.EcdhEncode(privateA, publicB, &planData)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, cipher.EndeType, endeType)
 	publicABytes, err := ecdh.PublicKeyToBytes(publicA)
@@ -52,7 +53,7 @@ func TestEnde25519_EcdhDecode(t *testing.T) {
 	assert.Equal(t, cipher.PublicKey, publicABytes)
 	assert.Equal(t, true, cipher.EnData)
 
-	planData2, err := ende.EcdhDecode(privateB, cipher)
+	planData2, err := ende.EcdhDecode(privateB, &cipher)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, planData.Body, planData2.Body)
 	assert.Equal(t, planData2.EndeType, endeType)

@@ -34,7 +34,7 @@ func main() {
 
 }
 
-//how to new the dots of config
+// how to new the dots of config
 func add(l dot.Line) error {
 	var err error
 	{
@@ -134,7 +134,7 @@ func add(l dot.Line) error {
 	return err
 }
 
-//Add assigned type to container directly
+// Add assigned type to container directly
 func addDot(l dot.Line) {
 	_ = l.ToInjecter().ReplaceOrAddByType(&Dot1{Name: "null"})
 	_ = l.ToInjecter().ReplaceOrAddByLiveID(&Dot1{Name: "6666"}, dot.LiveID("6666"))
@@ -172,25 +172,25 @@ type Dot4 struct {
 	T string
 }
 
-//Create use this method to initialize, run or monitor same content, better realize it in start method
+// Create use this method to initialize, run or monitor same content, better realize it in start method
 func (c *Dot3) Create(l dot.Line) error {
 	return nil
 }
 
-//Start
-//ignore When calliing other Lifer, if true erred then continue, if false erred return directly
+// Start
+// ignore When calliing other Lifer, if true erred then continue, if false erred return directly
 func (c *Dot3) Start(ignore bool) error {
 	return nil
 }
 
-//Stop
-//ignore When calliing other Lifer, if true erred then continue, if false erred return directly
+// Stop
+// ignore When calliing other Lifer, if true erred then continue, if false erred return directly
 func (c *Dot3) Stop(ignore bool) error {
 	return nil
 }
 
-//Destroy Destroy Dot
-//ignore When calliing other Lifer, if true erred then continue, if false erred return directly
+// Destroy Destroy Dot
+// ignore When calliing other Lifer, if true erred then continue, if false erred return directly
 func (c *Dot3) Destroy(ignore bool) error {
 	return nil
 }

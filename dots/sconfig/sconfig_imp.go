@@ -24,22 +24,22 @@ var (
 	_ dot.SConfig = (*sConfig)(nil) //just static check implemet the interface
 )
 
-//sConfig implement SConfig
-//Run executable file content expath，xecutable file name exname (without extension name),expath same content, conf content exconf， config file content confpath
-//The process for searching config file content:
+// sConfig implement SConfig
+// Run executable file content expath，xecutable file name exname (without extension name),expath same content, conf content exconf， config file content confpath
+// The process for searching config file content:
 // 1，Command line parameter confpath
 // 2, exname_conf under expath
 // 3, conf under expath
 // 4，exname_conf under exconf
 // 5，conf in exconf
 // 6，If the content above does not existed, then use expath as confpath
-//Note: Check whether content existing rather than check whether corrsponding parameters existing
-//Config file searching process
-//1，Command line parameter conffile
-//2，Search exname.json under confpath
-//3，Search conf.json under confpath
-//4，If file above do not existing, then no config file
-//Note: Check whether file existing
+// Note: Check whether content existing rather than check whether corrsponding parameters existing
+// Config file searching process
+// 1，Command line parameter conffile
+// 2，Search exname.json under confpath
+// 3，Search conf.json under confpath
+// 4，If file above do not existing, then no config file
+// Note: Check whether file existing
 type sConfig struct {
 	confPath   string           //Config path
 	file       string           //File name
@@ -56,7 +56,7 @@ const (
 	conf              = "conf"
 )
 
-//NewConfig new sConfig
+// NewConfig new sConfig
 func NewConfig() *sConfig {
 	return &sConfig{
 		simpleConf: viper.New(),
@@ -125,7 +125,7 @@ func (c *sConfig) RootPath() {
 	}
 }
 
-//Create implement
+// Create implement
 func (c *sConfig) Create(l dot.Line) error {
 
 	fname := filepath.Join(c.ConfigPath(), c.ConfigFile())
@@ -176,24 +176,24 @@ func (c *sConfig) Create(l dot.Line) error {
 //	return nil
 //}
 
-//Destroy  implement
+// Destroy  implement
 func (c *sConfig) Destroy(ignore bool) error {
 	c.simpleJSON = nil
 	c.simpleConf = nil
 	return nil
 }
 
-//ConfigPath  implement
+// ConfigPath  implement
 func (c *sConfig) ConfigPath() string {
 	return c.confPath
 }
 
-//ConfigFile  implement
+// ConfigFile  implement
 func (c *sConfig) ConfigFile() string {
 	return c.file
 }
 
-//Key  implement
+// Key  implement
 func (c *sConfig) Key(key string) bool {
 
 	re := false
@@ -212,13 +212,13 @@ func (c *sConfig) Key(key string) bool {
 	return re
 }
 
-//Map  implement
+// Map  implement
 func (c *sConfig) Map() (m map[string]interface{}, err error) {
 	c.simpleConf.AllSettings()
 	return c.simpleJSON.Map()
 }
 
-//Unmarshal implement
+// Unmarshal implement
 func (c *sConfig) Unmarshal(s interface{}) error {
 	//f := filepath.Join(c.ConfigPath(), c.ConfigFile())
 	//var data []byte
@@ -249,7 +249,7 @@ func (c *sConfig) Marshal(data []byte) error {
 	return err
 }
 
-//DefInterface  implement
+// DefInterface  implement
 func (c *sConfig) DefInterface(key string, def interface{}) interface{} {
 
 	re := def
@@ -296,7 +296,7 @@ func (c *sConfig) UnmarshalKey(key string, obj interface{}) error {
 	return err
 }
 
-//DefArray  implement
+// DefArray  implement
 func (c *sConfig) DefArray(key string, def []interface{}) []interface{} {
 
 	re := def
@@ -320,7 +320,7 @@ func (c *sConfig) DefArray(key string, def []interface{}) []interface{} {
 	return re
 }
 
-//DefMap  implement
+// DefMap  implement
 func (c *sConfig) DefMap(key string, def map[string]interface{}) map[string]interface{} {
 
 	re := def
@@ -345,7 +345,7 @@ func (c *sConfig) DefMap(key string, def map[string]interface{}) map[string]inte
 	return re
 }
 
-//DefString  implement
+// DefString  implement
 func (c *sConfig) DefString(key string, def string) string {
 
 	re := def
@@ -370,7 +370,7 @@ func (c *sConfig) DefString(key string, def string) string {
 	return re
 }
 
-//DefInt32  implement
+// DefInt32  implement
 func (c *sConfig) DefInt32(key string, def int32) int32 {
 
 	re := def
@@ -395,7 +395,7 @@ func (c *sConfig) DefInt32(key string, def int32) int32 {
 	return re
 }
 
-//DefUint32  implement
+// DefUint32  implement
 func (c *sConfig) DefUint32(key string, def uint32) uint32 {
 
 	re := def
@@ -420,7 +420,7 @@ func (c *sConfig) DefUint32(key string, def uint32) uint32 {
 	return re
 }
 
-//DefInt64  implement
+// DefInt64  implement
 func (c *sConfig) DefInt64(key string, def int64) int64 {
 
 	re := def
@@ -446,7 +446,7 @@ func (c *sConfig) DefInt64(key string, def int64) int64 {
 
 }
 
-//DefUint64  implement
+// DefUint64  implement
 func (c *sConfig) DefUint64(key string, def uint64) uint64 {
 	re := def
 	if c.simpleJSON != nil {
@@ -470,7 +470,7 @@ func (c *sConfig) DefUint64(key string, def uint64) uint64 {
 	return re
 }
 
-//DefBool  implement
+// DefBool  implement
 func (c *sConfig) DefBool(key string, def bool) bool {
 	re := def
 	if c.simpleJSON != nil {
@@ -494,7 +494,7 @@ func (c *sConfig) DefBool(key string, def bool) bool {
 	return re
 }
 
-//DefFloat32  implement
+// DefFloat32  implement
 func (c *sConfig) DefFloat32(key string, def float32) float32 {
 	re := def
 	if c.simpleJSON != nil {
@@ -517,7 +517,7 @@ func (c *sConfig) DefFloat32(key string, def float32) float32 {
 	return re
 }
 
-//DefFloat64  implement
+// DefFloat64  implement
 func (c *sConfig) DefFloat64(key string, def float64) float64 {
 	re := def
 	if c.simpleJSON != nil {

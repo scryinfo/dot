@@ -1,7 +1,7 @@
 // Scry Info.  All rights reserved.
 // license that can be found in the license file.
 
-//文件定时拆分处理
+// 文件定时拆分处理
 package demo
 
 import (
@@ -79,7 +79,7 @@ func (log *sLogger) updateLogFile() {
 
 const funLog = "Fun Log"
 
-//NewSLogger new sConfig
+// NewSLogger new sConfig
 func NewSLogger(conf *dot.LogConfig, l dot.Line) dot.SLogger {
 	if conf == nil {
 		conf = &dot.LogConfig{
@@ -132,54 +132,54 @@ func (log *sLogger) GetLevel() dot.Level {
 	return l
 }
 
-//SetLevel set level
+// SetLevel set level
 func (log *sLogger) SetLevel(levels dot.Level) {
 	log.conf.Level = levels.String()
 	log.level.SetLevel(levels)
 }
 
-//Debugln debug
+// Debugln debug
 func (log *sLogger) Debugln(msg string, fields ...zap.Field) {
 	log.Logger.Debug(msg, fields...)
 }
 
-//Debug debug
+// Debug debug
 func (log *sLogger) Debug(mstr dot.MakeStringer) {
 	if dot.DebugLevel <= log.GetLevel() {
 		log.Logger.Debug(funLog, zap.String("", mstr()))
 	}
 }
 
-//Infoln info
+// Infoln info
 func (log *sLogger) Infoln(msg string, fields ...zap.Field) {
 	log.Logger.Info(msg, fields...)
 }
 
-//Info info
+// Info info
 func (log *sLogger) Info(mstr dot.MakeStringer) {
 	if dot.InfoLevel <= log.GetLevel() {
 		log.Logger.Info(funLog, zap.String("", mstr()))
 	}
 }
 
-////Warnln warn
+// //Warnln warn
 func (log *sLogger) Warnln(msg string, fields ...zap.Field) {
 	log.Logger.Warn(msg, fields...)
 }
 
-//Warn warn
+// Warn warn
 func (log *sLogger) Warn(mstr dot.MakeStringer) {
 	if dot.WarnLevel <= log.GetLevel() {
 		log.Logger.Warn(funLog, zap.String("", mstr()))
 	}
 }
 
-////Errorln error
+// //Errorln error
 func (log *sLogger) Errorln(msg string, fields ...zap.Field) {
 	log.Logger.Error(msg, fields...)
 }
 
-////Error error
+// //Error error
 func (log *sLogger) Error(mstr dot.MakeStringer) {
 
 	if dot.ErrorLevel <= log.GetLevel() {
@@ -187,19 +187,19 @@ func (log *sLogger) Error(mstr dot.MakeStringer) {
 	}
 }
 
-////Fatalln fatal
+// //Fatalln fatal
 func (log *sLogger) Fatalln(msg string, fields ...zap.Field) {
 	log.Logger.Fatal(msg, fields...)
 }
 
-////Fatal fatal
+// //Fatal fatal
 func (log *sLogger) Fatal(mstr dot.MakeStringer) {
 	if dot.FatalLevel <= log.GetLevel() {
 		log.Logger.Fatal(funLog, zap.String("", mstr()))
 	}
 }
 
-//NewLogger return new logger
+// NewLogger return new logger
 func (log *sLogger) NewLogger(callerSkip int) dot.SLogger {
 	//top
 	//n := &sLogger{
@@ -222,7 +222,7 @@ func (log *sLogger) NewLogger(callerSkip int) dot.SLogger {
 	*/
 }
 
-//Create
+// Create
 func (log *sLogger) Create(l dot.Line) (err error) {
 	encoderCfg := zapcore.EncoderConfig{
 		// Keys can be anything except the empty string.
@@ -263,8 +263,8 @@ func (log *sLogger) Create(l dot.Line) (err error) {
 	return err
 }
 
-//Destroy Destroy Dot
-//ignore When calling other Lifer, if true erred then continue, if false erred then return directly
+// Destroy Destroy Dot
+// ignore When calling other Lifer, if true erred then continue, if false erred then return directly
 func (log *sLogger) Destroy(ignore bool) error {
 	if log.Logger != nil {
 		_ = log.Logger.Sync() //no log

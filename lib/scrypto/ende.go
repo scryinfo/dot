@@ -26,7 +26,7 @@ const (
 	EndeType_X25519 EndeType = "x25519"
 )
 
-//以下值只会在init中进行修改，所以认为是安全的
+// 以下值只会在init中进行修改，所以认为是安全的
 var (
 	Encoders = make(map[EndeType]AsymmetricEncoder, 2)
 	Decoders = make(map[EndeType]AsymmetricDecoder, 2)

@@ -21,7 +21,7 @@ const (
 	GinNoblTypeID = "3c9e8119-3d42-45bd-98f9-32939c895c6d"
 )
 
-//support the http and tcp
+// support the http and tcp
 type ginNobl struct {
 	ServerNobl        ServerNobl     `dot:""`
 	GinRouter         *gindot.Router `dot:""`
@@ -29,7 +29,7 @@ type ginNobl struct {
 	preUrl            string
 }
 
-//GinNoblTypeLives Data structure needed when generating newer component
+// GinNoblTypeLives Data structure needed when generating newer component
 func GinNoblTypeLives() []*dot.TypeLives {
 
 	lives := []*dot.TypeLives{{
@@ -49,7 +49,7 @@ func GinNoblTypeLives() []*dot.TypeLives {
 	return lives
 }
 
-//Run after every component finished start, this can ensure all service has been registered on grpc server
+// Run after every component finished start, this can ensure all service has been registered on grpc server
 func (c *ginNobl) AfterAllStart(dot.Line) {
 	if rp := c.GinRouter.RelativePath(); len(rp) > 0 && rp != "/" {
 		if !strings.HasPrefix(rp, "/") {
@@ -65,7 +65,7 @@ func (c *ginNobl) AfterAllStart(dot.Line) {
 	c.startServer()
 }
 
-//Stop stop dot
+// Stop stop dot
 func (c *ginNobl) Stop(bool) error {
 	if c.wrappedGrpcServer != nil {
 		c.wrappedGrpcServer = nil
@@ -97,7 +97,7 @@ func (c *ginNobl) startServer() {
 		// not allow handling gRPC requests for unknown endpoints (e.g. for proxying).
 		grpcweb.WithCorsForRegisteredEndpointsOnly(true),
 		grpcweb.WithAllowedRequestHeaders([]string{"Access-Control-Allow-Origin:*", "Access-Control-Allow-Methods:*"}),
-	}//todo #49
+	} //todo #49
 
 	c.wrappedGrpcServer = grpcweb.WrapServer(c.Server(), options...)
 

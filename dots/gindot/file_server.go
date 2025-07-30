@@ -18,7 +18,7 @@ const (
 	con
 )
 
-//see https://github.com/lpar/gzipped/blob/master/fileserver.go
+// see https://github.com/lpar/gzipped/blob/master/fileserver.go
 // FileServer is a drop-in replacement for Go's standard http.FileServer
 // which adds support for static resources precompressed with gzip, at
 // the cost of removing the support for directory browsing.

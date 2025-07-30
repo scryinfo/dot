@@ -55,7 +55,7 @@ func (c *PublicKey) ToPublicKey(keyBytes []byte) (err error) {
 	return
 }
 
-//see: https://github.com/aead/ecdh
+// see: https://github.com/aead/ecdh
 type ecdh25519 struct{}
 
 var curve25519Params = scrypto.CurveParameters{
