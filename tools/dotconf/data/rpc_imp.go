@@ -26,6 +26,7 @@ const (
 )
 
 type RpcImplement struct {
+	rpc.UnimplementedDotConfigFaceServer
 	ServerNobl gserver.ServerNobl `dot:""`
 }
 

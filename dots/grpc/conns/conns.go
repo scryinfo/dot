@@ -233,7 +233,7 @@ func (c *connsImp) Stop(ignore bool) error {
 	}
 
 	//todo This function is for testing only,
-	resolver.UnregisterForTesting(c.config.Scheme)
+	// resolver.UnregisterForTesting(c.config.Scheme)
 	return err
 }
 
