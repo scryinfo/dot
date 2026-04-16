@@ -8,7 +8,7 @@ import (
 
 func setSomeValues(num int) {
 	for i := 0; i < num; i++ {
-		save(sc, &S{Str: "index " + strconv.Itoa(i), I: i+1})
+		save(sc, &S{Str: "index " + strconv.Itoa(i), I: i + 1})
 	}
 
 	return

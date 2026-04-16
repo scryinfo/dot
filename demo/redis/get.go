@@ -1,5 +1,7 @@
 package main
 
+import "context"
+
 func getValue(key string) (string, error) {
-    return dbClient.Get(dbClient.Context(), key).Result()
+	return dbClient.Get(context.Background(), key).Result()
 }
