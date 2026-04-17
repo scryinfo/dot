@@ -1,20 +1,17 @@
 package gindot
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/scryg/sutils/sfile"
-	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
+
+	"github.com/gin-gonic/gin"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
-const UiTypeID = "d9972be7-cef9-464c-9bbb-d1f11abea803" //type id of dot
-
-type configUi struct {
+type ConfigUi struct {
 	UrlRelativePath string `json:"urlRelativePath" yaml:"urlRelativePath"` //relative path of url
 	ResRelativePath string `json:"resRelativePath" yaml:"resRelativePath"` //relative path of resource， The order of locating files is: absolute path, relative path，executable path，current path，user path
 	Paths           []struct {
@@ -28,29 +25,29 @@ type configUi struct {
 
 // Ui  add static resource into gin
 type Ui struct {
-	Engine_ *Engine `dot:""`
+	Engine *Engine
 
 	router       *gin.RouterGroup
-	config       configUi
+	config       ConfigUi
 	executePath  string //executable path
 	currentPath  string //current path
 	userPath     string //user path
 	relativePath string //relative path
 }
 
-func (c *Ui) Injected(l dot.Line) error {
-	c.router = c.Engine_.GinEngine().Group(c.config.UrlRelativePath)
+func (c *Ui) Injected() error {
+	c.router = c.Engine.GinEngine().Group(c.config.UrlRelativePath)
 	c.router.Use(func(ctx *gin.Context) {
 		ctx.Handler()
 	})
 	if len(c.config.MainHTMlName) > 0 {
-		c.Engine_.GinEngine().GET("/", func(ctx *gin.Context) {
+		c.Engine.GinEngine().GET("/", func(ctx *gin.Context) {
 			ctx.Redirect(http.StatusFound, c.UrlRelativePath()+"/"+c.config.MainHTMlName)
 		})
-		c.Engine_.GinEngine().GET("/home", func(ctx *gin.Context) {
+		c.Engine.GinEngine().GET("/home", func(ctx *gin.Context) {
 			ctx.Redirect(http.StatusFound, c.UrlRelativePath()+"/"+c.config.MainHTMlName)
 		})
-		c.Engine_.GinEngine().GET("/index", func(ctx *gin.Context) {
+		c.Engine.GinEngine().GET("/index", func(ctx *gin.Context) {
 			ctx.Redirect(http.StatusFound, c.UrlRelativePath()+"/"+c.config.MainHTMlName)
 		})
 	}
@@ -58,12 +55,12 @@ func (c *Ui) Injected(l dot.Line) error {
 }
 
 // Start start the gin
-func (c *Ui) Start(ignore bool) error {
-	logger := dot.Logger()
+func (c *Ui) Start() error {
+	logger := &dot.Logger
 	for _, it := range c.config.Paths {
 		res := c.ResAbsolutePath(it.Value)
 		if len(res) > 0 {
-			logger.Debugln("Ui", zap.String("", res))
+			logger.Debug().Str("Ui", res).Send()
 			if sfile.IsDir(res) {
 				if c.config.NoCompress {
 					c.router.Static(it.RelativePath, res)
@@ -83,10 +80,10 @@ func (c *Ui) Start(ignore bool) error {
 			} else if sfile.IsFile(res) {
 				c.router.StaticFile(it.RelativePath, res)
 			} else {
-				logger.Errorln("", zap.String("", "can not: "+it.Value+" realy: "+res))
+				logger.Error().Msg("can not: " + it.Value + " realy: " + res)
 			}
 		} else {
-			logger.Errorln("", zap.String("", fmt.Sprintf("can not find : %s  under (%s, %s, %s, %s)", it.RelativePath, c.relativePath, c.executePath, c.currentPath, c.userPath)))
+			logger.Error().Msgf("can not find : %s  under (%s, %s, %s, %s)", it.RelativePath, c.relativePath, c.executePath, c.currentPath, c.userPath)
 		}
 	}
 	return nil
@@ -150,70 +147,42 @@ func (c *Ui) ResAbsolutePath(res string) string {
 }
 
 // construct dot
-func newUi(conf []byte) (*Ui, error) {
-	dconf := &configUi{}
-	err := dot.UnMarshalConfig(conf, dconf)
-	if err != nil {
-		return nil, err
-	}
+func NewUi(conf *ConfigUi, engine *Engine) (*Ui, error) {
 
-	ui := &Ui{config: *dconf}
+	var err error
+	ui := &Ui{config: *conf, Engine: engine}
 	d := ui
 	{
 		ui.executePath, err = os.Executable()
 		if err != nil {
-			dot.Logger().Errorln("Ui", zap.Error(err))
+			dot.Logger.Error().AnErr("Ui", err).Send()
 			ui.executePath = ""
 		} else {
 			ui.executePath = filepath.Dir(ui.executePath)
 		}
 		ui.currentPath, err = os.Getwd()
 		if err != nil {
-			dot.Logger().Errorln("Ui", zap.Error(err))
+			dot.Logger.Error().AnErr("Ui", err).Send()
 			ui.currentPath = ""
 		}
 		ui.userPath, err = os.UserHomeDir()
 		if err != nil {
-			dot.Logger().Errorln("Ui", zap.Error(err))
+			dot.Logger.Error().AnErr("Ui", err).Send()
 			ui.userPath = ""
 		}
 
 		if len(ui.config.ResRelativePath) > 0 {
 			////for dev
 			if !sfile.ExistFile(ui.ResAbsolutePath("dist")) {
-				dot.Logger().Debugln("UiPreAdd", zap.String("", ui.config.ResRelativePath))
+				dot.Logger.Debug().Msgf("UiPreAdd %s", ui.config.ResRelativePath)
 				ui.SetResRelativePath(ui.config.ResRelativePath)
 			}
 		}
 
 		err = nil
 	}
+	d.Injected()
+	d.Start()
 
 	return d, err
-}
-
-// UiTypeLives generate data for structural  dot,  include gindot.Engine
-func UiTypeLives() []*dot.TypeLives {
-	lives := []*dot.TypeLives{{
-		Meta: dot.Metadata{TypeID: UiTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
-			return newUi(conf)
-		}},
-
-		Lives: []dot.Live{
-			{
-				LiveID:    UiTypeID,
-				RelyLives: map[string]dot.LiveID{"Engine_": EngineLiveID},
-			},
-		},
-	}}
-	lives = append(lives, GinDotTypeLives()...)
-	return lives
-}
-
-// return config of Ui
-func UiConfigTypeLive() *dot.ConfigTypeLive {
-	return &dot.ConfigTypeLive{
-		TypeIDConfig: UiTypeID,
-		ConfigInfo:   &configUi{},
-	}
 }

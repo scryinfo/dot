@@ -4,12 +4,13 @@
 package main
 
 import (
+	"os"
+
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/gindot"
 	"github.com/scryinfo/dot/dots/line"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 	"go.uber.org/zap"
-	"os"
 )
 
 func main() {

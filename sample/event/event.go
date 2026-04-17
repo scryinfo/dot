@@ -5,8 +5,9 @@ package main
 
 import (
 	"fmt"
-	"go.uber.org/zap"
 	"os"
+
+	"go.uber.org/zap"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/line"

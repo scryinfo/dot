@@ -6,7 +6,6 @@ package gserver
 //	"encoding/json"
 //	"github.com/golang/mock/gomock"
 //	"github.com/scryinfo/dot/dots/grpc/conns"
-//	"github.com/scryinfo/dot/dots/line"
 //	"github.com/stretchr/testify/assert"
 //	"runtime"
 //	"testing"

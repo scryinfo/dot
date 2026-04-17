@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/scryinfo/dot/dots/db/redis_client"
 	"os"
+
+	"github.com/scryinfo/dot/dots/db/redis_client"
+	"github.com/scryinfo/dot/dots/line"
 
 	"go.uber.org/zap"
 
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/line"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 

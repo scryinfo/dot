@@ -4,17 +4,18 @@
 package main
 
 import (
-	"go.uber.org/zap"
 	"net/http"
 	"os"
 	"reflect"
 
+	"go.uber.org/zap"
+
 	"github.com/gin-gonic/gin"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/line"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 
 	"github.com/scryinfo/dot/dots/gindot"
+	"github.com/scryinfo/dot/dots/line"
 )
 
 func main() {

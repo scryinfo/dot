@@ -16,6 +16,13 @@ clean:
 	rm -f go.sum go.work.sum demo/go.sum
 	${go} clean
 	cd demo && ${go} clean
+tidy:
+	${go} mod tidy
+	cd demo && ${go} mod tidy
+	cd demo/redis && ${go} mod tidy
+	cd demo/redis/orm && ${go} mod tidy
+	cd dots/db/tools/gdao && ${go} mod tidy
+	cd dots/db/tools/gmodel && ${go} mod tidy
 upgrade:
 	${go} get -t -u ./... && ${go} mod tidy
 	cd demo && ${go} get -t -u ./... && ${go} mod tidy

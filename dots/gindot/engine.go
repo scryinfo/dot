@@ -37,29 +37,6 @@ type Engine struct {
 	loggerOnlyGin *dot.LoggerType
 }
 
-// DefaultGinEngine return the default gin dot,
-// it have to call after the line ceated
-func DefaultGinEngine() *gin.Engine {
-	logger := dot.Logger
-	l := dot.GetDefaultLine()
-	if l == nil {
-		logger.Errorln("the line do not create, do not call it")
-		return nil
-	}
-	d, err := l.ToInjecter().GetByLiveID(EngineLiveID)
-	if err != nil {
-		logger.Errorln(err.Error())
-		return nil
-	}
-
-	if g, ok := d.(*Engine); ok {
-		return g.ginEngine
-	}
-
-	logger.Errorln("do not get the gin dot")
-	return nil
-}
-
 // construct dot
 func NewGinDot(conf *ConfigEngine, loggerOnlyGin *dot.LoggerType) (*Engine, error) {
 	d := &Engine{config: *conf, ginEngine: gin.New(), loggerOnlyGin: loggerOnlyGin}

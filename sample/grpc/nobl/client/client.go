@@ -6,14 +6,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/scryinfo/dot/sample/grpc/go_out/hidot"
-	"github.com/scryinfo/dot/sample/grpc/nobl"
-	"go.uber.org/zap"
 	"os"
 	"time"
 
-	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/line"
+	"github.com/scryinfo/dot/sample/grpc/go_out/hidot"
+	"github.com/scryinfo/dot/sample/grpc/nobl"
+	"go.uber.org/zap"
+
+	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
