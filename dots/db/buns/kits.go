@@ -11,7 +11,7 @@ import (
 )
 
 // CreateSchema create tables
-func CreateSchema(db *bun.DB, ms []interface{}) error {
+func CreateSchema(db *bun.DB, ms []any) error {
 	ctx := context.Background()
 	for _, model := range ms {
 		if _, err := db.NewCreateTable().Model(model).Exec(ctx); err != nil {
@@ -50,7 +50,7 @@ func SQLLikeEscape(param string, special []rune, escape rune) string {
 }
 
 // ToMap convert fields of struct to map,  key is Lowercase for the first letter of the field name
-func ToMap(d interface{}, ex map[string]bool) map[string]string {
+func ToMap(d any, ex map[string]bool) map[string]string {
 	if ex == nil {
 		ex = map[string]bool{}
 	}

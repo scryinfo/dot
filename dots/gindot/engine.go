@@ -5,13 +5,13 @@ package gindot
 
 import (
 	"fmt"
-	"go.uber.org/zap"
 	"os"
 	"path/filepath"
 	"reflect"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
@@ -23,7 +23,7 @@ const (
 	EngineLiveID = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
 )
 
-type configEngine struct {
+type ConfigEngine struct {
 	Addr         string   `json:"addr" yaml:"addr"`                 // addr smaple:  ":8080"
 	KeyFile      string   `json:"keyFile" yaml:"keyFile"`           //if it is not abs path, preferred to use the executable path
 	PemFile      string   `json:"pemFile" yaml:"pemFile"`           //if it is not abs path, preferred to use the executable path
@@ -33,14 +33,14 @@ type configEngine struct {
 // GinEngine  gin dot
 type Engine struct {
 	ginEngine     *gin.Engine
-	config        configEngine
-	loggerOnlyGin dot.SLogger
+	config        ConfigEngine
+	loggerOnlyGin *dot.LoggerType
 }
 
 // DefaultGinEngine return the default gin dot,
 // it have to call after the line ceated
 func DefaultGinEngine() *gin.Engine {
-	logger := dot.Logger()
+	logger := dot.Logger
 	l := dot.GetDefaultLine()
 	if l == nil {
 		logger.Errorln("the line do not create, do not call it")
@@ -61,51 +61,11 @@ func DefaultGinEngine() *gin.Engine {
 }
 
 // construct dot
-func newGinDot(conf []byte) (dot.Dot, error) {
-	dconf := &configEngine{}
-	err := dot.UnMarshalConfig(conf, dconf)
-	if err != nil {
-		return nil, err
-	}
-
-	d := &Engine{config: *dconf}
-
-	return d, err
-}
-
-// GinDotTypeLives generate data for structural  dot
-func GinDotTypeLives() []*dot.TypeLives {
-	return []*dot.TypeLives{{
-		Meta: dot.Metadata{TypeID: EngineTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
-			return newGinDot(conf)
-		}}},
-	}
-}
-
-// jayce edit
-// return config of GinDot
-func GinDotConfigTypeLive() *dot.ConfigTypeLive {
-	paths := make([]string, 0)
-	paths = append(paths, "")
-	return &dot.ConfigTypeLive{
-		TypeIDConfig: EngineTypeID,
-		ConfigInfo: &configEngine{
-			LogSkipPaths: paths,
-		},
-	}
-}
-
-// Create create the gin
-func (c *Engine) Create(l dot.Line) error {
-	c.ginEngine = gin.New()
-	c.loggerOnlyGin = dot.Logger().NewLogger(1)
-	c.ginEngine.Use(c.makeLogger(l), gin.Recovery())
-	return nil
-}
-
-// AfterAllStart run the function after start
-func (c *Engine) AfterAllStart(l dot.Line) {
-	go c.startServer()
+func NewGinDot(conf *ConfigEngine, loggerOnlyGin *dot.LoggerType) (*Engine, error) {
+	d := &Engine{config: *conf, ginEngine: gin.New(), loggerOnlyGin: loggerOnlyGin}
+	d.ginEngine.Use(d.makeLogger(), gin.Recovery())
+	go d.startServer()
+	return d, nil
 }
 
 func (c *Engine) GinEngine() *gin.Engine {
@@ -131,8 +91,8 @@ func (c *Engine) RouterGet(h interface{}, pre string) {
 }
 
 func (c *Engine) startServer() {
-	logger := dot.Logger() //do not use the c.loggerOnlyGin, it only for gin
-	if logger.GetLevel() != zap.DebugLevel {
+	logger := &dot.Logger //do not use the c.loggerOnlyGin, it only for gin
+	if logger.GetLevel() != zerolog.DebugLevel {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	if len(c.config.KeyFile) > 0 && len(c.config.PemFile) > 0 {
@@ -161,22 +121,22 @@ func (c *Engine) startServer() {
 			if sfile.ExistFile(pemFile) && sfile.ExistFile(keyFile) {
 				err := c.ginEngine.RunTLS(c.config.Addr, pemFile, keyFile)
 				if err != nil {
-					logger.Errorln(err.Error())
+					logger.Error().Err(err).Send()
 				}
 			} else {
-				logger.Errorln("the keyfile or pemfile do not exist")
+				logger.Error().Msg("the keyfile or pemfile do not exist")
 				return
 			}
 		}
 	} else {
 		err := c.ginEngine.Run(c.config.Addr)
 		if err != nil {
-			logger.Errorln(err.Error())
+			logger.Error().Err(err).Send()
 		}
 	}
 }
 
-func (c *Engine) makeLogger(l dot.Line) gin.HandlerFunc {
+func (c *Engine) makeLogger() gin.HandlerFunc {
 
 	formatter := defaultLogFormatter
 	notLogged := c.config.LogSkipPaths
@@ -223,9 +183,7 @@ func (c *Engine) makeLogger(l dot.Line) gin.HandlerFunc {
 				path = path + "?" + raw
 			}
 			param.Path = path
-			logger.Info(func() string {
-				return formatter(param)
-			})
+			logger.Info().Msg(formatter(param))
 		}
 	}
 }

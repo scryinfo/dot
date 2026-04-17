@@ -10,7 +10,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
 
 	"github.com/scryinfo/dot/dot"
 )
@@ -18,7 +17,7 @@ import (
 // RedisClientTypeID type id
 const RedisClientTypeID = "0ae35550-7e37-4afe-866e-b129099759b7"
 
-type configRedis struct {
+type RedisConfig struct {
 	Addr                string `json:"addr"`
 	KeepMaxVersionCount int64  `json:"keepMaxVersionCount"` //分类中版本的最大数据量
 	VersionFromRedis    bool   `json:"versionFromRedis"`    //get version from redis or not
@@ -26,7 +25,7 @@ type configRedis struct {
 
 // RedisClient redis client dot
 type RedisClient struct {
-	conf configRedis
+	conf RedisConfig
 
 	subscribe *redis.PubSub
 	versions  sync.Map
@@ -120,7 +119,7 @@ func (c *RedisClient) SetVersion(category, version string) error {
 	pipe.Publish(c.ctx, VersionControlChannelName, vcJSON)
 	_, err := pipe.Exec(c.ctx)
 	if err != nil {
-		dot.Logger().Errorln("redis set version failed", zap.NamedError("error", err))
+		dot.Logger.Error().AnErr("redis set version failed", err).Send()
 		return err
 	}
 	if !c.conf.VersionFromRedis {
@@ -132,14 +131,12 @@ func (c *RedisClient) SetVersion(category, version string) error {
 	// 所以维护操作没有加入事务中，且出错也只是打印日志，而不认为函数执行错误
 	length, err := c.clientV9.ZCard(c.ctx, categoriesKey).Result()
 	if err != nil {
-		dot.Logger().Errorln("redis get list.length failed",
-			zap.NamedError("error", err),
-			zap.String("list name", category))
+		dot.Logger.Error().AnErr("redis get list.length failed", err).Str("list name", category).Send()
 		return nil
 	}
 	if length > c.conf.KeepMaxVersionCount {
 		if err = c.clientV9.ZRemRangeByRank(c.ctx, categoriesKey, length-c.conf.KeepMaxVersionCount, -1).Err(); err != nil {
-			dot.Logger().Errorln("redis.rPop failed", zap.NamedError("error", err))
+			dot.Logger.Error().AnErr("redis.rPop failed", err).Send()
 		}
 	}
 
@@ -199,7 +196,7 @@ func (c *RedisClient) CleanVersion(category string, version string) error {
 		//scan see http://doc.redisfans.com/key/scan.html
 		keys, cursor, err = c.clientV9.Scan(c.ctx, cursor, versionKey+KeySplitChar+"*", 100).Result()
 		if err != nil {
-			dot.Logger().Errorln("RedisClient CleanVersion", zap.NamedError("error", err))
+			dot.Logger.Error().AnErr("RedisClient CleanVersion", err).Send()
 			return err
 		}
 		if len(keys) > 0 {
@@ -207,7 +204,7 @@ func (c *RedisClient) CleanVersion(category string, version string) error {
 			pipe.Del(c.ctx, keys...)
 			_, err = pipe.Exec(c.ctx)
 			if err != nil {
-				dot.Logger().Errorln("RedisClient CleanVersion", zap.NamedError("error", err))
+				dot.Logger.Error().AnErr("RedisClient CleanVersion", err).Send()
 				return err
 			}
 		}
@@ -224,7 +221,7 @@ func (c *RedisClient) CleanVersion(category string, version string) error {
 	pipe.Publish(c.ctx, VersionControlChannelName, vsJSON)
 	_, err = pipe.Exec(c.ctx)
 	if err != nil {
-		dot.Logger().Errorln("RedisClient CleanVersion", zap.NamedError("error", err))
+		dot.Logger.Error().AnErr("RedisClient CleanVersion", err).Send()
 	}
 	return err
 }
@@ -234,14 +231,14 @@ func (c *RedisClient) GetVersions(category string) ([]string, error) {
 	categoryKey := CategoriesKey(category)
 	versions, err := c.clientV9.ZRange(c.ctx, categoryKey, 0, -1).Result()
 	if err != nil {
-		dot.Logger().Errorln("redis get all versions failed", zap.NamedError("error", err))
+		dot.Logger.Error().AnErr("redis get all versions failed", err).Send()
 	}
 
 	return versions, err
 }
 
 // Create create dot
-func (c *RedisClient) Create(dot.Line) error {
+func (c *RedisClient) Create() error {
 	c.clientV9 = redis.NewClient(&redis.Options{
 		Addr: c.conf.Addr,
 	})
@@ -266,9 +263,7 @@ func (c *RedisClient) Create(dot.Line) error {
 				vc := &VersionControl{}
 				vc, err := vc.Unmarshal(msg.Payload)
 				if err != nil {
-					dot.Logger().Errorln("unmarshal key with version failed",
-						zap.NamedError("error", err),
-						zap.String("key with version", msg.Payload))
+					dot.Logger.Error().AnErr("unmarshal key with version failed", err).Str("key with version", msg.Payload).Send()
 				} else {
 					if vc.Op == Set {
 						c.versions.Store(vc.Key, vc.Version)
@@ -284,7 +279,7 @@ func (c *RedisClient) Create(dot.Line) error {
 }
 
 // AfterAllDestroy after all destroy
-func (c *RedisClient) AfterAllDestroy(_ dot.Line) {
+func (c *RedisClient) AfterAllDestroy() {
 	if c.cancelFun != nil {
 		c.cancelFun() //此方法可以调用多次
 	}
@@ -301,47 +296,16 @@ func (c *RedisClient) AfterAllDestroy(_ dot.Line) {
 }
 
 // construct dot
-func newRedisClient(conf []byte) (dot.Dot, error) {
-	dconf := &configRedis{}
+func NewRedisClient(conf *RedisConfig) (*RedisClient, func(), error) {
 
-	err := dot.UnMarshalConfig(conf, dconf)
-	if err != nil {
-		return nil, err
-	}
-
-	d := &RedisClient{conf: *dconf}
+	d := &RedisClient{conf: *conf}
 
 	d.ctx, d.cancelFun = context.WithCancel(context.Background())
+	err := d.Create()
 
-	return d, nil
-}
-
-// RedisClientTypeLives return type lives
-func RedisClientTypeLives() []*dot.TypeLives {
-	return []*dot.TypeLives{{
-		Meta: dot.Metadata{TypeID: RedisClientTypeID, NewDoter: newRedisClient},
-	}}
-}
-
-// RedisClientTest for test
-func RedisClientTest(jsonConfig string) *RedisClient {
-	d, err := newRedisClient([]byte(jsonConfig))
-	if err != nil || d == nil {
-		return nil
-	}
-
-	redisClient := d.(*RedisClient)
-	_ = redisClient.Create(nil)
-	time.Sleep(2 * time.Second)
-	return redisClient
-}
-
-// RedisClientConfigTypeLive return config
-func RedisClientConfigTypeLive() *dot.ConfigTypeLive {
-	return &dot.ConfigTypeLive{
-		TypeIDConfig: RedisClientTypeID,
-		ConfigInfo:   &configRedis{},
-	}
+	return d, func() {
+		d.AfterAllDestroy()
+	}, err
 }
 
 // GenerateKey generate key for redis

@@ -1,7 +1,6 @@
 package redis_client //nolint:golint
 
 import (
-	"encoding/json"
 	"testing"
 	"time"
 
@@ -9,7 +8,7 @@ import (
 )
 
 func TestRedisClient_GetVersions(t *testing.T) {
-	redisClient := GetRedisClient(false)
+	redisClient := makeTestRedisClientFalse()
 	assert.NotEqual(t, nil, redisClient)
 	category := "test"
 	version := "1.0"
@@ -62,7 +61,7 @@ func TestRedisClient_GetVersions(t *testing.T) {
 		assert.Equal(t, []string{}, getVersions)
 	}
 
-	redisClient = GetRedisClient(true)
+	redisClient = makeTestRedisClientTrue()
 	assert.NotEqual(t, nil, redisClient)
 	{
 		redisClient.SetVersion(category, version)
@@ -108,14 +107,42 @@ func TestRedisClient_GetVersions(t *testing.T) {
 		assert.Equal(t, nil, err)
 		assert.Equal(t, []string{}, getVersions)
 	}
+	cleanup()
 }
 
-func GetRedisClient(versionFromRedis bool) *RedisClient {
-	config := &configRedis{
+var (
+	clientTrue        *RedisClient
+	clientFalse       *RedisClient
+	clientCancelTrue  func()
+	clientCancelFalse func()
+)
+
+func makeTestRedisClientTrue() *RedisClient {
+	if clientTrue != nil {
+		return clientTrue
+	}
+	config := &RedisConfig{
 		Addr:                "127.0.0.1:6379",
 		KeepMaxVersionCount: 3,
-		VersionFromRedis:    versionFromRedis,
+		VersionFromRedis:    true,
 	}
-	bs, _ := json.Marshal(config)
-	return RedisClientTest(string(bs))
+	clientTrue, clientCancelTrue, _ = NewRedisClient(config)
+	return clientTrue
+}
+func makeTestRedisClientFalse() *RedisClient {
+	if clientFalse != nil {
+		return clientFalse
+	}
+	config := &RedisConfig{
+		Addr:                "127.0.0.1:6379",
+		KeepMaxVersionCount: 3,
+		VersionFromRedis:    false,
+	}
+	clientFalse, clientCancelFalse, _ = NewRedisClient(config)
+	return clientFalse
+}
+
+func cleanup() {
+	clientCancelTrue()
+	clientCancelFalse()
 }

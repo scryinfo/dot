@@ -4,11 +4,11 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/pkg/errors"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/scryg/sutils/sfile"
@@ -23,7 +23,7 @@ func GetFullPathFile(file string) string {
 	for {
 		ex, err := os.Executable()
 		if err != nil {
-			dot.Logger().Errorln("connsImp", zap.Error(err))
+			dot.Logger.Error().AnErr("connsImp", err).Send()
 			res = ""
 			break
 		}
@@ -36,7 +36,7 @@ func GetFullPathFile(file string) string {
 		} else { //try find file from the current path
 			temp, err = os.Getwd()
 			if err != nil {
-				dot.Logger().Errorln("connsImp", zap.Error(err))
+				dot.Logger.Error().AnErr("connsImp", err).Send()
 				res = ""
 				break
 			}

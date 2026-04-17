@@ -10,7 +10,7 @@ import (
 )
 
 func TestEcdsa_GenerateCaCertKey(t *testing.T) {
-	ec := &Ecdsa{}
+	ec := NewEcdsa()
 
 	caPri, err := MakePriKey()
 	if err != nil {

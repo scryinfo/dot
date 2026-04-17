@@ -10,14 +10,14 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"math/big"
 	"os"
 	"path/filepath"
 	"time"
 
-	"github.com/scryinfo/dot/dot"
+	"github.com/pkg/errors"
+
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
@@ -30,20 +30,8 @@ const (
 type Ecdsa struct {
 }
 
-func newEcdsa(conf []byte) (dot.Dot, error) {
-	var err error = nil
-	_ = conf
-	d := &Ecdsa{}
-	return d, err
-}
-
-// EcdsaTypeLives return type lives
-func EcdsaTypeLives() []*dot.TypeLives {
-	return []*dot.TypeLives{{
-		Meta: dot.Metadata{TypeID: EcdsaTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
-			return newEcdsa(conf)
-		}}},
-	}
+func NewEcdsa() *Ecdsa {
+	return &Ecdsa{}
 }
 
 // GenerateCaCertKey Generate ca certificate and private key

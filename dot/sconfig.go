@@ -6,17 +6,15 @@ package dot
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
 	"io"
 	"os"
 	"regexp"
 	"strings"
 
+	"gopkg.in/yaml.v3"
+
 	vault "github.com/hashicorp/vault/api"
 	auth "github.com/hashicorp/vault/api/auth/approle"
-
-	"github.com/scryinfo/scryg/sutils/skit"
 )
 
 const (
@@ -54,28 +52,17 @@ func (e *StringFromEnv) UnmarshalYAML(value *yaml.Node) error {
 // S represents scryinfo config this name is used frequently, so add s to distinguish it
 type SConfig interface {
 	//RootPath root path
-	RootPath()
+	RootPath() error
 	//Config file path
 	ConfigPath() string
 	//Without path, only file name
 	ConfigFile() string
 	//Whether key existing
-	Key(key string) bool
+	ExistKey(key string) bool
 	//If no config or config is empty, return nil
-	Map() (m map[string]interface{}, err error)
+	Map() map[string]any
 
-	//Priorly bring data from RAM and operate, if RAM is nil then check whether original config file existing
-	Unmarshal(s interface{}) error
-	//Analyze key is corresponding type
-	UnmarshalKey(key string, obj interface{}) error
-
-	Marshal(data []byte) error
-
-	//If no corresponding key or data type cannot be converted, must pay attention to default value,
-	//so add "Def" before function to notify default value
-	DefInterface(key string, def interface{}) interface{}
-	DefArray(key string, def []interface{}) []interface{}
-	DefMap(key string, def map[string]interface{}) map[string]interface{}
+	DefMap(key string, def map[string]any) map[string]any
 	DefString(key string, def string) string
 	DefInt32(key string, def int32) int32
 	DefUint32(key string, def uint32) uint32
@@ -105,7 +92,7 @@ func readIDFromFile(file string) (string, error) {
 }
 
 // Fetches a key-value secret (kv-v2) after authenticating via AppRole.
-func GetSecretWithAppRole(keypath string, vaultAdd string) (map[string]interface{}, error) {
+func GetSecretWithAppRole(keypath string, vaultAdd string) (map[string]any, error) {
 	config := vault.DefaultConfig() // modify for more granular configuration
 
 	config.Address = vaultAdd
@@ -179,51 +166,4 @@ func UnMarshalConfig(conf []byte, obj interface{}) (err error) {
 		err = SError.Parameter
 	}
 	return err
-}
-
-// MarshalConfig marshal config
-func MarshalConfig(lconf *LiveConfig) (conf []byte, err error) {
-	conf = nil
-	err = nil
-
-	if lconf != nil {
-		if !skit.IsNil(lconf.Config) {
-			conf, ok := lconf.Config.(map[string]interface{})
-			if ok {
-				keypath, ok := conf["keypath"].(string)
-				if ok {
-					if keypath != "" {
-						VAULT_ADDR := os.Getenv("VAULT_ADDR")
-						if VAULT_ADDR != "" {
-							//Logger().Infoln("marshal ", zap.String("keypath", keypath))
-							keys, err := GetSecretWithAppRole(keypath, VAULT_ADDR)
-							if err == nil {
-								envMap = keys
-								//Logger().Infoln("envMap ", zap.Any("envMap", envMap))
-								//for key, value := range keys {
-								//	if value == "true" || value == "false" {
-								//		switch value {
-								//		case "true":
-								//			conf[key] = true
-								//		case "false":
-								//			conf[key] = false
-								//		}
-								//	} else {
-								//		conf[key] = value
-								//	}
-								//}
-							} else {
-								Logger().Errorln("Get keypath failed", zap.String("keypath", keypath))
-							}
-						}
-						Logger().Infoln("marshal ok", zap.String("keypath", keypath))
-					}
-				}
-			}
-
-			return yaml.Marshal(lconf.Config)
-			//return json.Marshal(lconf.Config)
-		}
-	}
-	return conf, err
 }
