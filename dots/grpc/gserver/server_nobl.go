@@ -6,14 +6,15 @@ package gserver
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"io/ioutil"
+	"net"
+
 	"github.com/pkg/errors"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/utils"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"io/ioutil"
-	"net"
 )
 
 const (
@@ -32,13 +33,13 @@ type ConfigNobl struct {
 }
 
 // grpc server component, without bl; one server can monitor in multi address or API at the same time,support tls
-type serverNoblImp struct {
+type ServerNoblImp struct {
 	conf      ConfigNobl
 	server    *grpc.Server
 	listeners []net.Listener
 }
 
-func (c *serverNoblImp) Server() *grpc.Server {
+func (c *ServerNoblImp) Server() *grpc.Server {
 	return c.server
 }
 
@@ -55,39 +56,33 @@ func (c *serverNoblImp) Server() *grpc.Server {
 //	return serverItem
 //}
 
-func (c *serverNoblImp) startServer() {
+func (c *ServerNoblImp) startServer() {
 	for _, lis := range c.listeners {
 		go func(li net.Listener) {
-			logger := dot.Logger()
-			logger.Infoln("ServerNobl", zap.String("", li.Addr().String()))
+			dot.Logger.Info().Str("ServerNobl", lis.Addr().String()).Send()
 			err := c.server.Serve(li)
 			if err != nil {
-				logger.Errorln(err.Error())
+				dot.Logger.Error().Err(err).Send()
 			}
 		}(lis)
 	}
 }
 
 // Construct component
-func newServerNobl(conf []byte) (dot.Dot, error) {
-	dconf := &ConfigNobl{}
-	err := dot.UnMarshalConfig(conf, dconf)
-	if err != nil {
-		return nil, err
-	}
+func NewServerNobl(conf *ConfigNobl) (*ServerNoblImp, error) {
 
-	d := &serverNoblImp{
-		conf: *dconf,
+	d := &ServerNoblImp{
+		conf: *conf,
 	}
 
 	if len(d.conf.Name) < 1 {
-		dot.Logger().Warnln("serverNoblImp", zap.String("", "the server name is empty"))
+		dot.Logger.Warn().Str("serverNoblImp", "the server name is empty").Send()
 	}
 	if len(d.conf.Addrs) < 1 {
-		dot.Logger().Warnln("serverNoblImp", zap.String("", "the server addrs are empty"))
+		dot.Logger.Warn().Str("serverNoblImp", "the server addrs are empty").Send()
 	}
 
-	return d, err
+	return d, nil
 }
 
 // Data structure needed when generating newer component
@@ -112,7 +107,7 @@ func ServerNoblConfigTypeLive() *dot.ConfigTypeLive {
 	}
 }
 
-func (c *serverNoblImp) Create(l dot.Line) error {
+func (c *ServerNoblImp) Create(l dot.Line) error {
 	logger := dot.Logger()
 	var err error = nil
 	errDo := func(er error) {
@@ -226,12 +221,12 @@ func (c *serverNoblImp) Create(l dot.Line) error {
 }
 
 // Run after every component finished start, this can ensure all service has been registered on grpc server
-func (c *serverNoblImp) AfterAllStart(l dot.Line) {
+func (c *ServerNoblImp) AfterAllStart(l dot.Line) {
 	c.startServer()
 }
 
 // Stop stop dot
-func (c *serverNoblImp) Stop(ignore bool) error {
+func (c *ServerNoblImp) Stop(ignore bool) error {
 	if c.server != nil {
 		c.server.GracefulStop()
 		c.server = nil

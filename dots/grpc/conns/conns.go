@@ -11,7 +11,6 @@ import (
 	"io/ioutil"
 
 	"github.com/pkg/errors"
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/resolver"
@@ -19,10 +18,6 @@ import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/grpc/lb"
 	"github.com/scryinfo/dot/utils"
-)
-
-const (
-	ConnsTypeID = "7bf0a017-ef0c-496a-b04c-b1dc262abc8d"
 )
 
 // grpc connection, support one Scheme, multi services are below, every service can have multi address(ClientConn load balancing)
@@ -57,53 +52,24 @@ type ClientContext struct {
 	Cancel     context.CancelFunc
 }
 
-type connsImp struct {
+type ConnsImp struct {
 	conns  map[string]*ClientContext
 	config ConnsConfig
 }
 
 // Construction component
-func newConns(conf []byte) (dot.Dot, error) {
-	dconf := &ConnsConfig{}
-	err := dot.UnMarshalConfig(conf, dconf)
-	if err != nil {
-		return nil, err
+func NewConns(conf *ConnsConfig) (*ConnsImp, func(), error) {
+	d := &ConnsImp{
+		config: *conf,
 	}
-
-	d := &connsImp{
-		config: *dconf,
-	}
-
-	return d, err
+	err := d.Create()
+	return d, func() {
+		d.Stop(true)
+	}, err
 }
 
-// Data structure needed when generating newer component
-func ConnsTypeLives() []*dot.TypeLives {
-	return []*dot.TypeLives{{
-		Meta: dot.Metadata{TypeID: ConnsTypeID, NewDoter: func(conf []byte) (dot dot.Dot, err error) {
-			return newConns(conf)
-		}},
-	}}
-}
-
-// jayce edit
-// return config of Conn
-func ConnsConfigTypeLive() *dot.ConfigTypeLive {
-	slice1 := make([]ServiceConfig, 0)
-	slice2 := make([]string, 0)
-	slice2 = append(slice2, "")
-	slice1 = append(slice1, ServiceConfig{Addrs: slice2})
-
-	return &dot.ConfigTypeLive{
-		TypeIDConfig: ConnsTypeID,
-		ConfigInfo: &ConnsConfig{
-			Services: slice1,
-		},
-	}
-}
-
-func (c *connsImp) Create(l dot.Line) error {
-	logger := dot.Logger()
+func (c *ConnsImp) Create() error {
+	logger := &dot.Logger
 	var err error = nil
 	c.conns = make(map[string]*ClientContext)
 	if len(c.config.Services) > 0 {
@@ -117,7 +83,7 @@ func (c *connsImp) Create(l dot.Line) error {
 		resolver.Register(lb.NewClientBuilder(c.config.Scheme, sa))
 		errDo := func(er error) {
 			if err != nil {
-				logger.Errorln("connsImp", zap.Error(err))
+				logger.Error().AnErr("connsImp", err).Send()
 			}
 			err = er
 		}
@@ -182,7 +148,7 @@ func (c *connsImp) Create(l dot.Line) error {
 						})
 					}
 
-					logger.Infoln("connsImp", zap.String("", "tls with ca"))
+					logger.Info().Str("connsImp", "tls with ca").Send()
 					e1 = funRpc(&rpc, target, lb.Balance(s.Balance), grpc.WithTransportCredentials(tc))
 				case len(s.Tls.Pem) > 0: //just server
 					pemfile := utils.GetFullPathFile(s.Tls.Pem)
@@ -196,10 +162,10 @@ func (c *connsImp) Create(l dot.Line) error {
 						errDo(errors.WithStack(err1))
 						continue ForServices
 					}
-					logger.Infoln("connsImp", zap.String("", "tls no ca"))
+					logger.Info().Str("connsImp", "tls no ca").Send()
 					e1 = funRpc(&rpc, target, lb.Balance(s.Balance), grpc.WithTransportCredentials(creds))
 				default: //no tls
-					logger.Infoln("connsImp", zap.String("", "no tls"))
+					logger.Info().Str("connsImp", "no tls").Send()
 					e1 = funRpc(&rpc, target, lb.Balance(s.Balance), grpc.WithInsecure())
 				}
 			}
@@ -214,7 +180,7 @@ func (c *connsImp) Create(l dot.Line) error {
 	return err
 }
 
-func (c *connsImp) Stop(ignore bool) error {
+func (c *ConnsImp) Stop(ignore bool) error {
 	var err error = nil
 	if len(c.conns) > 0 {
 		conns := c.conns
@@ -224,7 +190,7 @@ func (c *connsImp) Stop(ignore bool) error {
 				e1 := conn.ClientConn.Close() //todo Cancel request?
 				if e1 != nil {                //do not return , close all connection
 					if err != nil { //log the err
-						dot.Logger().Errorln(err.Error())
+						dot.Logger.Error().Err(err).Send()
 					}
 					err = e1
 				}
@@ -237,7 +203,7 @@ func (c *connsImp) Stop(ignore bool) error {
 	return err
 }
 
-func (c *connsImp) DefaultClientConn() *grpc.ClientConn {
+func (c *ConnsImp) DefaultClientConn() *grpc.ClientConn {
 	var conn *grpc.ClientConn = nil
 	if len(c.conns) == 1 {
 		for k := range c.conns {
@@ -248,7 +214,7 @@ func (c *connsImp) DefaultClientConn() *grpc.ClientConn {
 	return conn
 }
 
-func (c *connsImp) ClientConn(serviceName string) *grpc.ClientConn {
+func (c *ConnsImp) ClientConn(serviceName string) *grpc.ClientConn {
 	var conn *grpc.ClientConn = nil
 	if len(c.conns) > 0 {
 		if c, ok := c.conns[serviceName]; ok {
@@ -258,7 +224,7 @@ func (c *connsImp) ClientConn(serviceName string) *grpc.ClientConn {
 	return conn
 }
 
-func (c *connsImp) ClientContext(serviceName string) *ClientContext {
+func (c *ConnsImp) ClientContext(serviceName string) *ClientContext {
 	var conn *ClientContext = nil
 	if len(c.conns) > 0 {
 		if c, ok := c.conns[serviceName]; ok {
@@ -268,7 +234,7 @@ func (c *connsImp) ClientContext(serviceName string) *ClientContext {
 	return conn
 }
 
-func (c *connsImp) ServiceName() []string {
+func (c *ConnsImp) ServiceName() []string {
 	var sn []string = nil
 	if len(c.config.Services) > 0 {
 		sn = make([]string, 0, len(c.config.Services))
@@ -279,13 +245,14 @@ func (c *connsImp) ServiceName() []string {
 	return sn
 }
 
-func (c *connsImp) SchemeName() string {
+func (c *ConnsImp) SchemeName() string {
 	return c.config.Scheme
 }
 
 func NewTestConns(conf *ConnsConfig) Conns {
-	re := &connsImp{}
-	re.config = *conf
-	re.Create(nil)
+	re := &ConnsImp{
+		config: *conf,
+	}
+	re.Create()
 	return re
 }
