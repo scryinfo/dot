@@ -6,29 +6,49 @@ package main
 import (
 	"os"
 
+	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/gindot"
-	"github.com/scryinfo/dot/dots/line"
+	"github.com/scryinfo/dot/dots/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
-	"go.uber.org/zap"
+)
+
+type App struct {
+	SConfig *sconfig.SConfig
+	Logger  *dot.LoggerType
+}
+
+type AppConfig struct {
+	Log dot.LogConfig
+}
+
+func NewAppConfig(config *sconfig.SConfig) (*AppConfig, error) {
+	return sconfig.NewAppConfig[AppConfig](config)
+}
+
+var AppSet = wire.NewSet(
+	NewAppConfig,
+	wire.Struct(new(App), "*"),
+	sconfig.NewConfig,
+	dot.InitLogger,
+	wire.FieldsOf(new(*AppConfig), "Log"),
 )
 
 func main() {
-	l, err := line.BuildAndStart(add)
+	// dot.InitLogger(new(dot.TestLogConfig()))
+	app, close, err := InitializeService()
 	if err != nil {
-		dot.Logger().Errorln("", zap.Error(err))
+		dot.Logger.Error().Err(err).Msg("initialize service failed")
 		return
 	}
-	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
+	if close != nil {
+		defer close()
+	}
 
-	dot.Logger().Infoln("dot ok")
+	dot.Logger.Info().Msg("dot ok")
 	//second step ....
+	_ = app
 
 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
 	})
-}
-
-func add(l dot.Line) error {
-	return l.PreAdd(gindot.UiTypeLives()...)
 }

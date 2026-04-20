@@ -8,14 +8,12 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/certificate"
 	"github.com/scryinfo/dot/dots/sconfig"
 )
 
 // Injectors from wire.go:
 
 func InitializeService() (*App, func(), error) {
-	ecdsa := certificate.NewEcdsa()
 	sConfig, err := sconfig.NewConfig()
 	if err != nil {
 		return nil, nil, err
@@ -27,7 +25,6 @@ func InitializeService() (*App, func(), error) {
 	logConfig := &appConfig.Log
 	logger := dot.InitLogger(logConfig)
 	app := &App{
-		Cert:    ecdsa,
 		SConfig: sConfig,
 		Logger:  logger,
 	}

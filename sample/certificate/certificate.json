@@ -1,18 +1,12 @@
 {
   "log": {
-    "file": "log.log",
-    "level": "debug"
-  },
-  "dots": [
-    {
-      "metaData": {
-        "typeId": "4b8b1751-4799-4578-af46-d9b339cf582f"
-      },
-      "lives": [
-        {
-          "liveId": "4b8b1751-4799-4578-af46-d9b339cf582f"
-        }
-      ]
-    }
-  ]
+    "fileName": "log.log",
+    "maxSize": 1024000,
+    "maxBackups": 3,
+    "maxAge": 7,
+    "compress": false,
+    "level": "info",
+    "addStdOut": true,
+    "setSlog": true
+  }
 }

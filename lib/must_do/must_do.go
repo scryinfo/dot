@@ -4,8 +4,9 @@
 package must_do
 
 import (
-	"github.com/scryinfo/dot/dot"
 	"time"
+
+	"github.com/scryinfo/dot/dot"
 )
 
 /*
@@ -33,10 +34,10 @@ func (c *MustDo) Start() {
 		for i := 0; i < c.Conf.CycleIndex; i++ {
 			if c.Thing() {
 				//todo 日志怎么知道具体做了什么事情
-				dot.Logger().Infoln("try successful")
+				dot.Logger.Info().Msg("try successful")
 				return
 			}
-			dot.Logger().Warnln("try fail")
+			dot.Logger.Warn().Msg("try fail")
 			time.Sleep(c.Conf.SmallInterval)
 		}
 		time.Sleep(c.Conf.LargeInterval)

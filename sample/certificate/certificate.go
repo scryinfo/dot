@@ -9,24 +9,44 @@ import (
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/certificate"
+	"github.com/scryinfo/dot/dots/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
 type App struct {
-	Cert *certificate.Ecdsa
+	Cert    *certificate.Ecdsa
+	SConfig *sconfig.SConfig
+	Logger  *dot.LoggerType
+}
+
+type AppConfig struct {
+	Log dot.LogConfig
+}
+
+func NewAppConfig(config *sconfig.SConfig) (*AppConfig, error) {
+	return sconfig.NewAppConfig[AppConfig](config)
 }
 
 var AppSet = wire.NewSet(
+	NewAppConfig,
 	wire.Struct(new(App), "*"),
+	sconfig.NewConfig,
+	dot.InitLogger,
+	wire.FieldsOf(new(*AppConfig), "Log"),
 	certificate.NewEcdsa,
 )
 
 func main() {
-	dot.InitLogger(new(dot.TestLogConfig()))
-	app := InitializeService()
-	//second step ....
+	app, close, err := InitializeService()
+	if err != nil {
+		dot.Logger.Error().Err(err).Msg("initialize service failed")
+		return
+	}
+	if close != nil {
+		defer close()
+	}
 
-	err := makeSample(app.Cert)
+	err = makeSample(app.Cert)
 	if err != nil {
 		dot.Logger.Error().Err(err).Send()
 	}

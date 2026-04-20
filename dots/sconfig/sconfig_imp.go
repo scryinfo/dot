@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -65,6 +66,15 @@ func NewConfig() (*SConfig, error) {
 	return conf, err
 }
 
+func NewAppConfig[T any](config *SConfig) (*T, error) {
+	conf, err := Unmarshal[T](config)
+	if err != nil {
+		fmt.Printf("%v", err)
+		return nil, err
+	}
+	return &conf, nil
+}
+
 func (c *SConfig) RootPath() error {
 
 	ex, err := os.Executable()
@@ -114,6 +124,23 @@ func (c *SConfig) RootPath() error {
 		} else if file := filepath.Join(c.confPath, conf+extensionNameYaml); sfile.ExistFile(file) {
 			c.file = conf + extensionNameYaml
 			c.fileType = extensionNameYaml
+		} else if strings.Contains(exName, "__debug_") {
+			//get source file name as config file name
+			if _, srcFile, _, ok := runtime.Caller(3); ok {
+				c.confPath = filepath.Dir(srcFile)
+				srcName := filepath.Base(srcFile)
+				srcName = srcName[0 : len(srcName)-len(filepath.Ext(srcFile))]
+				if file := filepath.Join(c.confPath, srcName+extensionNameJson); sfile.ExistFile(file) {
+					c.file = srcName + extensionNameJson
+					c.fileType = extensionNameJson
+				} else if file := filepath.Join(c.confPath, srcName+extensionNameToml); sfile.ExistFile(file) {
+					c.file = srcName + extensionNameToml
+					c.fileType = extensionNameToml
+				} else if file := filepath.Join(c.confPath, srcName+extensionNameYaml); sfile.ExistFile(file) {
+					c.file = srcName + extensionNameYaml
+					c.fileType = extensionNameYaml
+				}
+			}
 		}
 		c.simpleConf.SetConfigFile(c.file)
 		//c.simpleConf.SetConfigType(c.fileType)

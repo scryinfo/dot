@@ -26,6 +26,10 @@ func InitLogger(conf *LogConfig) *LoggerType {
 		MaxAge:     conf.MaxAge,
 		Compress:   conf.Compress,
 	}
+	level, err := zerolog.ParseLevel(conf.Level)
+	if err != nil {
+		level = zerolog.DebugLevel
+	}
 
 	if IsDebug {
 		var writer io.Writer = rotator
@@ -33,7 +37,7 @@ func InitLogger(conf *LogConfig) *LoggerType {
 			consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout}
 			writer = zerolog.MultiLevelWriter(consoleWriter, rotator)
 		}
-		Logger = zerolog.New(writer).With().Caller().Logger().Level(conf.Level)
+		Logger = zerolog.New(writer).With().Caller().Logger().Level(level)
 
 	} else {
 		var writer io.Writer = rotator
@@ -41,7 +45,7 @@ func InitLogger(conf *LogConfig) *LoggerType {
 			consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout}
 			writer = zerolog.MultiLevelWriter(consoleWriter, rotator)
 		}
-		Logger = zerolog.New(writer).With().Timestamp().Caller().Logger().Level(conf.Level)
+		Logger = zerolog.New(writer).With().Timestamp().Caller().Logger().Level(level)
 	}
 	log.Logger = Logger
 	if conf.SetSlog {
@@ -55,10 +59,10 @@ type LogConfig struct {
 	MaxSize    int    `json:"maxSize" toml:"maxSize" yaml:"maxSize"`
 	MaxBackups int    `json:"maxBackups" toml:"maxBackups" yaml:"maxBackups"`
 	// days
-	MaxAge    int           `json:"maxAge" toml:"maxAge" yaml:"maxAge"`
-	Compress  bool          `json:"compress" toml:"compress" yaml:"compress"`
-	Level     zerolog.Level `json:"level" toml:"level" yaml:"level"`
-	AddStdOut bool          `json:"addStdOut" toml:"addStdOut" yaml:"addStdOut"`
+	MaxAge    int    `json:"maxAge" toml:"maxAge" yaml:"maxAge"`
+	Compress  bool   `json:"compress" toml:"compress" yaml:"compress"`
+	Level     string `json:"level" toml:"level" yaml:"level"`
+	AddStdOut bool   `json:"addStdOut" toml:"addStdOut" yaml:"addStdOut"`
 	// 是否把zerolog设置为系统日志
 	SetSlog bool `json:"setSlog" toml:"setSlog" yaml:"setSlog"`
 }
@@ -70,7 +74,7 @@ func TestLogConfig() LogConfig {
 		MaxBackups: 2,
 		MaxAge:     2, // days
 		Compress:   false,
-		Level:      zerolog.DebugLevel,
+		Level:      "debug",
 		AddStdOut:  true,
 		SetSlog:    true,
 	}
