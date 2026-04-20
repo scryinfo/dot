@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/go-kit/kit/transport/http/jsonrpc"
-	"github.com/scryinfo/dot/dot"
-	"go.uber.org/zap"
 	"net/http"
 	"reflect"
+
+	"github.com/go-kit/kit/transport/http/jsonrpc"
+	"github.com/scryinfo/dot/dot"
 )
 
 type handle struct {
@@ -74,7 +74,7 @@ func makeJsonrpc(preName string, server interface{}) jsonrpc.EndpointCodecMap {
 					if e2 := recover(); e2 != nil {
 						response = nil
 						err = nil //todo 不太确定 err的具体工作过程， 这里暂定
-						dot.Logger().Debugln("ApiService", zap.Any("", e2))
+						dot.Logger.Debug().Interface("ApiService", e2).Send()
 					}
 				}()
 				inType := fn.In(1)
@@ -83,7 +83,7 @@ func makeJsonrpc(preName string, server interface{}) jsonrpc.EndpointCodecMap {
 				if ok && !bytes.Equal(bs, []byte("[null]")) { //"[null]", 就是 nil
 					err = json.Unmarshal(bs, inValue.Interface())
 					if err != nil {
-						dot.Logger().Errorln("ApiService", zap.Error(err))
+						dot.Logger.Error().AnErr("ApiService", err).Send()
 						inValue = reflect.New(inType)
 					}
 				} else {
@@ -112,6 +112,6 @@ func (rpcLogger) Log(params ...interface{}) error {
 	if len(params) == 2 {
 		err = params[1]
 	}
-	dot.Logger().Warnln("ApiService rpc", zap.Any("", err))
+	dot.Logger.Warn().Interface("ApiService rpc", err).Send()
 	return nil
 }
