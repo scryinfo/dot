@@ -16,13 +16,6 @@ import (
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
-const (
-	//EngineTypeID for gin dot
-	EngineTypeID = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
-	//EngineLiveID for gin dot
-	EngineLiveID = "4943e959-7ad7-42c6-84dd-8b24e9ed30bb"
-)
-
 type ConfigEngine struct {
 	Addr         string   `json:"addr" yaml:"addr"`                 // addr smaple:  ":8080"
 	KeyFile      string   `json:"keyFile" yaml:"keyFile"`           //if it is not abs path, preferred to use the executable path
