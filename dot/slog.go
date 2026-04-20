@@ -15,7 +15,10 @@ type LoggerType = zerolog.Logger
 var Logger LoggerType
 
 // init log with zerolog and lumberjack
-func InitLogger(conf LogConfig) *LoggerType {
+func InitLogger(conf *LogConfig) *LoggerType {
+	if len(conf.FileName) < 1 {
+		conf.FileName = "logs/log.log"
+	}
 	rotator := &lumberjack.Logger{
 		Filename:   conf.FileName,
 		MaxSize:    conf.MaxSize,
@@ -48,13 +51,27 @@ func InitLogger(conf LogConfig) *LoggerType {
 }
 
 type LogConfig struct {
-	FileName   string        `json:"fileName" toml:"fileName" yaml:"fileName"`
-	MaxSize    int           `json:"maxSize" toml:"maxSize" yaml:"maxSize"`
-	MaxBackups int           `json:"maxBackups" toml:"maxBackups" yaml:"maxBackups"`
-	MaxAge     int           `json:"maxAge" toml:"maxAge" yaml:"maxAge"`
-	Compress   bool          `json:"compress" toml:"compress" yaml:"compress"`
-	Level      zerolog.Level `json:"level" toml:"level" yaml:"level"`
-	AddStdOut  bool          `json:"addStdOut" toml:"addStdOut" yaml:"addStdOut"`
+	FileName   string `json:"fileName" toml:"fileName" yaml:"fileName"`
+	MaxSize    int    `json:"maxSize" toml:"maxSize" yaml:"maxSize"`
+	MaxBackups int    `json:"maxBackups" toml:"maxBackups" yaml:"maxBackups"`
+	// days
+	MaxAge    int           `json:"maxAge" toml:"maxAge" yaml:"maxAge"`
+	Compress  bool          `json:"compress" toml:"compress" yaml:"compress"`
+	Level     zerolog.Level `json:"level" toml:"level" yaml:"level"`
+	AddStdOut bool          `json:"addStdOut" toml:"addStdOut" yaml:"addStdOut"`
 	// 是否把zerolog设置为系统日志
 	SetSlog bool `json:"setSlog" toml:"setSlog" yaml:"setSlog"`
+}
+
+func TestLogConfig() LogConfig {
+	return LogConfig{
+		FileName:   "logs/log.log",
+		MaxSize:    10 << 20,
+		MaxBackups: 2,
+		MaxAge:     2, // days
+		Compress:   false,
+		Level:      zerolog.DebugLevel,
+		AddStdOut:  true,
+		SetSlog:    true,
+	}
 }

@@ -6,40 +6,33 @@ package main
 import (
 	"os"
 
-	"go.uber.org/zap"
-
+	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/dots/certificate"
-	"github.com/scryinfo/dot/dots/line"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
-func main() {
-	l, err := line.BuildAndStart(add) //first step create line and dots
-	if err != nil {
-		dot.Logger().Errorln("", zap.Error(err))
-		return
-	}
-	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
+type App struct {
+	Cert *certificate.Ecdsa
+}
 
-	dot.Logger().Infoln("dot ok")
+var AppSet = wire.NewSet(
+	wire.Struct(new(App), "*"),
+	certificate.NewEcdsa,
+)
+
+func main() {
+	dot.InitLogger(new(dot.TestLogConfig()))
+	app := InitializeService()
 	//second step ....
 
-	dd, _ := l.ToInjecter().GetByLiveID(dot.LiveID(certificate.EcdsaTypeID))
-	if d, ok := dd.(*certificate.Ecdsa); ok {
-		err := makeSample(d)
-		if err != nil {
-			dot.Logger().Errorln(err.Error())
-		}
+	err := makeSample(app.Cert)
+	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 	}
 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
 	})
-}
-
-func add(l dot.Line) error {
-	err := l.PreAdd(certificate.EcdsaTypeLives()...)
-	return err
 }
 
 // Generate ca certificate, generate serve and client certificate under ca certificate

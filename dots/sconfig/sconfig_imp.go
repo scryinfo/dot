@@ -4,6 +4,7 @@
 package sconfig
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -57,7 +58,8 @@ func NewConfig() (*SConfig, error) {
 	conf.RootPath()
 	err := conf.create()
 	if err != nil {
-		dot.Logger.Error().AnErr("cant read the config", err).Send()
+		// the config is the first, and the logger is not initialized, so use fmt.Printf
+		fmt.Printf("cant read the config: %v", err)
 	}
 
 	return conf, err
