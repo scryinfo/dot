@@ -104,7 +104,7 @@ func NewSampleCtroller(router *gindot.Router) (*SampleCtroller, error) {
 }
 
 type SampleCtroller struct {
-	Router *gindot.Router `dot:"6be39d0b-3f5b-47b4-818c-642c049f3166"`
+	Router *gindot.Router
 }
 
 func (c *SampleCtroller) Start() error {
