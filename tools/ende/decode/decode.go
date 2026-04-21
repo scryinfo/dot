@@ -1,40 +1,57 @@
+// Scry Info.  All rights reserved.
+// license that can be found in the license file.
+
 package main
 
 import (
 	"os"
 
+	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/grpc/conns"
-	"github.com/scryinfo/dot/dots/line"
+	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/dot/tools/ende"
 	"github.com/scryinfo/scryg/sutils/ssignal"
-	"go.uber.org/zap"
+)
+
+type Line struct {
+	SConfig *sconfig.SConfig
+	Logger  *dot.LoggerType
+	Decode  *ende.Decode
+}
+
+type LineConfig struct {
+	Log    dot.LogConfig
+	Decode *ende.DecodeConfig
+}
+
+func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
+	return sconfig.NewLiceConfig[LineConfig](config)
+}
+
+var LineSet = wire.NewSet(
+	NewLineConfig,
+	wire.Struct(new(Line), "*"),
+	sconfig.NewConfig,
+	dot.NewLogger,
+	wire.FieldsOf(new(*LineConfig), "Log", "Decode"),
+	ende.NewDecode,
 )
 
 func main() {
-	l, err := line.BuildAndStart(add) //first step create line and dots
+	line, clean, err := InitializeService()
 	if err != nil {
-		dot.Logger().Errorln("", zap.Error(err))
+		dot.Logger.Error().Err(err).Msg("initialize service failed")
 		return
 	}
-	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
-
-	dot.Logger().Infoln("dot ok")
-	//second step ....
-
-	dd, _ := l.ToInjecter().GetByLiveID(dot.LiveID(conns.ConnNameTypeID))
-	if dd != nil {
-
+	if clean != nil {
+		defer clean()
 	}
+	dot.Logger.Info().Msg("line run")
 
-	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
+	_ = line
+
+	ssignal.WaitCtrlC(func(s os.Signal) bool {
 		return false
 	})
-
-}
-
-func add(l dot.Line) error {
-	var err error
-	err = l.PreAdd(ende.DecodeTypeLives()...)
-	return err
+	dot.Logger.Info().Msg("line exist")
 }

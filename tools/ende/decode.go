@@ -6,10 +6,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"syscall"
-
-	"go.uber.org/zap"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/scrypto"
@@ -21,7 +19,7 @@ import (
 
 const DecodeTypeID = "7e592fd2-6cd8-4953-8fae-8c3a9915bef7"
 
-type configDecode struct {
+type DecodeConfig struct {
 	Help     bool   `json:"help"` //输出帮助信息
 	Generate string `json:"generate"`
 	File     string `json:"file"`
@@ -32,7 +30,7 @@ type configDecode struct {
 	X25519PrivateKeyKey string `json:"x25519PrivateKeyKey"` //解密用的x25519的私钥， hex
 }
 type Decode struct {
-	conf configDecode
+	conf DecodeConfig
 }
 
 //func (c *Decode) Create(l dot.Line) error {
@@ -61,53 +59,14 @@ func (c *Decode) Start(ignore bool) error {
 //}
 
 // construct dot
-func newDecode(conf []byte) (dot.Dot, error) {
-	dconf := &configDecode{}
-
-	err := dot.UnMarshalConfig(conf, dconf)
-	if err != nil {
-		return nil, err
-	}
-
-	d := &Decode{conf: *dconf}
-
+func NewDecode(conf *DecodeConfig) (*Decode, error) {
+	d := &Decode{conf: *conf}
 	return d, nil
-}
-
-// DecodeTypeLives
-func DecodeTypeLives() []*dot.TypeLives {
-	tl := &dot.TypeLives{
-		Meta: dot.Metadata{TypeID: DecodeTypeID, NewDoter: func(conf []byte) (dot.Dot, error) {
-			return newDecode(conf)
-		}},
-		//Lives: []dot.Live{
-		//	{
-		//		LiveID:    DecodeTypeID,
-		//		RelyLives: map[string]dot.LiveID{"some field": "some id"},
-		//	},
-		//},
-	}
-
-	lives := []*dot.TypeLives{tl}
-
-	return lives
-}
-
-// DecodeConfigTypeLive
-func DecodeConfigTypeLive() *dot.ConfigTypeLive {
-	paths := make([]string, 0)
-	paths = append(paths, "")
-	return &dot.ConfigTypeLive{
-		TypeIDConfig: DecodeTypeID,
-		ConfigInfo:   &configDecode{
-			//todo
-		},
-	}
 }
 
 // 返回值为true 接着运行
 func (c *Decode) parseEnParameter() bool {
-	logger := dot.Logger()
+	logger := &dot.Logger
 	if c.conf.Help {
 		//todo
 		return false
@@ -119,13 +78,13 @@ func (c *Decode) parseEnParameter() bool {
 	}
 
 	if len(c.conf.File) < 1 {
-		logger.Errorln("请入要解密的文件")
+		logger.Error().Msg("请入要解密的文件")
 		return false
 	}
 
 	fullPath := utils.GetFullPathFile(c.conf.File)
 	if len(fullPath) < 1 || !sfile.ExistFile(fullPath) {
-		logger.Errorln(fmt.Sprintf("不能找到文件： %s\n", c.conf.File))
+		logger.Error().Msgf("不能找到文件： %s\n", c.conf.File)
 		return false
 	}
 
@@ -135,14 +94,14 @@ func (c *Decode) parseEnParameter() bool {
 
 	data := scrypto.EndeData{}
 	{
-		bytes, err := ioutil.ReadFile(fullPath)
+		bytes, err := os.ReadFile(fullPath)
 		if err != nil {
-			logger.Errorln("", zap.Error(err))
+			logger.Error().Err(err).Send()
 			return false
 		}
 		err = json.Unmarshal(bytes, &data)
 		if err != nil {
-			logger.Errorln("", zap.Error(err))
+			logger.Error().Err(err).Send()
 			return false
 		}
 	}
@@ -151,7 +110,7 @@ func (c *Decode) parseEnParameter() bool {
 		{
 			bytes, err := hex.DecodeString(c.conf.X25519PrivateKeyKey)
 			if err != nil {
-				logger.Errorln("", zap.Error(err))
+				logger.Error().Err(err).Send()
 				return false
 			}
 			privateKey = bytes
@@ -160,7 +119,7 @@ func (c *Decode) parseEnParameter() bool {
 		{
 			bytes, err := hex.DecodeString(c.conf.Ed25519PublicKey)
 			if err != nil {
-				logger.Errorln("", zap.Error(err))
+				logger.Error().Err(err).Send()
 				return false
 			}
 			signedPublicKey = bytes
@@ -168,14 +127,14 @@ func (c *Decode) parseEnParameter() bool {
 		var err error
 		data, err = scrypto.DecodeData(&data, privateKey, signedPublicKey)
 		if err != nil {
-			logger.Errorln("", zap.Error(err))
+			logger.Error().Err(err).Send()
 			return false
 		}
 	}
 
-	err := ioutil.WriteFile(c.conf.OutFile, data.Body, 0644)
+	err := os.WriteFile(c.conf.OutFile, data.Body, 0644)
 	if err != nil {
-		logger.Errorln("", zap.Error(err))
+		logger.Error().Err(err).Send()
 		return false
 	}
 

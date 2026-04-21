@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"github.com/scryinfo/dot/dots/db/tools"
-	"github.com/scryinfo/scryg/sutils/uuid"
 	"go/format"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/scryinfo/dot/line/db/tools"
+	"github.com/scryinfo/scryg/sutils/uuid"
 )
 
 const templateStr = `
@@ -27,31 +27,31 @@ type {{$.Name}} struct {
 	//todo add
 }
 //func (c *{{$.Name}}) Create(l dot.Line) error {
-//	
+//
 //}
 //func (c *{{$.Name}}) Injected(l dot.Line) error {
-//	
+//
 //}
 //func (c *{{$.Name}}) AfterAllInject(l dot.Line) {
-//	
+//
 //}
 //
 //func (c *{{$.Name}}) Start(ignore bool) error {
-//	
+//
 //}
 //
 //func (c *{{$.Name}}) Stop(ignore bool) error {
-//	
+//
 //}
 //
 //func (c *{{$.Name}}) Destroy(ignore bool) error {
-//	
+//
 //}
 
 //construct dot
 func new{{$.Name}}(conf []byte) (dot.Dot, error) {
 	dconf := &config{{$.Name}}{}
-	
+
 	//err := dot.UnMarshalConfig(conf, dconf)
 	//if err != nil {
 	//	return nil, err
@@ -148,7 +148,7 @@ func main() {
 	}
 
 	if _, err := os.Stat(outputName); os.IsNotExist(err) {
-		err := ioutil.WriteFile(outputName, src, 0644)
+		err := os.WriteFile(outputName, src, 0644)
 		if err != nil {
 			log.Fatalf("writing output: %s", err)
 		}

@@ -1,0 +1,17 @@
+[log]
+fileName = "log.log"
+maxSize = 1024000
+maxBackups = 3
+maxAge = 7
+compress = false
+level = "info"
+addStdOut = true
+setSlog = true
+
+[decode]
+help = true
+generate = ""
+file = "encode.json_en"
+outFile = "encode.json"
+ed25519PublicKey = "f3896b1ce890dc78e0e212e67f48f3aba619d8615acd80848ce8c9b3decda9ed"
+x25519PrivateKeyKey = "70ca0217bbbef282af0cc9706534f88d5a551d1b9cffe115ad4d2b8db7056c71"

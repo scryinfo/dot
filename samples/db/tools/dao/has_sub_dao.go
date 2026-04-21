@@ -6,41 +6,20 @@ import (
 	"time"
 
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/db/buns"
-	"github.com/scryinfo/dot/sample/db/tools/model"
+	"github.com/scryinfo/dot/line/db/buns"
+	"github.com/scryinfo/dot/samples/db/tools/model"
 	"github.com/scryinfo/scryg/sutils/uuid"
 	"github.com/uptrace/bun"
 )
 
-const HasSubDaoTypeID = "36598b3d-28eb-4b13-baa9-e01b4fdb9126"
-
-type HasSubDao struct {
-	*buns.DaoBase `dot:""`
+func NewHasSubDao(conn *buns.DaoBase) *HasSubDao {
+	return &HasSubDao{
+		DaoBase: conn,
+	}
 }
 
-// HasSubDaoTypeLives
-func HasSubDaoTypeLives() []*dot.TypeLives {
-	tl := &dot.TypeLives{
-		Meta: dot.Metadata{
-			Name:   "HasSubDao",
-			TypeID: HasSubDaoTypeID,
-			NewDoter: func(conf []byte) (dot.Dot, error) {
-				return &HasSubDao{}, nil
-			},
-		},
-		Lives: []dot.Live{
-			{
-				LiveID: HasSubDaoTypeID,
-				RelyLives: map[string]dot.LiveID{
-					"DaoBase": buns.DaoBaseTypeID,
-				},
-			},
-		},
-	}
-
-	lives := buns.DaoBaseTypeLives()
-	lives = append(lives, tl)
-	return lives
+type HasSubDao struct {
+	*buns.DaoBase
 }
 
 // if find|update|insert nothing, sql.ErrNoRows error may returned
@@ -350,7 +329,7 @@ func (c *HasSubDao) UpdateHasSubSomeColumn(conn bun.IDB, ids []string /*todo: up
 		ms[i].OptimisticLockVersion++
 		_, err = conn.NewUpdate().Model(ms[i]).Where(condition, ms[i].ID, ms[i].OptimisticLockVersion-1).Column( /*model.HasSub_xx,*/ model.HasSub_OptimisticLockVersion, model.HasSub_UpdateTime).Exec(ctx)
 		if err != nil {
-			dot.Logger().Debugln(err.Error())
+			dot.Logger.Debug().Err(err).Send()
 			return
 		}
 	}

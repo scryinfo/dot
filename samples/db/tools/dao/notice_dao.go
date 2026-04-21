@@ -6,41 +6,20 @@ import (
 	"time"
 
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/db/buns"
-	"github.com/scryinfo/dot/sample/db/tools/model"
+	"github.com/scryinfo/dot/line/db/buns"
+	"github.com/scryinfo/dot/samples/db/tools/model"
 	"github.com/scryinfo/scryg/sutils/uuid"
 	"github.com/uptrace/bun"
 )
 
-const NoticeDaoTypeID = "1855adc2-42da-4264-8823-1a270d91aaca"
-
-type NoticeDao struct {
-	*buns.DaoBase `dot:""`
+func NewNoticeDao(conn *buns.DaoBase) *NoticeDao {
+	return &NoticeDao{
+		DaoBase: conn,
+	}
 }
 
-// NoticeDaoTypeLives
-func NoticeDaoTypeLives() []*dot.TypeLives {
-	tl := &dot.TypeLives{
-		Meta: dot.Metadata{
-			Name:   "NoticeDao",
-			TypeID: NoticeDaoTypeID,
-			NewDoter: func(conf []byte) (dot.Dot, error) {
-				return &NoticeDao{}, nil
-			},
-		},
-		Lives: []dot.Live{
-			{
-				LiveID: NoticeDaoTypeID,
-				RelyLives: map[string]dot.LiveID{
-					"DaoBase": buns.DaoBaseTypeID,
-				},
-			},
-		},
-	}
-
-	lives := buns.DaoBaseTypeLives()
-	lives = append(lives, tl)
-	return lives
+type NoticeDao struct {
+	*buns.DaoBase
 }
 
 // if find|update|insert nothing, sql.ErrNoRows error may returned
@@ -350,7 +329,7 @@ func (c *NoticeDao) UpdateNoticeSomeColumn(conn bun.IDB, ids []string /*todo: up
 		ms[i].OptimisticLockVersion++
 		_, err = conn.NewUpdate().Model(ms[i]).Where(condition, ms[i].ID, ms[i].OptimisticLockVersion-1).Column( /*model.Notice_xx,*/ model.Notice_OptimisticLockVersion, model.Notice_UpdateTime).Exec(ctx)
 		if err != nil {
-			dot.Logger().Debugln(err.Error())
+			dot.Logger.Debug().Err(err).Send()
 			return
 		}
 	}

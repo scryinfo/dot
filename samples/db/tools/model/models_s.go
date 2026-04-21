@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/scryinfo/dot/dots/db"
+	"github.com/scryinfo/dot/line/db"
 )
 
 type DataType struct {

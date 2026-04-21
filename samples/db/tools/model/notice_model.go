@@ -2,7 +2,8 @@ package model
 
 import (
 	"fmt"
-	"github.com/scryinfo/dot/dots/db/buns"
+
+	"github.com/scryinfo/dot/line/db/buns"
 )
 
 const (
