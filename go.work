@@ -5,6 +5,6 @@ use (
 	./demo
 	./demo/redis
 	./demo/redis/orm
-	./dots/db/tools/gdao
-	./dots/db/tools/gmodel
+	./line/db/tools/gdao
+	./line/db/tools/gmodel
 )

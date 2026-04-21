@@ -1,0 +1,9 @@
+log:
+  fileName: "log.log"
+  maxSize: 1024000
+  maxBackups: 3
+  maxAge: 7
+  compress: false
+  level: "info"
+  addStdOut: true
+  setSlog: true

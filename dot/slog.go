@@ -15,7 +15,7 @@ type LoggerType = zerolog.Logger
 var Logger LoggerType
 
 // init log with zerolog and lumberjack
-func InitLogger(conf *LogConfig) *LoggerType {
+func NewLogger(conf *LogConfig) *LoggerType {
 	if len(conf.FileName) < 1 {
 		conf.FileName = "logs/log.log"
 	}
