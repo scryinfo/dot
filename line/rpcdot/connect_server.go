@@ -1,4 +1,4 @@
-package connectdot
+package rpcdot
 
 import (
 	"context"
@@ -13,9 +13,12 @@ import (
 	"golang.org/x/net/http2/h2c"
 )
 
-func NewHttpServerMux() *http.ServeMux {
-	mux := http.NewServeMux()
-	return mux
+type ConnectHttpServerMux struct {
+	http.ServeMux
+}
+
+func NewHttpServerMuxConnect() *ConnectHttpServerMux {
+	return &ConnectHttpServerMux{http.ServeMux{}}
 }
 
 type HandlerMiddle func(w http.ResponseWriter, r *http.Request) error
@@ -38,15 +41,14 @@ type HttpServerConfig struct {
 	ShutdownTimeout time.Duration
 }
 
-type HttpServerEx struct {
+type ConnectHttpServer struct {
 	HTTPServer *http.Server
 	conf       HttpServerConfig
-	rawMux     *http.ServeMux
 	logger     *dot.LoggerType
 	started    atomic.Bool
 }
 
-func NewHttpServerEx(conf *HttpServerConfig, mux *http.ServeMux, logger *dot.LoggerType, middle HandlerMiddle) (*HttpServerEx, func(), error) {
+func NewConnetHttpServer(conf *HttpServerConfig, connetMux *ConnectHttpServerMux, logger *dot.LoggerType, middle HandlerMiddle) (*ConnectHttpServer, func(), error) {
 	if conf.ShutdownTimeout < 0 {
 		conf.ShutdownTimeout = 10 * time.Second
 	}
@@ -81,7 +83,7 @@ func NewHttpServerEx(conf *HttpServerConfig, mux *http.ServeMux, logger *dot.Log
 				return
 			}
 		}
-		mux.ServeHTTP(w, r)
+		connetMux.ServeHTTP(w, r)
 	})
 	server := &http.Server{
 		Addr: conf.Addr,
@@ -91,10 +93,9 @@ func NewHttpServerEx(conf *HttpServerConfig, mux *http.ServeMux, logger *dot.Log
 		ReadTimeout:  conf.ReadTimeout,
 		WriteTimeout: conf.WriteTimeout,
 	}
-	d := &HttpServerEx{
+	d := &ConnectHttpServer{
 		HTTPServer: server,
 		conf:       *conf,
-		rawMux:     mux,
 		logger:     logger,
 		started:    atomic.Bool{},
 	}
@@ -105,7 +106,7 @@ func NewHttpServerEx(conf *HttpServerConfig, mux *http.ServeMux, logger *dot.Log
 	}, nil
 }
 
-func (p *HttpServerEx) Start() {
+func (p *ConnectHttpServer) Start() {
 	p.logger.Info().Msg("rpc api init")
 	if p.started.Swap(true) {
 		return
@@ -120,7 +121,7 @@ func (p *HttpServerEx) Start() {
 		}
 	}()
 }
-func (p *HttpServerEx) Shoutdown() {
+func (p *ConnectHttpServer) Shoutdown() {
 	if !p.started.Swap(false) {
 		return
 	}
@@ -134,6 +135,5 @@ func (p *HttpServerEx) Shoutdown() {
 		}
 		p.HTTPServer = nil
 	}
-	p.rawMux = nil
 	p.logger = nil
 }

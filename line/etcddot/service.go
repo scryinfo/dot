@@ -2,7 +2,7 @@ package etcddot
 
 import (
 	"github.com/scryinfo/dot/dot"
-	"go.etcd.io/etcd/embed"
+	"go.etcd.io/etcd/server/v3/embed"
 )
 
 type ServiceConfig struct {

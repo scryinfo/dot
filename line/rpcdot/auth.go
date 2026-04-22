@@ -1,4 +1,4 @@
-package connectdot
+package rpcdot
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"slices"
 
 	"github.com/scryinfo/dot/dot"
-	httptools "github.com/scryinfo/dot/line/connect_dot/http_tools"
+	httptools "github.com/scryinfo/dot/line/rpcdot/http_tools"
 )
 
 func NewHandlerMiddle() HandlerMiddle {
