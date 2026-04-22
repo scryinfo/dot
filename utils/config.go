@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -70,7 +69,7 @@ func GetTlsConfig(conf *TlsConfig) (*tls.Config, error) {
 
 		pool := x509.NewCertPool()
 		{
-			caCrt, err := ioutil.ReadFile(caPemFile)
+			caCrt, err := os.ReadFile(caPemFile)
 			if err != nil {
 				return nil, errors.WithStack(err)
 			}
@@ -92,7 +91,7 @@ func GetTlsConfig(conf *TlsConfig) (*tls.Config, error) {
 		if len(pemFile) < 1 {
 			return nil, errors.New("the Pem is not empty, and can not find the file: " + conf.Pem)
 		}
-		b, err := ioutil.ReadFile(pemFile)
+		b, err := os.ReadFile(pemFile)
 		if err != nil {
 			return nil, err
 		}

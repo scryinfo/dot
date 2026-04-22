@@ -10,7 +10,6 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"io/ioutil"
 	"math/big"
 	"os"
 	"path/filepath"
@@ -187,7 +186,7 @@ func (c *Ecdsa) PrivateKey(keyFile string) (pri *ecdsa.PrivateKey, err error) {
 		return nil, errors.New("file do not exist")
 	}
 
-	bs, err := ioutil.ReadFile(file)
+	bs, err := os.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}
@@ -231,7 +230,7 @@ func (c *Ecdsa) Certificate(pemFile string) (cert *x509.Certificate, err error) 
 		return nil, errors.New("file do not exist")
 	}
 
-	bs, err := ioutil.ReadFile(file)
+	bs, err := os.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}

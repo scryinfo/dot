@@ -1,43 +1,43 @@
-// Scry Info.  All rights reserved.
-// license that can be found in the license file.
+// // Scry Info.  All rights reserved.
+// // license that can be found in the license file.
 
-package main
+// package main
 
-import (
-	"os"
+// import (
+// 	"os"
 
-	"go.uber.org/zap"
+// 	"go.uber.org/zap"
 
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/dots/grpc/conns"
-	"github.com/scryinfo/dot/dots/line"
-	"github.com/scryinfo/scryg/sutils/ssignal"
-)
+// 	"github.com/scryinfo/dot/dot"
+// 	"github.com/scryinfo/dot/dots/grpc/conns"
+// 	"github.com/scryinfo/dot/dots/line"
+// 	"github.com/scryinfo/scryg/sutils/ssignal"
+// )
 
-func main() {
-	l, err := line.BuildAndStart(add) //first step create line and dots
-	if err != nil {
-		dot.Logger().Errorln("", zap.Error(err))
-		return
-	}
-	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
+// func main() {
+// 	l, err := line.BuildAndStart(add) //first step create line and dots
+// 	if err != nil {
+// 		dot.Logger().Errorln("", zap.Error(err))
+// 		return
+// 	}
+// 	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
 
-	dot.Logger().Infoln("dot ok")
-	//second step ....
+// 	dot.Logger().Infoln("dot ok")
+// 	//second step ....
 
-	dd, _ := l.ToInjecter().GetByLiveID(dot.LiveID(conns.ConnNameTypeID))
-	if dd != nil {
+// 	dd, _ := l.ToInjecter().GetByLiveID(dot.LiveID(conns.ConnNameTypeID))
+// 	if dd != nil {
 
-	}
+// 	}
 
-	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
-		return false
-	})
+// 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
+// 		return false
+// 	})
 
-}
+// }
 
-func add(l dot.Line) error {
-	var err error
-	err = l.PreAdd(conns.ConnNameTypeLives()...)
-	return err
-}
+// func add(l dot.Line) error {
+// 	var err error
+// 	err = l.PreAdd(conns.ConnNameTypeLives()...)
+// 	return err
+// }
