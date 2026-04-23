@@ -1,0 +1,44 @@
+version: v2
+# inputs:
+#   - directory: protos
+plugins:
+  - local: protoc-gen-go
+    # - remote: buf.build/protocolbuffers/go:v1.36.11
+    out: ../go_out/connect
+    opt:
+      - paths=source_relative
+  - local: protoc-gen-go-vtproto
+    # - remote: buf.build/community/planetscale-vtprotobuf:v0.6.0
+    out: ../go_out/connect
+    opt:
+      - paths=source_relative
+      - features=marshal+unmarshal+size
+  - local: protoc-gen-go-json
+    # - remote: buf.build/community/mfridman-go-json:v1.6.0
+    out: ../go_out/connect
+    opt:
+      - paths=source_relative
+      - allow_unknown_fields=true
+      - allow_unknown=true
+  - local: protoc-gen-connect-go
+    # - remote: buf.build/connectrpc/go:v1.19.1
+    out: ../go_out/connect
+    opt:
+      - paths=source_relative
+  # TypeScript/Web Plugins
+  - remote: buf.build/bufbuild/es:v2.11.0
+    out: ../http/client/src
+    opt:
+      - target=ts
+      # - import_extension=none
+  # - local: ../cashbox_backend/node_modules/.bin/protoc-gen-es
+  #   out: ../cashbox_backend/src
+  #   opt:
+  #     - target=ts
+  #     - import_extension=none
+  #     # - json_types=true
+  # - local: ../cashbox_backend/node_modules/.bin/protoc-gen-connect-es
+  #   out: ../cashbox_backend/src
+  #   opt: target=ts
+managed:
+  enabled: true

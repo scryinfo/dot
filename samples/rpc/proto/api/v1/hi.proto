@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package api.v1;
+
+option go_package = "github.com/scryinfo/dot/samples/rpc/go_out/connect/api/v1;apiv1";
+
+message HiRequest {
+  string name = 1;
+}
+
+message HiResponse {
+  string name = 1;
+}
+
+message WriteRequest {
+  string data = 1;
+}
+
+message WriteResponse {
+  string data = 1;
+}
+
+message ServerStreamRequest {
+  string greeting = 1;
+}
+message ServerStreamResponse {
+  string reply = 1;
+}
+
+message ClientStreamRequest {
+  string greeting = 1;
+}
+
+message ClientStreamResponse {
+  string greeting = 1;
+}
+
+message BothStreamRequest {
+  string greeting = 1;
+}
+
+message BothStreamResponse {
+  string greeting = 1;
+}
+
+service HiService {
+  rpc Hi(HiRequest) returns (HiResponse);
+  rpc Write(WriteRequest) returns (WriteResponse);
+  rpc ServerStream(ServerStreamRequest) returns (ServerStreamResponse);
+  rpc ClientStream(ClientStreamRequest) returns (ClientStreamResponse);
+  rpc BothStream(BothStreamRequest) returns (BothStreamResponse);
+}

@@ -1,0 +1,6 @@
+{
+  "name": "dot",
+  "workspaces": [
+    "samples/rpc/http/client"
+  ]
+}
