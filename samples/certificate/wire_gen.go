@@ -15,7 +15,6 @@ import (
 // Injectors from wire.go:
 
 func InitializeService() (*Line, func(), error) {
-	ecdsa := certificate.NewEcdsa()
 	sConfig, err := sconfig.NewConfig()
 	if err != nil {
 		return nil, nil, err
@@ -26,10 +25,9 @@ func InitializeService() (*Line, func(), error) {
 	}
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
+	ecdsa := certificate.NewEcdsa(logger)
 	line := &Line{
-		Cert:    ecdsa,
-		SConfig: sConfig,
-		Logger:  logger,
+		Cert: ecdsa,
 	}
 	return line, func() {
 	}, nil

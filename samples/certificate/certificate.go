@@ -14,9 +14,7 @@ import (
 )
 
 type Line struct {
-	Cert    *certificate.Ecdsa
-	SConfig *sconfig.SConfig
-	Logger  *dot.LoggerType
+	Cert *certificate.Ecdsa
 }
 
 type LineConfig struct {
@@ -28,11 +26,11 @@ func NewAppConfig(config *sconfig.SConfig) (*LineConfig, error) {
 }
 
 var LineSet = wire.NewSet(
-	NewAppConfig,
 	wire.Struct(new(Line), "*"),
+	wire.FieldsOf(new(*LineConfig), "Log"),
+	NewAppConfig,
 	sconfig.NewConfig,
 	dot.NewLogger,
-	wire.FieldsOf(new(*LineConfig), "Log"),
 	certificate.NewEcdsa,
 )
 

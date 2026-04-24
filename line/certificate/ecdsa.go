@@ -17,6 +17,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
@@ -27,10 +28,13 @@ const (
 
 // Ecdsa dot
 type Ecdsa struct {
+	logger *dot.LoggerType
 }
 
-func NewEcdsa() *Ecdsa {
-	return &Ecdsa{}
+func NewEcdsa(logger *dot.LoggerType) *Ecdsa {
+	return &Ecdsa{
+		logger: logger,
+	}
 }
 
 // GenerateCaCertKey Generate ca certificate and private key

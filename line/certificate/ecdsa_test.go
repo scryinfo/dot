@@ -7,10 +7,12 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/scryinfo/dot/dot"
 )
 
 func TestEcdsa_GenerateCaCertKey(t *testing.T) {
-	ec := NewEcdsa()
+	ec := NewEcdsa(dot.NewLogger(&dot.LogConfig{}))
 
 	caPri, err := MakePriKey()
 	if err != nil {

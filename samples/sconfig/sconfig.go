@@ -26,11 +26,11 @@ func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 }
 
 var LineSet = wire.NewSet(
-	NewLineConfig,
 	wire.Struct(new(Line), "*"),
+	wire.FieldsOf(new(*LineConfig), "Log"),
+	NewLineConfig,
 	sconfig.NewConfig,
 	dot.NewLogger,
-	wire.FieldsOf(new(*LineConfig), "Log"),
 )
 
 func main() {

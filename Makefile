@@ -13,10 +13,11 @@ $(info "go: ${go}")
 .PHONY: clean upgrade format build
 
 clean:
-	rm -rf go.sum go.work.sum demo/go.sum node_modules
+	rm -rf go.sum go.work.sum demo/go.sum node_modules bun.lock
 	${go} clean
 	cd demo && ${go} clean
 	cd samples/rpc/proto && make clean
+	cd samples/rpc/http/client && rm -rf dist node_modules bun.lock
 tidy:
 	${go} mod tidy
 	cd demo && ${go} mod tidy
