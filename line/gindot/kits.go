@@ -12,8 +12,8 @@ import (
 
 // for each funcs that like “gin.HandlerFunc”
 // sampe pre = "scry", and  "func (c * SampleCtroller) Hello(cxt *gin.Context) {}", the url is "/scry/hello"
-func RouterSelf(h interface{}, pre string, call func(url string, gmethod reflect.Value)) {
-	hf := reflect.TypeOf(gin.HandlerFunc(nil))
+func RouterSelf(h any, pre string, call func(url string, gmethod reflect.Value)) {
+	hf := reflect.TypeFor[gin.HandlerFunc]()
 	vr := reflect.ValueOf(h)
 	tr := reflect.TypeOf(h)
 	pre = strings.TrimSpace(pre)
@@ -41,7 +41,7 @@ func RouterSelf(h interface{}, pre string, call func(url string, gmethod reflect
 }
 
 // all post
-func RouterPost(g *gin.RouterGroup, h interface{}, pre string) {
+func RouterPost(g *gin.RouterGroup, h any, pre string) {
 	post := reflect.ValueOf(g).MethodByName("POST")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {
 		vs := []reflect.Value{reflect.ValueOf(url), gmethod}
@@ -50,7 +50,7 @@ func RouterPost(g *gin.RouterGroup, h interface{}, pre string) {
 }
 
 // all get
-func RouterGet(g *gin.RouterGroup, h interface{}, pre string) {
+func RouterGet(g *gin.RouterGroup, h any, pre string) {
 	get := reflect.ValueOf(g).MethodByName("GET")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {
 		vs := []reflect.Value{reflect.ValueOf(url), gmethod}

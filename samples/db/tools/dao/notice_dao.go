@@ -61,7 +61,7 @@ func (c *NoticeDao) GetLockByModelID(conn bun.IDB, ms ...*model.Notice) error {
 	return conn.NewSelect().Model(&ms).WherePK().Column(model.Notice_OptimisticLockVersion, model.Notice_Struct+"."+model.Notice_ID).For("UPDATE").Scan(context.TODO())
 }
 
-func (c *NoticeDao) QueryWithLock(conn bun.IDB, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+func (c *NoticeDao) QueryWithLock(conn bun.IDB, condition string, params ...any) (ms []*model.Notice, err error) {
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(&ms).For("UPDATE").Scan(context.TODO())
 	} else {
@@ -72,7 +72,7 @@ func (c *NoticeDao) QueryWithLock(conn bun.IDB, condition string, params ...inte
 	}
 	return
 }
-func (c *NoticeDao) Query(conn bun.IDB, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+func (c *NoticeDao) Query(conn bun.IDB, condition string, params ...any) (ms []*model.Notice, err error) {
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(&ms).Scan(context.TODO())
 	} else {
@@ -99,7 +99,7 @@ func (c *NoticeDao) List(conn bun.IDB) (ms []*model.Notice, err error) {
 	return
 }
 
-func (c *NoticeDao) Count(conn bun.IDB, condition string, params ...interface{}) (count int, err error) {
+func (c *NoticeDao) Count(conn bun.IDB, condition string, params ...any) (count int, err error) {
 	if len(condition) < 1 {
 		count, err = conn.NewSelect().Model(&model.Notice{}).Count(context.TODO())
 	} else {
@@ -108,7 +108,7 @@ func (c *NoticeDao) Count(conn bun.IDB, condition string, params ...interface{})
 	return
 }
 
-func (c *NoticeDao) QueryPageWithLock(conn bun.IDB, pageSize int, page int, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+func (c *NoticeDao) QueryPageWithLock(conn bun.IDB, pageSize int, page int, condition string, params ...any) (ms []*model.Notice, err error) {
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).For("UPDATE").Scan(context.TODO())
 	} else {
@@ -119,7 +119,7 @@ func (c *NoticeDao) QueryPageWithLock(conn bun.IDB, pageSize int, page int, cond
 	}
 	return
 }
-func (c *NoticeDao) QueryPage(conn bun.IDB, pageSize int, page int, condition string, params ...interface{}) (ms []*model.Notice, err error) {
+func (c *NoticeDao) QueryPage(conn bun.IDB, pageSize int, page int, condition string, params ...any) (ms []*model.Notice, err error) {
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).Scan(context.TODO())
 	} else {
@@ -137,7 +137,7 @@ func (c *NoticeDao) QueryPageWithCount(
 	pageSize,
 	pageNum int,
 	condition string,
-	params ...interface{},
+	params ...any,
 ) (ms []*model.Notice, count int, err error) {
 	if len(condition) < 1 {
 		count, err = conn.NewSelect().Model(&ms).Limit(pageSize).Offset((pageNum - 1) * pageSize).ScanAndCount(context.TODO())
@@ -151,7 +151,7 @@ func (c *NoticeDao) QueryPageWithCount(
 	return
 }
 
-func (c *NoticeDao) QueryOneWithLock(conn bun.IDB, condition string, params ...interface{}) (m *model.Notice, err error) {
+func (c *NoticeDao) QueryOneWithLock(conn bun.IDB, condition string, params ...any) (m *model.Notice, err error) {
 	m = &model.Notice{}
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(m).For("UPDATE").Limit(1).Scan(context.TODO())
@@ -164,7 +164,7 @@ func (c *NoticeDao) QueryOneWithLock(conn bun.IDB, condition string, params ...i
 	return
 }
 
-func (c *NoticeDao) QueryOne(conn bun.IDB, condition string, params ...interface{}) (m *model.Notice, err error) {
+func (c *NoticeDao) QueryOne(conn bun.IDB, condition string, params ...any) (m *model.Notice, err error) {
 	m = &model.Notice{}
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(m).Scan(context.TODO())

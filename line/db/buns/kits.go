@@ -2,6 +2,7 @@ package buns
 
 import (
 	"context"
+	"slices"
 
 	"github.com/uptrace/bun"
 
@@ -36,11 +37,8 @@ func SQLLikeEscape(param string, special []rune, escape rune) string {
 	newcs := make([]rune, 0, len(cs)+10)
 	es := escape
 	for _, c := range cs {
-		for _, s := range special {
-			if c == s {
-				newcs = append(newcs, es)
-				break
-			}
+		if slices.Contains(special, c) {
+			newcs = append(newcs, es)
 		}
 		newcs = append(newcs, c)
 	}

@@ -6,7 +6,7 @@ import (
 )
 
 // only one input parameter, one out parameter
-func NewService(pattern string, preName string, service interface{}) (http.Handler, error) {
+func NewService(pattern string, preName string, service any) (http.Handler, error) {
 	if service == nil {
 		return nil, errors.New("service is nil")
 	}

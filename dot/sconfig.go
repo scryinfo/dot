@@ -25,7 +25,7 @@ const (
 
 var reVar = regexp.MustCompile(`^\${(\w+)}$`)
 
-var envMap map[string]interface{}
+var envMap map[string]any
 
 type StringFromEnv string
 
@@ -157,7 +157,7 @@ func GetSecretWithAppRole(keypath string, vaultAdd string) (map[string]any, erro
 }
 
 // UnMarshalConfig unmarshal config
-func UnMarshalConfig(conf []byte, obj interface{}) (err error) {
+func UnMarshalConfig(conf []byte, obj any) (err error) {
 	err = nil
 	if conf != nil {
 		err = yaml.Unmarshal(conf, obj)

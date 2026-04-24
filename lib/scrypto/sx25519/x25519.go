@@ -169,7 +169,7 @@ func (e ecdh25519) BytesToPrivateKey(keyBytes []byte) (privateKey crypto.Private
 	return
 }
 
-func checkType(key *[32]byte, typeToCheck interface{}) (ok bool) {
+func checkType(key *[32]byte, typeToCheck any) (ok bool) {
 	switch t := typeToCheck.(type) {
 	case [32]byte:
 		copy(key[:], t[:])

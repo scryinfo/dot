@@ -12,7 +12,7 @@ func TestX25519_ComputeSecret(t *testing.T) {
 	ecdh := X25519()
 
 	secret := make([]byte, 32)
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		privateA, publicA, err := ecdh.GenerateKey(nil)
 		assert.Equal(t, nil, err, "A key pair generation failed")
 

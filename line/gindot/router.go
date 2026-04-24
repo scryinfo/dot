@@ -37,7 +37,7 @@ func (c *Router) RelativePath() string {
 }
 
 // all post
-func (c *Router) RouterPost(h interface{}, pre string) {
+func (c *Router) RouterPost(h any, pre string) {
 	post := reflect.ValueOf(c.router).MethodByName("POST")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {
 		vs := []reflect.Value{reflect.ValueOf(url), gmethod}
@@ -46,7 +46,7 @@ func (c *Router) RouterPost(h interface{}, pre string) {
 }
 
 // all get
-func (c *Router) RouterGet(h interface{}, pre string) {
+func (c *Router) RouterGet(h any, pre string) {
 	get := reflect.ValueOf(c.router).MethodByName("GET")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {
 		vs := []reflect.Value{reflect.ValueOf(url), gmethod}

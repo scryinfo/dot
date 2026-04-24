@@ -7,12 +7,12 @@ import (
 	"net/url"
 )
 
-func CallOne(urlStr string, out interface{}, method string, params ...interface{}) error {
+func CallOne(urlStr string, out any, method string, params ...any) error {
 	u, err := url.Parse(urlStr)
 	if err != nil {
 		return err
 	}
-	client := jsonrpc.NewClient(u, method, jsonrpc.ClientResponseDecoder(func(_ context.Context, res jsonrpc.Response) (interface{}, error) {
+	client := jsonrpc.NewClient(u, method, jsonrpc.ClientResponseDecoder(func(_ context.Context, res jsonrpc.Response) (any, error) {
 		if res.Error != nil {
 			return nil, *res.Error
 		}

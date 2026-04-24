@@ -43,7 +43,7 @@ func (c *Engine) GinEngine() *gin.Engine {
 }
 
 // all post
-func (c *Engine) RouterPost(h interface{}, pre string) {
+func (c *Engine) RouterPost(h any, pre string) {
 	post := reflect.ValueOf(c.ginEngine).MethodByName("POST")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {
 		vs := []reflect.Value{reflect.ValueOf(url), gmethod}
@@ -52,7 +52,7 @@ func (c *Engine) RouterPost(h interface{}, pre string) {
 }
 
 // all get
-func (c *Engine) RouterGet(h interface{}, pre string) {
+func (c *Engine) RouterGet(h any, pre string) {
 	get := reflect.ValueOf(c.ginEngine).MethodByName("GET")
 	RouterSelf(h, pre, func(url string, gmethod reflect.Value) {
 		vs := []reflect.Value{reflect.ValueOf(url), gmethod}

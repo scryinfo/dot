@@ -31,20 +31,20 @@ func SetPrivateField() {
 		field := reflect.ValueOf(t).Elem().FieldByName("fInterface")
 		if field.CanAddr() {
 			fp := field.Addr().Pointer()
-			fpp := ((*interface{})(unsafe.Pointer(fp)))
+			fpp := ((*any)(unsafe.Pointer(fp)))
 
 			{ // Method 1, need to confirm interface type when compiling
 				var t2 Inter2 = &Inter2Imp{F: 20}
-				fp2 := (*interface{})(unsafe.Pointer(&t2))
+				fp2 := (*any)(unsafe.Pointer(&t2))
 				*fpp = *fp2
 			}
 
 			{ // Method 2, Generally use reflection to realize it
-				var t2 interface{} = &Inter2Imp{F: 15}
+				var t2 any = &Inter2Imp{F: 15}
 				v := reflect.ValueOf(t2).Convert(field.Type()) // Must convert to  field type,since type in t2 is interface{}, not Inter2 type
 				v2 := reflect.ValueOf(v)                       // Get ptr value through reflection, cannot use Pointer here，it will panic，Since t2 is not pointer type
 				ptr := v2.FieldByName("ptr")
-				fp2 := (*interface{})(unsafe.Pointer(ptr.Pointer()))
+				fp2 := (*any)(unsafe.Pointer(ptr.Pointer()))
 				*fpp = *fp2
 			}
 		}

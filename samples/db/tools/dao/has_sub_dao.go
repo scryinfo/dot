@@ -61,7 +61,7 @@ func (c *HasSubDao) GetLockByModelID(conn bun.IDB, ms ...*model.HasSub) error {
 	return conn.NewSelect().Model(&ms).WherePK().Column(model.HasSub_OptimisticLockVersion, model.HasSub_Struct+"."+model.HasSub_ID).For("UPDATE").Scan(context.TODO())
 }
 
-func (c *HasSubDao) QueryWithLock(conn bun.IDB, condition string, params ...interface{}) (ms []*model.HasSub, err error) {
+func (c *HasSubDao) QueryWithLock(conn bun.IDB, condition string, params ...any) (ms []*model.HasSub, err error) {
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(&ms).For("UPDATE").Scan(context.TODO())
 	} else {
@@ -72,7 +72,7 @@ func (c *HasSubDao) QueryWithLock(conn bun.IDB, condition string, params ...inte
 	}
 	return
 }
-func (c *HasSubDao) Query(conn bun.IDB, condition string, params ...interface{}) (ms []*model.HasSub, err error) {
+func (c *HasSubDao) Query(conn bun.IDB, condition string, params ...any) (ms []*model.HasSub, err error) {
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(&ms).Scan(context.TODO())
 	} else {
@@ -99,7 +99,7 @@ func (c *HasSubDao) List(conn bun.IDB) (ms []*model.HasSub, err error) {
 	return
 }
 
-func (c *HasSubDao) Count(conn bun.IDB, condition string, params ...interface{}) (count int, err error) {
+func (c *HasSubDao) Count(conn bun.IDB, condition string, params ...any) (count int, err error) {
 	if len(condition) < 1 {
 		count, err = conn.NewSelect().Model(&model.HasSub{}).Count(context.TODO())
 	} else {
@@ -108,7 +108,7 @@ func (c *HasSubDao) Count(conn bun.IDB, condition string, params ...interface{})
 	return
 }
 
-func (c *HasSubDao) QueryPageWithLock(conn bun.IDB, pageSize int, page int, condition string, params ...interface{}) (ms []*model.HasSub, err error) {
+func (c *HasSubDao) QueryPageWithLock(conn bun.IDB, pageSize int, page int, condition string, params ...any) (ms []*model.HasSub, err error) {
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).For("UPDATE").Scan(context.TODO())
 	} else {
@@ -119,7 +119,7 @@ func (c *HasSubDao) QueryPageWithLock(conn bun.IDB, pageSize int, page int, cond
 	}
 	return
 }
-func (c *HasSubDao) QueryPage(conn bun.IDB, pageSize int, page int, condition string, params ...interface{}) (ms []*model.HasSub, err error) {
+func (c *HasSubDao) QueryPage(conn bun.IDB, pageSize int, page int, condition string, params ...any) (ms []*model.HasSub, err error) {
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(&ms).Limit(pageSize).Offset((page - 1) * pageSize).Scan(context.TODO())
 	} else {
@@ -137,7 +137,7 @@ func (c *HasSubDao) QueryPageWithCount(
 	pageSize,
 	pageNum int,
 	condition string,
-	params ...interface{},
+	params ...any,
 ) (ms []*model.HasSub, count int, err error) {
 	if len(condition) < 1 {
 		count, err = conn.NewSelect().Model(&ms).Limit(pageSize).Offset((pageNum - 1) * pageSize).ScanAndCount(context.TODO())
@@ -151,7 +151,7 @@ func (c *HasSubDao) QueryPageWithCount(
 	return
 }
 
-func (c *HasSubDao) QueryOneWithLock(conn bun.IDB, condition string, params ...interface{}) (m *model.HasSub, err error) {
+func (c *HasSubDao) QueryOneWithLock(conn bun.IDB, condition string, params ...any) (m *model.HasSub, err error) {
 	m = &model.HasSub{}
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(m).For("UPDATE").Limit(1).Scan(context.TODO())
@@ -164,7 +164,7 @@ func (c *HasSubDao) QueryOneWithLock(conn bun.IDB, condition string, params ...i
 	return
 }
 
-func (c *HasSubDao) QueryOne(conn bun.IDB, condition string, params ...interface{}) (m *model.HasSub, err error) {
+func (c *HasSubDao) QueryOne(conn bun.IDB, condition string, params ...any) (m *model.HasSub, err error) {
 	m = &model.HasSub{}
 	if len(condition) < 1 {
 		err = conn.NewSelect().Model(m).Scan(context.TODO())

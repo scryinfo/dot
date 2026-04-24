@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func One(msg ...interface{}) error {
+func One(msg ...any) error {
 	//随机一个10
 	i := rand.Intn(11)
 	log.Print("当前值为：", i)

@@ -147,7 +147,7 @@ func (c *FileServer) acceptable(r *http.Request) []Encoding {
 	starQuality := -1.
 
 	// encodings we've already seen (used to handle duplicates and *)
-	seenEncodings := make(map[string]interface{})
+	seenEncodings := make(map[string]any)
 
 	// match the client accept encodings against the ones we support
 	for _, aspec := range header.ParseAccept(r.Header, acceptEncodingHeader) {

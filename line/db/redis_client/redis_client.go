@@ -150,7 +150,7 @@ func (c *RedisClient) Get(category, version, itemKey string) (string, error) {
 }
 
 // Get get value
-func (c *RedisClient) GetJsonSerialize(category, version, itemKey string, value interface{}) error {
+func (c *RedisClient) GetJsonSerialize(category, version, itemKey string, value any) error {
 	key := VersionItemKey(category, version, itemKey)
 	str, err := c.clientV9.Get(c.ctx, key).Result()
 	if err == nil {
@@ -166,7 +166,7 @@ func (c *RedisClient) Set(category, version, itemKey, value string, expiration t
 }
 
 // Set set value
-func (c *RedisClient) SetJsonSerialize(category, version, itemKey string, value interface{}, expiration time.Duration) (string, error) {
+func (c *RedisClient) SetJsonSerialize(category, version, itemKey string, value any, expiration time.Duration) (string, error) {
 	bs, err := json.Marshal(value)
 	if err == nil {
 		key := VersionItemKey(category, version, itemKey)

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"maps"
 	"net/http"
 	"reflect"
 
@@ -12,7 +13,7 @@ import (
 )
 
 type handle struct {
-	service interface{}
+	service any
 	preName string
 	handle  *jsonrpc.Server
 }
@@ -21,7 +22,7 @@ func (h *handle) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	h.handle.ServeHTTP(res, req)
 }
 
-func NewHandle(preName string, service interface{}) http.Handler {
+func NewHandle(preName string, service any) http.Handler {
 	h := &handle{
 		service: service,
 		preName: preName,
@@ -30,30 +31,28 @@ func NewHandle(preName string, service interface{}) http.Handler {
 	return h
 }
 
-func NewHandles(servives map[string]interface{}) http.Handler {
+func NewHandles(servives map[string]any) http.Handler {
 	methods := jsonrpc.EndpointCodecMap{}
 	for k, v := range servives {
 		temp := makeJsonrpc(k, v)
-		for tk, tv := range temp {
-			methods[tk] = tv
-		}
+		maps.Copy(methods, temp)
 	}
 	h := jsonrpc.NewServer(methods, jsonrpc.ServerErrorLogger(&rpcLogger{}))
 	return h
 }
 
 // json rpc的解码函数
-func nopDecoder(ctx context.Context, j json.RawMessage) (interface{}, error) {
+func nopDecoder(ctx context.Context, j json.RawMessage) (any, error) {
 	return j, nil
 }
 
 // json rpc的编码函数
-func nopEncoder(ctx context.Context, req interface{}) (json.RawMessage, error) {
+func nopEncoder(ctx context.Context, req any) (json.RawMessage, error) {
 	bs, err := json.Marshal(req)
 	return bs, err
 }
 
-func makeJsonrpc(preName string, server interface{}) jsonrpc.EndpointCodecMap {
+func makeJsonrpc(preName string, server any) jsonrpc.EndpointCodecMap {
 	ecm := jsonrpc.EndpointCodecMap{}
 	receiver := reflect.ValueOf(server)
 	typ := receiver.Type()
@@ -69,7 +68,7 @@ func makeJsonrpc(preName string, server interface{}) jsonrpc.EndpointCodecMap {
 				Decode: nopDecoder,
 				Encode: nopEncoder,
 			}
-			endpointCodec.Endpoint = func(ctx context.Context, request interface{}) (response interface{}, err error) {
+			endpointCodec.Endpoint = func(ctx context.Context, request any) (response any, err error) {
 				defer func() {
 					if e2 := recover(); e2 != nil {
 						response = nil
@@ -107,8 +106,8 @@ func makeJsonrpc(preName string, server interface{}) jsonrpc.EndpointCodecMap {
 
 type rpcLogger struct{}
 
-func (rpcLogger) Log(params ...interface{}) error {
-	var err interface{} = params
+func (rpcLogger) Log(params ...any) error {
+	var err any = params
 	if len(params) == 2 {
 		err = params[1]
 	}

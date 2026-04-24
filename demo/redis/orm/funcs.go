@@ -7,7 +7,7 @@ import (
 )
 
 func setSomeValues(num int) {
-	for i := 0; i < num; i++ {
+	for i := range num {
 		save(sc, &S{Str: "index " + strconv.Itoa(i), I: i + 1})
 	}
 
