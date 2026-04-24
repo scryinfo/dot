@@ -46,7 +46,7 @@ message BothStreamResponse {
 service HiService {
   rpc Hi(HiRequest) returns (HiResponse);
   rpc Write(WriteRequest) returns (WriteResponse);
-  rpc ServerStream(ServerStreamRequest) returns (ServerStreamResponse);
-  rpc ClientStream(ClientStreamRequest) returns (ClientStreamResponse);
-  rpc BothStream(BothStreamRequest) returns (BothStreamResponse);
+  rpc ServerStream(ServerStreamRequest) returns (stream ServerStreamResponse);
+  rpc ClientStream(stream ClientStreamRequest) returns (ClientStreamResponse);
+  rpc BothStream(stream BothStreamRequest) returns (stream BothStreamResponse);
 }

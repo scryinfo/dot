@@ -10,7 +10,7 @@ import type { Message } from '@bufbuild/protobuf'
  * Describes the file api/v1/hi.proto.
  */
 export const file_api_v1_hi: GenFile /*@__PURE__*/ = fileDesc(
-  'Cg9hcGkvdjEvaGkucHJvdG8SBmFwaS52MSIZCglIaVJlcXVlc3QSDAoEbmFtZRgBIAEoCSIaCgpIaVJlc3BvbnNlEgwKBG5hbWUYASABKAkiHAoMV3JpdGVSZXF1ZXN0EgwKBGRhdGEYASABKAkiHQoNV3JpdGVSZXNwb25zZRIMCgRkYXRhGAEgASgJIicKE1NlcnZlclN0cmVhbVJlcXVlc3QSEAoIZ3JlZXRpbmcYASABKAkiJQoUU2VydmVyU3RyZWFtUmVzcG9uc2USDQoFcmVwbHkYASABKAkiJwoTQ2xpZW50U3RyZWFtUmVxdWVzdBIQCghncmVldGluZxgBIAEoCSIoChRDbGllbnRTdHJlYW1SZXNwb25zZRIQCghncmVldGluZxgBIAEoCSIlChFCb3RoU3RyZWFtUmVxdWVzdBIQCghncmVldGluZxgBIAEoCSImChJCb3RoU3RyZWFtUmVzcG9uc2USEAoIZ3JlZXRpbmcYASABKAkyyQIKCUhpU2VydmljZRIrCgJIaRIRLmFwaS52MS5IaVJlcXVlc3QaEi5hcGkudjEuSGlSZXNwb25zZRI0CgVXcml0ZRIULmFwaS52MS5Xcml0ZVJlcXVlc3QaFS5hcGkudjEuV3JpdGVSZXNwb25zZRJJCgxTZXJ2ZXJTdHJlYW0SGy5hcGkudjEuU2VydmVyU3RyZWFtUmVxdWVzdBocLmFwaS52MS5TZXJ2ZXJTdHJlYW1SZXNwb25zZRJJCgxDbGllbnRTdHJlYW0SGy5hcGkudjEuQ2xpZW50U3RyZWFtUmVxdWVzdBocLmFwaS52MS5DbGllbnRTdHJlYW1SZXNwb25zZRJDCgpCb3RoU3RyZWFtEhkuYXBpLnYxLkJvdGhTdHJlYW1SZXF1ZXN0GhouYXBpLnYxLkJvdGhTdHJlYW1SZXNwb25zZUKPAQoKY29tLmFwaS52MUIHSGlQcm90b1ABWj9naXRodWIuY29tL3NjcnlpbmZvL2RvdC9zYW1wbGVzL3JwYy9nb19vdXQvY29ubmVjdC9hcGkvdjE7YXBpdjGiAgNBWFiqAgZBcGkuVjHKAgZBcGlcVjHiAhJBcGlcVjFcR1BCTWV0YWRhdGHqAgdBcGk6OlYxYgZwcm90bzM',
+  'Cg9hcGkvdjEvaGkucHJvdG8SBmFwaS52MSIZCglIaVJlcXVlc3QSDAoEbmFtZRgBIAEoCSIaCgpIaVJlc3BvbnNlEgwKBG5hbWUYASABKAkiHAoMV3JpdGVSZXF1ZXN0EgwKBGRhdGEYASABKAkiHQoNV3JpdGVSZXNwb25zZRIMCgRkYXRhGAEgASgJIicKE1NlcnZlclN0cmVhbVJlcXVlc3QSEAoIZ3JlZXRpbmcYASABKAkiJQoUU2VydmVyU3RyZWFtUmVzcG9uc2USDQoFcmVwbHkYASABKAkiJwoTQ2xpZW50U3RyZWFtUmVxdWVzdBIQCghncmVldGluZxgBIAEoCSIoChRDbGllbnRTdHJlYW1SZXNwb25zZRIQCghncmVldGluZxgBIAEoCSIlChFCb3RoU3RyZWFtUmVxdWVzdBIQCghncmVldGluZxgBIAEoCSImChJCb3RoU3RyZWFtUmVzcG9uc2USEAoIZ3JlZXRpbmcYASABKAky0QIKCUhpU2VydmljZRIrCgJIaRIRLmFwaS52MS5IaVJlcXVlc3QaEi5hcGkudjEuSGlSZXNwb25zZRI0CgVXcml0ZRIULmFwaS52MS5Xcml0ZVJlcXVlc3QaFS5hcGkudjEuV3JpdGVSZXNwb25zZRJLCgxTZXJ2ZXJTdHJlYW0SGy5hcGkudjEuU2VydmVyU3RyZWFtUmVxdWVzdBocLmFwaS52MS5TZXJ2ZXJTdHJlYW1SZXNwb25zZTABEksKDENsaWVudFN0cmVhbRIbLmFwaS52MS5DbGllbnRTdHJlYW1SZXF1ZXN0GhwuYXBpLnYxLkNsaWVudFN0cmVhbVJlc3BvbnNlKAESRwoKQm90aFN0cmVhbRIZLmFwaS52MS5Cb3RoU3RyZWFtUmVxdWVzdBoaLmFwaS52MS5Cb3RoU3RyZWFtUmVzcG9uc2UoATABQo8BCgpjb20uYXBpLnYxQgdIaVByb3RvUAFaP2dpdGh1Yi5jb20vc2NyeWluZm8vZG90L3NhbXBsZXMvcnBjL2dvX291dC9jb25uZWN0L2FwaS92MTthcGl2MaICA0FYWKoCBkFwaS5WMcoCBkFwaVxWMeICEkFwaVxWMVxHUEJNZXRhZGF0YeoCB0FwaTo6VjFiBnByb3RvMw',
 )
 
 /**
@@ -217,7 +217,7 @@ export const HiService: GenService<{
    * @generated from rpc api.v1.HiService.ServerStream
    */
   serverStream: {
-    methodKind: 'unary'
+    methodKind: 'server_streaming'
     input: typeof ServerStreamRequestSchema
     output: typeof ServerStreamResponseSchema
   }
@@ -225,7 +225,7 @@ export const HiService: GenService<{
    * @generated from rpc api.v1.HiService.ClientStream
    */
   clientStream: {
-    methodKind: 'unary'
+    methodKind: 'client_streaming'
     input: typeof ClientStreamRequestSchema
     output: typeof ClientStreamResponseSchema
   }
@@ -233,7 +233,7 @@ export const HiService: GenService<{
    * @generated from rpc api.v1.HiService.BothStream
    */
   bothStream: {
-    methodKind: 'unary'
+    methodKind: 'bidi_streaming'
     input: typeof BothStreamRequestSchema
     output: typeof BothStreamResponseSchema
   }

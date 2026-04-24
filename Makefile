@@ -13,9 +13,10 @@ $(info "go: ${go}")
 .PHONY: clean upgrade format build
 
 clean:
-	rm -f go.sum go.work.sum demo/go.sum
+	rm -rf go.sum go.work.sum demo/go.sum node_modules
 	${go} clean
 	cd demo && ${go} clean
+	cd samples/rpc/proto && make clean
 tidy:
 	${go} mod tidy
 	cd demo && ${go} mod tidy
@@ -40,6 +41,7 @@ format:
 	cd line/db/tools/gmodel && ${go} fmt ./...
 	cd samples/rpc/http/client && bun run format
 build:
+	bun install
 	${go} build ./...
 	cd demo && ${go} build ./...
 	cd demo/redis && ${go} build ./...
@@ -47,12 +49,16 @@ build:
 	cd line/db/tools/gdao && ${go} build ./...
 	cd line/db/tools/gmodel && ${go} build ./...
 	cd samples/rpc/http/client && bun run build
+rebuild: clean gen wire build
 wire:
 	cd samples/certificate && wire
 	cd samples/gindot && wire
 	cd samples/sconfig && wire
 	cd samples/simple && wire
 	cd samples/db/redis_client && wire
+	cd samples/rpc/http/server && wire
+gen:
+	cd samples/rpc/proto && make gen
 
 lint:
 	${go} vet ./...

@@ -486,14 +486,14 @@ const file_api_v1_hi_proto_rawDesc = "" +
 	"\x11BothStreamRequest\x12\x1a\n" +
 	"\bgreeting\x18\x01 \x01(\tR\bgreeting\"0\n" +
 	"\x12BothStreamResponse\x12\x1a\n" +
-	"\bgreeting\x18\x01 \x01(\tR\bgreeting2\xc9\x02\n" +
+	"\bgreeting\x18\x01 \x01(\tR\bgreeting2\xd1\x02\n" +
 	"\tHiService\x12+\n" +
 	"\x02Hi\x12\x11.api.v1.HiRequest\x1a\x12.api.v1.HiResponse\x124\n" +
-	"\x05Write\x12\x14.api.v1.WriteRequest\x1a\x15.api.v1.WriteResponse\x12I\n" +
-	"\fServerStream\x12\x1b.api.v1.ServerStreamRequest\x1a\x1c.api.v1.ServerStreamResponse\x12I\n" +
-	"\fClientStream\x12\x1b.api.v1.ClientStreamRequest\x1a\x1c.api.v1.ClientStreamResponse\x12C\n" +
+	"\x05Write\x12\x14.api.v1.WriteRequest\x1a\x15.api.v1.WriteResponse\x12K\n" +
+	"\fServerStream\x12\x1b.api.v1.ServerStreamRequest\x1a\x1c.api.v1.ServerStreamResponse0\x01\x12K\n" +
+	"\fClientStream\x12\x1b.api.v1.ClientStreamRequest\x1a\x1c.api.v1.ClientStreamResponse(\x01\x12G\n" +
 	"\n" +
-	"BothStream\x12\x19.api.v1.BothStreamRequest\x1a\x1a.api.v1.BothStreamResponseB\x8f\x01\n" +
+	"BothStream\x12\x19.api.v1.BothStreamRequest\x1a\x1a.api.v1.BothStreamResponse(\x010\x01B\x8f\x01\n" +
 	"\n" +
 	"com.api.v1B\aHiProtoP\x01Z?github.com/scryinfo/dot/samples/rpc/go_out/connect/api/v1;apiv1\xa2\x02\x03AXX\xaa\x02\x06Api.V1\xca\x02\x06Api\\V1\xe2\x02\x12Api\\V1\\GPBMetadata\xea\x02\aApi::V1b\x06proto3"
 

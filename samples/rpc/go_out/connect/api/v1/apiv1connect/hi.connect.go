@@ -49,9 +49,9 @@ const (
 type HiServiceClient interface {
 	Hi(context.Context, *connect.Request[v1.HiRequest]) (*connect.Response[v1.HiResponse], error)
 	Write(context.Context, *connect.Request[v1.WriteRequest]) (*connect.Response[v1.WriteResponse], error)
-	ServerStream(context.Context, *connect.Request[v1.ServerStreamRequest]) (*connect.Response[v1.ServerStreamResponse], error)
-	ClientStream(context.Context, *connect.Request[v1.ClientStreamRequest]) (*connect.Response[v1.ClientStreamResponse], error)
-	BothStream(context.Context, *connect.Request[v1.BothStreamRequest]) (*connect.Response[v1.BothStreamResponse], error)
+	ServerStream(context.Context, *connect.Request[v1.ServerStreamRequest]) (*connect.ServerStreamForClient[v1.ServerStreamResponse], error)
+	ClientStream(context.Context) *connect.ClientStreamForClient[v1.ClientStreamRequest, v1.ClientStreamResponse]
+	BothStream(context.Context) *connect.BidiStreamForClient[v1.BothStreamRequest, v1.BothStreamResponse]
 }
 
 // NewHiServiceClient constructs a client for the api.v1.HiService service. By default, it uses the
@@ -118,27 +118,27 @@ func (c *hiServiceClient) Write(ctx context.Context, req *connect.Request[v1.Wri
 }
 
 // ServerStream calls api.v1.HiService.ServerStream.
-func (c *hiServiceClient) ServerStream(ctx context.Context, req *connect.Request[v1.ServerStreamRequest]) (*connect.Response[v1.ServerStreamResponse], error) {
-	return c.serverStream.CallUnary(ctx, req)
+func (c *hiServiceClient) ServerStream(ctx context.Context, req *connect.Request[v1.ServerStreamRequest]) (*connect.ServerStreamForClient[v1.ServerStreamResponse], error) {
+	return c.serverStream.CallServerStream(ctx, req)
 }
 
 // ClientStream calls api.v1.HiService.ClientStream.
-func (c *hiServiceClient) ClientStream(ctx context.Context, req *connect.Request[v1.ClientStreamRequest]) (*connect.Response[v1.ClientStreamResponse], error) {
-	return c.clientStream.CallUnary(ctx, req)
+func (c *hiServiceClient) ClientStream(ctx context.Context) *connect.ClientStreamForClient[v1.ClientStreamRequest, v1.ClientStreamResponse] {
+	return c.clientStream.CallClientStream(ctx)
 }
 
 // BothStream calls api.v1.HiService.BothStream.
-func (c *hiServiceClient) BothStream(ctx context.Context, req *connect.Request[v1.BothStreamRequest]) (*connect.Response[v1.BothStreamResponse], error) {
-	return c.bothStream.CallUnary(ctx, req)
+func (c *hiServiceClient) BothStream(ctx context.Context) *connect.BidiStreamForClient[v1.BothStreamRequest, v1.BothStreamResponse] {
+	return c.bothStream.CallBidiStream(ctx)
 }
 
 // HiServiceHandler is an implementation of the api.v1.HiService service.
 type HiServiceHandler interface {
 	Hi(context.Context, *connect.Request[v1.HiRequest]) (*connect.Response[v1.HiResponse], error)
 	Write(context.Context, *connect.Request[v1.WriteRequest]) (*connect.Response[v1.WriteResponse], error)
-	ServerStream(context.Context, *connect.Request[v1.ServerStreamRequest]) (*connect.Response[v1.ServerStreamResponse], error)
-	ClientStream(context.Context, *connect.Request[v1.ClientStreamRequest]) (*connect.Response[v1.ClientStreamResponse], error)
-	BothStream(context.Context, *connect.Request[v1.BothStreamRequest]) (*connect.Response[v1.BothStreamResponse], error)
+	ServerStream(context.Context, *connect.Request[v1.ServerStreamRequest], *connect.ServerStream[v1.ServerStreamResponse]) error
+	ClientStream(context.Context, *connect.ClientStream[v1.ClientStreamRequest]) (*connect.Response[v1.ClientStreamResponse], error)
+	BothStream(context.Context, *connect.BidiStream[v1.BothStreamRequest, v1.BothStreamResponse]) error
 }
 
 // NewHiServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -160,19 +160,19 @@ func NewHiServiceHandler(svc HiServiceHandler, opts ...connect.HandlerOption) (s
 		connect.WithSchema(hiServiceMethods.ByName("Write")),
 		connect.WithHandlerOptions(opts...),
 	)
-	hiServiceServerStreamHandler := connect.NewUnaryHandler(
+	hiServiceServerStreamHandler := connect.NewServerStreamHandler(
 		HiServiceServerStreamProcedure,
 		svc.ServerStream,
 		connect.WithSchema(hiServiceMethods.ByName("ServerStream")),
 		connect.WithHandlerOptions(opts...),
 	)
-	hiServiceClientStreamHandler := connect.NewUnaryHandler(
+	hiServiceClientStreamHandler := connect.NewClientStreamHandler(
 		HiServiceClientStreamProcedure,
 		svc.ClientStream,
 		connect.WithSchema(hiServiceMethods.ByName("ClientStream")),
 		connect.WithHandlerOptions(opts...),
 	)
-	hiServiceBothStreamHandler := connect.NewUnaryHandler(
+	hiServiceBothStreamHandler := connect.NewBidiStreamHandler(
 		HiServiceBothStreamProcedure,
 		svc.BothStream,
 		connect.WithSchema(hiServiceMethods.ByName("BothStream")),
@@ -207,14 +207,14 @@ func (UnimplementedHiServiceHandler) Write(context.Context, *connect.Request[v1.
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.v1.HiService.Write is not implemented"))
 }
 
-func (UnimplementedHiServiceHandler) ServerStream(context.Context, *connect.Request[v1.ServerStreamRequest]) (*connect.Response[v1.ServerStreamResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.v1.HiService.ServerStream is not implemented"))
+func (UnimplementedHiServiceHandler) ServerStream(context.Context, *connect.Request[v1.ServerStreamRequest], *connect.ServerStream[v1.ServerStreamResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("api.v1.HiService.ServerStream is not implemented"))
 }
 
-func (UnimplementedHiServiceHandler) ClientStream(context.Context, *connect.Request[v1.ClientStreamRequest]) (*connect.Response[v1.ClientStreamResponse], error) {
+func (UnimplementedHiServiceHandler) ClientStream(context.Context, *connect.ClientStream[v1.ClientStreamRequest]) (*connect.Response[v1.ClientStreamResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.v1.HiService.ClientStream is not implemented"))
 }
 
-func (UnimplementedHiServiceHandler) BothStream(context.Context, *connect.Request[v1.BothStreamRequest]) (*connect.Response[v1.BothStreamResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("api.v1.HiService.BothStream is not implemented"))
+func (UnimplementedHiServiceHandler) BothStream(context.Context, *connect.BidiStream[v1.BothStreamRequest, v1.BothStreamResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("api.v1.HiService.BothStream is not implemented"))
 }
