@@ -65,6 +65,10 @@ wire:
 	cd samples/simple && wire
 	cd samples/db/redis_client && wire
 	cd samples/rpc/http/server && wire
+	cd samples/rpc/bl && wire
+	cd samples/rpc/nobl/client && wire
+	cd samples/rpc/nobl/server && wire
+	cd samples/rpc/nobl/server2 && wire
 gen:
 	cd samples/rpc/proto && make gen
 

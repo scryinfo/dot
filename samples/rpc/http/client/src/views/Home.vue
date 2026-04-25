@@ -63,22 +63,30 @@ function onWrite(): boolean {
   })
   return false
 }
-function onServerStream(): boolean {
-  hiService.serverStream({ greeting: serverStreamData.value }).then((res) => {
-    serverStreamReturn.value = res.reply
-  })
-  return false
+async function onServerStream() {
+  const stream = hiService.serverStream({ greeting: serverStreamData.value })
+  for await (const res of stream) {
+    serverStreamReturn.value = serverStreamReturn.value + res.reply + '\n'
+  }
 }
-function onClientStream(): boolean {
-  hiService.clientStream({ greeting: clientStreamData.value }).then((res) => {
-    clientStreamReturn.value = res.greeting
-  })
-  return false
+async function onClientStream() {
+  const res = await hiService.clientStream(
+    (async function* () {
+      yield { greeting: clientStreamData.value + 'first' }
+      yield { greeting: clientStreamData.value + 'second' }
+    })(),
+  )
+  clientStreamReturn.value = res.greeting
 }
-function onBoth(): boolean {
-  hiService.bothStream({ greeting: bothData.value }).then((res) => {
-    bothReturn.value = res.greeting
-  })
-  return false
+async function onBoth() {
+  const stream = hiService.bothStream(
+    (async function* () {
+      yield { greeting: bothData.value + 'first' }
+      yield { greeting: bothData.value + 'second' }
+    })(),
+  )
+  for await (const res of stream) {
+    bothReturn.value = bothReturn.value + res.greeting + '\n'
+  }
 }
 </script>

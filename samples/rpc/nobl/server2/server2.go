@@ -1,35 +1,54 @@
-// // Scry Info.  All rights reserved.
-// // license that can be found in the license file.
+// Scry Info.  All rights reserved.
+// license that can be found in the license file.
 
 package main
 
-// import (
-// 	"os"
+import (
+	"os"
 
-// 	"github.com/scryinfo/dot/dot"
-// 	"github.com/scryinfo/dot/dots/line"
-// 	"github.com/scryinfo/dot/sample/grpc/nobl"
-// 	"github.com/scryinfo/scryg/sutils/ssignal"
-// 	"go.uber.org/zap"
-// )
+	"github.com/google/wire"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/sconfig"
+	"github.com/scryinfo/scryg/sutils/ssignal"
+)
 
-// func main() {
-// 	l, err := line.BuildAndStart(add) //first step create line and dots
-// 	if err != nil {
-// 		dot.Logger().Errorln("", zap.Error(err))
-// 		return
-// 	}
-// 	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
+type Line struct {
+	SConfig *sconfig.SConfig
+	Logger  *dot.LoggerType
+}
 
-// 	dot.Logger().Infoln("dot ok")
-// 	//second step ....
+type LineConfig struct {
+	Log dot.LogConfig
+}
 
-// 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
-// 		return false
-// 	})
+func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
+	return sconfig.NewLiceConfig[LineConfig](config)
+}
 
-// }
+var LineSet = wire.NewSet(
+	wire.Struct(new(Line), "*"),
+	wire.FieldsOf(new(*LineConfig), "Log"),
+	NewLineConfig,
+	sconfig.NewConfig,
+	dot.NewLogger,
+)
 
-// func add(l dot.Line) error {
-// 	return l.PreAdd(nobl.HiServerTypeLives()...)
-// }
+func main() {
+	// dot.InitLogger(new(dot.TestLogConfig()))
+	line, clear, err := InitializeService()
+	if err != nil {
+		dot.Logger.Error().Err(err).Msg("initialize service failed")
+		return
+	}
+	if clear != nil {
+		defer clear()
+	}
+
+	dot.Logger.Info().Msg("dot ok")
+	//second step ....
+	_ = line
+
+	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
+		return false
+	})
+}

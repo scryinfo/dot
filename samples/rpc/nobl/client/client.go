@@ -1,58 +1,54 @@
-// // Scry Info.  All rights reserved.
-// // license that can be found in the license file.
+// Scry Info.  All rights reserved.
+// license that can be found in the license file.
 
 package main
 
-// import (
-// 	"context"
-// 	"fmt"
-// 	"os"
-// 	"time"
+import (
+	"os"
 
-// 	"github.com/scryinfo/dot/dots/line"
-// 	"github.com/scryinfo/dot/sample/grpc/go_out/hidot"
-// 	"github.com/scryinfo/dot/sample/grpc/nobl"
-// 	"go.uber.org/zap"
+	"github.com/google/wire"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/sconfig"
+	"github.com/scryinfo/scryg/sutils/ssignal"
+)
 
-// 	"github.com/scryinfo/dot/dot"
-// 	"github.com/scryinfo/scryg/sutils/ssignal"
-// )
+type Line struct {
+	SConfig *sconfig.SConfig
+	Logger  *dot.LoggerType
+}
 
-// func main() {
-// 	l, err := line.BuildAndStart(add) //first step create line and dots
-// 	if err != nil {
-// 		dot.Logger().Errorln("", zap.Error(err))
-// 		return
-// 	}
-// 	defer line.StopAndDestroy(l, true) //fourth step stop and destroy dots
+type LineConfig struct {
+	Log dot.LogConfig
+}
 
-// 	dot.Logger().Infoln("dot ok")
-// 	//second step ....
+func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
+	return sconfig.NewLiceConfig[LineConfig](config)
+}
 
-// 	go func() {
-// 		dd, _ := l.ToInjecter().GetByLiveID(dot.LiveID(nobl.HiClientTypeID))
-// 		if hiclient, ok := dd.(*nobl.HiClient); ok {
-// 			logger := dot.Logger()
-// 			for i := 0; i < 1000; i++ {
-// 				name := fmt.Sprintf("client: %d", i)
-// 				req, err := hiclient.HiClient().Hi(context.Background(), &hidot.HiReq{Name: name})
-// 				if err != nil {
-// 					logger.Infoln(err.Error())
-// 				} else {
-// 					logger.Infoln(fmt.Sprintf("%s %s", name, req.Name))
-// 				}
-// 				time.Sleep(100 * time.Millisecond)
-// 			}
-// 			logger.Infoln("done")
-// 		}
-// 	}()
+var LineSet = wire.NewSet(
+	wire.Struct(new(Line), "*"),
+	wire.FieldsOf(new(*LineConfig), "Log"),
+	NewLineConfig,
+	sconfig.NewConfig,
+	dot.NewLogger,
+)
 
-// 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
-// 		return false
-// 	})
+func main() {
+	// dot.InitLogger(new(dot.TestLogConfig()))
+	line, clear, err := InitializeService()
+	if err != nil {
+		dot.Logger.Error().Err(err).Msg("initialize service failed")
+		return
+	}
+	if clear != nil {
+		defer clear()
+	}
 
-// }
+	dot.Logger.Info().Msg("dot ok")
+	//second step ....
+	_ = line
 
-// func add(l dot.Line) error {
-// 	return l.PreAdd(nobl.HiClientTypeLives()...)
-// }
+	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
+		return false
+	})
+}
