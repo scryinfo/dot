@@ -15,22 +15,13 @@ $(info "go: ${go}")
 clean:
 	cd rpc/proto && make clean
 	cd rpc/web_rpc/client && rm -rf dist node_modules bun.lock
-	cd rpc/web_rpc/server && find . -maxdepth 1 -type f -executable -delete && rm -rf *.exe *.log
-	cd certificate && find . -maxdepth 1 -type f -executable -delete && rm -rf *.exe *.log
-	cd gindot && find . -maxdepth 1 -type f -executable -delete && rm -rf *.exe *.log
-	cd rpc/bl/client && find . -maxdepth 1 -type f -executable -delete && rm -rf *.exe *.log
-	cd rpc/bl/server && find . -maxdepth 1 -type f -executable -delete && rm -rf *.exe *.log
-	cd rpc/bl/server2 && find . -maxdepth 1 -type f -executable -delete && rm -rf *.exe *.log
-	cd rpc/nobl/client && find . -maxdepth 1 -type f -executable -delete && rm -rf *.exe *.log
-	cd rpc/nobl/server && find . -maxdepth 1 -type f -executable -delete && rm -rf *.exe *.log
-	cd sconfig/ && find . -maxdepth 1 -type f -executable -delete && rm -rf *.exe *.log
-	cd simple && find . -maxdepth 1 -type f -executable -delete && rm -rf *.exe *.log
+	find . -type f \( -executable -o -name "*.log" \) -delete
 upgrade:
 	cd rpc/web_rpc/client && bun update --latest
 format:
 	cd rpc/web_rpc/client && bun run format
 build: samples
-	cd rpc/web_rpc/client && bun run build
+	cd rpc/web_rpc/client && bun install && bun run build
 rebuild: clean gen wire build
 
 wire:
