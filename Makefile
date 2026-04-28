@@ -10,14 +10,13 @@ else
 endif
 $(info "go: ${go}")
 
-.PHONY: clean upgrade format build
+.PHONY: clean upgrade format build samples
 
 clean:
 	rm -rf go.sum go.work.sum demo/go.sum node_modules bun.lock
 	${go} clean
 	cd demo && ${go} clean
-	cd samples/rpc/proto && make clean
-	cd samples/rpc/http/client && rm -rf dist node_modules bun.lock
+	cd samples && make clean
 tidy:
 	${go} mod tidy
 	cd demo && ${go} mod tidy
@@ -32,7 +31,7 @@ upgrade:
 	cd demo/redis/orm && ${go} get -t -u ./... && ${go} mod tidy
 	cd line/db/tools/gdao && ${go} get -t -u ./... && ${go} mod tidy
 	cd line/db/tools/gmodel && ${go} get -t -u ./... && ${go} mod tidy
-	cd samples/rpc/http/client && bun update --latest
+	cd samples && make upgrade
 format:
 	${go} fmt ./...
 	cd demo && ${go} fmt ./...
@@ -40,7 +39,7 @@ format:
 	cd demo/redis/orm && ${go} fmt ./...
 	cd line/db/tools/gdao && ${go} fmt ./...
 	cd line/db/tools/gmodel && ${go} fmt ./...
-	cd samples/rpc/http/client && bun run format
+	cd samples && make format
 build:
 	bun install
 	${go} build ./...
@@ -49,7 +48,7 @@ build:
 	cd demo/redis/orm && ${go} build ./...
 	cd line/db/tools/gdao && ${go} build ./...
 	cd line/db/tools/gmodel && ${go} build ./...
-	cd samples/rpc/http/client && bun run build
+	cd samples && make build
 rebuild: clean gen wire build
 go_fix:
 	${go} fix ./...
@@ -59,18 +58,11 @@ go_fix:
 	cd line/db/tools/gdao && ${go} fix ./...
 	cd line/db/tools/gmodel && ${go} fix ./...
 wire:
-	cd samples/certificate && wire
-	cd samples/gindot && wire
-	cd samples/sconfig && wire
-	cd samples/simple && wire
-	cd samples/db/redis_client && wire
-	cd samples/rpc/http/server && wire
-	cd samples/rpc/bl && wire
-	cd samples/rpc/nobl/client && wire
-	cd samples/rpc/nobl/server && wire
-	cd samples/rpc/nobl/server2 && wire
+	cd samples && make wire
+samples:
+	cd samples && make samples
 gen:
-	cd samples/rpc/proto && make gen
+	cd samples && make gen
 
 lint:
 	${go} vet ./...

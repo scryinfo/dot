@@ -27,7 +27,7 @@ plugins:
       - paths=source_relative
   # TypeScript/Web Plugins
   - remote: buf.build/bufbuild/es:v2.11.0
-    out: ../http/client/src
+    out: ../web_rpc/client/src
     opt:
       - target=ts
       # - import_extension=none

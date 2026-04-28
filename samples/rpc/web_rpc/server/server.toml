@@ -1,0 +1,21 @@
+[log]
+fileName = "log.log"
+maxSize = 1024000
+maxBackups = 3
+maxAge = 7
+compress = false
+level = "info"
+addStdOut = true
+setSlog = true
+[connect]
+addr = ":8089"
+readTimeout = 0
+writeTimeout = 0
+maxConcurrentStreams = 100
+allowedOrigins = []
+allowHeaders = []
+allowMethods = ["GET", "POST", "OPTIONS"]
+allowCredentials = true
+unAuthUrls = ["*"]
+optionMethods = true
+shutdownTimeout = 1024000

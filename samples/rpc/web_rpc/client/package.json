@@ -1,0 +1,56 @@
+{
+  "name": "client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "test:unit": "vitest",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "format": "oxfmt . --write"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.12.0",
+    "@connectrpc/connect": "^2.1.1",
+    "@connectrpc/connect-web": "^2.1.1",
+    "vue": "^3.5.33",
+    "vue-router": "^5.0.6"
+  },
+  "devDependencies": {
+    "@tsconfig/node24": "^24.0.4",
+    "@types/jsdom": "^28.0.1",
+    "@types/node": "^25.6.0",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vue/test-utils": "^2.4.9",
+    "@vue/tsconfig": "^0.9.1",
+    "jsdom": "^29.1.0",
+    "npm-run-all2": "^8.0.4",
+    "oxfmt": "^0.47.0",
+    "typescript": "~6.0.3",
+    "vite": "^8.0.10",
+    "vite-plugin-vue-devtools": "^8.1.1",
+    "vitest": "^4.1.5",
+    "vue-tsc": "^3.2.7"
+  },
+  "overrides": {
+    "@vue/compat": "beta",
+    "@vue/compiler-core": "beta",
+    "@vue/compiler-dom": "beta",
+    "@vue/compiler-sfc": "beta",
+    "@vue/compiler-ssr": "beta",
+    "@vue/compiler-vapor": "beta",
+    "@vue/reactivity": "beta",
+    "@vue/runtime-core": "beta",
+    "@vue/runtime-dom": "beta",
+    "@vue/runtime-vapor": "beta",
+    "@vue/server-renderer": "beta",
+    "@vue/shared": "beta",
+    "vue": "beta"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}

@@ -1,11 +1,11 @@
 
-/sample/debug
-/sample/certificate/ca.key
-/sample/certificate/ca.pem
-/sample/certificate/client.key
-/sample/certificate/client.pem
-/sample/certificate/server.key
-/sample/certificate/server.pem
+/samples/debug
+/samples/certificate/ca.key
+/samples/certificate/ca.pem
+/samples/certificate/client.key
+/samples/certificate/client.pem
+/samples/certificate/server.key
+/samples/certificate/server.pem
 
 **/*.log
 **/go.sum
@@ -19,8 +19,19 @@
 /tools/ende/decode/encode.json
 /tools/ende/decode/encode.json_en
 /tools/ende/decode/encode.json_en
-sample/db/tools/dao/
-sample/db/tools/model/has_sub_model.go
-sample/db/tools/model/notice_model.go
-sample/db/tools/model/sub_model.go
 demo/wait_conn/wait_conn
+samples/db/tools/dao/
+samples/db/tools/model/has_sub_model.go
+samples/db/tools/model/notice_model.go
+samples/db/tools/model/sub_model.go
+samples/simple/simple
+samples/sconfig/sconfig
+samples/certificate/certificate
+samples/db/redis_client/redis_client
+samples/gindot/gindot
+samples/rpc/bl/client/bl_client
+samples/rpc/bl/server/bl_server
+samples/rpc/bl/server2/bl_server2
+samples/rpc/nobl/client/nobl_client
+samples/rpc/nobl/server/nobl_server
+samples/rpc/web_rpc/server/web_server
