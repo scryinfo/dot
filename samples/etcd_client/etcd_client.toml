@@ -8,3 +8,6 @@ level = "info"
 addStdOut = true
 setSlog = true
 [etcdClient]
+endpoints = [""]
+# milli second count
+DialTimeout = 5000
