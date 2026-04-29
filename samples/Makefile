@@ -1,5 +1,5 @@
-
 ifeq ($(OS),Windows_NT)
+	EXE := .exe
 	ifneq (,$(findstring MINGW,$(UNAME_S)))
 	    go := ${shell which go}
 	else
@@ -7,6 +7,7 @@ ifeq ($(OS),Windows_NT)
 	endif
 else
 	go := ${shell which go}
+	EXE :=
 endif
 $(info "go: ${go}")
 
@@ -19,7 +20,7 @@ WIRES := certificate etcd_server etcd_client gindot sconfig simple db/redis_clie
 clean:
 	cd rpc/proto && make clean
 	cd rpc/web_rpc/client && rm -rf dist node_modules bun.lock
-	find . -type f \( -executable -o -name "*.log" \) -delete
+	find . -type f \( -executable -o -name "*.log" -o -name "wire_gen.go" \) -delete
 upgrade:
 	cd rpc/web_rpc/client && bun update --latest
 format:
@@ -41,11 +42,6 @@ $(foreach wire,$(WIRES),$(eval $(call wire_rule,$(wire))))
 wire:  $(addsuffix /wire_gen.go, $(WIRES))
 
 
-ifeq ($(OS),Windows_NT)
-	EXE := .exe
-else
-	EXE :=
-endif
 define sample_rule
 $1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go
 	cd $1 && ${go} build -o $(notdir $1) ./...
