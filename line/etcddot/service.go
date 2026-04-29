@@ -5,17 +5,17 @@ import (
 	"go.etcd.io/etcd/server/v3/embed"
 )
 
-type ServiceConfig struct {
+type ServerConfig struct {
 	embed.Config
 }
 
-func NewService(conf *ServiceConfig) (*Service, func(), error) {
+func NewServer(conf *ServerConfig) (*Server, func(), error) {
 	e, err := embed.StartEtcd(&conf.Config)
 	if err != nil {
 		dot.Logger.Error().Err(err).Send()
 		return nil, nil, err
 	}
-	d := Service{
+	d := Server{
 		conf: *conf,
 		etct: e,
 	}
@@ -27,7 +27,7 @@ func NewService(conf *ServiceConfig) (*Service, func(), error) {
 	}, nil
 }
 
-type Service struct {
-	conf ServiceConfig
+type Server struct {
+	conf ServerConfig
 	etct *embed.Etcd
 }

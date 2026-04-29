@@ -10,13 +10,13 @@ import (
 )
 
 type HttpClientConfig struct {
-	ForceAttemptHTTP2   bool
-	DisableCompression  bool
-	MaxIdleConns        int
-	MaxIdleConnsPerHost int
-	MaxConnsPerHost     int
+	ForceAttemptHTTP2   bool `json:"forceAttemptHTTP2" toml:"forceAttemptHTTP2" yaml:"forceAttemptHTTP2"`
+	DisableCompression  bool `json:"disableCompression" toml:"disableCompression" yaml:"disableCompression"`
+	MaxIdleConns        int  `json:"maxIdleConns" toml:"maxIdleConns" yaml:"maxIdleConns"`
+	MaxIdleConnsPerHost int  `json:"maxIdleConnsPerHost" toml:"maxIdleConnsPerHost" yaml:"maxIdleConnsPerHost"`
+	MaxConnsPerHost     int  `json:"maxConnsPerHost" toml:"maxConnsPerHost" yaml:"maxConnsPerHost"`
 	// sample "http://localhost:8089"
-	ServerAddress string
+	ServerAddress string `json:"serverAddress" toml:"serverAddress" yaml:"serverAddress"`
 }
 
 func NewHttpClientEx(config *HttpClientConfig, logger *dot.LoggerType) (*HttpClientEx, error) {
@@ -31,6 +31,7 @@ func NewHttpClientEx(config *HttpClientConfig, logger *dot.LoggerType) (*HttpCli
 	if err != nil {
 		return nil, err
 	}
+
 	return &HttpClientEx{
 		client: http.Client{
 			Transport: tr,

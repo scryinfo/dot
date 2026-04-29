@@ -35,3 +35,10 @@ samples/rpc/bl/server2/bl_server2
 samples/rpc/nobl/client/nobl_client
 samples/rpc/nobl/server/nobl_server
 samples/rpc/web_rpc/server/web_server
+samples/etcd_client/etcd_client
+samples/etcd_server/etcd_server
+samples/rpc/bl/bl_client/bl_client
+samples/rpc/bl/bl_server/bl_server
+samples/rpc/nobl/nobl_client/nobl_client
+samples/rpc/nobl/nobl_server/nobl_server
+samples/rpc/web_rpc/web_rpc_server/web_rpc_server
