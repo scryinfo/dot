@@ -11,6 +11,10 @@ endif
 $(info "go: ${go}")
 
 .PHONY: clean upgrade format build samples
+WIRES := certificate etcd_server etcd_client gindot sconfig simple db/redis_client \
+	rpc/web_rpc/web_rpc_server \
+	rpc/nobl/nobl_client rpc/nobl/nobl_server \
+	rpc/bl/bl_client rpc/bl/bl_server rpc/bl/bl_server2
 
 clean:
 	cd rpc/proto && make clean
@@ -24,29 +28,30 @@ build: samples
 	cd rpc/web_rpc/client && bun install && bun run build
 rebuild: clean gen wire build
 
-wire:
-	cd certificate && wire
-	cd gindot && wire
-	cd sconfig && wire
-	cd simple && wire
-	cd db/redis_client && wire
-	cd rpc/web_rpc/server && wire
-	cd rpc/nobl/client && wire
-	cd rpc/nobl/server && wire
-	cd rpc/bl/client && wire
-	cd rpc/bl/server && wire
-	cd rpc/bl/server2 && wire
-samples:
-	cd certificate && ${go} build -o certificate ./...
-	cd gindot && ${go} build -o gindot ./...
-	cd sconfig && ${go} build -o sconfig ./...
-	cd simple && ${go} build -o simple ./...
-	cd db/redis_client && ${go} build -o redis_client ./...
-	cd rpc/web_rpc/server && ${go} build -o web_server ./...
-	cd rpc/nobl/client && ${go} build -o nobl_client ./...
-	cd rpc/nobl/server && ${go} build -o nobl_server ./...
-	cd rpc/bl/client && ${go} build -o bl_client ./...
-	cd rpc/bl/server && ${go} build -o bl_server ./...
-	cd rpc/bl/server2 && ${go} build -o bl_server2 ./...
+WIRES := certificate etcd_server etcd_client gindot sconfig simple db/redis_client \
+	rpc/web_rpc/web_rpc_server \
+	rpc/nobl/nobl_client rpc/nobl/nobl_server \
+	rpc/bl/bl_client rpc/bl/bl_server rpc/bl/bl_server2
+
+define wire_rule
+$1/wire_gen.go: $1/$(notdir $1).go
+	cd $1 && wire
+endef
+$(foreach wire,$(WIRES),$(eval $(call wire_rule,$(wire))))
+wire:  $(addsuffix /wire_gen.go, $(WIRES))
+
+
+ifeq ($(OS),Windows_NT)
+	EXE := .exe
+else
+	EXE :=
+endif
+define sample_rule
+$1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go
+	cd $1 && ${go} build -o $(notdir $1) ./...
+endef
+$(foreach wire,$(WIRES),$(eval $(call sample_rule,$(wire))))
+samples: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))$(EXE))
+
 gen:
 	cd rpc/proto && make gen

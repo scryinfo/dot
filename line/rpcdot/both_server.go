@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewBothHttpServer(conf *HttpServerConfig, connectMux *http.ServeMux, grpcServer *grpc.Server, logger *dot.LoggerType, middle HandlerMiddle) (*BothHttpServer, func(), error) {
+func NewBothHttpServer(conf *ConnectServerConfig, connectMux *http.ServeMux, grpcServer *grpc.Server, logger *dot.LoggerType, middle HandlerMiddle) (*BothHttpServer, func(), error) {
 	if conf.ShutdownTimeout < 0 {
 		conf.ShutdownTimeout = 10 * time.Second
 	}
@@ -69,7 +69,7 @@ func NewBothHttpServer(conf *HttpServerConfig, connectMux *http.ServeMux, grpcSe
 		WriteTimeout: conf.WriteTimeout,
 	}
 	d := &BothHttpServer{
-		ConnectHttpServer: ConnectHttpServer{
+		ConnectServer: ConnectServer{
 			HTTPServer: server,
 			conf:       *conf,
 			logger:     logger,
@@ -84,5 +84,5 @@ func NewBothHttpServer(conf *HttpServerConfig, connectMux *http.ServeMux, grpcSe
 }
 
 type BothHttpServer struct {
-	ConnectHttpServer
+	ConnectServer
 }

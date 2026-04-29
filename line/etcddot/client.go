@@ -9,9 +9,12 @@ import (
 
 func NewClient(conf *ClientConfig) (*Client, func(), error) {
 
+	if conf.DialTimeout < 0 {
+		conf.DialTimeout = 10
+	}
 	client, err := clientv3.New(clientv3.Config{
 		Endpoints:   conf.Endpoints,
-		DialTimeout: conf.DialTimeout,
+		DialTimeout: conf.DialTimeoutDuration(),
 	})
 	if err != nil {
 		dot.Logger.Error().Err(err).Send()
@@ -33,11 +36,20 @@ func NewClient(conf *ClientConfig) (*Client, func(), error) {
 }
 
 type ClientConfig struct {
-	Endpoints   []string
-	DialTimeout time.Duration
+	Endpoints []string
+	// milli second count
+	DialTimeout int32
 }
 
 type Client struct {
 	conf   ClientConfig
 	client *clientv3.Client
+}
+
+func (p *Client) EtcdClient() *clientv3.Client {
+	return p.client
+}
+
+func (p *ClientConfig) DialTimeoutDuration() time.Duration {
+	return time.Duration(p.DialTimeout) * time.Millisecond
 }

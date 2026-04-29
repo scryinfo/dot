@@ -24,32 +24,32 @@ func NewConnectHttpServerMux() *ConnectHttpServerMux {
 
 type HandlerMiddle func(w http.ResponseWriter, r *http.Request) error
 
-type HttpServerConfig struct {
+type ConnectServerConfig struct {
 	// sample ":8080"
-	Addr                 string
-	ReadTimeout          time.Duration
-	WriteTimeout         time.Duration
-	MaxConcurrentStreams uint32
-	AllowedOrigins       []string
-	AllowHeaders         []string
-	AllowMethods         []string
-	AllowCredentials     bool
+	Addr                 string        `json:"addr" toml:"addr" yaml:"addr"`
+	ReadTimeout          time.Duration `json:"readTimeout" toml:"readTimeout" yaml:"readTimeout"`
+	WriteTimeout         time.Duration `json:"writeTimeout" toml:"writeTimeout" yaml:"writeTimeout"`
+	MaxConcurrentStreams uint32        `json:"maxConcurrentStreams" toml:"maxConcurrentStreams" yaml:"maxConcurrentStreams"`
+	AllowedOrigins       []string      `json:"allowedOrigins" toml:"allowedOrigins" yaml:"allowedOrigins"`
+	AllowHeaders         []string      `json:"allowHeaders" toml:"allowHeaders" yaml:"allowHeaders"`
+	AllowMethods         []string      `json:"allowMethods" toml:"allowMethods" yaml:"allowMethods"`
+	AllowCredentials     bool          `json:"allowCredentials" toml:"allowCredentials" yaml:"allowCredentials"`
 	// dont auth these urls,sample: ["/login", "/rpc/test"]
-	UnAuthUrls []string
+	UnAuthUrls []string `json:"unAuthUrls" toml:"unAuthUrls" yaml:"unAuthUrls"`
 	// if it is true, all OPTIONS requests will be returned ok
-	OptionMethods bool
-
-	ShutdownTimeout time.Duration
+	OptionMethods bool `json:"optionMethods" toml:"optionMethods" yaml:"optionMethods"`
+	// shutdown timeout
+	ShutdownTimeout time.Duration `json:"shutdownTimeout" toml:"shutdownTimeout" yaml:"shutdownTimeout"`
 }
 
-type ConnectHttpServer struct {
+type ConnectServer struct {
 	HTTPServer *http.Server
-	conf       HttpServerConfig
+	conf       ConnectServerConfig
 	logger     *dot.LoggerType
 	started    atomic.Bool
 }
 
-func NewConnetHttpServer(conf *HttpServerConfig, connetMux *ConnectHttpServerMux, logger *dot.LoggerType, middle HandlerMiddle) (*ConnectHttpServer, func(), error) {
+func NewConnetHttpServer(conf *ConnectServerConfig, connetMux *ConnectHttpServerMux, logger *dot.LoggerType, middle HandlerMiddle) (*ConnectServer, func(), error) {
 	if conf.ShutdownTimeout < 0 {
 		conf.ShutdownTimeout = 10 * time.Second
 	}
@@ -117,7 +117,7 @@ func NewConnetHttpServer(conf *HttpServerConfig, connetMux *ConnectHttpServerMux
 		ReadTimeout:  conf.ReadTimeout,
 		WriteTimeout: conf.WriteTimeout,
 	}
-	d := &ConnectHttpServer{
+	d := &ConnectServer{
 		HTTPServer: server,
 		conf:       *conf,
 		logger:     logger,
@@ -130,7 +130,7 @@ func NewConnetHttpServer(conf *HttpServerConfig, connetMux *ConnectHttpServerMux
 	}, nil
 }
 
-func (p *ConnectHttpServer) Start() {
+func (p *ConnectServer) Start() {
 	p.logger.Info().Msg("rpc api init")
 	if p.started.Swap(true) {
 		return
@@ -145,7 +145,7 @@ func (p *ConnectHttpServer) Start() {
 		}
 	}()
 }
-func (p *ConnectHttpServer) Shoutdown() {
+func (p *ConnectServer) Shoutdown() {
 	if !p.started.Swap(false) {
 		return
 	}
