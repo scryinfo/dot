@@ -24,9 +24,9 @@
     "@types/jsdom": "^28.0.1",
     "@types/node": "^25.6.0",
     "@vitejs/plugin-vue": "^6.0.6",
-    "@vue/test-utils": "^2.4.9",
+    "@vue/test-utils": "^2.4.10",
     "@vue/tsconfig": "^0.9.1",
-    "jsdom": "^29.1.0",
+    "jsdom": "^29.1.1",
     "npm-run-all2": "^8.0.4",
     "oxfmt": "^0.47.0",
     "typescript": "~6.0.3",
@@ -51,6 +51,6 @@
     "vue": "beta"
   },
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": ">=22.12.0"
   }
 }
