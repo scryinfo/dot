@@ -1,81 +1,122 @@
 [中文](./README-cn.md)  
-[EN](./README.md)  
-# dot  
-Component development specification, including component definition, component dependencies, component life cycle, dependency injection, and common basic components  
-* Dot: A component which has no type or interface requirements, anything can be a component  
-* Line: A container that holds components, adds, deletes, modifies, and injects dependencies into components  
-* Newer:  Construct component, the Newer is used to construct the component, and if it is not specified, then construct it by default "refect.New"
-* Lifer: Is the component life cycle management interface, the implementation of the interface and the method will be automatically run by Line, the following are the four interfaces 
+[EN](./README.md)
+
+# dot
+
+Component development specification, including component definition, component dependencies, component life cycle, dependency injection, and common basic components
+
+- Dot: A component which has no type or interface requirements, anything can be a component
+- Line: the collect of dot components
+
+- Injecter((wire)[github.com/google/wire]) ：It is component dependency injection, base on wire
+
+[the simple samp1e](./samples/simple)
+
 ```go
-Creator
-Starter
-Stopper
-Destroyer
+// file name: simple.go
+// Scry Info.  All rights reserved.
+// license that can be found in the license file.
+
+package main
+
+import (
+	"os"
+
+	"github.com/google/wire"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/sconfig"
+	"github.com/scryinfo/scryg/sutils/ssignal"
+)
+
+type Line struct {
+	SConfig *sconfig.SConfig
+	Logger  *dot.LoggerType
+}
+
+type LineConfig struct {
+	Log dot.LogConfig
+}
+
+func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
+	return sconfig.NewLiceConfig[LineConfig](config)
+}
+
+var LineSet = wire.NewSet(
+	NewLineConfig,
+	wire.Struct(new(Line), "*"),
+	sconfig.NewConfig,
+	dot.NewLogger,
+	wire.FieldsOf(new(*LineConfig), "Log"),
+)
+
+func main() {
+	line, clean, err := InitializeService()
+	if err != nil {
+		dot.Logger.Error().Err(err).Msg("initialize service failed")
+		return
+	}
+	if clean != nil {
+		defer clean()
+	}
+	dot.Logger.Info().Msg("line run")
+
+	_ = line
+
+	ssignal.WaitCtrlC(func(s os.Signal) bool {
+		return false
+	})
+	dot.Logger.Info().Msg("line exist")
+}
+
 ```
-* Injecter ：It is component dependency injection, adding, deleting and checking components. The creation process of components added through this interface is completed by ourselves, which is part of Line   
 
-The process that component runs as follows：  
-***
-Create Config and Log  
-1. Make Default Log
-2. Make Config 
-3. Make Log of config
-***
-Create  
-1. Builder.BeforeCreate 
-2. dot.Newer
-3. dot.SetterLine
-4. dot.SetterTypeAndLiveId
-5. Events.BeforeCreate //for type id
-6. Events.BeforeCreate //for live id
-7. dot.Creator
-8. Events.AfterCreate //for live id
-9. Events.AfterCreate //for type id, go to "2. Newer", untill all done  
-10. Inject all dependentes of dots  
-11. AfterAllInjecter  
-12. Builder.AfterCreate  
-***
-Start  
-1. Builder.BeforeStart 
-2. Events.BeforeStart
-3. Events.BeforeStart //for live id
-4. dot.Starter
-5. Events.AfterStart //for live id
-6. Events.AfterStart //go to "2. Events.BeforeStart", untill all done
-7. dot.AfterAllStart
-8. Builder.AfterStart  
-***
-Stop  
-1. Builder.BeforeStop
-2. dot.BeforeAllStopper
-3. Events.BeforeStop //for type id
-4. Events.BeforeStop //for live id
-5. dot.Stopper
-6. Events.AfterStop //for live id
-7. Events.AfterStop //for type id go to "2. Events.BeforeStop", until all done
-8. Builder.AfterStop  
-***
-Destroy  
-1. Builder.BeforeDestroy 
-2. Events.BeforeDestroy //for type id
-3. Events.BeforeDestroy //for live id
-4. dot.Destroyer
-5. Events.AfterStop //for live id
-6. Events.AfterStop //for type id go to "2. Events.BeforeDestroy", until all done
-7. Builder.AfterDestroy  
+how to run it：
 
-The relationships between components can be set by configuration files or code, Line computes the dependencies between components, regardless of the order in which they are created .
+```bash
+# make the file wire.go
+# run the command
+wire
+# config the simple.toml file
+# run the command
+go run simple.go wire_gen.go
+```
 
-# Default components 
-## Config: dots/sconfig
-Now use the json format,  later will support toml, yaml, command line, and environment variables.
-## Log: dots/slog
-High performance logs based on zap.
+# Default components
 
-## GRPC client balance:  dots/grpc/conns
- Client load balancing for GRPC. "sample /grpc_conns" is an example.
-## Certificate generated: dots/certificate
+## (Config)[./line/sconfig]
+
+the json/toml/yaml format, command line, and environment variables.
+
+## (Log)[./line/slog]
+
+High performance logs based on zerolog.
+
+## (Certificate generated)[./line/certificate]
+
 Generate root and sub certificates. "sample/certificate" is an example.
 
-# [Code Style -- Go](https://github.com/scryinfo/scryg/blob/master/codestyle_go.md)
+## (db)[./line/db]
 
+## (etcd)[./line/etcd]
+
+etcd (client)[go.etcd.io/etcd/client/v3] and (server)[go.etcd.io/etcd/server/v3].
+
+## (gindot)[./line/gindot]
+
+dot for (gin)[github.com/gin-gonic/gin]
+
+## (jsonrpc2)[./line/jsonrpc2]
+
+## (rpcdot)[./line/rpcdot]
+
+dot for (grpc)[google.golang.org/grpc] and (connect-rpc)[github.com/connectrpc/connect-go]  
+dot HandlerMiddle: auth middleware for connect-rpc or grpc  
+dot connect-rpc - HttpClientEx:
+dot connect-rpc - ConnectHttpServerMux:
+dot connect-rpc - ConnectServer:
+dot connect-rpc - ConnectServerEtcd: etcd registry for connect-rpc
+dot grpc - GrpcConnectEx: grpc connect middleware
+dot grpc - GrpcClientEtcd: grpc connect with etcd
+dot grpc - grpc.Server: grpc server
+
+# [Code Style -- Go](https://github.com/scryinfo/scryg/blob/master/codestyle_go.md)
