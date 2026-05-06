@@ -20,7 +20,7 @@
       <div v-text="serverStreamReturn"></div>
     </div>
     <div>
-      <h1>client stream</h1>
+      <h1>client stream(dont support)</h1>
       <input
         placeholder="Please input data"
         v-model="clientStreamData"
@@ -29,7 +29,7 @@
       <div v-text="clientStreamReturn"></div>
     </div>
     <div>
-      <h1>both sides</h1>
+      <h1>both sides(dont support)</h1>
       <input placeholder="Please input data" v-model="bothData" @keyup.enter="onBoth" />
       <div v-text="bothReturn"></div>
     </div>

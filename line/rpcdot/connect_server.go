@@ -35,6 +35,7 @@ type ConnectServerConfig struct {
 	AllowMethods         []string      `json:"allowMethods" toml:"allowMethods" yaml:"allowMethods"`
 	AllowCredentials     bool          `json:"allowCredentials" toml:"allowCredentials" yaml:"allowCredentials"`
 	// dont auth these urls,sample: ["/login", "/rpc/test"]
+	// ["*"] dont auth all urls
 	UnAuthUrls []string `json:"unAuthUrls" toml:"unAuthUrls" yaml:"unAuthUrls"`
 	// if it is true, all OPTIONS requests will be returned ok
 	OptionMethods bool `json:"optionMethods" toml:"optionMethods" yaml:"optionMethods"`
@@ -53,7 +54,7 @@ func NewConnetHttpServer(conf *ConnectServerConfig, connetMux *ConnectHttpServer
 	if conf.ShutdownTimeout < 0 {
 		conf.ShutdownTimeout = 10 * time.Second
 	}
-	if len(conf.UnAuthUrls) < 1 {
+	if len(conf.UnAuthUrls) > 0 {
 		unauthUrls = conf.UnAuthUrls
 	}
 	if len(conf.AllowMethods) < 1 {

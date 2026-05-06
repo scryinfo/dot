@@ -17,7 +17,7 @@ func NewBothHttpServer(conf *ConnectServerConfig, connectMux *http.ServeMux, grp
 	if conf.ShutdownTimeout < 0 {
 		conf.ShutdownTimeout = 10 * time.Second
 	}
-	if len(conf.UnAuthUrls) < 1 {
+	if len(conf.UnAuthUrls) > 0 {
 		unauthUrls = conf.UnAuthUrls
 	}
 	allowMethods := strings.Join(conf.AllowMethods, ",")
