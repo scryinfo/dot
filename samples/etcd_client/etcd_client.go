@@ -48,7 +48,12 @@ func main() {
 	}
 	dot.Logger.Info().Msg("line run")
 
-	_ = line
+	err = line.EtcdClient.Ping()
+	if err != nil {
+		dot.Logger.Error().Err(err).Msg("ping failed")
+		return
+	}
+	dot.Logger.Info().Msg("ping success")
 
 	ssignal.WaitCtrlC(func(s os.Signal) bool {
 		return false

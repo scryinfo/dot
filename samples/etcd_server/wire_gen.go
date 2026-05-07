@@ -26,7 +26,7 @@ func InitializeService() (*Line, func(), error) {
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
 	serverConfig := &lineConfig.EtcdServer
-	server, cleanup, err := etcddot.NewServer(serverConfig)
+	server, cleanup, err := etcddot.NewServer(serverConfig, logger)
 	if err != nil {
 		return nil, nil, err
 	}

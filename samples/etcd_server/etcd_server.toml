@@ -9,3 +9,11 @@ addStdOut = true
 setSlog = true
 
 [etcdServer]
+name = "etcd1"
+listenClientUrls = ["http://127.0.0.1:2379"]
+advertiseClientUrls = ["http://127.0.0.1:2379"]
+listenPeerUrls = ["http://127.0.0.1:2380"]
+advertisePeerUrls = ["http://127.0.0.1:2380"]
+initialClusterToken = "ClusterToken"
+initialCluster = "etcd1=http://127.0.0.1:2380"
+logLevel = "info"

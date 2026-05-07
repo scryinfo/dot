@@ -8,6 +8,6 @@ level = "info"
 addStdOut = true
 setSlog = true
 [etcdClient]
-endpoints = [""]
+endpoints = ["http://127.0.0.1:2379"]
 # milli second count
 DialTimeout = 5000
