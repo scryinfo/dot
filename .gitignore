@@ -52,3 +52,6 @@ samples/sconfig/sconfig.exe
 samples/simple/simple
 samples/simple/simple.exe
 samples/etcd_server/default.etcd
+demo/redis/orm/orm
+line/db/tools/gdao/gdao
+line/db/tools/gmodel/gmodel
