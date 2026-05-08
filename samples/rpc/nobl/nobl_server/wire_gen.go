@@ -30,7 +30,7 @@ func InitializeService() (*Line, func(), error) {
 	hiService := connectimpl.NewHiService(connectHttpServerMux, logger)
 	connectServerConfig := &lineConfig.ConnectServer
 	handlerMiddle := NewHandlerMiddle()
-	connectServer, cleanup, err := rpcdot.NewConnetHttpServer(connectServerConfig, connectHttpServerMux, logger, handlerMiddle)
+	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, connectHttpServerMux, logger, handlerMiddle)
 	if err != nil {
 		return nil, nil, err
 	}

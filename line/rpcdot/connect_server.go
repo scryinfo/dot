@@ -50,7 +50,7 @@ type ConnectServer struct {
 	started    atomic.Bool
 }
 
-func NewConnetHttpServer(conf *ConnectServerConfig, connetMux *ConnectHttpServerMux, logger *dot.LoggerType, middle HandlerMiddle) (*ConnectServer, func(), error) {
+func NewConnetServer(conf *ConnectServerConfig, connetMux *ConnectHttpServerMux, logger *dot.LoggerType, middle HandlerMiddle) (*ConnectServer, func(), error) {
 	if conf.ShutdownTimeout < 0 {
 		conf.ShutdownTimeout = 10 * time.Second
 	}

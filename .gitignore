@@ -55,3 +55,5 @@ samples/etcd_server/default.etcd
 demo/redis/orm/orm
 line/db/tools/gdao/gdao
 line/db/tools/gmodel/gmodel
+samples/rpc/bl/bl_server/default.etcd/
+samples/rpc/bl/bl_server2/default.etcd/

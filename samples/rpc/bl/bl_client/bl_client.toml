@@ -8,7 +8,8 @@ level = "info"
 addStdOut = true
 setSlog = true
 [etcdClient]
+endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378"]
 # milliseconds
 dialTimeout = 12000
 [grpcClientEtcd]
-name = "etcd://server/sample"
+name = "etcd://server/samples/rpc_bl"

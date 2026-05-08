@@ -4,6 +4,7 @@
 package main
 
 import (
+	"context"
 	"os"
 
 	"github.com/google/wire"
@@ -57,9 +58,14 @@ func main() {
 		defer clear()
 	}
 
-	dot.Logger.Info().Msg("dot ok")
+	line.Logger.Info().Msg("dot ok")
 	//second step ....
-	_ = line
+	res, err := line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt"})
+	if err != nil {
+		line.Logger.Error().Err(err).Msg("hi failed")
+		return
+	}
+	line.Logger.Info().Msg(res.Name)
 
 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false

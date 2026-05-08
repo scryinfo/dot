@@ -1,11 +1,19 @@
 package etcddot
 
 import (
+	"fmt"
 	"net/url"
 	"time"
 
 	"github.com/scryinfo/dot/dot"
 	"go.etcd.io/etcd/server/v3/embed"
+)
+
+var Newer = wire.NewSet(
+	contextex.NewContextEx,
+	dot.NewLogger,
+	NewServer,
+	NewClient,
 )
 
 type ServerConfig struct {
@@ -22,7 +30,7 @@ type ServerConfig struct {
 	LogLevel string `json:"logLevel" toml:"logLevel" yaml:"logLevel"`
 }
 
-func NewServer(conf *ServerConfig, logger *dot.LoggerType) (*Server, func(), error) {
+func NewServer(conf *ServerConfig, ctx *contextex.ContextEx, logger *dot.LoggerType) (*Server, func(), error) {
 	cfgEtcd := embed.NewConfig()
 	cfgEtcd.Name = conf.Name
 	if len(conf.Dir) < 1 {
@@ -76,21 +84,22 @@ func NewServer(conf *ServerConfig, logger *dot.LoggerType) (*Server, func(), err
 		logger.Error().Err(err).Send()
 		return nil, nil, err
 	}
-
-	select {
-	case <-etcdServer.Server.ReadyNotify():
-		logger.Info().Msg("etcd server is ready")
-	case <-time.After(10 * time.Second):
-		logger.Error().Msg("etcd server did not become ready within 10 seconds")
-		etcdServer.Server.Stop()
-		return nil, nil, nil
-	}
+	go func() {
+		select {
+		case <-etcdServer.Server.ReadyNotify():
+			logger.Info().Msg("etcd server is ready")
+		case <-ctx.Context().Done():
+			logger.Error().Msg("etcd server did not become ready within 10 seconds")
+			etcdServer.Server.Stop()
+		}
+	}()
 
 	d := Server{
 		conf:    *conf,
 		cfgEtcd: cfgEtcd,
 		etct:    etcdServer,
 		logger:  logger,
+		ctx:     ctx,
 	}
 	return &d, func() {
 		if d.etct != nil {
@@ -105,4 +114,5 @@ type Server struct {
 	cfgEtcd *embed.Config
 	etct    *embed.Etcd
 	logger  *dot.LoggerType
+	ctx     *contextex.ContextEx
 }

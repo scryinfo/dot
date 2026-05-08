@@ -15,16 +15,22 @@ import (
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
+// sdf
 type Line struct {
-	SConfig   *sconfig.SConfig
-	Logger    *dot.LoggerType
-	HiService *connectimpl.HiService
+	SConfig           *sconfig.SConfig
+	Logger            *dot.LoggerType
+	EtcdServer        *etcddot.Server
+	HiService         *connectimpl.HiService
+	ConnectServer     *rpcdot.ConnectServer
+	ConnectServerEtcd *rpcdot.ConnectServerEtcd
 }
 
 type LineConfig struct {
 	Log               dot.LogConfig
 	EtcdServer        etcddot.ServerConfig
 	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig
+	ConnectServer     rpcdot.ConnectServerConfig
+	EtcdClient        etcddot.ClientConfig
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -36,14 +42,17 @@ func NewHandlerMiddle() rpcdot.HandlerMiddle {
 
 var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
-	wire.FieldsOf(new(*LineConfig), "Log", "EtcdServer", "ConnectServerEtcd"),
+	wire.FieldsOf(new(*LineConfig), "Log", "EtcdServer", "ConnectServerEtcd", "ConnectServer", "EtcdClient"),
 	NewLineConfig,
 	sconfig.NewConfig,
 	dot.NewLogger,
 	NewHandlerMiddle,
 	connectimpl.NewHiService,
+	etcddot.NewServer,
 	rpcdot.NewConnectServerEtcd,
 	rpcdot.NewConnectHttpServerMux,
+	rpcdot.NewConnetServer,
+	etcddot.NewClient,
 )
 
 func main() {

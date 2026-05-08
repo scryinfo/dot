@@ -8,5 +8,31 @@ level = "info"
 addStdOut = true
 setSlog = true
 [etcdServer]
-
+name = "etcd1"
+listenClientUrls = ["http://127.0.0.1:2379"]
+advertiseClientUrls = ["http://127.0.0.1:2379"]
+listenPeerUrls = ["http://127.0.0.1:2380"]
+advertisePeerUrls = ["http://127.0.0.1:2380"]
+initialClusterToken = "ClusterToken"
+initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
+logLevel = "info"
 [connectServerEtcd]
+name = "etcd://server/samples/rpc_bl"
+addr = "http://127.0.0.1:8090"
+[connectServer]
+addr = ":8090"
+readTimeout = 0
+writeTimeout = 0
+maxConcurrentStreams = 100
+allowedOrigins = []
+allowHeaders = []
+allowMethods = ["GET", "POST", "OPTIONS"]
+allowCredentials = true
+unAuthUrls = ["*"]
+optionMethods = true
+shutdownTimeout = 1024000
+
+[etcdClient]
+endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]
+# milliseconds
+dialTimeout = 12000

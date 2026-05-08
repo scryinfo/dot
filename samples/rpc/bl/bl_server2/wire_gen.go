@@ -8,6 +8,7 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/dot/samples/rpc/go_impl/connectimpl"
@@ -26,13 +27,47 @@ func InitializeService() (*Line, func(), error) {
 	}
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
+	serverConfig := &lineConfig.EtcdServer
+	server, cleanup, err := etcddot.NewServer(serverConfig, logger)
+	if err != nil {
+		return nil, nil, err
+	}
 	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
 	hiService := connectimpl.NewHiService(connectHttpServerMux, logger)
+	connectServerConfig := &lineConfig.ConnectServer
+	handlerMiddle := NewHandlerMiddle()
+	connectServer, cleanup2, err := rpcdot.NewConnetServer(connectServerConfig, connectHttpServerMux, logger, handlerMiddle)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	connectServerEtcdConfig := &lineConfig.ConnectServerEtcd
+	clientConfig := &lineConfig.EtcdClient
+	client, cleanup3, err := etcddot.NewClient(clientConfig, logger)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	connectServerEtcd, cleanup4, err := rpcdot.NewConnectServerEtcd(connectServerEtcdConfig, client, connectServer, logger)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	line := &Line{
-		SConfig:   sConfig,
-		Logger:    logger,
-		HiService: hiService,
+		SConfig:           sConfig,
+		Logger:            logger,
+		EtcdServer:        server,
+		HiService:         hiService,
+		ConnectServer:     connectServer,
+		ConnectServerEtcd: connectServerEtcd,
 	}
 	return line, func() {
+		cleanup4()
+		cleanup3()
+		cleanup2()
+		cleanup()
 	}, nil
 }

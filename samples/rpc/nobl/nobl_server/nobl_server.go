@@ -40,7 +40,7 @@ var LineSet = wire.NewSet(
 	NewLineConfig,
 	sconfig.NewConfig,
 	dot.NewLogger,
-	rpcdot.NewConnetHttpServer,
+	rpcdot.NewConnetServer,
 	rpcdot.NewConnectHttpServerMux,
 	NewHandlerMiddle,
 	connectimpl.NewHiService,

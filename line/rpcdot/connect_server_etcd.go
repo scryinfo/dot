@@ -19,7 +19,10 @@ func NewConnectServerEtcd(config *ConnectServerEtcdConfig, etcdClient *etcddot.C
 		server:     server,
 		logger:     logger,
 	}
-	d.register()
+	err := d.register()
+	if err != nil {
+		return nil, nil, err
+	}
 	return d, func() {
 		d.unregister()
 	}, nil
@@ -43,12 +46,12 @@ type ConnectServerEtcd struct {
 	leaseId    *clientv3.LeaseID
 }
 
-func (p *ConnectServerEtcd) register() {
+func (p *ConnectServerEtcd) register() error {
 	lease := clientv3.NewLease(p.etcdClient.EtcdClient())
 	leaseResp, err := lease.Grant(context.Background(), p.config.Ttl)
 	if err != nil {
 		p.logger.Error().Err(err).Send()
-		return
+		return err
 
 	}
 	p.leaseId = new(leaseResp.ID)
@@ -56,15 +59,16 @@ func (p *ConnectServerEtcd) register() {
 	_, err = p.etcdClient.EtcdClient().Put(context.Background(), key, p.config.Address, clientv3.WithLease(leaseResp.ID))
 	if err != nil {
 		p.logger.Error().Err(err).Send()
-		return
+		return err
 	}
 	p.logger.Info().Msgf("register server: %s, addr: %s, ttl: %d", p.config.Name, p.config.Address, p.config.Ttl)
 	_, err = lease.KeepAlive(context.Background(), leaseResp.ID)
 	if err != nil {
 		p.logger.Error().Err(err).Send()
-		return
+		return err
 	}
 
+	return nil
 }
 
 func (p *ConnectServerEtcd) unregister() {
