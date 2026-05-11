@@ -1,0 +1,16 @@
+[log]
+fileName = "log.log"
+maxSize = 1024000
+maxBackups = 3
+maxAge = 7
+compress = false
+level = "info"
+addStdOut = true
+setSlog = true
+[httpClient]
+forceAttemptHTTP2 = true
+disableCompression = false
+maxIdleConns = 10
+maxIdleConnsPerHost = 10
+maxConnsPerHost = 10
+serverAddress = "http://localhost:8090"

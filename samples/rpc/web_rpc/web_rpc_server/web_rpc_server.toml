@@ -19,3 +19,5 @@ allowCredentials = true
 unAuthUrls = ["*"]
 optionMethods = true
 shutdownTimeout = 1024000
+[hiService]
+name = "web_rpc_server"

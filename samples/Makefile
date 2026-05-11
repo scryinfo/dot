@@ -15,7 +15,9 @@ $(info "go: ${go}")
 WIRES := certificate etcd_server etcd_client gindot sconfig simple db/redis_client \
 	rpc/web_rpc/web_rpc_server \
 	rpc/nobl/nobl_client rpc/nobl/nobl_server \
-	rpc/bl/bl_client rpc/bl/bl_server rpc/bl/bl_server2
+	rpc/nobls/nobls_client rpc/nobls/nobls_server \
+	rpc/bl/bl_client rpc/bl/bl_server rpc/bl/bl_server2 rpc/bl/bl_server3 \
+	rpc/bls/bls_client rpc/bls/bls_server rpc/bls/bls_server2 rpc/bls/bls_server3
 
 clean:
 	cd rpc/proto && make clean
@@ -32,18 +34,12 @@ rebuild: clean gen wire build
 clean_wire:
 	find . -type f -name "wire_gen.go" -delete
 
-WIRES := certificate etcd_server etcd_client gindot sconfig simple db/redis_client \
-	rpc/web_rpc/web_rpc_server \
-	rpc/nobl/nobl_client rpc/nobl/nobl_server \
-	rpc/bl/bl_client rpc/bl/bl_server rpc/bl/bl_server2 rpc/bl/bl_server3
-
 define wire_rule
 $1/wire_gen.go: $1/$(notdir $1).go
 	cd $1 && wire
 endef
 $(foreach wire,$(WIRES),$(eval $(call wire_rule,$(wire))))
 wire:  $(addsuffix /wire_gen.go, $(WIRES))
-
 
 define sample_rule
 $1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go

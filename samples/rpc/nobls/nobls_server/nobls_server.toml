@@ -20,4 +20,4 @@ unAuthUrls = ["*"]
 optionMethods = true
 shutdownTimeout = 1024000
 [hiService]
-name = "nobl_server"
+name = "nobls_server"

@@ -24,6 +24,7 @@ type Line struct {
 type LineConfig struct {
 	Log           dot.LogConfig              `json:"log" toml:"log" yaml:"log"`
 	ConnectServer rpcdot.ConnectServerConfig `json:"connectServer" toml:"connectServer" yaml:"connectServer"`
+	HiService     connectimpl.HiServiceConfig
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -32,7 +33,7 @@ func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 
 var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
-	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer"),
+	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer", "HiService"),
 	NewLineConfig,
 	sconfig.NewConfig,
 	dot.NewLogger,

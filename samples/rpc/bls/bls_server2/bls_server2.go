@@ -8,43 +8,54 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	contextex "github.com/scryinfo/dot/line/context_ex"
+	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/dot/samples/rpc/go_impl/connectimpl"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
+// sdf
 type Line struct {
-	// SConfig           *sconfig.SConfig
-	// Logger            *dot.LoggerType
+	SConfig           *sconfig.SConfig
+	Logger            *dot.LoggerType
+	EtcdServer        *etcddot.Server
 	HiService         *connectimpl.HiService
-	ConnectHttpServer *rpcdot.ConnectServer
+	ConnectServer     *rpcdot.ConnectServer
+	ConnectServerEtcd *rpcdot.ConnectServerEtcd
 }
 
 type LineConfig struct {
-	Log           dot.LogConfig
-	ConnectServer rpcdot.ConnectServerConfig
-	HiService     connectimpl.HiServiceConfig
+	Log               dot.LogConfig
+	EtcdServer        etcddot.ServerConfig
+	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig
+	ConnectServer     rpcdot.ConnectServerConfig
+	EtcdClient        etcddot.ClientConfig
+	HiService         connectimpl.HiServiceConfig
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 	return sconfig.NewLiceConfig[LineConfig](config)
 }
-
 func NewHandlerMiddle() rpcdot.HandlerMiddle {
 	return nil
 }
 
 var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
-	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer", "HiService"),
+	wire.FieldsOf(new(*LineConfig), "Log", "EtcdServer", "ConnectServerEtcd", "ConnectServer", "EtcdClient", "HiService"),
 	NewLineConfig,
 	sconfig.NewConfig,
 	dot.NewLogger,
-	rpcdot.NewConnetServer,
-	rpcdot.NewConnectHttpServerMux,
+	contextex.NewContextEx,
 	NewHandlerMiddle,
 	connectimpl.NewHiService,
+	etcddot.NewServer,
+	rpcdot.NewConnectServerEtcd,
+	rpcdot.NewConnectHttpServerMux,
+	rpcdot.NewConnetServer,
+	etcddot.NewClient,
 )
 
 func main() {

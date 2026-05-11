@@ -1,0 +1,42 @@
+[log]
+fileName = "log.log"
+maxSize = 1024000
+maxBackups = 3
+maxAge = 7
+compress = false
+level = "info"
+addStdOut = true
+setSlog = true
+[etcdServer]
+name = "etcd3"
+listenClientUrls = ["http://127.0.0.1:2377"]
+advertiseClientUrls = ["http://127.0.0.1:2377"]
+listenPeerUrls = ["http://127.0.0.1:2382"]
+advertisePeerUrls = ["http://127.0.0.1:2382"]
+initialClusterToken = "ClusterToken"
+initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
+logLevel = "info"
+[connectServerEtcd]
+name = "server/samples/rpc_bl"
+addr = "127.0.0.1:8092"
+# seconds tls
+# tls = 10
+[hiService]
+name = "etcd3"
+[connectServer]
+addr = ":8092"
+readTimeout = 0
+writeTimeout = 0
+maxConcurrentStreams = 100
+allowedOrigins = []
+allowHeaders = []
+allowMethods = ["GET", "POST", "OPTIONS"]
+allowCredentials = true
+unAuthUrls = ["*"]
+optionMethods = true
+shutdownTimeout = 1024000
+
+[etcdClient]
+endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]
+# milliseconds
+dialTimeout = 12000

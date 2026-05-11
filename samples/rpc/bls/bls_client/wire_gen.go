@@ -8,15 +8,14 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
-	"github.com/scryinfo/dot/samples/rpc/go_impl/connectimpl"
 )
 
 // Injectors from wire.go:
 
 func InitializeService() (*Line, func(), error) {
-	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
 	sConfig, err := sconfig.NewConfig()
 	if err != nil {
 		return nil, nil, err
@@ -27,17 +26,22 @@ func InitializeService() (*Line, func(), error) {
 	}
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
-	hiServiceConfig := &lineConfig.HiService
-	hiService := connectimpl.NewHiService(connectHttpServerMux, logger, hiServiceConfig)
-	connectServerConfig := &lineConfig.ConnectServer
-	handlerMiddle := rpcdot.NewHandlerMiddle()
-	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, connectHttpServerMux, logger, handlerMiddle)
+	grpcClientEtcdConfig := &lineConfig.GrpcClientEtcd
+	clientConfig := &lineConfig.EtcdClient
+	client, cleanup, err := etcddot.NewClient(clientConfig, logger)
 	if err != nil {
 		return nil, nil, err
 	}
+	grpcClientEtcd, err := rpcdot.NewGrpcClientEtcd(grpcClientEtcdConfig, client, logger)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	hiServiceClient := NewHiServiceClient(grpcClientEtcd)
 	line := &Line{
-		HiService:     hiService,
-		ConnectServer: connectServer,
+		SConfig:         sConfig,
+		Logger:          logger,
+		HiServiceClient: hiServiceClient,
 	}
 	return line, func() {
 		cleanup()

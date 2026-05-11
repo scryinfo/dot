@@ -10,13 +10,11 @@ import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
-	"github.com/scryinfo/dot/samples/rpc/go_impl/connectimpl"
 )
 
 // Injectors from wire.go:
 
 func InitializeService() (*Line, func(), error) {
-	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
 	sConfig, err := sconfig.NewConfig()
 	if err != nil {
 		return nil, nil, err
@@ -27,19 +25,17 @@ func InitializeService() (*Line, func(), error) {
 	}
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
-	hiServiceConfig := &lineConfig.HiService
-	hiService := connectimpl.NewHiService(connectHttpServerMux, logger, hiServiceConfig)
-	connectServerConfig := &lineConfig.ConnectServer
-	handlerMiddle := rpcdot.NewHandlerMiddle()
-	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, connectHttpServerMux, logger, handlerMiddle)
+	httpClientConfig := &lineConfig.HttpClient
+	httpClientEx, err := rpcdot.NewHttpClientEx(httpClientConfig, logger)
 	if err != nil {
 		return nil, nil, err
 	}
+	hiServiceClient := NewHiServiceClient(httpClientEx)
 	line := &Line{
-		HiService:     hiService,
-		ConnectServer: connectServer,
+		SConfig:         sConfig,
+		Logger:          logger,
+		HiServiceClient: hiServiceClient,
 	}
 	return line, func() {
-		cleanup()
 	}, nil
 }
