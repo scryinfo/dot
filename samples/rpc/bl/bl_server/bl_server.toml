@@ -17,8 +17,12 @@ initialClusterToken = "ClusterToken"
 initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
 logLevel = "info"
 [connectServerEtcd]
-name = "etcd://server/samples/rpc_bl"
-addr = "http://127.0.0.1:8090"
+name = "server/samples/rpc_bl"
+addr = "127.0.0.1:8090"
+# seconds tls
+# tls = 10
+[hiService]
+name = "etcd1"
 [connectServer]
 addr = ":8090"
 readTimeout = 0

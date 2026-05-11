@@ -32,7 +32,11 @@ func InitializeService() (*Line, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	grpcClientEtcd := rpcdot.NewGrpcClientEtcd(grpcClientEtcdConfig, client)
+	grpcClientEtcd, err := rpcdot.NewGrpcClientEtcd(grpcClientEtcdConfig, client, logger)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	hiServiceClient := NewHiServiceClient(grpcClientEtcd)
 	line := &Line{
 		SConfig:         sConfig,

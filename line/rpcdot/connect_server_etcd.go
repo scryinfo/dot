@@ -32,7 +32,7 @@ type ConnectServerEtcdConfig struct {
 	// the name of the server, used for etcd discovery
 	Name string `json:"name" toml:"name" yaml:"name"`
 	// the address of the server, used for etcd discovery
-	Address string `json:"address" toml:"address" yaml:"address"`
+	Addr string `json:"addr" toml:"addr" yaml:"addr"`
 	// the ttl of the lease, in seconds,
 	// default is 10 seconds, if the ttl is <= 0
 	Ttl int64 `json:"ttl" toml:"ttl" yaml:"ttl"`
@@ -55,13 +55,14 @@ func (p *ConnectServerEtcd) register() error {
 
 	}
 	p.leaseId = new(leaseResp.ID)
-	key := fmt.Sprintf("%s/%s", p.config.Name, p.config.Address)
-	_, err = p.etcdClient.EtcdClient().Put(context.Background(), key, p.config.Address, clientv3.WithLease(leaseResp.ID))
+	key := fmt.Sprintf("%s/%s", p.config.Name, p.config.Addr)
+	addrValue := fmt.Sprintf(`{"Addr":"%s"}`, p.config.Addr)
+	_, err = p.etcdClient.EtcdClient().Put(context.Background(), key, addrValue, clientv3.WithLease(leaseResp.ID))
 	if err != nil {
 		p.logger.Error().Err(err).Send()
 		return err
 	}
-	p.logger.Info().Msgf("register server: %s, addr: %s, ttl: %d", p.config.Name, p.config.Address, p.config.Ttl)
+	p.logger.Info().Msgf("register server: %s, addr: %s, ttl: %d", p.config.Name, p.config.Addr, p.config.Ttl)
 	_, err = lease.KeepAlive(context.Background(), leaseResp.ID)
 	if err != nil {
 		p.logger.Error().Err(err).Send()
@@ -77,7 +78,7 @@ func (p *ConnectServerEtcd) unregister() {
 		if err != nil {
 			p.logger.Error().Err(err).Send()
 		} else {
-			p.logger.Info().Msgf("unregister server: %s, addr: %s", p.config.Name, p.config.Address)
+			p.logger.Info().Msgf("unregister server: %s, addr: %s", p.config.Name, p.config.Addr)
 		}
 	}
 }

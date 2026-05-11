@@ -1,7 +1,9 @@
 package rpcdot
 
 import (
+	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/etcddot"
+	"go.etcd.io/etcd/client/v3/naming/resolver"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -15,31 +17,43 @@ type GrpcClientEtcd struct {
 	config         *GrpcClientEtcdConfig
 	etcdClient     *etcddot.Client
 	grpcClientConn *grpc.ClientConn
+	logger         *dot.LoggerType
 }
 
-func NewGrpcClientEtcd(config *GrpcClientEtcdConfig, etcdClient *etcddot.Client) *GrpcClientEtcd {
+func NewGrpcClientEtcd(config *GrpcClientEtcdConfig, etcdClient *etcddot.Client, logger *dot.LoggerType) (*GrpcClientEtcd, error) {
 	if len(config.WithDefaultServiceConfig) < 1 {
 		config.WithDefaultServiceConfig = `{"loadBalancingConfig": [{"round_robin": {}}]}`
 	}
 	d := &GrpcClientEtcd{
 		config:     config,
 		etcdClient: etcdClient,
+		logger:     logger,
 	}
-	d.grpcClientConn = d.makeClientConn()
-
-	return d
+	err := d.makeClientConn()
+	if err != nil {
+		return nil, err
+	}
+	return d, nil
 }
 
-func (p *GrpcClientEtcd) makeClientConn() *grpc.ClientConn {
+func (p *GrpcClientEtcd) makeClientConn() error {
+	etcdResolver, err := resolver.NewBuilder(p.etcdClient.EtcdClient())
+	if err != nil {
+		p.logger.Error().Err(err).Send()
+		return err
+	}
 	conn, err := grpc.NewClient(
-		p.config.Name,
+		"etcd:///"+p.config.Name,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithDefaultServiceConfig(p.config.WithDefaultServiceConfig),
+		grpc.WithResolvers(etcdResolver),
 	)
 	if err != nil {
-		panic(err)
+		p.logger.Error().Err(err).Send()
+		return err
 	}
-	return conn
+	p.grpcClientConn = conn
+	return nil
 }
 
 func (p *GrpcClientEtcd) Client() *grpc.ClientConn {

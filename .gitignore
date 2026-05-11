@@ -39,8 +39,13 @@ samples/rpc/bl/bl_client/bl_client
 samples/rpc/bl/bl_client/bl_client.exe
 samples/rpc/bl/bl_server/bl_server
 samples/rpc/bl/bl_server/bl_server.exe
+samples/rpc/bl/bl_server/default.etcd/
 samples/rpc/bl/bl_server2/bl_server2
 samples/rpc/bl/bl_server2/bl_server2.exe
+samples/rpc/bl/bl_server2/default.etcd/
+samples/rpc/bl/bl_server3/bl_server3
+samples/rpc/bl/bl_server3/bl_server3.exe
+samples/rpc/bl/bl_server3/default.etcd/
 samples/rpc/nobl/nobl_client/nobl_client
 samples/rpc/nobl/nobl_client/nobl_client.exe
 samples/rpc/nobl/nobl_server/nobl_server
@@ -55,5 +60,3 @@ samples/etcd_server/default.etcd
 demo/redis/orm/orm
 line/db/tools/gdao/gdao
 line/db/tools/gmodel/gmodel
-samples/rpc/bl/bl_server/default.etcd/
-samples/rpc/bl/bl_server2/default.etcd/

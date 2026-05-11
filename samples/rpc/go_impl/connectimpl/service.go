@@ -15,8 +15,12 @@ import (
 	"github.com/scryinfo/dot/samples/rpc/go_out/connect/api/v1/apiv1connect"
 )
 
-func NewHiService(mux *rpcdot.ConnectHttpServerMux, logger *dot.LoggerType) *HiService {
-	d := &HiService{logger: logger, name: "hi server1"}
+type HiServiceConfig struct {
+	Name string
+}
+
+func NewHiService(mux *rpcdot.ConnectHttpServerMux, logger *dot.LoggerType, conf *HiServiceConfig) *HiService {
+	d := &HiService{logger: logger, name: conf.Name}
 
 	path, handle := apiv1connect.NewHiServiceHandler(d)
 	mux.Handle(path, handle)

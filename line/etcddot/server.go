@@ -1,11 +1,13 @@
 package etcddot
 
 import (
-	"fmt"
+	"math"
 	"net/url"
 	"time"
 
+	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	contextex "github.com/scryinfo/dot/line/context_ex"
 	"go.etcd.io/etcd/server/v3/embed"
 )
 
@@ -28,9 +30,17 @@ type ServerConfig struct {
 	InitialCluster      string `json:"initialCluster" toml:"initialCluster" yaml:"initialCluster"`
 	// debug, info, warn, error, panic, or fatal. Default 'info'
 	LogLevel string `json:"logLevel" toml:"logLevel" yaml:"logLevel"`
+	// etcd ready notify timeout in seconds. Default 0
+	ReadyNotifyTimeOut int64 `json:"readyNotifyTimeOut" toml:"readyNotifyTimeOut" yaml:"readyNotifyTimeOut"`
 }
 
-func NewServer(conf *ServerConfig, ctx *contextex.ContextEx, logger *dot.LoggerType) (*Server, func(), error) {
+func NewServer(conf *ServerConfig, ctxEx *contextex.ContextEx, logger *dot.LoggerType) (*Server, func(), error) {
+	if conf.ReadyNotifyTimeOut < 0 {
+		conf.ReadyNotifyTimeOut = 180
+	} else if conf.ReadyNotifyTimeOut == 0 {
+		conf.ReadyNotifyTimeOut = math.MaxInt64 / int64(time.Second)
+	}
+
 	cfgEtcd := embed.NewConfig()
 	cfgEtcd.Name = conf.Name
 	if len(conf.Dir) < 1 {
@@ -88,8 +98,11 @@ func NewServer(conf *ServerConfig, ctx *contextex.ContextEx, logger *dot.LoggerT
 		select {
 		case <-etcdServer.Server.ReadyNotify():
 			logger.Info().Msg("etcd server is ready")
-		case <-ctx.Context().Done():
-			logger.Error().Msg("etcd server did not become ready within 10 seconds")
+		case <-time.After(time.Duration(conf.ReadyNotifyTimeOut) * time.Second):
+			logger.Error().Msgf("etcd server did not become ready within %d seconds", conf.ReadyNotifyTimeOut)
+			etcdServer.Server.Stop()
+		case <-ctxEx.Context().Done():
+			logger.Error().Msg("etcd server did not become ready, context cancelled")
 			etcdServer.Server.Stop()
 		}
 	}()
@@ -99,7 +112,7 @@ func NewServer(conf *ServerConfig, ctx *contextex.ContextEx, logger *dot.LoggerT
 		cfgEtcd: cfgEtcd,
 		etct:    etcdServer,
 		logger:  logger,
-		ctx:     ctx,
+		ctx:     ctxEx,
 	}
 	return &d, func() {
 		if d.etct != nil {

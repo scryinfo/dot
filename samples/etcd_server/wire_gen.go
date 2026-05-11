@@ -8,6 +8,7 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/context_ex"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/sconfig"
 )
@@ -26,7 +27,8 @@ func InitializeService() (*Line, func(), error) {
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
 	serverConfig := &lineConfig.EtcdServer
-	server, cleanup, err := etcddot.NewServer(serverConfig, logger)
+	contextEx := contextex.NewContextEx()
+	server, cleanup, err := etcddot.NewServer(serverConfig, contextEx, logger)
 	if err != nil {
 		return nil, nil, err
 	}

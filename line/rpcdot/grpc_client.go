@@ -10,16 +10,16 @@ type GrpcClientConfig struct {
 	ServerAddress string
 }
 
-type GrpcConnectEx struct {
+type GrpcClientEx struct {
 	conn *grpc.ClientConn
 }
 
-func NewGrpcConnectEx(config *GrpcClientConfig, logger *dot.LoggerType) (*GrpcConnectEx, func(), error) {
+func NewGrpcClientEx(config *GrpcClientConfig, logger *dot.LoggerType) (*GrpcClientEx, func(), error) {
 	conn, err := grpc.NewClient(config.ServerAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, nil, err
 	}
-	d := &GrpcConnectEx{conn: conn}
+	d := &GrpcClientEx{conn: conn}
 
 	return d, func() {
 		if d.conn != nil {
@@ -31,6 +31,6 @@ func NewGrpcConnectEx(config *GrpcClientConfig, logger *dot.LoggerType) (*GrpcCo
 	}, nil
 }
 
-func (g *GrpcConnectEx) Client() *grpc.ClientConn {
+func (g *GrpcClientEx) Client() *grpc.ClientConn {
 	return g.conn
 }

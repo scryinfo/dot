@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	contextex "github.com/scryinfo/dot/line/context_ex"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -31,6 +32,7 @@ type LineConfig struct {
 	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig
 	ConnectServer     rpcdot.ConnectServerConfig
 	EtcdClient        etcddot.ClientConfig
+	HiService         connectimpl.HiServiceConfig
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -42,10 +44,11 @@ func NewHandlerMiddle() rpcdot.HandlerMiddle {
 
 var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
-	wire.FieldsOf(new(*LineConfig), "Log", "EtcdServer", "ConnectServerEtcd", "ConnectServer", "EtcdClient"),
+	wire.FieldsOf(new(*LineConfig), "Log", "EtcdServer", "ConnectServerEtcd", "ConnectServer", "EtcdClient", "HiService"),
 	NewLineConfig,
 	sconfig.NewConfig,
 	dot.NewLogger,
+	contextex.NewContextEx,
 	NewHandlerMiddle,
 	connectimpl.NewHiService,
 	etcddot.NewServer,

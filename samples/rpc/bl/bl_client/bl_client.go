@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	contextex "github.com/scryinfo/dot/line/context_ex"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -38,6 +39,7 @@ var LineSet = wire.NewSet(
 	NewLineConfig,
 	sconfig.NewConfig,
 	dot.NewLogger,
+	contextex.NewContextEx,
 	rpcdot.NewGrpcClientEtcd,
 	NewHiServiceClient,
 	etcddot.NewClient,
@@ -61,6 +63,16 @@ func main() {
 	line.Logger.Info().Msg("dot ok")
 	//second step ....
 	res, err := line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt"})
+	if err != nil {
+		line.Logger.Error().Err(err).Msg("hi failed")
+		return
+	}
+	res, err = line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt2"})
+	if err != nil {
+		line.Logger.Error().Err(err).Msg("hi failed")
+		return
+	}
+	res, err = line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt3"})
 	if err != nil {
 		line.Logger.Error().Err(err).Msg("hi failed")
 		return

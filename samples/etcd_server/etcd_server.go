@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	contextex "github.com/scryinfo/dot/line/context_ex"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
@@ -34,6 +35,7 @@ var LineSet = wire.NewSet(
 	sconfig.NewConfig,
 	dot.NewLogger,
 	wire.FieldsOf(new(*LineConfig), "Log", "EtcdServer"),
+	contextex.NewContextEx,
 	etcddot.NewServer,
 )
 

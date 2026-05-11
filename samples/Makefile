@@ -29,10 +29,13 @@ build: samples
 	cd rpc/web_rpc/client && bun install && bun run build
 rebuild: clean gen wire build
 
+clean_wire:
+	find . -type f -name "wire_gen.go" -delete
+
 WIRES := certificate etcd_server etcd_client gindot sconfig simple db/redis_client \
 	rpc/web_rpc/web_rpc_server \
 	rpc/nobl/nobl_client rpc/nobl/nobl_server \
-	rpc/bl/bl_client rpc/bl/bl_server rpc/bl/bl_server2
+	rpc/bl/bl_client rpc/bl/bl_server rpc/bl/bl_server2 rpc/bl/bl_server3
 
 define wire_rule
 $1/wire_gen.go: $1/$(notdir $1).go
