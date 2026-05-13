@@ -11,49 +11,49 @@ import (
 	"github.com/scryinfo/dot/dot"
 )
 
-func TestEcdsa_GenerateCaCertKey(t *testing.T) {
+func TestEcdsa_GenerateECDSAKey(t *testing.T) {
 	ec := NewEcdsa(dot.NewLogger(&dot.LogConfig{}))
 
-	caPri, err := MakePriKey()
+	rootKey, err := MakeECDSAKey()
 	if err != nil {
 		t.Error(err)
 	}
 
-	keyFile := "ca.key"
-	pemFile := "ca.pem"
+	keyFile := "root.key"
+	certFile := "root.cert"
 	{
 		exPath, _ := os.Executable()
 		exPath = filepath.Dir(exPath)
 		keyFile = filepath.Join(exPath, keyFile)
-		pemFile = filepath.Join(exPath, pemFile)
+		certFile = filepath.Join(exPath, certFile)
 	}
-	_, err = ec.GenerateRoot(caPri, keyFile, pemFile, []string{"scry"}, []string{"scry"})
+	_, err = ec.GenerateRoot(rootKey, keyFile, certFile, []string{"scry"}, []string{"scry"})
 
 	defer func() {
 		_ = os.Remove(keyFile)
-		_ = os.Remove(pemFile)
+		_ = os.Remove(certFile)
 	}()
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	caPri2, err := ec.PrivateKey(keyFile)
+	loadKey, err := ec.PrivateKey(keyFile)
 	if err != nil {
 		t.Error(err)
 	}
 	if err == nil {
-		if caPri.D.Cmp(caPri2.D) != 0 {
+		if rootKey.D.Cmp(loadKey.D) != 0 {
 			t.Error(err)
 		}
 	}
 
-	caPub, err := ec.PublicKey(pemFile)
+	caPub, err := ec.PublicKey(certFile)
 	if err != nil {
 		t.Error(err)
 	}
 	if err == nil {
-		if caPri.PublicKey.X.Cmp(caPub.X) != 0 || caPri.PublicKey.Y.Cmp(caPub.Y) != 0 {
+		if rootKey.PublicKey.X.Cmp(caPub.X) != 0 || rootKey.PublicKey.Y.Cmp(caPub.Y) != 0 {
 			t.Error(err)
 		}
 	}
@@ -62,56 +62,56 @@ func TestEcdsa_GenerateCaCertKey(t *testing.T) {
 
 func TestEcdsa_GenerateCertKey(t *testing.T) {
 
-	ec := &Ecdsa{}
+	ec := NewEcdsa(dot.NewLogger(&dot.LogConfig{}))
 
-	caPri, err := MakePriKey()
+	rootKey, err := MakeECDSAKey()
 	if err != nil {
 		t.Error(err)
 	}
 
-	keyFile := "ca.key"
-	pemFile := "ca.pem"
-	keySub := "sub.key"
-	pemSub := "sum.pem"
+	rootKeyFile := "root.key"
+	rootCertFile := "cert.cert"
+	leafKeyFile := "leaf.key"
+	leafCertFile := "leaf.cert"
 	{
 		exPath, _ := os.Executable()
 		exPath = filepath.Dir(exPath)
-		keyFile = filepath.Join(exPath, keyFile)
-		pemFile = filepath.Join(exPath, pemFile)
-		keySub = filepath.Join(exPath, keySub)
-		pemSub = filepath.Join(exPath, pemSub)
+		rootKeyFile = filepath.Join(exPath, rootKeyFile)
+		rootCertFile = filepath.Join(exPath, rootCertFile)
+		leafKeyFile = filepath.Join(exPath, leafKeyFile)
+		leafCertFile = filepath.Join(exPath, leafCertFile)
 	}
-	ca, err := ec.GenerateRoot(caPri, keyFile, pemFile, []string{"scry"}, []string{"scry"})
+	rootCert, err := ec.GenerateRoot(rootKey, rootKeyFile, rootCertFile, []string{"scry"}, []string{"scry"})
 
 	defer func() {
-		_ = os.Remove(keyFile)
-		_ = os.Remove(pemFile)
+		_ = os.Remove(rootKeyFile)
+		_ = os.Remove(rootCertFile)
 	}()
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	err = ec.GenerateECDSALeaf(ca, caPri, keySub, pemSub, []string{"scry"}, []string{"scry"})
+	_, err = ec.GenerateLeaf(rootCert, rootKey, leafKeyFile, leafCertFile, []string{"scry"}, []string{"scry"})
 	defer func() {
-		_ = os.Remove(keySub)
-		_ = os.Remove(pemSub)
+		_ = os.Remove(leafKeyFile)
+		_ = os.Remove(leafCertFile)
 	}()
 	if err != nil {
 		t.Error(err)
 	}
 
-	subPri, err := ec.PrivateKey(keySub)
+	leafKey, err := ec.PrivateKey(leafKeyFile)
 	if err != nil {
 		t.Error(err)
 	}
 
-	caPub, err := ec.PublicKey(pemSub)
+	caPub, err := ec.PublicKey(leafCertFile)
 	if err != nil {
 		t.Error(err)
 	}
 	if err == nil {
-		if subPri.PublicKey.X.Cmp(caPub.X) != 0 || subPri.PublicKey.Y.Cmp(caPub.Y) != 0 {
+		if leafKey.PublicKey.X.Cmp(caPub.X) != 0 || leafKey.PublicKey.Y.Cmp(caPub.Y) != 0 {
 			t.Error(err)
 		}
 	}

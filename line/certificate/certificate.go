@@ -35,11 +35,13 @@ func NewCertificate(logger *dot.LoggerType) *LoadCertificate {
 }
 
 // GenerateRoot Generate root certificate
-func (c *LoadCertificate) GenerateRoot(signatureAlgorithm x509.SignatureAlgorithm, dnsName []string, orgName []string) (rootCa *x509.Certificate, err error) {
-	var serialNumber *big.Int = nil
-	serialNumber, err = c.makeSerialNumber()
+func (c *LoadCertificate) GenerateRoot(signatureAlgorithm x509.SignatureAlgorithm, dnsName []string, orgName []string) (*x509.Certificate, error) {
+	serialNumber, err := c.makeSerialNumber()
+	if err != nil {
+		return nil, err
+	}
 
-	rootCa = &x509.Certificate{
+	rootCert := &x509.Certificate{
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
 			Country:       []string{"cn"},
@@ -59,14 +61,14 @@ func (c *LoadCertificate) GenerateRoot(signatureAlgorithm x509.SignatureAlgorith
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
 	}
-	return rootCa, err
+	return rootCert, err
 }
 
 // GenerateRootFile
 // keyFile private key, pemFile from certificate file
-func (c *LoadCertificate) GenerateRootFile(pri any, ca *x509.Certificate, pub any, keyFile string, pemFile string) error {
+func (c *LoadCertificate) GenerateRootFile(pri any, rootCert *x509.Certificate, pub any, keyFile string, pemFile string) error {
 	{
-		certBytes, err := x509.CreateCertificate(rand.Reader, ca, ca, pub, pri)
+		certBytes, err := x509.CreateCertificate(rand.Reader, rootCert, rootCert, pub, pri)
 		if err != nil {
 			return err
 		}
@@ -119,7 +121,7 @@ func (c *LoadCertificate) GenerateLeafCertificate(signatureAlgorithm x509.Signat
 	if err != nil {
 		return nil, err
 	}
-	leaf := &x509.Certificate{
+	leafCert := &x509.Certificate{
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
 			Country:       []string{"cn"},
@@ -140,15 +142,15 @@ func (c *LoadCertificate) GenerateLeafCertificate(signatureAlgorithm x509.Signat
 		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
 	}
 
-	return leaf, nil
+	return leafCert, nil
 }
 
 // GenerateECDSALeafFile Generate subcertificate and private key
 // keyFile private file, pemFile subcertificate file
-func (c *LoadCertificate) GenerateLeafFile(leafPri any, leafCa *x509.Certificate, leafPub any, keyFile string, pemFile string, rootCa *x509.Certificate, rootPri any) error {
+func (c *LoadCertificate) GenerateLeafFile(leafPri any, leafCert *x509.Certificate, leafPub any, keyFile string, pemFile string, rootCert *x509.Certificate, rootPri any) error {
 
 	{
-		certBytes, err := x509.CreateCertificate(rand.Reader, leafCa, rootCa, leafPub, rootPri)
+		certBytes, err := x509.CreateCertificate(rand.Reader, leafCert, rootCert, leafPub, rootPri)
 		if err != nil {
 			return err
 		}

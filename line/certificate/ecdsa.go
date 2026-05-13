@@ -8,17 +8,11 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
-	"encoding/pem"
-	"os"
+	"fmt"
 
 	"github.com/pkg/errors"
 
 	"github.com/scryinfo/dot/dot"
-)
-
-const (
-	//EcdsaTypeID type id of dot
-	EcdsaTypeID = "4b8b1751-4799-4578-af46-d9b339cf582f"
 )
 
 // Ecdsa dot
@@ -38,72 +32,60 @@ func NewEcdsa(logger *dot.LoggerType) *Ecdsa {
 // keyFile private key, pemFile ca certificate file
 func (c *Ecdsa) GenerateRoot(rootPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
 
-	rootCa, err := c.certificate.GenerateRoot(x509.ECDSAWithSHA256, dnsName, orgName)
+	rootCert, err := c.certificate.GenerateRoot(x509.ECDSAWithSHA256, dnsName, orgName)
 	if err != nil {
 		return nil, err
 	}
-	err = c.certificate.GenerateRootFile(rootPri, rootCa, rootPri.Public(), keyFile, pemFile)
+	err = c.certificate.GenerateRootFile(rootPri, rootCert, rootPri.Public(), keyFile, pemFile)
 
-	return rootCa, err
+	return rootCert, err
 }
 
 // GenerateLeaf Generate subcertificate and private key
 // keyFile private file, pemFile subcertificate file
-func (c *Ecdsa) GenerateLeaf(rootCa *x509.Certificate, rootPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
+func (c *Ecdsa) GenerateLeaf(rootCert *x509.Certificate, rootPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
 	leaf, err := c.certificate.GenerateLeafCertificate(x509.ECDSAWithSHA256, dnsName, orgName)
 	if err != nil {
 		return nil, err
 	}
-	leafPri, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	err = c.certificate.GenerateLeafFile(leafPri, leaf, leafPri.Public(), keyFile, pemFile, rootCa, rootPri)
+	leafPri, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err != nil {
+		return nil, err
+	}
+	err = c.certificate.GenerateLeafFile(leafPri, leaf, leafPri.Public(), keyFile, pemFile, rootCert, rootPri)
 	return leaf, err
 }
 
 // PrivateKey Read private key from keyFile
-func (c *Ecdsa) PrivateKey(keyFile string) (pri *ecdsa.PrivateKey, err error) {
+func (c *Ecdsa) PrivateKey(keyFile string) (*ecdsa.PrivateKey, error) {
 
-	file, err := wdFile(keyFile)
-
-	if err != nil || len(file) < 1 {
-		return nil, errors.New("file do not exist")
-	}
-
-	bs, err := os.ReadFile(file)
+	key, err := c.certificate.LoadPrivateKey(keyFile)
 	if err != nil {
 		return nil, err
 	}
 
-	block, _ := pem.Decode(bs)
-	if block == nil || block.Bytes == nil {
-		return nil, errors.New("do not parse the data of file")
+	if ecdsaKey, ok := key.(*ecdsa.PrivateKey); ok {
+		return ecdsaKey, nil
+	} else {
+		return nil, fmt.Errorf("the key isnt ecdsa.PrivateKey")
 	}
-
-	pri, err = x509.ParseECPrivateKey(block.Bytes)
-	if err != nil {
-		return nil, err
-	}
-
-	return pri, err
 }
 
-// PublicKey Read public key from pemFile
-func (c *Ecdsa) PublicKey(pemFile string) (pubKey *ecdsa.PublicKey, err error) {
-
-	cer, err := c.Certificate(pemFile)
+// PublicKey Read public key from certFile
+func (c *Ecdsa) PublicKey(certFile string) (*ecdsa.PublicKey, error) {
+	cer, err := c.certificate.LoadCertificate(certFile)
 	if err != nil {
 		return nil, err
 	}
 
-	tpub, ok := cer.PublicKey.(*ecdsa.PublicKey)
-	if ok {
-		pubKey = tpub
+	if tpub, ok := cer.PublicKey.(*ecdsa.PublicKey); ok {
+		return tpub, nil
 	} else {
 		return nil, errors.New("do not ecdsa.PublicKey")
 	}
-	return pubKey, err
 }
 
-// MakePriKey Generate private key
-func MakePriKey() (*ecdsa.PrivateKey, error) {
+// MakeECDSAKey Generate private key
+func MakeECDSAKey() (*ecdsa.PrivateKey, error) {
 	return ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 }

@@ -56,22 +56,22 @@ func main() {
 // Generate ca certificate, generate serve and client certificate under ca certificate
 func makeSample(cs *certificate.Ecdsa) error {
 
-	caPri, err := certificate.MakePriKey()
+	rootKey, err := certificate.MakeECDSAKey()
 	if err != nil {
 		return err
 	}
 
-	ca, err := cs.GenerateRoot(caPri, "ca.key", "ca.pem", []string{"scry"}, []string{"scry"})
+	ca, err := cs.GenerateRoot(rootKey, "root.key", "root.cert", []string{"scry"}, []string{"scry"})
 	if err != nil {
 		return err
 	}
 
-	err = cs.GenerateECDSALeaf(ca, caPri, "server.key", "server.pem", []string{"scry"}, []string{"scry"})
+	_, err = cs.GenerateLeaf(ca, rootKey, "server.key", "server.cert", []string{"scry"}, []string{"scry"})
 	if err != nil {
 		return err
 	}
 
-	err = cs.GenerateECDSALeaf(ca, caPri, "client.key", "client.pem", []string{"scry"}, []string{"scry"})
+	_, err = cs.GenerateLeaf(ca, rootKey, "client.key", "client.cert", []string{"scry"}, []string{"scry"})
 	if err != nil {
 		return err
 	}
