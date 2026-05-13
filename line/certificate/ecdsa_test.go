@@ -27,7 +27,7 @@ func TestEcdsa_GenerateCaCertKey(t *testing.T) {
 		keyFile = filepath.Join(exPath, keyFile)
 		pemFile = filepath.Join(exPath, pemFile)
 	}
-	_, err = ec.GenerateCaCertKey(caPri, keyFile, pemFile, []string{"scry"}, []string{"scry"})
+	_, err = ec.GenerateRoot(caPri, keyFile, pemFile, []string{"scry"}, []string{"scry"})
 
 	defer func() {
 		_ = os.Remove(keyFile)
@@ -81,7 +81,7 @@ func TestEcdsa_GenerateCertKey(t *testing.T) {
 		keySub = filepath.Join(exPath, keySub)
 		pemSub = filepath.Join(exPath, pemSub)
 	}
-	ca, err := ec.GenerateCaCertKey(caPri, keyFile, pemFile, []string{"scry"}, []string{"scry"})
+	ca, err := ec.GenerateRoot(caPri, keyFile, pemFile, []string{"scry"}, []string{"scry"})
 
 	defer func() {
 		_ = os.Remove(keyFile)
@@ -92,7 +92,7 @@ func TestEcdsa_GenerateCertKey(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = ec.GenerateCertKey(ca, caPri, keySub, pemSub, []string{"scry"}, []string{"scry"})
+	err = ec.GenerateECDSALeaf(ca, caPri, keySub, pemSub, []string{"scry"}, []string{"scry"})
 	defer func() {
 		_ = os.Remove(keySub)
 		_ = os.Remove(pemSub)

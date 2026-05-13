@@ -8,17 +8,12 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/x509"
-	"crypto/x509/pkix"
 	"encoding/pem"
-	"math/big"
 	"os"
-	"path/filepath"
-	"time"
 
 	"github.com/pkg/errors"
 
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
 const (
@@ -28,163 +23,46 @@ const (
 
 // Ecdsa dot
 type Ecdsa struct {
-	logger *dot.LoggerType
+	logger      *dot.LoggerType
+	certificate LoadCertificate
 }
 
 func NewEcdsa(logger *dot.LoggerType) *Ecdsa {
 	return &Ecdsa{
-		logger: logger,
+		logger:      logger,
+		certificate: LoadCertificate{logger: logger},
 	}
 }
 
-// GenerateCaCertKey Generate ca certificate and private key
+// GenerateRoot Generate ca certificate and private key
 // keyFile private key, pemFile ca certificate file
-func (c *Ecdsa) GenerateCaCertKey(caPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (ca *x509.Certificate, err error) {
+func (c *Ecdsa) GenerateRoot(rootPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
 
-	var serialNumber *big.Int = nil
-	serialNumber, err = c.makeSerialNumber()
-
-	ca = &x509.Certificate{
-		SerialNumber: serialNumber,
-		Subject: pkix.Name{
-			Country:       []string{"cn"},
-			Locality:      []string{"scry"},
-			Province:      []string{"scry"},
-			Organization:  orgName,
-			StreetAddress: []string{"scry"},
-			PostalCode:    []string{"scry"},
-			CommonName:    "scry",
-		},
-		DNSNames:              dnsName,
-		NotBefore:             time.Now(),
-		NotAfter:              time.Now().AddDate(100, 0, 0),
-		BasicConstraintsValid: true,
-		IsCA:                  true,
-		SignatureAlgorithm:    x509.ECDSAWithSHA256,
-		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
-		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
+	rootCa, err := c.certificate.GenerateRoot(x509.ECDSAWithSHA256, dnsName, orgName)
+	if err != nil {
+		return nil, err
 	}
+	err = c.certificate.GenerateRootFile(rootPri, rootCa, rootPri.Public(), keyFile, pemFile)
 
-	{
-		var certBytes []byte = nil
-		pub := &caPri.PublicKey
-		certBytes, err = x509.CreateCertificate(rand.Reader, ca, ca, pub, caPri)
-		if err != nil {
-			return nil, err
-		}
-
-		file := ""
-		file, err = exPathFileAndMakeDirs(pemFile)
-		if err != nil {
-			return nil, err
-		}
-		certOut, err := os.Create(file)
-		if err != nil {
-			return nil, err
-		}
-		defer certOut.Close()
-		if err = pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: certBytes}); err != nil {
-			return nil, err
-		}
-	}
-	{
-		var privBytes []byte = nil
-		if privBytes, err = x509.MarshalECPrivateKey(caPri); err != nil {
-			return nil, err
-		}
-		file := ""
-		file, err = exPathFileAndMakeDirs(keyFile)
-		if err != nil {
-			return nil, err
-		}
-		keyOut, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-		if err != nil {
-			return nil, err
-		}
-		defer keyOut.Close()
-		if err = pem.Encode(keyOut, &pem.Block{Type: "EC PRIVATE KEY", Bytes: privBytes}); err != nil {
-			return nil, err
-		}
-	}
-
-	return ca, err
+	return rootCa, err
 }
 
-// GenerateCertKey Generate subcertificate and private key
+// GenerateLeaf Generate subcertificate and private key
 // keyFile private file, pemFile subcertificate file
-func (c *Ecdsa) GenerateCertKey(caParent *x509.Certificate, caPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (err error) {
-	var serialNumber *big.Int = nil
-	serialNumber, err = c.makeSerialNumber()
-	cert := &x509.Certificate{
-		SerialNumber: serialNumber,
-		Subject: pkix.Name{
-			Country:       []string{"cn"},
-			Locality:      []string{"scry"},
-			Province:      []string{"scry"},
-			Organization:  orgName,
-			StreetAddress: []string{"scry"},
-			PostalCode:    []string{"scry"},
-			CommonName:    "scry",
-		},
-		DNSNames:           dnsName,
-		NotBefore:          time.Now(),
-		NotAfter:           time.Now().AddDate(100, 0, 0),
-		SignatureAlgorithm: x509.ECDSAWithSHA256,
-		ExtKeyUsage:        []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
-		KeyUsage:           x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
+func (c *Ecdsa) GenerateLeaf(rootCa *x509.Certificate, rootPri *ecdsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
+	leaf, err := c.certificate.GenerateLeafCertificate(x509.ECDSAWithSHA256, dnsName, orgName)
+	if err != nil {
+		return nil, err
 	}
-
-	priv, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-
-	{
-		pub := &priv.PublicKey
-		certBytes, err := x509.CreateCertificate(rand.Reader, cert, caParent, pub, caPri)
-		if err != nil {
-			return err
-		}
-
-		file := ""
-		file, err = exPathFileAndMakeDirs(pemFile)
-		if err != nil {
-			return err
-		}
-		certOut, err := os.Create(file)
-		if err != nil {
-			return err
-		}
-		defer certOut.Close()
-		if err = pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: certBytes}); err != nil {
-			return err
-		}
-	}
-
-	{
-		var privBytes []byte = nil
-		if privBytes, err = x509.MarshalECPrivateKey(priv); err != nil {
-			return err
-		}
-		file := ""
-		file, err = exPathFileAndMakeDirs(keyFile)
-		if err != nil {
-			return err
-		}
-		keyOut, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-		if err != nil {
-			return err
-		}
-		defer keyOut.Close()
-		if err = pem.Encode(keyOut, &pem.Block{Type: "EC PRIVATE KEY", Bytes: privBytes}); err != nil {
-			return err
-		}
-	}
-
-	return err
+	leafPri, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	err = c.certificate.GenerateLeafFile(leafPri, leaf, leafPri.Public(), keyFile, pemFile, rootCa, rootPri)
+	return leaf, err
 }
 
 // PrivateKey Read private key from keyFile
 func (c *Ecdsa) PrivateKey(keyFile string) (pri *ecdsa.PrivateKey, err error) {
 
-	file, err := exPathFile(keyFile)
+	file, err := wdFile(keyFile)
 
 	if err != nil || len(file) < 1 {
 		return nil, errors.New("file do not exist")
@@ -206,7 +84,6 @@ func (c *Ecdsa) PrivateKey(keyFile string) (pri *ecdsa.PrivateKey, err error) {
 	}
 
 	return pri, err
-
 }
 
 // PublicKey Read public key from pemFile
@@ -224,99 +101,6 @@ func (c *Ecdsa) PublicKey(pemFile string) (pubKey *ecdsa.PublicKey, err error) {
 		return nil, errors.New("do not ecdsa.PublicKey")
 	}
 	return pubKey, err
-}
-
-// Certificate Read certificate from pemFile
-func (c *Ecdsa) Certificate(pemFile string) (cert *x509.Certificate, err error) {
-	file, err := exPathFile(pemFile)
-
-	if err != nil || len(file) < 1 {
-		return nil, errors.New("file do not exist")
-	}
-
-	bs, err := os.ReadFile(file)
-	if err != nil {
-		return nil, err
-	}
-
-	block, _ := pem.Decode(bs)
-	if block == nil || block.Bytes == nil {
-		return nil, errors.New("do not parse the data of file")
-	}
-
-	if block.Type == "CERTIFICATE" {
-		cert, err = x509.ParseCertificate(block.Bytes)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		return nil, errors.New("must be CERTIFICATE")
-	}
-	return cert, err
-}
-
-func (c *Ecdsa) makeSerialNumber() (serial *big.Int, err error) {
-	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
-	serial, err = rand.Int(rand.Reader, serialNumberLimit)
-	return
-}
-
-// If not absolute path, then comparing executable file path, create content where file existing
-func exPathFileAndMakeDirs(file string) (nfile string, err error) {
-	nfile = ""
-	tfile := ""
-	if filepath.IsAbs(file) {
-		tfile = file
-	} else {
-		exPath := ""
-		{
-			ex, err3 := os.Executable()
-			if err3 == nil {
-				exPath = filepath.Dir(ex)
-			} else {
-				err = err3
-				return
-			}
-		}
-		tfile = filepath.Join(exPath, file)
-	}
-
-	tdir := filepath.Dir(tfile)
-	if !sfile.ExistFile(tdir) {
-		err = os.MkdirAll(tdir, os.ModeDir)
-	}
-	nfile = tfile
-	return
-}
-
-// If comparing executable file do not exist, then check whether parameter file existing or not
-func exPathFile(file string) (tfile string, err error) {
-	tfile = ""
-	if filepath.IsAbs(file) {
-		tfile = file
-	} else {
-		exPath := ""
-		{
-			ex, err3 := os.Executable()
-			if err3 == nil {
-				exPath = filepath.Dir(ex)
-			} else {
-				err = err3
-				return
-			}
-		}
-		tfile = filepath.Join(exPath, file)
-	}
-
-	if !sfile.ExistFile(tfile) {
-		if sfile.ExistFile(file) {
-			tfile = file
-		} else {
-			tfile = ""
-			err = errors.New("no file")
-		}
-	}
-	return
 }
 
 // MakePriKey Generate private key

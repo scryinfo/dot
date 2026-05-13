@@ -61,17 +61,17 @@ func makeSample(cs *certificate.Ecdsa) error {
 		return err
 	}
 
-	ca, err := cs.GenerateCaCertKey(caPri, "ca.key", "ca.pem", []string{"scry"}, []string{"scry"})
+	ca, err := cs.GenerateRoot(caPri, "ca.key", "ca.pem", []string{"scry"}, []string{"scry"})
 	if err != nil {
 		return err
 	}
 
-	err = cs.GenerateCertKey(ca, caPri, "server.key", "server.pem", []string{"scry"}, []string{"scry"})
+	err = cs.GenerateECDSALeaf(ca, caPri, "server.key", "server.pem", []string{"scry"}, []string{"scry"})
 	if err != nil {
 		return err
 	}
 
-	err = cs.GenerateCertKey(ca, caPri, "client.key", "client.pem", []string{"scry"}, []string{"scry"})
+	err = cs.GenerateECDSALeaf(ca, caPri, "client.key", "client.pem", []string{"scry"}, []string{"scry"})
 	if err != nil {
 		return err
 	}
