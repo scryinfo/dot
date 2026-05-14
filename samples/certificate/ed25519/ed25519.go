@@ -4,17 +4,14 @@
 package main
 
 import (
-	"os"
-
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/certificate"
 	"github.com/scryinfo/dot/line/sconfig"
-	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
 type Line struct {
-	Cert *certificate.Ecdsa
+	Ed25519 *certificate.Ed25519
 }
 
 type LineConfig struct {
@@ -31,7 +28,7 @@ var LineSet = wire.NewSet(
 	NewAppConfig,
 	sconfig.NewConfig,
 	dot.NewLogger,
-	certificate.NewEcdsa,
+	certificate.NewEd25519,
 )
 
 func main() {
@@ -44,34 +41,34 @@ func main() {
 		defer clear()
 	}
 
-	err = makeSample(line.Cert)
+	err = makeSample(line.Ed25519)
 	if err != nil {
 		dot.Logger.Error().Err(err).Send()
 	}
-	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
-		return false
-	})
+	// ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
+	// 	return false
+	// })
 }
 
 // Generate ca certificate, generate serve and client certificate under ca certificate
-func makeSample(cs *certificate.Ecdsa) error {
+func makeSample(cs *certificate.Ed25519) error {
 
-	rootKey, err := certificate.MakeECDSAKey()
+	rootKey, err := certificate.MakeEd25519Key()
 	if err != nil {
 		return err
 	}
 
-	ca, err := cs.GenerateRoot(rootKey, "root.key", "root.cert", []string{"scry"}, []string{"scry"})
+	ca, err := cs.GenerateRoot(rootKey, "temp/root.key", "temp/root.cert", []string{"scry"}, []string{"scry"})
 	if err != nil {
 		return err
 	}
 
-	_, err = cs.GenerateLeaf(ca, rootKey, "server.key", "server.cert", []string{"scry"}, []string{"scry"})
+	_, err = cs.GenerateLeaf(ca, rootKey, "temp/server.key", "temp/server.cert", []string{"scry"}, []string{"scry"})
 	if err != nil {
 		return err
 	}
 
-	_, err = cs.GenerateLeaf(ca, rootKey, "client.key", "client.cert", []string{"scry"}, []string{"scry"})
+	_, err = cs.GenerateLeaf(ca, rootKey, "temp/client.key", "temp/client.cert", []string{"scry"}, []string{"scry"})
 	if err != nil {
 		return err
 	}

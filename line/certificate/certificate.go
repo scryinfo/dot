@@ -261,7 +261,7 @@ func wdFileAndMakeDirs(file string) (nfile string, err error) {
 
 	tdir := filepath.Dir(tfile)
 	if !sfile.ExistFile(tdir) {
-		err = os.MkdirAll(tdir, os.ModeDir)
+		err = os.MkdirAll(tdir, 0755)
 	}
 	nfile = tfile
 	return
