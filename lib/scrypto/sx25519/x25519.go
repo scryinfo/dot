@@ -3,10 +3,11 @@ package sx25519
 import (
 	"crypto"
 	"crypto/rand"
+	"io"
+
 	"github.com/pkg/errors"
 	"github.com/scryinfo/dot/lib/scrypto"
 	"golang.org/x/crypto/curve25519"
-	"io"
 )
 
 func init() {
@@ -15,13 +16,12 @@ func init() {
 
 type PrivateKey []byte
 
-func (c PrivateKey) ToBytes(key []byte, err error) {
+func (c PrivateKey) ToBytes() ([]byte, error) {
 	var bytes [32]byte
 	if ok := checkType(&bytes, c); !ok {
-		err = errors.New("unexpected type of public key")
+		return nil, errors.New("unexpected type of public key")
 	}
-	key = bytes[:]
-	return
+	return bytes[:], nil
 }
 
 func (c *PrivateKey) ToPrivateKey(keyBytes []byte) (err error) {

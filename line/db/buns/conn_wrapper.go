@@ -96,9 +96,3 @@ func GenerateConnWrapperByDb(db *bun.DB) *ConnWrapper {
 	conn := &ConnWrapper{db, BunConfig{}}
 	return conn
 }
-
-type pgLogger struct{}
-
-func (d pgLogger) BeforeQuery(c context.Context, _ *pgdriver.Listener) (context.Context, error) {
-	return c, nil
-}

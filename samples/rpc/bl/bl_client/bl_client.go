@@ -67,11 +67,13 @@ func main() {
 		line.Logger.Error().Err(err).Msg("hi failed")
 		return
 	}
+	line.Logger.Info().Msg(res.Name)
 	res, err = line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt2"})
 	if err != nil {
 		line.Logger.Error().Err(err).Msg("hi failed")
 		return
 	}
+	line.Logger.Info().Msg(res.Name)
 	res, err = line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt3"})
 	if err != nil {
 		line.Logger.Error().Err(err).Msg("hi failed")

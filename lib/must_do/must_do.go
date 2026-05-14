@@ -30,7 +30,7 @@ type MustDo struct {
 
 func (c *MustDo) Start() {
 
-	for true {
+	for {
 		for i := 0; i < c.Conf.CycleIndex; i++ {
 			if c.Thing() {
 				//todo 日志怎么知道具体做了什么事情

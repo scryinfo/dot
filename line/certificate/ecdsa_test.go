@@ -43,7 +43,7 @@ func TestEcdsa_GenerateECDSAKey(t *testing.T) {
 		t.Error(err)
 	}
 	if err == nil {
-		if rootKey.D.Cmp(loadKey.D) != 0 {
+		if !rootKey.Equal(loadKey) {
 			t.Error(err)
 		}
 	}
@@ -53,7 +53,7 @@ func TestEcdsa_GenerateECDSAKey(t *testing.T) {
 		t.Error(err)
 	}
 	if err == nil {
-		if rootKey.PublicKey.X.Cmp(caPub.X) != 0 || rootKey.PublicKey.Y.Cmp(caPub.Y) != 0 {
+		if !rootKey.PublicKey.Equal(caPub) {
 			t.Error(err)
 		}
 	}
@@ -111,7 +111,7 @@ func TestEcdsa_GenerateCertKey(t *testing.T) {
 		t.Error(err)
 	}
 	if err == nil {
-		if leafKey.PublicKey.X.Cmp(caPub.X) != 0 || leafKey.PublicKey.Y.Cmp(caPub.Y) != 0 {
+		if !leafKey.PublicKey.Equal(caPub) {
 			t.Error(err)
 		}
 	}

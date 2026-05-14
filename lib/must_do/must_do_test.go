@@ -29,8 +29,9 @@ func (t *two) GetTen() bool {
 	log.Print("当前值为：", i)
 	if i != 10 {
 		return false
+	} else {
+		return true
 	}
-	return true
 }
 
 func TestMustDo_Start(t *testing.T) {
