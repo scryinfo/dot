@@ -2,7 +2,10 @@ package rpcdot
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"sync/atomic"
@@ -10,6 +13,7 @@ import (
 
 	"github.com/scryinfo/dot/dot"
 	httptools "github.com/scryinfo/dot/line/rpcdot/http_tools"
+	"github.com/scryinfo/scryg/sutils/sfile"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -41,16 +45,20 @@ type ConnectServerConfig struct {
 	OptionMethods bool `json:"optionMethods" toml:"optionMethods" yaml:"optionMethods"`
 	// shutdown timeout
 	ShutdownTimeout time.Duration `json:"shutdownTimeout" toml:"shutdownTimeout" yaml:"shutdownTimeout"`
+
+	TlsCert string `json:"tlsCert" toml:"tlsCert" yaml:"tlsCert"`
+	TlsKey  string `json:"tlsKey" toml:"tlsKey" yaml:"tlsKey"`
 }
 
 type ConnectServer struct {
 	HTTPServer *http.Server
 	conf       ConnectServerConfig
+	sconf      dot.SConfig
 	logger     *dot.LoggerType
 	started    atomic.Bool
 }
 
-func NewConnetServer(conf *ConnectServerConfig, connetMux *ConnectHttpServerMux, logger *dot.LoggerType, middle HandlerMiddle) (*ConnectServer, func(), error) {
+func NewConnetServer(conf *ConnectServerConfig, sconf dot.SConfig, connetMux *ConnectHttpServerMux, logger *dot.LoggerType, middle HandlerMiddle) (*ConnectServer, func(), error) {
 	if conf.ShutdownTimeout < 0 {
 		conf.ShutdownTimeout = 10 * time.Second
 	}
@@ -121,20 +129,41 @@ func NewConnetServer(conf *ConnectServerConfig, connetMux *ConnectHttpServerMux,
 	d := &ConnectServer{
 		HTTPServer: server,
 		conf:       *conf,
+		sconf:      sconf,
 		logger:     logger,
 		started:    atomic.Bool{},
 	}
-	d.Start()
+	d.start()
 
 	return d, func() {
 		d.Shoutdown()
 	}, nil
 }
 
-func (p *ConnectServer) Start() {
+func (p *ConnectServer) start() error {
 	p.logger.Info().Msg("rpc api init")
 	if p.started.Swap(true) {
-		return
+		return nil
+	}
+	if p.conf.TlsCert != "" || p.conf.TlsKey != "" {
+		exPath, err := os.Executable()
+		if err != nil {
+			return err
+		}
+		exPath = filepath.Dir(exPath)
+
+		//check tls cert and key
+		if !sfile.ExistFile(p.conf.TlsCert) {
+			f := filepath.Join(exPath, p.conf.TlsCert)
+			if sfile.ExistFile(f) {
+				p.conf.TlsCert = f
+			} else {
+				return fmt.Errorf("tls cert not found")
+			}
+		}
+		if !sfile.ExistFile(p.conf.TlsKey) {
+			return fmt.Errorf("tls key not found")
+		}
 	}
 
 	go func() {
@@ -145,6 +174,7 @@ func (p *ConnectServer) Start() {
 			p.logger.Info().Msg("rpc api done")
 		}
 	}()
+	return nil
 }
 func (p *ConnectServer) Shoutdown() {
 	if !p.started.Swap(false) {

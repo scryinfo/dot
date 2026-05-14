@@ -71,6 +71,8 @@ type SConfig interface {
 	DefBool(key string, def bool) bool
 	DefFloat32(key string, def float32) float32
 	DefFloat64(key string, def float64) float64
+
+	FullPath(file string) (string, error)
 }
 
 func readIDFromFile(file string) (string, error) {

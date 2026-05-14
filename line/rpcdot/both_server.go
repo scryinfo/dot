@@ -76,7 +76,7 @@ func NewBothHttpServer(conf *ConnectServerConfig, connectMux *http.ServeMux, grp
 			started:    atomic.Bool{},
 		},
 	}
-	d.Start()
+	d.start()
 
 	return d, func() {
 		d.Shoutdown()
