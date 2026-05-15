@@ -57,3 +57,4 @@ samples/simple/simple
 demo/redis/orm/orm
 line/db/tools/gdao/gdao
 line/db/tools/gmodel/gmodel
+samples/Makefile.gen

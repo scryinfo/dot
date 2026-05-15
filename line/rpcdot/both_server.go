@@ -64,6 +64,7 @@ func NewBothHttpServer(conf *ConnectServerConfig, sconf dot.SConfig, connectMux 
 		Handler:      muxEx,
 		ReadTimeout:  conf.ReadTimeout,
 		WriteTimeout: conf.WriteTimeout,
+		Protocols:    &http.Protocols{},
 	}
 	if conf.HTTP2 {
 		server.HTTP2 = &http.HTTP2Config{

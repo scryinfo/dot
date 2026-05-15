@@ -121,6 +121,7 @@ func NewConnetServer(conf *ConnectServerConfig, sconf dot.SConfig, connetMux *Co
 		Handler:      muxEx,
 		ReadTimeout:  conf.ReadTimeout,
 		WriteTimeout: conf.WriteTimeout,
+		Protocols:    &http.Protocols{},
 	}
 	if conf.HTTP2 {
 		server.HTTP2 = &http.HTTP2Config{
