@@ -28,7 +28,7 @@ type LineConfig struct {
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLiceConfig[LineConfig](config)
+	return sconfig.NewLineConfig[LineConfig](config)
 }
 
 var LineSet = wire.NewSet(
@@ -36,6 +36,7 @@ var LineSet = wire.NewSet(
 	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer", "HiService"),
 	NewLineConfig,
 	sconfig.NewConfig,
+	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
 	rpcdot.NewConnetServer,
 	rpcdot.NewConnectHttpServerMux,

@@ -13,7 +13,7 @@ import (
 )
 
 type Line struct {
-	SConfig *sconfig.SConfig
+	SConfig dot.SConfig
 	Logger  *dot.LoggerType
 }
 
@@ -22,13 +22,14 @@ type LineConfig struct {
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLiceConfig[LineConfig](config)
+	return sconfig.NewLineConfig[LineConfig](config)
 }
 
 var LineSet = wire.NewSet(
 	NewLineConfig,
 	wire.Struct(new(Line), "*"),
 	sconfig.NewConfig,
+	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
 	wire.FieldsOf(new(*LineConfig), "Log"),
 )

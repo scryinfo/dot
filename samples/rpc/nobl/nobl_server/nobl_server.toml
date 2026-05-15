@@ -19,5 +19,11 @@ allowCredentials = true
 unAuthUrls = ["*"]
 optionMethods = true
 shutdownTimeout = 1024000
+http1 = false
+http2 = true
+unencryptedHTTP2 = true
+tlsCert = ""
+tlsKey = ""
+
 [hiService]
 name = "nobl_server"

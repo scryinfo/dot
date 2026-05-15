@@ -38,6 +38,8 @@ var (
 // Note: Check whether file existing
 type SConfig struct {
 	confPath   string //Config path
+	wdPath     string
+	exePath    string //Executable file path 可执行文件路径
 	file       string //File name
 	fileType   string //json,yaml,toml
 	simpleConf *viper.Viper
@@ -66,7 +68,7 @@ func NewConfig() (*SConfig, error) {
 	return conf, err
 }
 
-func NewLiceConfig[T any](config *SConfig) (*T, error) {
+func NewLineConfig[T any](config *SConfig) (*T, error) {
 	conf, err := Unmarshal[T](config)
 	if err != nil {
 		fmt.Printf("%v", err)
@@ -75,80 +77,86 @@ func NewLiceConfig[T any](config *SConfig) (*T, error) {
 	return &conf, nil
 }
 
-func (c *SConfig) RootPath() error {
-
-	ex, err := os.Executable()
+func (p *SConfig) RootPath() error {
+	{
+		wd, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+		p.wdPath = wd
+	}
+	exeFile, err := os.Executable()
 	if err != nil {
 		return err
 	}
 	{
-		exPath := filepath.Dir(ex)
-		binPath := filepath.Dir(exPath)
-		exName := filepath.Base(ex)
-		ext := filepath.Ext(ex)
-		exName = exName[0 : len(exName)-len(ext)]
+		p.exePath = filepath.Dir(exeFile)
+		binPath := filepath.Dir(p.exePath)
+		exeName := filepath.Base(exeFile)
+		ext := filepath.Ext(exeFile)
+		exeName = exeName[0 : len(exeName)-len(ext)]
 		if sfile.ExistFile(dot.GCmd.ConfigPath) {
-			c.confPath = dot.GCmd.ConfigPath
-		} else if configPath := filepath.Join(exPath, exName+separator+conf); sfile.ExistFile(configPath) {
-			c.confPath = configPath
-		} else if configPath := filepath.Join(exPath, conf); sfile.ExistFile(configPath) {
-			c.confPath = configPath
-		} else if configPath := filepath.Join(binPath, exName+separator+conf); sfile.ExistFile(configPath) { //prefer the path
-			c.confPath = configPath
+			p.confPath = dot.GCmd.ConfigPath
+		} else if configPath := filepath.Join(p.exePath, exeName+separator+conf); sfile.ExistFile(configPath) {
+			p.confPath = configPath
+		} else if configPath := filepath.Join(p.exePath, conf); sfile.ExistFile(configPath) {
+			p.confPath = configPath
+		} else if configPath := filepath.Join(binPath, exeName+separator+conf); sfile.ExistFile(configPath) { //prefer the path
+			p.confPath = configPath
 		} else if configPath := filepath.Join(binPath, conf); sfile.ExistFile(configPath) {
-			c.confPath = configPath
+			p.confPath = configPath
 		}
 
-		if len(c.confPath) < 1 {
-			c.confPath = exPath
+		if len(p.confPath) < 1 {
+			p.confPath = p.exePath
 		}
 
-		if file := filepath.Join(c.confPath, dot.GCmd.ConfigFile); len(dot.GCmd.ConfigFile) > 0 && sfile.ExistFile(file) {
-			c.file = dot.GCmd.ConfigFile
-			c.getFileType()
-		} else if file := filepath.Join(c.confPath, exName+extensionNameJson); sfile.ExistFile(file) {
-			c.file = exName + extensionNameJson
-			c.fileType = extensionNameJson
-		} else if file := filepath.Join(c.confPath, conf+extensionNameJson); sfile.ExistFile(file) {
-			c.file = conf + extensionNameJson
-			c.fileType = extensionNameJson
-		} else if file := filepath.Join(c.confPath, exName+extensionNameToml); sfile.ExistFile(file) {
-			c.file = exName + extensionNameToml
-			c.fileType = extensionNameToml
-		} else if file := filepath.Join(c.confPath, conf+extensionNameToml); sfile.ExistFile(file) {
-			c.file = conf + extensionNameToml
-			c.fileType = extensionNameToml
-		} else if file := filepath.Join(c.confPath, exName+extensionNameYaml); sfile.ExistFile(file) {
-			c.file = exName + extensionNameYaml
-			c.fileType = extensionNameYaml
-		} else if file := filepath.Join(c.confPath, conf+extensionNameYaml); sfile.ExistFile(file) {
-			c.file = conf + extensionNameYaml
-			c.fileType = extensionNameYaml
-		} else if strings.Contains(exName, "__debug_") {
+		if file := filepath.Join(p.confPath, dot.GCmd.ConfigFile); len(dot.GCmd.ConfigFile) > 0 && sfile.ExistFile(file) {
+			p.file = dot.GCmd.ConfigFile
+			p.getFileType()
+		} else if file := filepath.Join(p.confPath, exeName+extensionNameJson); sfile.ExistFile(file) {
+			p.file = exeName + extensionNameJson
+			p.fileType = extensionNameJson
+		} else if file := filepath.Join(p.confPath, conf+extensionNameJson); sfile.ExistFile(file) {
+			p.file = conf + extensionNameJson
+			p.fileType = extensionNameJson
+		} else if file := filepath.Join(p.confPath, exeName+extensionNameToml); sfile.ExistFile(file) {
+			p.file = exeName + extensionNameToml
+			p.fileType = extensionNameToml
+		} else if file := filepath.Join(p.confPath, conf+extensionNameToml); sfile.ExistFile(file) {
+			p.file = conf + extensionNameToml
+			p.fileType = extensionNameToml
+		} else if file := filepath.Join(p.confPath, exeName+extensionNameYaml); sfile.ExistFile(file) {
+			p.file = exeName + extensionNameYaml
+			p.fileType = extensionNameYaml
+		} else if file := filepath.Join(p.confPath, conf+extensionNameYaml); sfile.ExistFile(file) {
+			p.file = conf + extensionNameYaml
+			p.fileType = extensionNameYaml
+		} else if strings.Contains(exeName, "__debug_") {
 			//get source file name as config file name
 			if _, srcFile, _, ok := runtime.Caller(3); ok {
-				c.confPath = filepath.Dir(srcFile)
+				p.confPath = filepath.Dir(srcFile)
 				srcName := filepath.Base(srcFile)
 				srcName = srcName[0 : len(srcName)-len(filepath.Ext(srcFile))]
-				if file := filepath.Join(c.confPath, srcName+extensionNameJson); sfile.ExistFile(file) {
-					c.file = srcName + extensionNameJson
-					c.fileType = extensionNameJson
-				} else if file := filepath.Join(c.confPath, srcName+extensionNameToml); sfile.ExistFile(file) {
-					c.file = srcName + extensionNameToml
-					c.fileType = extensionNameToml
-				} else if file := filepath.Join(c.confPath, srcName+extensionNameYaml); sfile.ExistFile(file) {
-					c.file = srcName + extensionNameYaml
-					c.fileType = extensionNameYaml
+				if file := filepath.Join(p.confPath, srcName+extensionNameJson); sfile.ExistFile(file) {
+					p.file = srcName + extensionNameJson
+					p.fileType = extensionNameJson
+				} else if file := filepath.Join(p.confPath, srcName+extensionNameToml); sfile.ExistFile(file) {
+					p.file = srcName + extensionNameToml
+					p.fileType = extensionNameToml
+				} else if file := filepath.Join(p.confPath, srcName+extensionNameYaml); sfile.ExistFile(file) {
+					p.file = srcName + extensionNameYaml
+					p.fileType = extensionNameYaml
 				}
 			}
 		}
-		c.simpleConf.SetConfigFile(c.file)
+		p.simpleConf.SetConfigFile(p.file)
 		//c.simpleConf.SetConfigType(c.fileType)
-		c.simpleConf.AddConfigPath(c.confPath)
+		p.simpleConf.AddConfigPath(p.confPath)
 	}
 
-	if len(c.confPath) > 0 && !sfile.ExistFile(c.confPath) {
-		err := os.MkdirAll(c.confPath, os.ModePerm)
+	if len(p.confPath) > 0 && !sfile.ExistFile(p.confPath) {
+		err := os.MkdirAll(p.confPath, os.ModePerm)
 		if err != nil {
 			dot.Logger.Debug().Err(err).Send()
 			return err
@@ -158,10 +166,10 @@ func (c *SConfig) RootPath() error {
 }
 
 // Create implement
-func (c *SConfig) create() error {
+func (p *SConfig) create() error {
 
-	fname := filepath.Join(c.ConfigPath(), c.ConfigFile())
-	if len(c.ConfigFile()) < 1 || !sfile.ExistFile(fname) {
+	fname := filepath.Join(p.ConfigPath(), p.ConfigFile())
+	if len(p.ConfigFile()) < 1 || !sfile.ExistFile(fname) {
 		return nil
 	}
 	f, err := os.Open(fname)
@@ -174,27 +182,37 @@ func (c *SConfig) create() error {
 	}
 	defer f.Close()
 
-	err = c.simpleConf.ReadInConfig()
+	err = p.simpleConf.ReadInConfig()
 
 	return err
 }
 
 // ConfigPath  implement
-func (c *SConfig) ConfigPath() string {
-	return c.confPath
+func (p *SConfig) ConfigPath() string {
+	return p.confPath
+}
+
+// ExePath implements [dot.SConfig].
+func (p *SConfig) ExePath() string {
+	return p.exePath
+}
+
+// WdPath implements [dot.SConfig].
+func (p *SConfig) WdPath() string {
+	return p.wdPath
 }
 
 // ConfigFile  implement
-func (c *SConfig) ConfigFile() string {
-	return c.file
+func (p *SConfig) ConfigFile() string {
+	return p.file
 }
 
 // Key  implement
-func (c *SConfig) ExistKey(key string) bool {
+func (p *SConfig) ExistKey(key string) bool {
 
 	re := false
-	if c.simpleConf != nil {
-		re = c.simpleConf.InConfig(key)
+	if p.simpleConf != nil {
+		re = p.simpleConf.InConfig(key)
 	}
 	return re
 }
@@ -219,58 +237,58 @@ func UnmarshalKey[T any](c *SConfig, key string) (T, error) {
 }
 
 // Map  implement
-func (c *SConfig) Map() map[string]any {
-	return c.simpleConf.AllSettings()
+func (p *SConfig) Map() map[string]any {
+	return p.simpleConf.AllSettings()
 }
 
 // DefMap  implement
-func (c *SConfig) DefMap(key string, def map[string]any) map[string]any {
+func (p *SConfig) DefMap(key string, def map[string]any) map[string]any {
 	re := def
-	if c.simpleConf != nil {
-		re = c.simpleConf.GetStringMap(key)
+	if p.simpleConf != nil {
+		re = p.simpleConf.GetStringMap(key)
 	}
 	return re
 }
 
 // DefString  implement
-func (c *SConfig) DefString(key string, def string) string {
+func (p *SConfig) DefString(key string, def string) string {
 
 	re := def
-	if c.simpleConf != nil {
-		re = c.simpleConf.GetString(key)
+	if p.simpleConf != nil {
+		re = p.simpleConf.GetString(key)
 	}
 
 	return re
 }
 
 // DefInt32  implement
-func (c *SConfig) DefInt32(key string, def int32) int32 {
+func (p *SConfig) DefInt32(key string, def int32) int32 {
 
 	re := def
-	if c.simpleConf != nil {
-		re = c.simpleConf.GetInt32(key)
+	if p.simpleConf != nil {
+		re = p.simpleConf.GetInt32(key)
 	}
 
 	return re
 }
 
 // DefUint32  implement
-func (c *SConfig) DefUint32(key string, def uint32) uint32 {
+func (p *SConfig) DefUint32(key string, def uint32) uint32 {
 
 	re := def
-	if c.simpleConf != nil {
-		re = c.simpleConf.GetUint32(key)
+	if p.simpleConf != nil {
+		re = p.simpleConf.GetUint32(key)
 	}
 
 	return re
 }
 
 // DefInt64  implement
-func (c *SConfig) DefInt64(key string, def int64) int64 {
+func (p *SConfig) DefInt64(key string, def int64) int64 {
 
 	re := def
-	if c.simpleConf != nil {
-		re = c.simpleConf.GetInt64(key)
+	if p.simpleConf != nil {
+		re = p.simpleConf.GetInt64(key)
 	}
 
 	return re
@@ -278,53 +296,75 @@ func (c *SConfig) DefInt64(key string, def int64) int64 {
 }
 
 // DefUint64  implement
-func (c *SConfig) DefUint64(key string, def uint64) uint64 {
+func (p *SConfig) DefUint64(key string, def uint64) uint64 {
 	re := def
-	if c.simpleConf != nil {
-		re = c.simpleConf.GetUint64(key)
+	if p.simpleConf != nil {
+		re = p.simpleConf.GetUint64(key)
 	}
 
 	return re
 }
 
 // DefBool  implement
-func (c *SConfig) DefBool(key string, def bool) bool {
+func (p *SConfig) DefBool(key string, def bool) bool {
 	re := def
-	if c.simpleConf != nil {
-		re = c.simpleConf.GetBool(key)
+	if p.simpleConf != nil {
+		re = p.simpleConf.GetBool(key)
 	}
 
 	return re
 }
 
 // DefFloat32  implement
-func (c *SConfig) DefFloat32(key string, def float32) float32 {
+func (p *SConfig) DefFloat32(key string, def float32) float32 {
 	re := def
-	if c.simpleConf != nil {
-		re = float32(c.simpleConf.GetFloat64(key))
+	if p.simpleConf != nil {
+		re = float32(p.simpleConf.GetFloat64(key))
 	}
 	return re
 }
 
 // DefFloat64  implement
-func (c *SConfig) DefFloat64(key string, def float64) float64 {
+func (p *SConfig) DefFloat64(key string, def float64) float64 {
 	re := def
-	if c.simpleConf != nil {
-		re = c.simpleConf.GetFloat64(key)
+	if p.simpleConf != nil {
+		re = p.simpleConf.GetFloat64(key)
 	}
 	return re
 }
 
-func (c *SConfig) getFileType() {
-	re := strings.Split(c.file, ".")
+func (p *SConfig) getFileType() {
+	re := strings.Split(p.file, ".")
 	if l := len(re); l >= 2 {
 		switch re[l-1] {
 		case "json":
-			c.fileType = extensionNameJson
+			p.fileType = extensionNameJson
 		case "yaml":
-			c.fileType = extensionNameYaml
+			p.fileType = extensionNameYaml
 		case "toml":
-			c.fileType = extensionNameToml
+			p.fileType = extensionNameToml
 		}
 	}
+}
+
+// FullPath implements [dot.SConfig].
+// if file exists, return the full path of the file,
+// else join config path, if the file exists, return the full path,
+// else join wd path, if the file exists, return the full path,
+// else join exe path, if the file exists, return the full path,
+// otherwise return an error
+func (p *SConfig) FullPath(file string) (string, error) {
+	if sfile.ExistFile(file) {
+		return filepath.Abs(file)
+	}
+	if sfile.ExistFile(filepath.Join(p.confPath, file)) {
+		return filepath.Abs(filepath.Join(p.confPath, file))
+	}
+	if sfile.ExistFile(filepath.Join(p.wdPath, file)) {
+		return filepath.Abs(filepath.Join(p.wdPath, file))
+	}
+	if sfile.ExistFile(filepath.Join(p.exePath, file)) {
+		return filepath.Abs(filepath.Join(p.exePath, file))
+	}
+	return "", fmt.Errorf("file %s not found", file)
 }

@@ -18,7 +18,7 @@ import (
 
 // sdf
 type Line struct {
-	SConfig           *sconfig.SConfig
+	SConfig           dot.SConfig
 	Logger            *dot.LoggerType
 	EtcdServer        *etcddot.Server
 	HiService         *connectimpl.HiService
@@ -36,7 +36,7 @@ type LineConfig struct {
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLiceConfig[LineConfig](config)
+	return sconfig.NewLineConfig[LineConfig](config)
 }
 func NewHandlerMiddle() rpcdot.HandlerMiddle {
 	return nil
@@ -47,6 +47,7 @@ var LineSet = wire.NewSet(
 	wire.FieldsOf(new(*LineConfig), "Log", "EtcdServer", "ConnectServerEtcd", "ConnectServer", "EtcdClient", "HiService"),
 	NewLineConfig,
 	sconfig.NewConfig,
+	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
 	contextex.NewContextEx,
 	NewHandlerMiddle,

@@ -55,6 +55,10 @@ type SConfig interface {
 	RootPath() error
 	//Config file path
 	ConfigPath() string
+	// current working directory path
+	WdPath() string
+	// executable file path, dont include file name
+	ExePath() string
 	//Without path, only file name
 	ConfigFile() string
 	//Whether key existing

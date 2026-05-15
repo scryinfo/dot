@@ -18,7 +18,7 @@ import (
 )
 
 type Line struct {
-	SConfig         *sconfig.SConfig
+	SConfig         dot.SConfig
 	Logger          *dot.LoggerType
 	HiServiceClient apiv1connect.HiServiceClient
 }
@@ -29,7 +29,7 @@ type LineConfig struct {
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLiceConfig[LineConfig](config)
+	return sconfig.NewLineConfig[LineConfig](config)
 }
 func NewHiServiceClient(httpClientEx *rpcdot.HttpClientEx) apiv1connect.HiServiceClient {
 	return apiv1connect.NewHiServiceClient(httpClientEx.Client(), httpClientEx.ServerAddress(), connect.WithGRPC())
@@ -40,6 +40,7 @@ var LineSet = wire.NewSet(
 	wire.FieldsOf(new(*LineConfig), "Log", "HttpClient"),
 	NewLineConfig,
 	sconfig.NewConfig,
+	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
 	NewHiServiceClient,
 	rpcdot.NewHttpClientEx,

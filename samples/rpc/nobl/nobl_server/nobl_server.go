@@ -15,8 +15,6 @@ import (
 )
 
 type Line struct {
-	// SConfig           *sconfig.SConfig
-	// Logger            *dot.LoggerType
 	HiService         *connectimpl.HiService
 	ConnectHttpServer *rpcdot.ConnectServer
 }
@@ -28,7 +26,7 @@ type LineConfig struct {
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLiceConfig[LineConfig](config)
+	return sconfig.NewLineConfig[LineConfig](config)
 }
 
 func NewHandlerMiddle() rpcdot.HandlerMiddle {
@@ -40,6 +38,7 @@ var LineSet = wire.NewSet(
 	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer", "HiService"),
 	NewLineConfig,
 	sconfig.NewConfig,
+	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
 	rpcdot.NewConnetServer,
 	rpcdot.NewConnectHttpServerMux,

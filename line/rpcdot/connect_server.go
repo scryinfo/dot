@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
-	"path/filepath"
 	"slices"
 	"strings"
 	"sync/atomic"
@@ -14,8 +12,6 @@ import (
 	"github.com/scryinfo/dot/dot"
 	httptools "github.com/scryinfo/dot/line/rpcdot/http_tools"
 	"github.com/scryinfo/scryg/sutils/sfile"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 )
 
 type ConnectHttpServerMux struct {
@@ -33,7 +29,7 @@ type ConnectServerConfig struct {
 	Addr                 string        `json:"addr" toml:"addr" yaml:"addr"`
 	ReadTimeout          time.Duration `json:"readTimeout" toml:"readTimeout" yaml:"readTimeout"`
 	WriteTimeout         time.Duration `json:"writeTimeout" toml:"writeTimeout" yaml:"writeTimeout"`
-	MaxConcurrentStreams uint32        `json:"maxConcurrentStreams" toml:"maxConcurrentStreams" yaml:"maxConcurrentStreams"`
+	MaxConcurrentStreams int           `json:"maxConcurrentStreams" toml:"maxConcurrentStreams" yaml:"maxConcurrentStreams"`
 	AllowedOrigins       []string      `json:"allowedOrigins" toml:"allowedOrigins" yaml:"allowedOrigins"`
 	AllowHeaders         []string      `json:"allowHeaders" toml:"allowHeaders" yaml:"allowHeaders"`
 	AllowMethods         []string      `json:"allowMethods" toml:"allowMethods" yaml:"allowMethods"`
@@ -44,7 +40,10 @@ type ConnectServerConfig struct {
 	// if it is true, all OPTIONS requests will be returned ok
 	OptionMethods bool `json:"optionMethods" toml:"optionMethods" yaml:"optionMethods"`
 	// shutdown timeout
-	ShutdownTimeout time.Duration `json:"shutdownTimeout" toml:"shutdownTimeout" yaml:"shutdownTimeout"`
+	ShutdownTimeout  time.Duration `json:"shutdownTimeout" toml:"shutdownTimeout" yaml:"shutdownTimeout"`
+	HTTP1            bool          `json:"http1" toml:"http1" yaml:"http1"`
+	HTTP2            bool          `json:"http2" toml:"http2" yaml:"http2"`
+	UnencryptedHTTP2 bool          `json:"unencryptedHTTP2" toml:"unencryptedHTTP2" yaml:"unencryptedHTTP2"`
 
 	TlsCert string `json:"tlsCert" toml:"tlsCert" yaml:"tlsCert"`
 	TlsKey  string `json:"tlsKey" toml:"tlsKey" yaml:"tlsKey"`
@@ -53,7 +52,6 @@ type ConnectServerConfig struct {
 type ConnectServer struct {
 	HTTPServer *http.Server
 	conf       ConnectServerConfig
-	sconf      dot.SConfig
 	logger     *dot.LoggerType
 	started    atomic.Bool
 }
@@ -119,56 +117,63 @@ func NewConnetServer(conf *ConnectServerConfig, sconf dot.SConfig, connetMux *Co
 		connetMux.ServeHTTP(w, r)
 	})
 	server := &http.Server{
-		Addr: conf.Addr,
-		Handler: h2c.NewHandler(muxEx, &http2.Server{
-			MaxConcurrentStreams: conf.MaxConcurrentStreams,
-		}),
+		Addr:         conf.Addr,
+		Handler:      muxEx,
 		ReadTimeout:  conf.ReadTimeout,
 		WriteTimeout: conf.WriteTimeout,
 	}
+	if conf.HTTP2 {
+		server.HTTP2 = &http.HTTP2Config{
+			MaxConcurrentStreams: conf.MaxConcurrentStreams,
+		}
+		server.Protocols.SetHTTP2(true)
+		server.Protocols.SetUnencryptedHTTP2(conf.UnencryptedHTTP2)
+	}
+	server.Protocols.SetHTTP1(conf.HTTP1)
 	d := &ConnectServer{
 		HTTPServer: server,
 		conf:       *conf,
-		sconf:      sconf,
 		logger:     logger,
 		started:    atomic.Bool{},
 	}
-	d.start()
+	d.start(sconf)
 
 	return d, func() {
 		d.Shoutdown()
 	}, nil
 }
 
-func (p *ConnectServer) start() error {
+func (p *ConnectServer) start(sconf dot.SConfig) error {
 	p.logger.Info().Msg("rpc api init")
 	if p.started.Swap(true) {
 		return nil
 	}
+	//check tls cert and key
 	if p.conf.TlsCert != "" || p.conf.TlsKey != "" {
-		exPath, err := os.Executable()
+		cert, err := sconf.FullPath(p.conf.TlsCert)
 		if err != nil {
 			return err
 		}
-		exPath = filepath.Dir(exPath)
-
-		//check tls cert and key
-		if !sfile.ExistFile(p.conf.TlsCert) {
-			f := filepath.Join(exPath, p.conf.TlsCert)
-			if sfile.ExistFile(f) {
-				p.conf.TlsCert = f
-			} else {
-				return fmt.Errorf("tls cert not found")
-			}
+		if sfile.ExistFile(cert) {
+			p.conf.TlsCert = cert
+		} else {
+			return fmt.Errorf("tls cert not found")
 		}
-		if !sfile.ExistFile(p.conf.TlsKey) {
+
+		key, err := sconf.FullPath(p.conf.TlsKey)
+		if err != nil {
+			return err
+		}
+		if sfile.ExistFile(key) {
+			p.conf.TlsKey = key
+		} else {
 			return fmt.Errorf("tls key not found")
 		}
 	}
 
 	go func() {
 		p.logger.Info().Msgf("rpc listen(%s)", p.conf.Addr)
-		if err := p.HTTPServer.ListenAndServe(); err != nil {
+		if err := p.HTTPServer.ListenAndServeTLS(p.conf.TlsCert, p.conf.TlsKey); err != nil {
 			p.logger.Error().Err(err).Send()
 		} else {
 			p.logger.Info().Msg("rpc api done")

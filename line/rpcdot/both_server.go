@@ -8,12 +8,10 @@ import (
 	"time"
 
 	"github.com/scryinfo/dot/dot"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 )
 
-func NewBothHttpServer(conf *ConnectServerConfig, connectMux *http.ServeMux, grpcServer *grpc.Server, logger *dot.LoggerType, middle HandlerMiddle) (*BothHttpServer, func(), error) {
+func NewBothHttpServer(conf *ConnectServerConfig, sconf dot.SConfig, connectMux *http.ServeMux, grpcServer *grpc.Server, logger *dot.LoggerType, middle HandlerMiddle) (*BothHttpServer, func(), error) {
 	if conf.ShutdownTimeout < 0 {
 		conf.ShutdownTimeout = 10 * time.Second
 	}
@@ -60,14 +58,22 @@ func NewBothHttpServer(conf *ConnectServerConfig, connectMux *http.ServeMux, grp
 		}
 		grpcServer.ServeHTTP(w, r)
 	})
+
 	server := &http.Server{
-		Addr: conf.Addr,
-		Handler: h2c.NewHandler(muxEx, &http2.Server{
-			MaxConcurrentStreams: conf.MaxConcurrentStreams,
-		}),
+		Addr:         conf.Addr,
+		Handler:      muxEx,
 		ReadTimeout:  conf.ReadTimeout,
 		WriteTimeout: conf.WriteTimeout,
 	}
+	if conf.HTTP2 {
+		server.HTTP2 = &http.HTTP2Config{
+			MaxConcurrentStreams: conf.MaxConcurrentStreams,
+		}
+		server.Protocols.SetHTTP2(true)
+		server.Protocols.SetUnencryptedHTTP2(conf.UnencryptedHTTP2)
+	}
+	server.Protocols.SetHTTP1(conf.HTTP1)
+
 	d := &BothHttpServer{
 		ConnectServer: ConnectServer{
 			HTTPServer: server,
@@ -76,7 +82,7 @@ func NewBothHttpServer(conf *ConnectServerConfig, connectMux *http.ServeMux, grp
 			started:    atomic.Bool{},
 		},
 	}
-	d.start()
+	d.start(sconf)
 
 	return d, func() {
 		d.Shoutdown()

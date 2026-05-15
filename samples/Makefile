@@ -27,8 +27,12 @@ upgrade:
 	cd rpc/web_rpc/client && bun update --latest
 format:
 	cd rpc/web_rpc/client && bun run format
-build: samples
+
+DIST_web_rpc_client := rpc/web_rpc/client/dist/index.html
+$(DIST_web_rpc_client): $(shell find rpc/web_rpc/client/src -type f)
 	cd rpc/web_rpc/client && bun install && bun run build
+build: samples $(DIST_web_rpc_client)
+
 rebuild: clean gen wire build
 
 clean_wire:
@@ -43,7 +47,7 @@ wire:  $(addsuffix /wire_gen.go, $(WIRES))
 
 define sample_rule
 $1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go
-	cd $1 && ${go} build -o $(notdir $1) ./...
+	cd $1 && ${go} build -o $(notdir $1)$(EXE) ./...
 endef
 $(foreach wire,$(WIRES),$(eval $(call sample_rule,$(wire))))
 samples: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))$(EXE))

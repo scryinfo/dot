@@ -19,7 +19,7 @@ type LineConfig struct {
 }
 
 func NewAppConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLiceConfig[LineConfig](config)
+	return sconfig.NewLineConfig[LineConfig](config)
 }
 
 var LineSet = wire.NewSet(
