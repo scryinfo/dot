@@ -17,13 +17,13 @@ import (
 // Sm2 dot
 type Sm2 struct {
 	logger      *dot.LoggerType
-	certificate LoadCertificate
+	certificate BaseCertificate
 }
 
 func NewRsa(logger *dot.LoggerType) *Sm2 {
 	return &Sm2{
 		logger:      logger,
-		certificate: LoadCertificate{logger: logger},
+		certificate: BaseCertificate{logger: logger},
 	}
 }
 

@@ -14,3 +14,9 @@ maxIdleConns = 10
 maxIdleConnsPerHost = 10
 maxConnsPerHost = 10
 serverAddress = "http://localhost:8090"
+[httpClient.tls]
+mode = "none"
+cert = ""
+key = ""
+rootCert = ""
+serverCert = ""

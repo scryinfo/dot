@@ -19,13 +19,13 @@ const rsaKeySize = 2048
 // Rsa dot
 type Rsa struct {
 	logger      *dot.LoggerType
-	certificate LoadCertificate
+	certificate BaseCertificate
 }
 
 func NewSm2(logger *dot.LoggerType) *Rsa {
 	return &Rsa{
 		logger:      logger,
-		certificate: LoadCertificate{logger: logger},
+		certificate: BaseCertificate{logger: logger},
 	}
 }
 

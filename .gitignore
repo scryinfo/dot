@@ -13,6 +13,8 @@
 /tools/ende/decode/encode.json_en
 /tools/ende/decode/encode.json_en
 demo/wait_conn/wait_conn
+demo/redis/orm/orm
+demo/redis/go_redis
 /samples/debug
 
 samples/db/tools/dao/
@@ -54,7 +56,7 @@ samples/rpc/nobls/nobls_server/nobls_server
 samples/rpc/web_rpc/web_rpc_server/web_rpc_server
 samples/sconfig/sconfig
 samples/simple/simple
-demo/redis/orm/orm
+
 line/db/tools/gdao/gdao
 line/db/tools/gmodel/gmodel
 samples/Makefile.gen

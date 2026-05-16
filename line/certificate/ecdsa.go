@@ -18,13 +18,13 @@ import (
 // Ecdsa dot
 type Ecdsa struct {
 	logger      *dot.LoggerType
-	certificate LoadCertificate
+	certificate BaseCertificate
 }
 
 func NewEcdsa(logger *dot.LoggerType) *Ecdsa {
 	return &Ecdsa{
 		logger:      logger,
-		certificate: LoadCertificate{logger: logger},
+		certificate: BaseCertificate{logger: logger},
 	}
 }
 

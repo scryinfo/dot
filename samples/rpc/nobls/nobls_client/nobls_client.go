@@ -10,6 +10,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/certificate"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	apiv1 "github.com/scryinfo/dot/samples/rpc/go_out/connect/api/v1"
@@ -44,6 +45,7 @@ var LineSet = wire.NewSet(
 	dot.NewLogger,
 	NewHiServiceClient,
 	rpcdot.NewHttpClientEx,
+	certificate.NewBaseCertificate,
 )
 
 func main() {

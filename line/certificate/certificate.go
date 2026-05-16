@@ -23,19 +23,19 @@ import (
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
-// LoadCertificate dot
-type LoadCertificate struct {
+// BaseCertificate dot
+type BaseCertificate struct {
 	logger *dot.LoggerType
 }
 
-func NewCertificate(logger *dot.LoggerType) *LoadCertificate {
-	return &LoadCertificate{
+func NewBaseCertificate(logger *dot.LoggerType) *BaseCertificate {
+	return &BaseCertificate{
 		logger: logger,
 	}
 }
 
 // GenerateRoot Generate root certificate
-func (c *LoadCertificate) GenerateRoot(signatureAlgorithm x509.SignatureAlgorithm, dnsName []string, orgName []string) (*x509.Certificate, error) {
+func (c *BaseCertificate) GenerateRoot(signatureAlgorithm x509.SignatureAlgorithm, dnsName []string, orgName []string) (*x509.Certificate, error) {
 	serialNumber, err := c.makeSerialNumber()
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (c *LoadCertificate) GenerateRoot(signatureAlgorithm x509.SignatureAlgorith
 
 // GenerateRootFile
 // keyFile private key, pemFile from certificate file
-func (c *LoadCertificate) GenerateRootFile(pri any, rootCert *x509.Certificate, pub any, keyFile string, pemFile string) error {
+func (c *BaseCertificate) GenerateRootFile(pri any, rootCert *x509.Certificate, pub any, keyFile string, pemFile string) error {
 	{
 		certBytes, err := x509.CreateCertificate(rand.Reader, rootCert, rootCert, pub, pri)
 		if err != nil {
@@ -92,7 +92,7 @@ func (c *LoadCertificate) GenerateRootFile(pri any, rootCert *x509.Certificate, 
 
 // KeyFile
 // keyFile private file
-func (c *LoadCertificate) KeyFile(leafPri any, keyFile string) error {
+func (c *BaseCertificate) KeyFile(leafPri any, keyFile string) error {
 	privBytes, err := x509.MarshalPKCS8PrivateKey(leafPri)
 	if err != nil {
 		return err
@@ -116,7 +116,7 @@ func (c *LoadCertificate) KeyFile(leafPri any, keyFile string) error {
 
 // GenerateLeafCertificate Generate subcertificate and private key
 // keyFile private file, pemFile subcertificate file
-func (c *LoadCertificate) GenerateLeafCertificate(signatureAlgorithm x509.SignatureAlgorithm, dnsName []string, orgName []string) (*x509.Certificate, error) {
+func (c *BaseCertificate) GenerateLeafCertificate(signatureAlgorithm x509.SignatureAlgorithm, dnsName []string, orgName []string) (*x509.Certificate, error) {
 	serialNumber, err := c.makeSerialNumber()
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func (c *LoadCertificate) GenerateLeafCertificate(signatureAlgorithm x509.Signat
 
 // GenerateECDSALeafFile Generate subcertificate and private key
 // keyFile private file, pemFile subcertificate file
-func (c *LoadCertificate) GenerateLeafFile(leafPri any, leafCert *x509.Certificate, leafPub any, keyFile string, pemFile string, rootCert *x509.Certificate, rootPri any) error {
+func (c *BaseCertificate) GenerateLeafFile(leafPri any, leafCert *x509.Certificate, leafPub any, keyFile string, pemFile string, rootCert *x509.Certificate, rootPri any) error {
 
 	{
 		certBytes, err := x509.CreateCertificate(rand.Reader, leafCert, rootCert, leafPub, rootPri)
@@ -173,7 +173,7 @@ func (c *LoadCertificate) GenerateLeafFile(leafPri any, leafCert *x509.Certifica
 	return c.KeyFile(leafPri, keyFile)
 }
 
-func (c *LoadCertificate) LoadPrivateKey(keyFile string) (any, error) {
+func (c *BaseCertificate) LoadPrivateKey(keyFile string) (any, error) {
 	data, err := os.ReadFile(keyFile)
 	if err != nil {
 		return nil, err
@@ -195,7 +195,7 @@ func (c *LoadCertificate) LoadPrivateKey(keyFile string) (any, error) {
 	return key, nil
 }
 
-func (c *LoadCertificate) KeyType(key any) {
+func (c *BaseCertificate) KeyType(key any) {
 	switch k := key.(type) {
 	case *rsa.PrivateKey:
 		_ = k
@@ -210,7 +210,7 @@ func (c *LoadCertificate) KeyType(key any) {
 }
 
 // LoadCertificate Read certificate from pemFile
-func (c *LoadCertificate) LoadCertificate(pemFile string) (cert *x509.Certificate, err error) {
+func (c *BaseCertificate) LoadCertificate(pemFile string) (cert *x509.Certificate, err error) {
 	file, err := wdFile(pemFile)
 
 	if err != nil || len(file) < 1 {
@@ -238,7 +238,20 @@ func (c *LoadCertificate) LoadCertificate(pemFile string) (cert *x509.Certificat
 	return cert, err
 }
 
-func (c *LoadCertificate) makeSerialNumber() (serial *big.Int, err error) {
+func (c *BaseCertificate) ServerName(cert *x509.Certificate) string {
+	if len(cert.DNSNames) > 0 {
+		return cert.DNSNames[0]
+	}
+	if len(cert.IPAddresses) > 0 {
+		return cert.IPAddresses[0].String()
+	}
+	if len(cert.Subject.CommonName) > 0 {
+		return cert.Subject.CommonName
+	}
+	return ""
+}
+
+func (c *BaseCertificate) makeSerialNumber() (serial *big.Int, err error) {
 	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
 	serial, err = rand.Int(rand.Reader, serialNumberLimit)
 	return

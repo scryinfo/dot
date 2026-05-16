@@ -8,6 +8,7 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/certificate"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 )
@@ -26,7 +27,8 @@ func InitializeService() (*Line, func(), error) {
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
 	httpClientConfig := &lineConfig.HttpClient
-	httpClientEx, err := rpcdot.NewHttpClientEx(httpClientConfig, logger)
+	baseCertificate := certificate.NewBaseCertificate(logger)
+	httpClientEx, err := rpcdot.NewHttpClientEx(httpClientConfig, sConfig, baseCertificate, logger)
 	if err != nil {
 		return nil, nil, err
 	}

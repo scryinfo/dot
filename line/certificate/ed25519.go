@@ -17,13 +17,13 @@ import (
 // Ed25519 dot
 type Ed25519 struct {
 	logger      *dot.LoggerType
-	certificate LoadCertificate
+	certificate BaseCertificate
 }
 
 func NewEd25519(logger *dot.LoggerType) *Ed25519 {
 	return &Ed25519{
 		logger:      logger,
-		certificate: LoadCertificate{logger: logger},
+		certificate: BaseCertificate{logger: logger},
 	}
 }
 

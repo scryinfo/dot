@@ -2,10 +2,14 @@ package rpcdot
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
+	"fmt"
 	"net/http"
 
 	"connectrpc.com/connect"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/certificate"
 	"golang.org/x/net/http2"
 )
 
@@ -17,9 +21,11 @@ type HttpClientConfig struct {
 	MaxConnsPerHost     int  `json:"maxConnsPerHost" toml:"maxConnsPerHost" yaml:"maxConnsPerHost"`
 	// sample "http://localhost:8089"
 	ServerAddress string `json:"serverAddress" toml:"serverAddress" yaml:"serverAddress"`
+
+	Tls TlsConfig
 }
 
-func NewHttpClientEx(config *HttpClientConfig, logger *dot.LoggerType) (*HttpClientEx, error) {
+func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *certificate.BaseCertificate, logger *dot.LoggerType) (*HttpClientEx, error) {
 	tr := &http.Transport{
 		ForceAttemptHTTP2:   config.ForceAttemptHTTP2,
 		DisableCompression:  config.DisableCompression,
@@ -30,6 +36,59 @@ func NewHttpClientEx(config *HttpClientConfig, logger *dot.LoggerType) (*HttpCli
 	err := http2.ConfigureTransport(tr)
 	if err != nil {
 		return nil, err
+	}
+
+	switch config.Tls.Mode {
+	case RpcTlsNone:
+		tr.TLSClientConfig = nil
+	case RpcTlsInsecure:
+		tr.TLSClientConfig = &tls.Config{
+			InsecureSkipVerify: true,
+		}
+	case RpcTlsSecure:
+		tr.TLSClientConfig = &tls.Config{
+			InsecureSkipVerify: false,
+		}
+		{
+			pool := x509.NewCertPool()
+			if config.Tls.RootCert != "" {
+				rootCertFile, err := sconf.FullPath(config.Tls.RootCert)
+				if err != nil {
+					return nil, fmt.Errorf("failed to get root cert path: %w", err)
+				}
+				rootCert, err := baseCert.LoadCertificate(rootCertFile)
+				if err != nil {
+					return nil, fmt.Errorf("failed to load root cert: %w", err)
+				}
+				pool.AddCert(rootCert)
+			}
+			serverCertFile, err := sconf.FullPath(config.Tls.ServerCert)
+			if err != nil {
+				return nil, fmt.Errorf("failed to get server cert path: %w", err)
+			}
+			if serverCertFile == "" {
+				return nil, fmt.Errorf("server cert is required")
+			}
+			serverCert, err := baseCert.LoadCertificate(serverCertFile)
+			if err != nil {
+				return nil, fmt.Errorf("failed to load server cert: %w", err)
+			}
+			pool.AddCert(serverCert)
+
+			tr.TLSClientConfig.RootCAs = pool
+			tr.TLSClientConfig.ServerName = baseCert.ServerName(serverCert)
+			if tr.TLSClientConfig.ServerName == "" {
+				return nil, fmt.Errorf("cant get server name from server certificate")
+			}
+		}
+	case RpcTlsBoth:
+		tr.TLSClientConfig = &tls.Config{
+			InsecureSkipVerify: false,
+		}
+		//todo
+		return nil, fmt.Errorf("dont implement the tls both")
+	default:
+		tr.TLSClientConfig = nil
 	}
 
 	return &HttpClientEx{
