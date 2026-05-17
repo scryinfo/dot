@@ -11,7 +11,6 @@ import (
 
 	"github.com/scryinfo/dot/dot"
 	httptools "github.com/scryinfo/dot/line/rpcdot/http_tools"
-	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
 type ConnectHttpServerMux struct {
@@ -45,8 +44,7 @@ type ConnectServerConfig struct {
 	HTTP2            bool          `json:"http2" toml:"http2" yaml:"http2"`
 	UnencryptedHTTP2 bool          `json:"unencryptedHTTP2" toml:"unencryptedHTTP2" yaml:"unencryptedHTTP2"`
 
-	TlsCert string `json:"tlsCert" toml:"tlsCert" yaml:"tlsCert"`
-	TlsKey  string `json:"tlsKey" toml:"tlsKey" yaml:"tlsKey"`
+	Tls TlsConfig `json:"tls" toml:"tls" yaml:"tls"`
 }
 
 type ConnectServer struct {
@@ -137,11 +135,10 @@ func NewConnetServer(conf *ConnectServerConfig, sconf dot.SConfig, connetMux *Co
 		logger:     logger,
 		started:    atomic.Bool{},
 	}
-	d.start(sconf)
-
+	err := d.start(sconf)
 	return d, func() {
 		d.Shoutdown()
-	}, nil
+	}, err
 }
 
 func (p *ConnectServer) start(sconf dot.SConfig) error {
@@ -149,35 +146,32 @@ func (p *ConnectServer) start(sconf dot.SConfig) error {
 	if p.started.Swap(true) {
 		return nil
 	}
-	//check tls cert and key
-	if p.conf.TlsCert != "" || p.conf.TlsKey != "" {
-		cert, err := sconf.FullPath(p.conf.TlsCert)
-		if err != nil {
-			return err
-		}
-		if sfile.ExistFile(cert) {
-			p.conf.TlsCert = cert
-		} else {
-			return fmt.Errorf("tls cert not found")
-		}
+	err := p.conf.Tls.FullPath(sconf)
+	if err != nil {
+		return err
+	}
 
-		key, err := sconf.FullPath(p.conf.TlsKey)
-		if err != nil {
-			return err
-		}
-		if sfile.ExistFile(key) {
-			p.conf.TlsKey = key
-		} else {
-			return fmt.Errorf("tls key not found")
-		}
+	//check tls cert and key
+	if (p.conf.Tls.Cert != "" && p.conf.Tls.Key == "") || (p.conf.Tls.Cert == "" && p.conf.Tls.Key != "") {
+		return fmt.Errorf("tls cert and key must be both set or both empty")
 	}
 
 	go func() {
-		p.logger.Info().Msgf("rpc listen(%s)", p.conf.Addr)
-		if err := p.HTTPServer.ListenAndServeTLS(p.conf.TlsCert, p.conf.TlsKey); err != nil {
-			p.logger.Error().Err(err).Send()
+
+		if p.conf.Tls.Key != "" {
+			p.logger.Info().Msgf("rpc tls listen(%s)", p.conf.Addr)
+			if err := p.HTTPServer.ListenAndServeTLS(p.conf.Tls.Cert, p.conf.Tls.Key); err != nil {
+				p.logger.Error().Err(err).Send()
+			} else {
+				p.logger.Info().Msg("rpc api done")
+			}
 		} else {
-			p.logger.Info().Msg("rpc api done")
+			p.logger.Info().Msgf("rpc listen(%s)", p.conf.Addr)
+			if err := p.HTTPServer.ListenAndServe(); err != nil {
+				p.logger.Error().Err(err).Send()
+			} else {
+				p.logger.Info().Msg("rpc api done")
+			}
 		}
 	}()
 	return nil

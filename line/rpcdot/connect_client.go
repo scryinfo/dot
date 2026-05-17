@@ -10,7 +10,6 @@ import (
 	"connectrpc.com/connect"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/certificate"
-	"golang.org/x/net/http2"
 )
 
 type HttpClientConfig struct {
@@ -33,10 +32,10 @@ func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *cert
 		MaxIdleConnsPerHost: config.MaxIdleConnsPerHost,
 		MaxConnsPerHost:     config.MaxConnsPerHost,
 	}
-	err := http2.ConfigureTransport(tr)
-	if err != nil {
-		return nil, err
-	}
+	// err := http2.ConfigureTransport(tr)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	switch config.Tls.Mode {
 	case RpcTlsNone:
@@ -62,23 +61,23 @@ func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *cert
 				}
 				pool.AddCert(rootCert)
 			}
-			serverCertFile, err := sconf.FullPath(config.Tls.ServerCert)
+			peerCertFile, err := sconf.FullPath(config.Tls.PeerCert)
 			if err != nil {
-				return nil, fmt.Errorf("failed to get server cert path: %w", err)
+				return nil, fmt.Errorf("failed to get peer cert path: %w", err)
 			}
-			if serverCertFile == "" {
-				return nil, fmt.Errorf("server cert is required")
+			if peerCertFile == "" {
+				return nil, fmt.Errorf("peer cert is required")
 			}
-			serverCert, err := baseCert.LoadCertificate(serverCertFile)
+			peerCert, err := baseCert.LoadCertificate(peerCertFile)
 			if err != nil {
-				return nil, fmt.Errorf("failed to load server cert: %w", err)
+				return nil, fmt.Errorf("failed to load peer cert: %w", err)
 			}
-			pool.AddCert(serverCert)
+			pool.AddCert(peerCert)
 
 			tr.TLSClientConfig.RootCAs = pool
-			tr.TLSClientConfig.ServerName = baseCert.ServerName(serverCert)
+			tr.TLSClientConfig.ServerName = baseCert.ServerName(peerCert)
 			if tr.TLSClientConfig.ServerName == "" {
-				return nil, fmt.Errorf("cant get server name from server certificate")
+				return nil, fmt.Errorf("cant get server name from peer certificate")
 			}
 		}
 	case RpcTlsBoth:

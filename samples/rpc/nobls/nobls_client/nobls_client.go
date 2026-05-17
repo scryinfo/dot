@@ -33,7 +33,8 @@ func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 	return sconfig.NewLineConfig[LineConfig](config)
 }
 func NewHiServiceClient(httpClientEx *rpcdot.HttpClientEx) apiv1connect.HiServiceClient {
-	return apiv1connect.NewHiServiceClient(httpClientEx.Client(), httpClientEx.ServerAddress(), connect.WithGRPC())
+	// return apiv1connect.NewHiServiceClient(httpClientEx.Client(), httpClientEx.ServerAddress(), connect.WithGRPC())
+	return apiv1connect.NewHiServiceClient(httpClientEx.Client(), httpClientEx.ServerAddress())
 }
 
 var LineSet = wire.NewSet(

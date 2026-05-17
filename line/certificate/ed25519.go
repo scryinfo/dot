@@ -31,7 +31,7 @@ func NewEd25519(logger *dot.LoggerType) *Ed25519 {
 // keyFile private key, pemFile ca certificate file
 func (c *Ed25519) GenerateRoot(rootPri ed25519.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
 
-	rootCert, err := c.certificate.GenerateRoot(x509.PureEd25519, dnsName, orgName)
+	rootCert, err := c.certificate.GenerateRoot(x509.UnknownSignatureAlgorithm, dnsName, orgName)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (c *Ed25519) GenerateRoot(rootPri ed25519.PrivateKey, keyFile string, pemFi
 // GenerateLeaf Generate subcertificate and private key
 // keyFile private file, pemFile subcertificate file
 func (c *Ed25519) GenerateLeaf(rootCert *x509.Certificate, rootPri ed25519.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
-	leaf, err := c.certificate.GenerateLeafCertificate(x509.PureEd25519, dnsName, orgName)
+	leaf, err := c.certificate.GenerateLeafCertificate(x509.UnknownSignatureAlgorithm, dnsName, orgName)
 	if err != nil {
 		return nil, err
 	}

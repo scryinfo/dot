@@ -12,23 +12,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-type RpcTls string
-
-const (
-	RpcTlsNone     RpcTls = "none"
-	RpcTlsInsecure RpcTls = "insecure" //InsecureSkipVerify = true
-	RpcTlsSecure   RpcTls = "secure"   //InsecureSkipVerify = false, read name from server cert
-	RpcTlsBoth     RpcTls = "both"     // client and server cert are verified
-)
-
-type TlsConfig struct {
-	Mode       RpcTls
-	Cert       string
-	Key        string
-	RootCert   string
-	ServerCert string
-}
-
 type GrpcClientConfig struct {
 	ServerAddress string
 	Tls           TlsConfig
@@ -74,23 +57,23 @@ func NewGrpcClientEx(config *GrpcClientConfig, sconf dot.SConfig, logger *dot.Lo
 				}
 				pool.AddCert(rootCert)
 			}
-			serverCertFile, err := sconf.FullPath(config.Tls.ServerCert)
+			peerCertFile, err := sconf.FullPath(config.Tls.PeerCert)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to get server cert path: %w", err)
+				return nil, nil, fmt.Errorf("failed to get peer cert path: %w", err)
 			}
-			if serverCertFile == "" {
-				return nil, nil, fmt.Errorf("server cert is required")
+			if peerCertFile == "" {
+				return nil, nil, fmt.Errorf("peer cert is required")
 			}
-			serverCert, err := baseCert.LoadCertificate(serverCertFile)
+			peerCert, err := baseCert.LoadCertificate(peerCertFile)
 			if err != nil {
-				return nil, nil, fmt.Errorf("failed to load server cert: %w", err)
+				return nil, nil, fmt.Errorf("failed to load peer cert: %w", err)
 			}
-			pool.AddCert(serverCert)
+			pool.AddCert(peerCert)
 
 			tlsConfig.RootCAs = pool
-			tlsConfig.ServerName = baseCert.ServerName(serverCert)
+			tlsConfig.ServerName = baseCert.ServerName(peerCert)
 			if tlsConfig.ServerName == "" {
-				return nil, nil, fmt.Errorf("cant get server name from server certificate")
+				return nil, nil, fmt.Errorf("cant get server name from peer certificate")
 			}
 		}
 		conn, err := grpc.NewClient(config.ServerAddress, grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig)))

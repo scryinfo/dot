@@ -15,8 +15,8 @@ maxIdleConnsPerHost = 10
 maxConnsPerHost = 10
 serverAddress = "https://localhost:8090"
 [httpClient.tls]
-mode = "insecure"
+mode = "secure"
 cert = ""
 key = ""
 rootCert = ""
-serverCert = ""
+peerCert = "../../config/cert/server.cert"

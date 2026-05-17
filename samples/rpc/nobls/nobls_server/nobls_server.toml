@@ -22,7 +22,11 @@ shutdownTimeout = 1024000
 http1 = false
 http2 = true
 unencryptedHTTP2 = false
-tlsCert = "../../config/cert/server.cert"
-tlsKey = "../../config/cert/server.key"
+[connectServer.tls]
+mode = "secure"
+cert = "../../config/cert/server.cert"
+key = "../../config/cert/server.key"
+rootCert = ""
+peerCert = ""
 [hiService]
 name = "nobls_server"
