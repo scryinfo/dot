@@ -10,6 +10,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/certificate"
+	"golang.org/x/net/http2"
 )
 
 type HttpClientConfig struct {
@@ -25,19 +26,28 @@ type HttpClientConfig struct {
 }
 
 func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *certificate.BaseCertificate, logger *dot.LoggerType) (*HttpClientEx, error) {
-	tr := &http.Transport{
-		ForceAttemptHTTP2:   config.ForceAttemptHTTP2,
-		DisableCompression:  config.DisableCompression,
-		MaxIdleConns:        config.MaxIdleConns,
-		MaxIdleConnsPerHost: config.MaxIdleConnsPerHost,
-		MaxConnsPerHost:     config.MaxConnsPerHost,
+	conf := *config
+	err := conf.Tls.FullPath(sconf)
+	if err != nil {
+		return nil, err
 	}
-	// err := http2.ConfigureTransport(tr)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
-	switch config.Tls.Mode {
+	tr := &http.Transport{
+		ForceAttemptHTTP2:   conf.ForceAttemptHTTP2,
+		DisableCompression:  conf.DisableCompression,
+		MaxIdleConns:        conf.MaxIdleConns,
+		MaxIdleConnsPerHost: conf.MaxIdleConnsPerHost,
+		MaxConnsPerHost:     conf.MaxConnsPerHost,
+	}
+	if !conf.Tls.NeedsTls() {
+		// add support http2 not tls
+		err := http2.ConfigureTransport(tr)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	switch conf.Tls.Mode {
 	case RpcTlsNone:
 		tr.TLSClientConfig = nil
 	case RpcTlsInsecure:
@@ -50,8 +60,8 @@ func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *cert
 		}
 		{
 			pool := x509.NewCertPool()
-			if config.Tls.RootCert != "" {
-				rootCertFile, err := sconf.FullPath(config.Tls.RootCert)
+			if conf.Tls.RootCert != "" {
+				rootCertFile, err := sconf.FullPath(conf.Tls.RootCert)
 				if err != nil {
 					return nil, fmt.Errorf("failed to get root cert path: %w", err)
 				}
@@ -61,7 +71,7 @@ func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *cert
 				}
 				pool.AddCert(rootCert)
 			}
-			peerCertFile, err := sconf.FullPath(config.Tls.PeerCert)
+			peerCertFile, err := sconf.FullPath(conf.Tls.PeerCert)
 			if err != nil {
 				return nil, fmt.Errorf("failed to get peer cert path: %w", err)
 			}
@@ -95,7 +105,7 @@ func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *cert
 			Transport: tr,
 		},
 		logger: logger,
-		conf:   *config,
+		conf:   conf,
 	}, nil
 }
 

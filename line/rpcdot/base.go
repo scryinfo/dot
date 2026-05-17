@@ -57,3 +57,8 @@ func (p *TlsConfig) FullPath(sconf dot.SConfig) error {
 	}
 	return nil
 }
+
+// needs tls
+func (p *TlsConfig) NeedsTls() bool {
+	return p.Mode != RpcTlsNone || p.Key != ""
+}
