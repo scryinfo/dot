@@ -1,16 +1,17 @@
 package rpcdot
 
+// todo
 import (
-	"context"
 	"net/http"
 
 	"connectrpc.com/connect"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/certificate"
+	"github.com/scryinfo/dot/line/etcddot"
 	"golang.org/x/net/http2"
 )
 
-type HttpClientConfig struct {
+type HttpClientConfigEtcd struct {
 	ForceAttemptHTTP2   bool `json:"forceAttemptHTTP2" toml:"forceAttemptHTTP2" yaml:"forceAttemptHTTP2"`
 	DisableCompression  bool `json:"disableCompression" toml:"disableCompression" yaml:"disableCompression"`
 	MaxIdleConns        int  `json:"maxIdleConns" toml:"maxIdleConns" yaml:"maxIdleConns"`
@@ -19,10 +20,12 @@ type HttpClientConfig struct {
 	// sample "http://localhost:8089"
 	ServerAddress string `json:"serverAddress" toml:"serverAddress" yaml:"serverAddress"`
 
-	Tls TlsConfig
+	Name                     string `json:"name" toml:"name" yaml:"name"`
+	WithDefaultServiceConfig string `json:"withDefaultServiceConfig" toml:"withDefaultServiceConfig" yaml:"withDefaultServiceConfig"`
+	Tls                      TlsConfig
 }
 
-func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *certificate.BaseCertificate, logger *dot.LoggerType) (*HttpClientEx, error) {
+func NewHttpClientEtcd(config *HttpClientConfigEtcd, sconf dot.SConfig, baseCert *certificate.BaseCertificate, etcdClient *etcddot.Client, logger *dot.LoggerType) (*HttpClientEtcd, error) {
 	conf := *config
 	err := conf.Tls.FullPath(sconf)
 	if err != nil {
@@ -49,7 +52,7 @@ func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *cert
 	}
 	tr.TLSClientConfig = tlsConfig
 
-	return &HttpClientEx{
+	return &HttpClientEtcd{
 		client: http.Client{
 			Transport: tr,
 		},
@@ -58,13 +61,13 @@ func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *cert
 	}, nil
 }
 
-type HttpClientEx struct {
+type HttpClientEtcd struct {
 	client http.Client
 	logger *dot.LoggerType
-	conf   HttpClientConfig
+	conf   HttpClientConfigEtcd
 }
 
-func (p *HttpClientEx) NotCompressOptions() []connect.ClientOption {
+func (p *HttpClientEtcd) NotCompressOptions() []connect.ClientOption {
 	return []connect.ClientOption{
 		connect.WithGRPC(),
 		connect.WithSendCompression(""),
@@ -73,20 +76,10 @@ func (p *HttpClientEx) NotCompressOptions() []connect.ClientOption {
 	}
 }
 
-func (p *HttpClientEx) ServerAddress() string {
+func (p *HttpClientEtcd) ServerAddress() string {
 	return p.conf.ServerAddress
 }
 
-func (p *HttpClientEx) Client() *http.Client {
+func (p *HttpClientEtcd) Client() *http.Client {
 	return &p.client
-}
-
-func disableGRPCCompressionInterceptor() connect.UnaryInterceptorFunc {
-	return func(next connect.UnaryFunc) connect.UnaryFunc {
-		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			req.Header().Del("Grpc-Encoding")
-			req.Header().Del("Grpc-Accept-Encoding")
-			return next(ctx, req)
-		}
-	}
 }

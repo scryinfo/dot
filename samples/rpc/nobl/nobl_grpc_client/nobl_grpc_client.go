@@ -9,8 +9,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
-	contextex "github.com/scryinfo/dot/line/context_ex"
-	"github.com/scryinfo/dot/line/etcddot"
+	"github.com/scryinfo/dot/line/certificate"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	apiv1grpc "github.com/scryinfo/dot/samples/rpc/go_out/gogrpc/api/v1"
@@ -24,30 +23,28 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log            dot.LogConfig
-	GrpcClientEtcd rpcdot.GrpcClientEtcdConfig
-	EtcdClient     etcddot.ClientConfig
+	Log        dot.LogConfig           `json:"log" toml:"log" yaml:"log"`
+	GrpcClient rpcdot.GrpcClientConfig `json:"grpcClient" toml:"grpcClient" yaml:"grpcClient"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 	return sconfig.NewLineConfig[LineConfig](config)
 }
+func NewHiServiceClient(clientEx *rpcdot.GrpcClientEx) apiv1grpc.HiServiceClient {
+	return apiv1grpc.NewHiServiceClient(clientEx.Client())
+}
 
 var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
-	wire.FieldsOf(new(*LineConfig), "Log", "GrpcClientEtcd", "EtcdClient"),
+	wire.FieldsOf(new(*LineConfig), "Log", "GrpcClient"),
 	NewLineConfig,
 	sconfig.NewConfig,
+	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
-	contextex.NewContextEx,
-	rpcdot.NewGrpcClientEtcd,
 	NewHiServiceClient,
-	etcddot.NewClient,
+	rpcdot.NewGrpcClientEx,
+	certificate.NewBaseCertificate,
 )
-
-func NewHiServiceClient(clientEtcd *rpcdot.GrpcClientEtcd) apiv1grpc.HiServiceClient {
-	return apiv1grpc.NewHiServiceClient(clientEtcd.Client())
-}
 
 func main() {
 	// dot.InitLogger(new(dot.TestLogConfig()))
@@ -60,26 +57,17 @@ func main() {
 		defer clear()
 	}
 
-	line.Logger.Info().Msg("dot ok")
+	dot.Logger.Info().Msg("dot ok")
 	//second step ....
-	res, err := line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt"})
+	_ = line
+
+	res, err := line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "test"})
 	if err != nil {
-		line.Logger.Error().Err(err).Msg("hi failed")
+		dot.Logger.Error().Err(err).Msg("hi failed")
 		return
 	}
-	line.Logger.Info().Msg(res.Name)
-	res, err = line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt2"})
-	if err != nil {
-		line.Logger.Error().Err(err).Msg("hi failed")
-		return
-	}
-	line.Logger.Info().Msg(res.Name)
-	res, err = line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt3"})
-	if err != nil {
-		line.Logger.Error().Err(err).Msg("hi failed")
-		return
-	}
-	line.Logger.Info().Msg(res.Name)
+
+	dot.Logger.Info().Msgf("hi response: %v", res.Name)
 
 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false

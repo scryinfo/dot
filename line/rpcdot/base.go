@@ -7,7 +7,14 @@
 // This means you can use streaming from the browser, but only server streaming."
 package rpcdot
 
-import "github.com/scryinfo/dot/dot"
+import (
+	"crypto/tls"
+	"crypto/x509"
+	"fmt"
+
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/certificate"
+)
 
 type RpcTls string
 
@@ -61,4 +68,58 @@ func (p *TlsConfig) FullPath(sconf dot.SConfig) error {
 // needs tls
 func (p *TlsConfig) NeedsTls() bool {
 	return p.Mode != RpcTlsNone || p.Key != ""
+}
+
+func (p *TlsConfig) MakeTlsConfig(sconf dot.SConfig, baseCert *certificate.BaseCertificate) (*tls.Config, error) {
+	switch p.Mode {
+	case RpcTlsNone:
+		return nil, nil
+	case RpcTlsInsecure:
+		return &tls.Config{
+			InsecureSkipVerify: true,
+		}, nil
+	case RpcTlsSecure:
+		tlsConfig := &tls.Config{
+			InsecureSkipVerify: false,
+		}
+		{
+			pool := x509.NewCertPool()
+			if p.RootCert != "" {
+				rootCertFile, err := sconf.FullPath(p.RootCert)
+				if err != nil {
+					return nil, fmt.Errorf("failed to get root cert path: %w", err)
+				}
+				rootCert, err := baseCert.LoadCertificate(rootCertFile)
+				if err != nil {
+					return nil, fmt.Errorf("failed to load root cert: %w", err)
+				}
+				pool.AddCert(rootCert)
+			}
+			peerCertFile, err := sconf.FullPath(p.PeerCert)
+			if err != nil {
+				return nil, fmt.Errorf("failed to get peer cert path: %w", err)
+			}
+			if peerCertFile == "" {
+				return nil, fmt.Errorf("peer cert is required")
+			}
+			peerCert, err := baseCert.LoadCertificate(peerCertFile)
+			if err != nil {
+				return nil, fmt.Errorf("failed to load peer cert: %w", err)
+			}
+			pool.AddCert(peerCert)
+
+			tlsConfig.RootCAs = pool
+			tlsConfig.ServerName = baseCert.ServerName(peerCert)
+			if tlsConfig.ServerName == "" {
+				return nil, fmt.Errorf("cant get server name from peer certificate")
+			}
+		}
+		return tlsConfig, nil
+	case RpcTlsBoth:
+		return &tls.Config{
+			InsecureSkipVerify: false,
+		}, nil
+	default:
+		return nil, nil
+	}
 }

@@ -8,6 +8,7 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/certificate"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -27,12 +28,13 @@ func InitializeService() (*Line, func(), error) {
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
 	grpcClientEtcdConfig := &lineConfig.GrpcClientEtcd
+	baseCertificate := certificate.NewBaseCertificate(logger)
 	clientConfig := &lineConfig.EtcdClient
 	client, cleanup, err := etcddot.NewClient(clientConfig, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	grpcClientEtcd, err := rpcdot.NewGrpcClientEtcd(grpcClientEtcdConfig, client, logger)
+	grpcClientEtcd, err := rpcdot.NewGrpcClientEtcd(grpcClientEtcdConfig, sConfig, baseCertificate, client, logger)
 	if err != nil {
 		cleanup()
 		return nil, nil, err

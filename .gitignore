@@ -31,7 +31,7 @@ samples/etcd_client/etcd_client
 samples/etcd_server/etcd_server
 samples/etcd_server/default.etcd
 
-samples/rpc/bl/bl_client/bl_client
+samples/rpc/bl/bl_grpc_client/bl_grpc_client
 samples/rpc/bl/bl_server/bl_server
 samples/rpc/bl/bl_server/default.etcd/
 samples/rpc/bl/bl_server2/bl_server2
@@ -39,7 +39,7 @@ samples/rpc/bl/bl_server2/default.etcd/
 samples/rpc/bl/bl_server3/bl_server3
 samples/rpc/bl/bl_server3/default.etcd/
 
-samples/rpc/bls/bls_client/bls_client
+samples/rpc/bls/bls_grpc_client/bls_grpc_client
 samples/rpc/bls/bls_server/bls_server
 samples/rpc/bls/bls_server/default.etcd/
 samples/rpc/bls/bls_server2/bls_server2
@@ -47,10 +47,12 @@ samples/rpc/bls/bls_server2/default.etcd/
 samples/rpc/bls/bls_server3/bls_server3
 samples/rpc/bls/bls_server3/default.etcd/
 
-samples/rpc/nobl/nobl_client/nobl_client
+samples/rpc/nobl/nobl_connect_client/nobl_connect_client
+samples/rpc/nobl/nobl_grpc_client/nobl_grpc_client
 samples/rpc/nobl/nobl_server/nobl_server
 
-samples/rpc/nobls/nobls_client/nobls_client
+samples/rpc/nobls/nobls_connect_client/nobls_connect_client
+samples/rpc/nobls/nobls_grpc_client/nobls_grpc_client
 samples/rpc/nobls/nobls_server/nobls_server
 
 samples/rpc/web_rpc/web_rpc_server/web_rpc_server
