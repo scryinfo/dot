@@ -49,42 +49,42 @@ type ConnectServerConfig struct {
 
 type ConnectServer struct {
 	HTTPServer *http.Server
-	conf       ConnectServerConfig
+	conf       *ConnectServerConfig
 	logger     *dot.LoggerType
 	started    atomic.Bool
 }
 
-func NewConnetServer(conf *ConnectServerConfig, sconf dot.SConfig, connetMux *ConnectHttpServerMux, logger *dot.LoggerType, middle HandlerMiddle) (*ConnectServer, func(), error) {
-	if conf.ShutdownTimeout < 0 {
-		conf.ShutdownTimeout = 10 * time.Second
+func NewConnetServer(config *ConnectServerConfig, sconf dot.SConfig, connetMux *ConnectHttpServerMux, logger *dot.LoggerType, middle HandlerMiddle) (*ConnectServer, func(), error) {
+	if config.ShutdownTimeout < 0 {
+		config.ShutdownTimeout = 10 * time.Second
 	}
-	if len(conf.UnAuthUrls) > 0 {
-		unauthUrls = conf.UnAuthUrls
+	if len(config.UnAuthUrls) > 0 {
+		unauthUrls = config.UnAuthUrls
 	}
-	if len(conf.AllowMethods) < 1 {
-		conf.AllowMethods = []string{"GET", "POST", "OPTIONS"}
+	if len(config.AllowMethods) < 1 {
+		config.AllowMethods = []string{"GET", "POST", "OPTIONS"}
 	}
-	if len(conf.AllowHeaders) < 1 {
-		conf.AllowHeaders = []string{
+	if len(config.AllowHeaders) < 1 {
+		config.AllowHeaders = []string{
 			"Origin", "Upgrade", "Connection", "X-Requested-With", "X-HTTP-Protocol", "Content-Type",
 			"Accept", "Cookie", "connect-protocol-version", "connect-timeout-ms",
 			httptools.TokenName, httptools.TokenGame, httptools.Authorization, httptools.AuthorizationGame}
 	}
-	if len(conf.AllowedOrigins) < 1 {
-		conf.AllowedOrigins = []string{"http://localhost", "http://127.0.0.1"}
+	if len(config.AllowedOrigins) < 1 {
+		config.AllowedOrigins = []string{"http://localhost", "http://127.0.0.1"}
 	}
 
-	allowMethods := strings.Join(conf.AllowMethods, ",")
-	allowHeaders := strings.Join(conf.AllowHeaders, ",")
+	allowMethods := strings.Join(config.AllowMethods, ",")
+	allowHeaders := strings.Join(config.AllowHeaders, ",")
 	muxEx := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		header := w.Header()
 		{
 			originHeader := r.Header.Get("Origin")
-			if len(conf.AllowedOrigins) == 1 && conf.AllowedOrigins[0] == "*" {
+			if len(config.AllowedOrigins) == 1 && config.AllowedOrigins[0] == "*" {
 				header.Set("Access-Control-Allow-Origin", "*")
-			} else if slices.Contains(conf.AllowedOrigins, originHeader) {
+			} else if slices.Contains(config.AllowedOrigins, originHeader) {
 				header.Set("Access-Control-Allow-Origin", originHeader)
-			} else if slices.ContainsFunc(conf.AllowedOrigins, func(origin string) bool {
+			} else if slices.ContainsFunc(config.AllowedOrigins, func(origin string) bool {
 				if strings.HasPrefix(origin, "http://localhost") || strings.HasPrefix(origin, "http://127.0.0.1") ||
 					strings.HasPrefix(origin, "https://localhost") || strings.HasPrefix(origin, "https://127.0.0.1") {
 					return true
@@ -97,10 +97,10 @@ func NewConnetServer(conf *ConnectServerConfig, sconf dot.SConfig, connetMux *Co
 		header.Set("Access-Control-Allow-Methods", allowMethods)
 		header.Set("Access-Control-Allow-Headers", allowHeaders)
 		header.Set("Access-Control-Expose-Headers", "X-Protocol, X-Response-Time")
-		if conf.AllowCredentials {
+		if config.AllowCredentials {
 			header.Set("Access-Control-Allow-Credentials", "true")
 		}
-		if conf.OptionMethods && r.Method == "OPTIONS" {
+		if config.OptionMethods && r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
@@ -115,23 +115,23 @@ func NewConnetServer(conf *ConnectServerConfig, sconf dot.SConfig, connetMux *Co
 		connetMux.ServeHTTP(w, r)
 	})
 	server := &http.Server{
-		Addr:         conf.Addr,
+		Addr:         config.Addr,
 		Handler:      muxEx,
-		ReadTimeout:  conf.ReadTimeout,
-		WriteTimeout: conf.WriteTimeout,
+		ReadTimeout:  config.ReadTimeout,
+		WriteTimeout: config.WriteTimeout,
 		Protocols:    &http.Protocols{},
 	}
-	if conf.HTTP2 {
+	if config.HTTP2 {
 		server.HTTP2 = &http.HTTP2Config{
-			MaxConcurrentStreams: conf.MaxConcurrentStreams,
+			MaxConcurrentStreams: config.MaxConcurrentStreams,
 		}
 		server.Protocols.SetHTTP2(true)
-		server.Protocols.SetUnencryptedHTTP2(conf.UnencryptedHTTP2)
+		server.Protocols.SetUnencryptedHTTP2(config.UnencryptedHTTP2)
 	}
-	server.Protocols.SetHTTP1(conf.HTTP1)
+	server.Protocols.SetHTTP1(config.HTTP1)
 	d := &ConnectServer{
 		HTTPServer: server,
-		conf:       *conf,
+		conf:       config,
 		logger:     logger,
 		started:    atomic.Bool{},
 	}

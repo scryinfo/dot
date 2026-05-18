@@ -26,7 +26,7 @@ func NewClient(conf *ClientConfig, logger *dot.LoggerType) (*Client, func(), err
 		return nil, nil, err
 	}
 	d := Client{
-		conf:   *conf,
+		conf:   conf,
 		client: client,
 		logger: logger,
 	}
@@ -48,7 +48,7 @@ type ClientConfig struct {
 }
 
 type Client struct {
-	conf   ClientConfig
+	conf   *ClientConfig
 	client *clientv3.Client
 	logger *dot.LoggerType
 }

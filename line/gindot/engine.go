@@ -26,13 +26,13 @@ type EngineConfig struct {
 // GinEngine  gin dot
 type Engine struct {
 	ginEngine     *gin.Engine
-	config        EngineConfig
+	config        *EngineConfig
 	loggerOnlyGin *dot.LoggerType
 }
 
 // construct dot
 func NewGinDot(conf *EngineConfig, loggerOnlyGin *dot.LoggerType) (*Engine, error) {
-	d := &Engine{config: *conf, ginEngine: gin.New(), loggerOnlyGin: loggerOnlyGin}
+	d := &Engine{config: conf, ginEngine: gin.New(), loggerOnlyGin: loggerOnlyGin}
 	d.ginEngine.Use(d.makeLogger(), gin.Recovery())
 	go d.startServer()
 	return d, nil

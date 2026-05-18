@@ -28,7 +28,7 @@ type Ui struct {
 	Engine *Engine
 
 	router       *gin.RouterGroup
-	config       ConfigUi
+	config       *ConfigUi
 	executePath  string //executable path
 	currentPath  string //current path
 	userPath     string //user path
@@ -150,7 +150,7 @@ func (c *Ui) ResAbsolutePath(res string) string {
 func NewUi(conf *ConfigUi, engine *Engine) (*Ui, error) {
 
 	var err error
-	ui := &Ui{config: *conf, Engine: engine}
+	ui := &Ui{config: conf, Engine: engine}
 	d := ui
 	{
 		ui.executePath, err = os.Executable()

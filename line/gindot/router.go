@@ -17,13 +17,13 @@ type RouterConfig struct {
 type Router struct {
 	Engine_ *Engine
 	router  *gin.RouterGroup
-	config  RouterConfig
+	config  *RouterConfig
 }
 
 // construct dot
 func NewRouter(conf *RouterConfig, engine *Engine) (*Router, error) {
 
-	d := &Router{config: *conf, router: engine.GinEngine().Group(conf.RelativePath), Engine_: engine}
+	d := &Router{config: conf, router: engine.GinEngine().Group(conf.RelativePath), Engine_: engine}
 
 	return d, nil
 }

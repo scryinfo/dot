@@ -23,27 +23,26 @@ type HttpClientConfig struct {
 }
 
 func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *certificate.BaseCertificate, logger *dot.LoggerType) (*HttpClientEx, error) {
-	conf := *config
-	err := conf.Tls.FullPath(sconf)
+	err := config.Tls.FullPath(sconf)
 	if err != nil {
 		return nil, err
 	}
 
 	tr := &http.Transport{
-		ForceAttemptHTTP2:   conf.ForceAttemptHTTP2,
-		DisableCompression:  conf.DisableCompression,
-		MaxIdleConns:        conf.MaxIdleConns,
-		MaxIdleConnsPerHost: conf.MaxIdleConnsPerHost,
-		MaxConnsPerHost:     conf.MaxConnsPerHost,
+		ForceAttemptHTTP2:   config.ForceAttemptHTTP2,
+		DisableCompression:  config.DisableCompression,
+		MaxIdleConns:        config.MaxIdleConns,
+		MaxIdleConnsPerHost: config.MaxIdleConnsPerHost,
+		MaxConnsPerHost:     config.MaxConnsPerHost,
 	}
-	if !conf.Tls.NeedsTls() {
+	if !config.Tls.NeedsTls() {
 		// add support http2 not tls
 		err := http2.ConfigureTransport(tr)
 		if err != nil {
 			return nil, err
 		}
 	}
-	tlsConfig, err := conf.Tls.MakeTlsConfig(sconf, baseCert)
+	tlsConfig, err := config.Tls.MakeTlsConfig(sconf, baseCert)
 	if err != nil {
 		return nil, err
 	}
@@ -54,14 +53,14 @@ func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *cert
 			Transport: tr,
 		},
 		logger: logger,
-		conf:   conf,
+		conf:   config,
 	}, nil
 }
 
 type HttpClientEx struct {
 	client http.Client
 	logger *dot.LoggerType
-	conf   HttpClientConfig
+	conf   *HttpClientConfig
 }
 
 func (p *HttpClientEx) NotCompressOptions() []connect.ClientOption {

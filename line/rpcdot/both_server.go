@@ -78,7 +78,7 @@ func NewBothHttpServer(conf *ConnectServerConfig, sconf dot.SConfig, connectMux 
 	d := &BothHttpServer{
 		ConnectServer: ConnectServer{
 			HTTPServer: server,
-			conf:       *conf,
+			conf:       conf,
 			logger:     logger,
 			started:    atomic.Bool{},
 		},

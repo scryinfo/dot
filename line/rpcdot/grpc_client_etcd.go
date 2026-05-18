@@ -17,7 +17,7 @@ type GrpcClientEtcdConfig struct {
 }
 
 type GrpcClientEtcd struct {
-	config         GrpcClientEtcdConfig
+	config         *GrpcClientEtcdConfig
 	etcdClient     *etcddot.Client
 	grpcClientConn *grpc.ClientConn
 	logger         *dot.LoggerType
@@ -32,7 +32,7 @@ func NewGrpcClientEtcd(config *GrpcClientEtcdConfig, sconf dot.SConfig, baseCert
 		return nil, err
 	}
 	d := &GrpcClientEtcd{
-		config:     *config,
+		config:     config,
 		etcdClient: etcdClient,
 		logger:     logger,
 	}

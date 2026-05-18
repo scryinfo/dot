@@ -108,7 +108,7 @@ func NewServer(conf *ServerConfig, ctxEx *contextex.ContextEx, logger *dot.Logge
 	}()
 
 	d := Server{
-		conf:    *conf,
+		conf:    conf,
 		cfgEtcd: cfgEtcd,
 		etct:    etcdServer,
 		logger:  logger,
@@ -123,7 +123,7 @@ func NewServer(conf *ServerConfig, ctxEx *contextex.ContextEx, logger *dot.Logge
 }
 
 type Server struct {
-	conf    ServerConfig
+	conf    *ServerConfig
 	cfgEtcd *embed.Config
 	etct    *embed.Etcd
 	logger  *dot.LoggerType

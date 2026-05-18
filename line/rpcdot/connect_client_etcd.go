@@ -26,27 +26,26 @@ type HttpClientConfigEtcd struct {
 }
 
 func NewHttpClientEtcd(config *HttpClientConfigEtcd, sconf dot.SConfig, baseCert *certificate.BaseCertificate, etcdClient *etcddot.Client, logger *dot.LoggerType) (*HttpClientEtcd, error) {
-	conf := *config
-	err := conf.Tls.FullPath(sconf)
+	err := config.Tls.FullPath(sconf)
 	if err != nil {
 		return nil, err
 	}
 
 	tr := &http.Transport{
-		ForceAttemptHTTP2:   conf.ForceAttemptHTTP2,
-		DisableCompression:  conf.DisableCompression,
-		MaxIdleConns:        conf.MaxIdleConns,
-		MaxIdleConnsPerHost: conf.MaxIdleConnsPerHost,
-		MaxConnsPerHost:     conf.MaxConnsPerHost,
+		ForceAttemptHTTP2:   config.ForceAttemptHTTP2,
+		DisableCompression:  config.DisableCompression,
+		MaxIdleConns:        config.MaxIdleConns,
+		MaxIdleConnsPerHost: config.MaxIdleConnsPerHost,
+		MaxConnsPerHost:     config.MaxConnsPerHost,
 	}
-	if !conf.Tls.NeedsTls() {
+	if !config.Tls.NeedsTls() {
 		// add support http2 not tls
 		err := http2.ConfigureTransport(tr)
 		if err != nil {
 			return nil, err
 		}
 	}
-	tlsConfig, err := conf.Tls.MakeTlsConfig(sconf, baseCert)
+	tlsConfig, err := config.Tls.MakeTlsConfig(sconf, baseCert)
 	if err != nil {
 		return nil, err
 	}
@@ -57,14 +56,14 @@ func NewHttpClientEtcd(config *HttpClientConfigEtcd, sconf dot.SConfig, baseCert
 			Transport: tr,
 		},
 		logger: logger,
-		conf:   conf,
+		conf:   config,
 	}, nil
 }
 
 type HttpClientEtcd struct {
 	client http.Client
 	logger *dot.LoggerType
-	conf   HttpClientConfigEtcd
+	conf   *HttpClientConfigEtcd
 }
 
 func (p *HttpClientEtcd) NotCompressOptions() []connect.ClientOption {
