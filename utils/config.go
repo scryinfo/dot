@@ -18,35 +18,26 @@ func GetFullPathFile(file string) string {
 		return file
 	}
 
-	res := ""
-	for {
-		ex, err := os.Executable()
+	ex, err := os.Executable()
+	if err != nil {
+		dot.Logger.Error().AnErr("connsImp", err).Send()
+		return ""
+	}
+
+	ex = filepath.Dir(ex)
+	res := filepath.Join(ex, file)
+	if sfile.ExistFile(res) {
+		return res
+	} else { //try find file from the current path
+		res, err = os.Getwd()
 		if err != nil {
 			dot.Logger.Error().AnErr("connsImp", err).Send()
-			res = ""
-			break
+			return ""
 		}
-
-		ex = filepath.Dir(ex)
-		temp := filepath.Join(ex, file)
-		if sfile.ExistFile(temp) {
-			res = temp
-			break
-		} else { //try find file from the current path
-			temp, err = os.Getwd()
-			if err != nil {
-				dot.Logger.Error().AnErr("connsImp", err).Send()
-				res = ""
-				break
-			}
-			temp = filepath.Join(temp, file)
-			if sfile.ExistFile(temp) {
-				res = temp
-				break
-			}
+		res = filepath.Join(res, file)
+		if sfile.ExistFile(res) {
+			return res
 		}
-
-		break
 	}
 
 	return res
