@@ -19,9 +19,9 @@ allowCredentials = true
 unAuthUrls = ["*"]
 optionMethods = true
 shutdownTimeout = 1024000
-http1 = false
+http1 = true
 http2 = true
-unencryptedHTTP2 = false
+unencryptedHTTP2 = true
 [connectServer.tls]
 mode = "secure"
 cert = "../../config/cert/server.cert"

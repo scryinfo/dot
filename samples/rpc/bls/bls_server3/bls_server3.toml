@@ -35,6 +35,15 @@ allowCredentials = true
 unAuthUrls = ["*"]
 optionMethods = true
 shutdownTimeout = 1024000
+http1 = true
+http2 = true
+unencryptedHTTP2 = true
+[connectServer.tls]
+mode = "secure"
+cert = "../../config/cert/server.cert"
+key = "../../config/cert/server.key"
+rootCert = ""
+peerCert = ""
 
 [etcdClient]
 endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]
