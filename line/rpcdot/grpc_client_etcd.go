@@ -24,17 +24,17 @@ type GrpcClientEtcd struct {
 }
 
 func NewGrpcClientEtcd(config *GrpcClientEtcdConfig, sconf dot.SConfig, baseCert *certificate.BaseCertificate, etcdClient *etcddot.Client, logger *dot.LoggerType) (*GrpcClientEtcd, error) {
+	if len(config.WithDefaultServiceConfig) < 1 {
+		config.WithDefaultServiceConfig = `{"loadBalancingConfig": [{"round_robin": {}}]}`
+	}
+	err := config.Tls.FullPath(sconf)
+	if err != nil {
+		return nil, err
+	}
 	d := &GrpcClientEtcd{
 		config:     *config,
 		etcdClient: etcdClient,
 		logger:     logger,
-	}
-	if len(config.WithDefaultServiceConfig) < 1 {
-		config.WithDefaultServiceConfig = `{"loadBalancingConfig": [{"round_robin": {}}]}`
-	}
-	err := d.config.Tls.FullPath(sconf)
-	if err != nil {
-		return nil, err
 	}
 
 	err = d.makeClientConn(sconf, baseCert)

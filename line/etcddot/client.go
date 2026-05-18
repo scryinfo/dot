@@ -16,6 +16,10 @@ func NewClient(conf *ClientConfig, logger *dot.LoggerType) (*Client, func(), err
 	client, err := clientv3.New(clientv3.Config{
 		Endpoints:   conf.Endpoints,
 		DialTimeout: conf.DialTimeoutDuration(),
+		// DialOptions: []grpc.DialOption{
+		// 	grpc.WithTransportCredentials(insecure.NewCredentials()),
+		// 	grpc.WithDefaultServiceConfig(`{}`),
+		// },
 	})
 	if err != nil {
 		logger.Error().Err(err).Send()
