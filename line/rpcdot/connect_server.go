@@ -157,7 +157,7 @@ func (p *ConnectServer) start(sconf dot.SConfig) error {
 	}
 
 	go func() {
-		if p.conf.Tls.Key != "" {
+		if p.conf.Tls.NeedsTls() {
 			p.logger.Info().Msgf("rpc tls listen(%s)", p.conf.Addr)
 			if err := p.HTTPServer.ListenAndServeTLS(p.conf.Tls.Cert, p.conf.Tls.Key); err != nil {
 				p.logger.Error().Err(err).Send()
