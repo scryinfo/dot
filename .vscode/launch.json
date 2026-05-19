@@ -22,5 +22,29 @@
             "program": "${workspaceRoot}/demo/wait_conn/main.go",
             "cwd": "${workspaceRoot}/demo/wait_conn/",
           },
+        {
+            "name": "sconfig",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}/samples/sconfig/",
+            "cwd": "${workspaceRoot}/samples/sconfig",
+            "args": ["-MakeConfig=true"],
+            // "dlvConfig": {
+            //   "args": ["-MakeConfig=true"],
+            // },
+        },
+                {
+            "name": "bls_server",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceRoot}/samples/rpc/bls/bls_server/",
+            "cwd": "${workspaceRoot}/samples/rpc/bls/bls_server",
+            "args": ["-MakeConfig=true"],
+            // "dlvConfig": {
+            //   "args": ["-MakeConfig=true"],
+            // },
+        },
     ]
 }

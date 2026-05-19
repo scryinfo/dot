@@ -6,7 +6,6 @@ package main
 import (
 	"flag"
 	"os"
-	"path/filepath"
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
@@ -21,7 +20,7 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log dot.LogConfig
+	Log dot.LogConfig `json:"log" toml:"log" yaml:"log"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -50,10 +49,11 @@ func main() {
 		flag.Parse()
 		if *makeConfig {
 			var config LineConfig
-			name := filepath.Join(line.SConfig.ConfigPath(), line.SConfig.ConfigFile())
-			ext := filepath.Ext(name)
-			newName := name[:len(name)-len(ext)] + "_new" + ext
-			kits.Config.WriteConfig(line.SConfig.ConfigFile(), &config, newName)
+			err := kits.Config.MakeConfig(line.SConfig, &config)
+			if err != nil {
+				line.Logger.Error().Err(err).Msg("make config failed")
+			}
+			line.Logger.Info().Msg("make config success")
 		}
 	}
 	if clear != nil {

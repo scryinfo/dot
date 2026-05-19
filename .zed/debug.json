@@ -9,7 +9,7 @@
     "adapter": "go",
     "request": "launch",
     "mode": "debug",
-    "program": "${workspaceFolder}/samples/sconfig/sconfig.go",
+    "program": "${workspaceFolder}/samples/sconfig/",
     "cwd": "${workspaceFolder}/samples/sconfig",
     "buildFlags": "-args -MakeConfig=true",
     // "dlvConfig": {

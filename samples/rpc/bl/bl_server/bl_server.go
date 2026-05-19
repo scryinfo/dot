@@ -4,10 +4,12 @@
 package main
 
 import (
+	"flag"
 	"os"
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/lib/kits"
 	contextex "github.com/scryinfo/dot/line/context_ex"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
@@ -63,14 +65,27 @@ func main() {
 	// dot.InitLogger(new(dot.TestLogConfig()))
 	line, clear, err := InitializeService()
 	if err != nil {
-		dot.Logger.Error().Err(err).Msg("initialize service failed")
+		line.Logger.Error().Err(err).Msg("initialize service failed")
 		return
+	}
+	{
+		makeConfig := flag.Bool("MakeConfig", false, "make config file from the config struct")
+		flag.Parse()
+		if *makeConfig {
+			var config LineConfig
+			err := kits.Config.MakeConfig(line.SConfig, &config)
+			if err != nil {
+				line.Logger.Error().Err(err).Msg("make config failed")
+			}
+			line.Logger.Info().Msg("make config success")
+			return
+		}
 	}
 	if clear != nil {
 		defer clear()
 	}
 
-	dot.Logger.Info().Msg("dot ok")
+	line.Logger.Info().Msg("dot ok")
 	//second step ....
 	_ = line
 
