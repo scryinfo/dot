@@ -42,9 +42,9 @@ func NewClient(conf *ClientConfig, logger *dot.LoggerType) (*Client, func(), err
 }
 
 type ClientConfig struct {
-	Endpoints []string
+	Endpoints []string `json:"endpoints" toml:"endpoints" yaml:"endpoints"`
 	// milli second count
-	DialTimeout int32
+	DialTimeout int32 `json:"dialTimeout" toml:"dialTimeout" yaml:"dialTimeout"`
 }
 
 type Client struct {

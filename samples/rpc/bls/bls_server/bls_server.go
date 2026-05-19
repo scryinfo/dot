@@ -4,10 +4,12 @@
 package main
 
 import (
+	"flag"
 	"os"
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/lib/kits"
 	contextex "github.com/scryinfo/dot/line/context_ex"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
@@ -27,12 +29,12 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log               dot.LogConfig
-	EtcdServer        etcddot.ServerConfig
-	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig
-	ConnectServer     rpcdot.ConnectServerConfig
-	EtcdClient        etcddot.ClientConfig
-	HiService         connectimpl.HiServiceConfig
+	Log               dot.LogConfig                  `json:"log" toml:"log" yaml:"log"`
+	EtcdServer        etcddot.ServerConfig           `json:"etcdServer" toml:"etcdServer" yaml:"etcdServer"`
+	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig `json:"connectServerEtcd" toml:"connectServerEtcd" yaml:"connectServerEtcd"`
+	ConnectServer     rpcdot.ConnectServerConfig     `json:"connectServer" toml:"connectServer" yaml:"connectServer"`
+	EtcdClient        etcddot.ClientConfig           `json:"etcdClient" toml:"etcdClient" yaml:"etcdClient"`
+	HiService         connectimpl.HiServiceConfig    `json:"hiService" toml:"hiService" yaml:"hiService"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -68,6 +70,19 @@ func main() {
 	}
 	if clear != nil {
 		defer clear()
+	}
+	{
+		makeConfig := flag.Bool("MakeConfig", false, "make config file from the config struct")
+		flag.Parse()
+		if *makeConfig {
+			var config LineConfig
+			err := kits.Config.MakeConfig(line.SConfig, &config)
+			if err != nil {
+				line.Logger.Error().Err(err).Msg("make config failed")
+			}
+			line.Logger.Info().Msg("make config success")
+			return
+		}
 	}
 
 	dot.Logger.Info().Msg("dot ok")

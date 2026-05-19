@@ -54,6 +54,7 @@ func main() {
 				line.Logger.Error().Err(err).Msg("make config failed")
 			}
 			line.Logger.Info().Msg("make config success")
+			return
 		}
 	}
 	if clear != nil {
