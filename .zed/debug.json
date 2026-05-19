@@ -1,0 +1,19 @@
+// Project-local debug tasks
+//
+// For more documentation on how to configure debug tasks,
+// see: https://zed.dev/docs/debugger
+[
+  {
+    "label": "sconfig",
+    "type": "go",
+    "adapter": "go",
+    "request": "launch",
+    "mode": "debug",
+    "program": "${workspaceFolder}/samples/sconfig/sconfig.go",
+    "cwd": "${workspaceFolder}/samples/sconfig",
+    "buildFlags": "-args -MakeConfig=true",
+    // "dlvConfig": {
+    //   "args": ["-MakeConfig=true"],
+    // },
+  },
+]
