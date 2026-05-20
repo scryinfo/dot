@@ -8,7 +8,6 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/line/context_ex"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -28,33 +27,24 @@ func InitializeService() (*Line, func(), error) {
 	}
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
-	serverConfig := &lineConfig.EtcdServer
-	contextEx := contextex.NewContextEx()
-	server, cleanup, err := etcddot.NewServer(serverConfig, contextEx, logger)
-	if err != nil {
-		return nil, nil, err
-	}
 	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
 	hiServiceConfig := &lineConfig.HiService
 	hiService := connectimpl.NewHiService(connectHttpServerMux, logger, hiServiceConfig)
 	connectServerConfig := &lineConfig.ConnectServer
 	handlerMiddle := NewHandlerMiddle()
-	connectServer, cleanup2, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, logger, handlerMiddle)
+	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, logger, handlerMiddle)
 	if err != nil {
-		cleanup()
 		return nil, nil, err
 	}
 	connectServerEtcdConfig := &lineConfig.ConnectServerEtcd
 	clientConfig := &lineConfig.EtcdClient
-	client, cleanup3, err := etcddot.NewClient(clientConfig, logger)
+	client, cleanup2, err := etcddot.NewClient(clientConfig, logger)
 	if err != nil {
-		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	connectServerEtcd, cleanup4, err := rpcdot.NewConnectServerEtcd(connectServerEtcdConfig, client, connectServer, logger)
+	connectServerEtcd, cleanup3, err := rpcdot.NewConnectServerEtcd(connectServerEtcdConfig, client, connectServer, logger)
 	if err != nil {
-		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
@@ -62,13 +52,11 @@ func InitializeService() (*Line, func(), error) {
 	line := &Line{
 		SConfig:           sConfig,
 		Logger:            logger,
-		EtcdServer:        server,
 		HiService:         hiService,
 		ConnectServer:     connectServer,
 		ConnectServerEtcd: connectServerEtcd,
 	}
 	return line, func() {
-		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()

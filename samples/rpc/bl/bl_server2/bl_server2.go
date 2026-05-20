@@ -20,7 +20,6 @@ import (
 type Line struct {
 	SConfig           dot.SConfig
 	Logger            *dot.LoggerType
-	EtcdServer        *etcddot.Server
 	HiService         *connectimpl.HiService
 	ConnectServer     *rpcdot.ConnectServer
 	ConnectServerEtcd *rpcdot.ConnectServerEtcd
@@ -28,7 +27,6 @@ type Line struct {
 
 type LineConfig struct {
 	Log               dot.LogConfig
-	EtcdServer        etcddot.ServerConfig
 	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig
 	ConnectServer     rpcdot.ConnectServerConfig
 	EtcdClient        etcddot.ClientConfig
@@ -44,7 +42,7 @@ func NewHandlerMiddle() rpcdot.HandlerMiddle {
 
 var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
-	wire.FieldsOf(new(*LineConfig), "Log", "EtcdServer", "ConnectServerEtcd", "ConnectServer", "EtcdClient", "HiService"),
+	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServerEtcd", "ConnectServer", "EtcdClient", "HiService"),
 	NewLineConfig,
 	sconfig.NewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
@@ -52,7 +50,6 @@ var LineSet = wire.NewSet(
 	contextex.NewContextEx,
 	NewHandlerMiddle,
 	connectimpl.NewHiService,
-	etcddot.NewServer,
 	rpcdot.NewConnectServerEtcd,
 	rpcdot.NewConnectHttpServerMux,
 	rpcdot.NewConnetServer,

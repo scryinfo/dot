@@ -7,15 +7,6 @@ compress = false
 level = "info"
 addStdOut = true
 setSlog = true
-[etcdServer]
-name = "etcd1"
-listenClientUrls = ["http://127.0.0.1:2379"]
-advertiseClientUrls = ["http://127.0.0.1:2379"]
-listenPeerUrls = ["http://127.0.0.1:2380"]
-advertisePeerUrls = ["http://127.0.0.1:2380"]
-initialClusterToken = "ClusterToken"
-initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-logLevel = "info"
 [connectServerEtcd]
 name = "server/samples/rpc_bl"
 addr = "127.0.0.1:8090"
