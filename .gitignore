@@ -62,3 +62,8 @@ samples/simple/simple
 line/db/tools/gdao/gdao
 line/db/tools/gmodel/gmodel
 samples/Makefile.gen
+samples/rpc/bl/bl_etcds/default.etcd
+samples/rpc/bl/bl_etcds/default.etcd1
+samples/rpc/bl/bl_etcds/default.etcd2
+samples/rpc/bl/bl_etcds/default.etcd3
+samples/rpc/bl/bl_etcds/default.etcd

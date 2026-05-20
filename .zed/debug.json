@@ -6,14 +6,24 @@
   {
     "label": "sconfig",
     "type": "go",
-    "adapter": "go",
+    "adapter": "Delve",
     "request": "launch",
     "mode": "debug",
-    "program": "${workspaceFolder}/samples/sconfig/",
-    "cwd": "${workspaceFolder}/samples/sconfig",
-    "buildFlags": "-args -MakeConfig=true",
+    "program": "${ZED_WORKTREE_ROOT}/samples/sconfig/",
+    "cwd": "${ZED_WORKTREE_ROOT}/samples/sconfig",
+    "args": ["-MakeConfig=true"],
     // "dlvConfig": {
     //   "args": ["-MakeConfig=true"],
     // },
+  },
+  {
+    "label": "bl_etcds",
+    "type": "go",
+    "adapter": "Delve",
+    "request": "launch",
+    "mode": "debug",
+    "program": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_etcds",
+    "cwd": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_etcds",
+    "args": ["-MakeConfig=true"],
   },
 ]

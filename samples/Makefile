@@ -16,7 +16,7 @@ WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sc
 	rpc/web_rpc/web_rpc_server \
 	rpc/nobl/nobl_connect_client rpc/nobl/nobl_grpc_client rpc/nobl/nobl_server \
 	rpc/nobls/nobls_connect_client rpc/nobls/nobls_grpc_client rpc/nobls/nobls_server \
-	rpc/bl/bl_grpc_client rpc/bl/bl_server rpc/bl/bl_server2 rpc/bl/bl_server3 \
+	rpc/bl/bl_grpc_client rpc/bl/bl_etcds rpc/bl/bl_server rpc/bl/bl_server2 rpc/bl/bl_server3 \
 	rpc/bls/bls_grpc_client rpc/bls/bls_server rpc/bls/bls_server2 rpc/bls/bls_server3
 
 clean:
@@ -33,9 +33,9 @@ format:
 DIST_web_rpc_client := rpc/web_rpc/client/dist/index.html
 $(DIST_web_rpc_client): $(shell find rpc/web_rpc/client/src -type f)
 	cd rpc/web_rpc/client && bun install && bun run build
-build: samples $(DIST_web_rpc_client)
+build: wire samples $(DIST_web_rpc_client)
 
-rebuild: clean gen wire build
+rebuild: clean gen build
 
 clean_wire:
 	find . -type f -name "wire_gen.go" -delete

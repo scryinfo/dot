@@ -43,6 +43,7 @@ func NewServer(conf *ServerConfig, ctxEx *contextex.ContextEx, logger *dot.Logge
 
 	cfgEtcd := embed.NewConfig()
 	cfgEtcd.Name = conf.Name
+	cfgEtcd.ClusterState = embed.ClusterStateFlagNew
 	if len(conf.Dir) < 1 {
 		conf.Dir = "default.etcd"
 	}
