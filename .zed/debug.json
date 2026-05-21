@@ -11,9 +11,9 @@
     "mode": "debug",
     "program": "${ZED_WORKTREE_ROOT}/samples/sconfig/",
     "cwd": "${ZED_WORKTREE_ROOT}/samples/sconfig",
-    "args": ["-MakeConfig=true"],
+    "args": ["-GenerateConfig=true"],
     // "dlvConfig": {
-    //   "args": ["-MakeConfig=true"],
+    //   "args": ["-GenerateConfig=true"],
     // },
   },
   {
@@ -24,6 +24,16 @@
     "mode": "debug",
     "program": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_etcds",
     "cwd": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_etcds",
-    "args": ["-MakeConfig=true"],
+    "args": ["-GenerateConfig=true"],
+  },
+  {
+    "label": "bl_server",
+    "type": "go",
+    "adapter": "Delve",
+    "request": "launch",
+    "mode": "debug",
+    "program": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_server",
+    "cwd": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_server",
+    "args": ["-GenerateConfig=true"],
   },
 ]

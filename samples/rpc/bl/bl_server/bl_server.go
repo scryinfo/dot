@@ -4,12 +4,10 @@
 package main
 
 import (
-	"flag"
 	"os"
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/lib/kits"
 	contextex "github.com/scryinfo/dot/line/context_ex"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
@@ -28,15 +26,19 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log               dot.LogConfig
-	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig
-	ConnectServer     rpcdot.ConnectServerConfig
-	EtcdClient        etcddot.ClientConfig
-	HiService         connectimpl.HiServiceConfig
+	Log               dot.LogConfig                  `json:"log" toml:"log" yaml:"log"`
+	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig `json:"connectServerEtcd" toml:"connectServerEtcd" yaml:"connectServerEtcd"`
+	ConnectServer     rpcdot.ConnectServerConfig     `json:"connectServer" toml:"connectServer" yaml:"connectServer"`
+	EtcdClient        etcddot.ClientConfig           `json:"etcdClient" toml:"etcdClient" yaml:"etcdClient"`
+	HiService         connectimpl.HiServiceConfig    `json:"hiService" toml:"hiService" yaml:"hiService"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLineConfig[LineConfig](config)
+	lineConfig, err := sconfig.NewLineConfig[LineConfig](config)
+	if err != nil {
+		return nil, err
+	}
+	return sconfig.GenerateConfigWithArgs(config, lineConfig)
 }
 func NewHandlerMiddle() rpcdot.HandlerMiddle {
 	return nil
@@ -64,19 +66,6 @@ func main() {
 	if err != nil {
 		line.Logger.Error().Err(err).Msg("initialize service failed")
 		return
-	}
-	{
-		makeConfig := flag.Bool("MakeConfig", false, "make config file from the config struct")
-		flag.Parse()
-		if *makeConfig {
-			var config LineConfig
-			err := kits.Config.MakeConfig(line.SConfig, &config)
-			if err != nil {
-				line.Logger.Error().Err(err).Msg("make config failed")
-			}
-			line.Logger.Info().Msg("make config success")
-			return
-		}
 	}
 	if clear != nil {
 		defer clear()

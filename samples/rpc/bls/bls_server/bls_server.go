@@ -4,12 +4,10 @@
 package main
 
 import (
-	"flag"
 	"os"
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/lib/kits"
 	contextex "github.com/scryinfo/dot/line/context_ex"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
@@ -38,7 +36,11 @@ type LineConfig struct {
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLineConfig[LineConfig](config)
+	lineConfig, err := sconfig.NewLineConfig[LineConfig](config)
+	if err != nil {
+		return nil, err
+	}
+	return sconfig.GenerateConfigWithArgs(config, lineConfig)
 }
 func NewHandlerMiddle() rpcdot.HandlerMiddle {
 	return nil
@@ -70,19 +72,6 @@ func main() {
 	}
 	if clear != nil {
 		defer clear()
-	}
-	{
-		makeConfig := flag.Bool("MakeConfig", false, "make config file from the config struct")
-		flag.Parse()
-		if *makeConfig {
-			var config LineConfig
-			err := kits.Config.MakeConfig(line.SConfig, &config)
-			if err != nil {
-				line.Logger.Error().Err(err).Msg("make config failed")
-			}
-			line.Logger.Info().Msg("make config success")
-			return
-		}
 	}
 
 	dot.Logger.Info().Msg("dot ok")

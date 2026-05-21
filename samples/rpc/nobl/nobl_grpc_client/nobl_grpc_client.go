@@ -28,7 +28,11 @@ type LineConfig struct {
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLineConfig[LineConfig](config)
+	lineConfig, err := sconfig.NewLineConfig[LineConfig](config)
+	if err != nil {
+		return nil, err
+	}
+	return sconfig.GenerateConfigWithArgs(config, lineConfig)
 }
 func NewHiServiceClient(clientEx *rpcdot.GrpcClientEx) apiv1grpc.HiServiceClient {
 	return apiv1grpc.NewHiServiceClient(clientEx.Client())

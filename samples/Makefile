@@ -54,5 +54,12 @@ endef
 $(foreach wire,$(WIRES),$(eval $(call sample_rule,$(wire))))
 samples: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))$(EXE))
 
+define generate_config_rule
+$1/$(notdir $1)_gen.toml: $1/$(notdir $1).go $1/wire_gen.go
+	cd $1 && ${go} run ./... -- -GenerateConfig
+endef
+$(foreach wire,$(WIRES),$(eval $(call generate_config_rule,$(wire))))
+generate_config: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))_gen.toml)
+
 gen:
 	cd rpc/proto && make gen

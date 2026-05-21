@@ -15,11 +15,15 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log dot.LogConfig
+	Log dot.LogConfig `json:"log" toml:"log" yaml:"log"`
 }
 
 func NewAppConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLineConfig[LineConfig](config)
+	lineConfig, err := sconfig.NewLineConfig[LineConfig](config)
+	if err != nil {
+		return nil, err
+	}
+	return sconfig.GenerateConfigWithArgs(config, lineConfig)
 }
 
 var LineSet = wire.NewSet(

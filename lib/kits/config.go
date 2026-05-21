@@ -22,10 +22,10 @@ type _config struct {
 
 var Config = _config{}
 
-func (c _config) MakeConfig(sconf dot.SConfig, confg any) error {
+func (c _config) GenerateConfig(sconf dot.SConfig, confg any) error {
 	name := filepath.Join(sconf.ConfigPath(), sconf.ConfigFile())
 	ext := filepath.Ext(name)
-	newName := name[:len(name)-len(ext)] + "_new" + ext
+	newName := name[:len(name)-len(ext)] + "_gen" + ext
 	return c.WriteConfig(name, confg, newName)
 }
 

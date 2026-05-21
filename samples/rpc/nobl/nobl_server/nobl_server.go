@@ -20,13 +20,17 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log           dot.LogConfig
-	ConnectServer rpcdot.ConnectServerConfig
-	HiService     connectimpl.HiServiceConfig
+	Log           dot.LogConfig               `json:"log" toml:"log" yaml:"log"`
+	ConnectServer rpcdot.ConnectServerConfig  `json:"connectServer" toml:"connectServer" yaml:"connectServer"`
+	HiService     connectimpl.HiServiceConfig `json:"hiService" toml:"hiService" yaml:"hiService"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLineConfig[LineConfig](config)
+	lineConfig, err := sconfig.NewLineConfig[LineConfig](config)
+	if err != nil {
+		return nil, err
+	}
+	return sconfig.GenerateConfigWithArgs(config, lineConfig)
 }
 
 func NewHandlerMiddle() rpcdot.HandlerMiddle {

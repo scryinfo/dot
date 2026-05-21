@@ -23,13 +23,17 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log    dot.LogConfig
-	Router gindot.RouterConfig
-	Engine gindot.EngineConfig
+	Log    dot.LogConfig       `json:"log" toml:"log" yaml:"log"`
+	Router gindot.RouterConfig `json:"router" toml:"router" yaml:"router"`
+	Engine gindot.EngineConfig `json:"engine" toml:"engine" yaml:"engine"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLineConfig[LineConfig](config)
+	lineConfig, err := sconfig.NewLineConfig[LineConfig](config)
+	if err != nil {
+		return nil, err
+	}
+	return sconfig.GenerateConfigWithArgs(config, lineConfig)
 }
 
 var LineSet = wire.NewSet(

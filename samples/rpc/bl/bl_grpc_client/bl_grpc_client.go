@@ -25,13 +25,17 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log            dot.LogConfig
-	GrpcClientEtcd rpcdot.GrpcClientEtcdConfig
-	EtcdClient     etcddot.ClientConfig
+	Log            dot.LogConfig               `json:"log" toml:"log" yaml:"log"`
+	GrpcClientEtcd rpcdot.GrpcClientEtcdConfig `json:"grpcClientEtcd" toml:"grpcClientEtcd" yaml:"grpcClientEtcd"`
+	EtcdClient     etcddot.ClientConfig        `json:"etcdClient" toml:"etcdClient" yaml:"etcdClient"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLineConfig[LineConfig](config)
+	lineConfig, err := sconfig.NewLineConfig[LineConfig](config)
+	if err != nil {
+		return nil, err
+	}
+	return sconfig.GenerateConfigWithArgs(config, lineConfig)
 }
 
 var LineSet = wire.NewSet(

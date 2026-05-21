@@ -21,12 +21,16 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log        dot.LogConfig
-	EtcdClient etcddot.ClientConfig
+	Log        dot.LogConfig        `json:"log" toml:"log" yaml:"log"`
+	EtcdClient etcddot.ClientConfig `json:"etcdClient" toml:"etcdClient" yaml:"etcdClient"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLineConfig[LineConfig](config)
+	lineConfig, err := sconfig.NewLineConfig[LineConfig](config)
+	if err != nil {
+		return nil, err
+	}
+	return sconfig.GenerateConfigWithArgs(config, lineConfig)
 }
 
 var LineSet = wire.NewSet(
