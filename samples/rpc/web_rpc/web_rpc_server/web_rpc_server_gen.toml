@@ -1,0 +1,36 @@
+
+[connectServer]
+  addr = ":8089"
+  allowCredentials = true
+  allowHeaders = []
+  allowMethods = ["GET", "POST", "OPTIONS"]
+  allowedOrigins = []
+  http1 = false
+  http2 = false
+  maxConcurrentStreams = 100
+  optionMethods = true
+  readTimeout = 0
+  shutdownTimeout = 1024000
+  unAuthUrls = ["*"]
+  unencryptedHTTP2 = false
+  writeTimeout = 0
+
+  [connectServer.tls]
+    cert = ""
+    key = ""
+    mode = ""
+    peerCert = ""
+    rootCert = ""
+
+[hiService]
+  name = "web_rpc_server"
+
+[log]
+  addStdOut = true
+  compress = false
+  fileName = "log.log"
+  level = "info"
+  maxAge = 7
+  maxBackups = 3
+  maxSize = 1024000
+  setSlog = true

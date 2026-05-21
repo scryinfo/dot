@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/lib/kits"
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
@@ -95,6 +96,15 @@ func (p *SConfig) RootPath() error {
 		exeName := filepath.Base(exeFile)
 		ext := filepath.Ext(exeFile)
 		exeName = exeName[0 : len(exeName)-len(ext)]
+		if dot.IsDebug {
+			mainFile := kits.Config.GetMainPackageDir()
+			if len(mainFile) > 0 {
+				p.exePath = filepath.Dir(mainFile)
+				binPath = filepath.Dir(p.exePath)
+				exeName = filepath.Base(mainFile)
+				exeName = exeName[0 : len(exeName)-len(".go")]
+			}
+		}
 		if sfile.ExistFile(dot.GCmd.ConfigPath) {
 			p.confPath = dot.GCmd.ConfigPath
 		} else if configPath := filepath.Join(p.exePath, exeName+separator+conf); sfile.ExistFile(configPath) {

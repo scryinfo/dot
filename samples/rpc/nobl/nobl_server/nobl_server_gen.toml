@@ -1,0 +1,37 @@
+
+[connectServer]
+  addr = ":8090"
+  allowCredentials = true
+  allowHeaders = []
+  allowMethods = ["GET", "POST", "OPTIONS"]
+  allowedOrigins = []
+  http1 = true
+  http2 = true
+  maxConcurrentStreams = 100
+  optionMethods = true
+  readTimeout = 0
+  shutdownTimeout = 1024000
+  unAuthUrls = ["*"]
+  unencryptedHTTP2 = true
+  writeTimeout = 0
+
+  [connectServer.tls]
+    cert = ""
+    key = ""
+    mode = "none"
+    peerCert = ""
+    rootCert = ""
+    serverCert = ""
+
+[hiService]
+  name = "nobl_server"
+
+[log]
+  addStdOut = true
+  compress = false
+  fileName = "log.log"
+  level = "info"
+  maxAge = 7
+  maxBackups = 3
+  maxSize = 1024000
+  setSlog = true

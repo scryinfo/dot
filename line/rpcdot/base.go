@@ -16,7 +16,7 @@ import (
 	"github.com/scryinfo/dot/line/certificate"
 )
 
-type RpcTls string
+type RpcTls = string
 
 const (
 	RpcTlsNone     RpcTls = "none"
@@ -123,3 +123,62 @@ func (p *TlsConfig) MakeTlsConfig(sconf dot.SConfig, baseCert *certificate.BaseC
 		return nil, nil
 	}
 }
+
+// var _ json.Marshaler = RpcTlsNone
+// var _ json.Unmarshaler = (*RpcTls)(nil)
+
+// func (c RpcTls) MarshalJSON() ([]byte, error) {
+// 	return json.Marshal(string(c))
+// }
+// func (c *RpcTls) UnmarshalJSON(data []byte) error {
+// 	var temp string
+// 	err := json.Unmarshal(data, &temp)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	if temp == "" {
+// 		*c = RpcTlsNone
+// 		return nil
+// 	}
+// 	*c = RpcTls(temp)
+// 	return nil
+// }
+
+// var _ json.Marshaler = RpcTlsNone
+// var _ json.Unmarshaler = (*RpcTls)(nil)
+
+// func (c RpcTls) MarshalYAML() ([]byte, error) {
+// 	return json.Marshal(string(c))
+// }
+
+// func (c *RpcTls) UnmarshalYAML(data []byte) error {
+// 	var temp string
+// 	err := json.Unmarshal(data, &temp)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	if temp == "" {
+// 		*c = RpcTlsNone
+// 		return nil
+// 	}
+// 	*c = RpcTls(temp)
+// 	return nil
+// }
+
+// var _ encoding.TextMarshaler = RpcTlsNone
+// var _ encoding.TextUnmarshaler = (*RpcTls)(nil)
+
+// func (t *RpcTls) UnmarshalText(text []byte) error {
+// 	str := string(text)
+// 	switch str {
+// 	case string(RpcTlsNone), string(RpcTlsInsecure), string(RpcTlsSecure), string(RpcTlsBoth):
+// 		*t = RpcTls(str)
+// 		return nil
+// 	default:
+// 		return fmt.Errorf("invalid RpcTls value: %s (only enable/disable)", str)
+// 	}
+// }
+
+// func (t RpcTls) MarshalText() ([]byte, error) {
+// 	return []byte(t), nil
+// }

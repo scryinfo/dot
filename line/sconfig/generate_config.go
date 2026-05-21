@@ -1,13 +1,23 @@
 package sconfig
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 
+	"github.com/knadh/koanf/providers/confmap"
+	"github.com/knadh/koanf/v2"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/lib/kits"
+	"github.com/scryinfo/scryg/sutils/sfile"
+
+	kjson "github.com/knadh/koanf/parsers/json"
+	ktoml "github.com/knadh/koanf/parsers/toml"
+	kyaml "github.com/knadh/koanf/parsers/yaml"
+	kfile "github.com/knadh/koanf/providers/file"
 )
 
 var OkGenerateConfig = fmt.Errorf("generate config ok")
@@ -85,7 +95,7 @@ func GenerateConfigWithArgs[T any](config dot.SConfig, rootConfig *T) (*T, error
 // rootConfig: the root config struct
 // returns: whether to make config, error
 func GenerateConfigGo[T any](config dot.SConfig, rootConfig *T) (bool, error) {
-	err := kits.Config.GenerateConfig(config, rootConfig)
+	err := MergeConfig(config, rootConfig)
 	if err != nil {
 		// dont use the logger here, the logger is not initialized yet
 		fmt.Printf("make config err: %v\n", err)
@@ -94,4 +104,130 @@ func GenerateConfigGo[T any](config dot.SConfig, rootConfig *T) (bool, error) {
 		fmt.Println("make config success")
 		return true, nil
 	}
+}
+
+func MergeConfig[T any](sconf dot.SConfig, confg *T) error {
+	name := filepath.Join(sconf.ConfigPath(), sconf.ConfigFile())
+	ext := filepath.Ext(name)
+	newName := name[:len(name)-len(ext)] + "_gen" + ext
+	return MergeConfigToNew(name, confg, newName)
+}
+
+func MergeConfigToNew[T any](file string, pconf *T, newFile string) error {
+	val := reflect.ValueOf(pconf)
+	if val.Kind() != reflect.Pointer {
+		return errors.New("the parameter pconf must be a pointer type")
+	}
+	tagName := "toml"
+	var parse koanf.Parser = ktoml.Parser()
+	if strings.HasSuffix(file, ".json") {
+		tagName = "json"
+		parse = kjson.Parser()
+	} else if strings.HasSuffix(file, ".yaml") {
+		tagName = "yaml"
+		parse = kyaml.Parser()
+	}
+	config := koanf.New(".")
+	if sfile.ExistFile(file) {
+		if err := config.Load(kfile.Provider(file), parse); err != nil {
+			return err
+		}
+		// if err := config.UnmarshalWithConf("", pconf, koanf.UnmarshalConf{
+		// 	DecoderConfig: &mapstructure.DecoderConfig{
+		// 		Result:           pconf,
+		// 		TagName:          "koanf",
+		// 		WeaklyTypedInput: true,
+		// 		DecodeHook: mapstructure.ComposeDecodeHookFunc(
+		// 			func(f reflect.Type, t reflect.Type, data any) (any, error) {
+		// 				if t == reflect.TypeFor[rpcdot.RpcTls]() {
+		// 					if s, ok := data.(string); ok {
+		// 						return rpcdot.RpcTls(s), nil
+		// 					}
+		// 				}
+		// 				return data, nil
+		// 			},
+		// 		),
+		// 	},
+		// }); err != nil {
+		// 	return err
+		// }
+		err := config.Unmarshal("", pconf)
+		if err != nil {
+			return err
+		}
+	}
+	kv := config.Raw()
+	err := structFields(tagName, kv, reflect.ValueOf(pconf))
+	if err != nil {
+		return err
+	}
+	err = config.Load(confmap.Provider(kv, "."), nil)
+	if err != nil {
+		return err
+	}
+	data, err := config.Marshal(parse)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(newFile, data, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func structFields(tagName string, kv map[string]any, s reflect.Value) error {
+	if s.Kind() == reflect.Pointer {
+		s = s.Elem()
+	}
+	typ := s.Type()
+	if typ.Kind() != reflect.Struct {
+		return nil
+	}
+	for i := 0; i < typ.NumField(); i++ {
+		fieldType := typ.Field(i)
+		fieldValue := s.Field(i)
+		if fieldType.Type.Kind() == reflect.Pointer && fieldType.Type.Elem().Kind() == reflect.Struct {
+			if fieldValue.IsNil() {
+				fieldValue.Set(reflect.New(fieldType.Type.Elem()))
+			}
+		}
+
+		key := fieldType.Tag.Get(tagName)
+		if key == "" {
+			key = fieldType.Name
+		}
+		if v, ok := kv[key]; ok {
+			fType := fieldType.Type
+			if fieldType.Type.Kind() == reflect.Pointer {
+				fType = fType.Elem()
+			}
+			if fType.Kind() == reflect.Struct {
+				if vs, ok := v.(map[string]any); ok {
+					if err := structFields(tagName, vs, fieldValue); err != nil {
+						return err
+					}
+				} else {
+					return errors.New("the value of key " + key + " must be a map[string]any")
+				}
+
+			} else {
+				// the field is exist in the config, do nothing
+			}
+		} else {
+
+			if fieldType.Type.Kind() == reflect.Struct || (fieldType.Type.Kind() == reflect.Pointer && fieldType.Type.Elem().Kind() == reflect.Struct) {
+				subStruct := make(map[string]any)
+				kv[key] = subStruct
+				if err := structFields(tagName, subStruct, fieldValue); err != nil {
+					return err
+				}
+			} else {
+				kv[key] = fieldValue.Interface()
+			}
+		}
+
+	}
+	return nil
 }

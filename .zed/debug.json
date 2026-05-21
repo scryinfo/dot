@@ -36,4 +36,14 @@
     "cwd": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_server",
     "args": ["-GenerateConfig=true"],
   },
+  {
+    "label": "web_rpc_server",
+    "type": "go",
+    "adapter": "Delve",
+    "request": "launch",
+    "mode": "debug",
+    "program": "${ZED_WORKTREE_ROOT}/samples/rpc/web_rpc/web_rpc_server",
+    "cwd": "${ZED_WORKTREE_ROOT}/samples/rpc/web_rpc/web_rpc_server",
+    "args": ["-GenerateConfig=true"],
+  },
 ]

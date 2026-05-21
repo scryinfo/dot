@@ -1,0 +1,32 @@
+
+[etcdClient]
+  dialTimeout = 12000
+  endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]
+
+[grpcClientEtcd]
+  name = "server/samples/rpc_bl"
+  withDefaultServiceConfig = ""
+
+  [grpcClientEtcd.Tls]
+    cert = ""
+    key = ""
+    mode = "none"
+    peerCert = ""
+    rootCert = ""
+
+  [grpcClientEtcd.tls]
+    cert = ""
+    key = ""
+    mode = "none"
+    rootCert = ""
+    serverCert = ""
+
+[log]
+  addStdOut = true
+  compress = false
+  fileName = "log.log"
+  level = "info"
+  maxAge = 7
+  maxBackups = 3
+  maxSize = 1024000
+  setSlog = true

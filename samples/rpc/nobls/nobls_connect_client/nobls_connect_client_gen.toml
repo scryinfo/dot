@@ -1,0 +1,32 @@
+
+[httpClient]
+  disableCompression = false
+  forceAttemptHTTP2 = true
+  maxConnsPerHost = 10
+  maxIdleConns = 10
+  maxIdleConnsPerHost = 10
+  serverAddress = "https://localhost:8090"
+
+  [httpClient.Tls]
+    cert = ""
+    key = ""
+    mode = "secure"
+    peerCert = "../../config/cert/server.cert"
+    rootCert = ""
+
+  [httpClient.tls]
+    cert = ""
+    key = ""
+    mode = "secure"
+    peerCert = "../../config/cert/server.cert"
+    rootCert = ""
+
+[log]
+  addStdOut = true
+  compress = false
+  fileName = "log.log"
+  level = "info"
+  maxAge = 7
+  maxBackups = 3
+  maxSize = 1024000
+  setSlog = true

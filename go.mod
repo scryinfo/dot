@@ -2,6 +2,11 @@ module github.com/scryinfo/dot
 
 go 1.26
 
+replace (
+	github.com/knadh/koanf => github.com/knadh/koanf/v2 v2.3.4 // Or whichever v2 version you upgraded to
+	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260226221140-a57be14db171
+)
+
 require (
 	connectrpc.com/connect v1.20.0
 	github.com/gin-gonic/gin v1.12.0
@@ -11,12 +16,12 @@ require (
 	github.com/google/wire v0.7.0
 	github.com/hashicorp/vault/api v1.23.0
 	github.com/hashicorp/vault/api/auth/approle v0.12.0
-	github.com/knadh/koanf v1.5.0
 	github.com/knadh/koanf/parsers/json v1.0.0
 	github.com/knadh/koanf/parsers/toml v0.1.0
 	github.com/knadh/koanf/parsers/yaml v1.1.0
 	github.com/knadh/koanf/providers/confmap v1.0.0
 	github.com/knadh/koanf/providers/file v1.2.1
+	github.com/knadh/koanf/v2 v2.3.4
 	github.com/pkg/errors v0.9.1
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10
 	github.com/redis/go-redis/v9 v9.19.0
@@ -157,9 +162,4 @@ require (
 	mellium.im/sasl v0.3.2 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 	sigs.k8s.io/yaml v1.6.0 // indirect
-)
-
-replace (
-	github.com/knadh/koanf => github.com/knadh/koanf/v2 v2.1.1 // Or whichever v2 version you upgraded to
-	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260226221140-a57be14db171
 )

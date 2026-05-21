@@ -1,0 +1,22 @@
+
+[etcdServer]
+  advertiseClientUrls = ["http://127.0.0.1:2379"]
+  advertisePeerUrls = ["http://127.0.0.1:2380"]
+  dir = ""
+  initialCluster = "etcd1=http://127.0.0.1:2380"
+  initialClusterToken = "ClusterToken"
+  listenClientUrls = ["http://127.0.0.1:2379"]
+  listenPeerUrls = ["http://127.0.0.1:2380"]
+  logLevel = "info"
+  name = "etcd1"
+  readyNotifyTimeOut = 0
+
+[log]
+  addStdOut = true
+  compress = false
+  fileName = "log.log"
+  level = "info"
+  maxAge = 7
+  maxBackups = 3
+  maxSize = 1024000
+  setSlog = true

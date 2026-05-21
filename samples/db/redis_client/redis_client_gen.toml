@@ -1,0 +1,18 @@
+
+[log]
+  addStdOut = true
+  compress = false
+  fileName = "log.log"
+  level = "info"
+  maxAge = 7
+  maxBackups = 3
+  maxSize = 1024000
+  setSlog = true
+
+[redis]
+  Addr = "127.0.0.1:6379"
+  KeepMaxVersionCount = 4
+  VersionFromRedis = false
+  addr = "127.0.0.1:6379"
+  keepMaxVersionCount = 4
+  versionFromRedis = false

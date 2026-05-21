@@ -1,0 +1,1 @@
+{"engine":{"addr":":8089","keyFile":"","logSkipPaths":[],"pemFile":""},"log":{"addStdOut":true,"compress":false,"fileName":"log.log","level":"info","maxAge":7,"maxBackups":3,"maxSize":1024000,"setSlog":true},"router":{"relativePath":"/rpc"}}
