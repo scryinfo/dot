@@ -31,18 +31,6 @@
   dialTimeout = 12000
   endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]
 
-[etcdServer]
-  advertiseClientUrls = ["http://127.0.0.1:2378"]
-  advertisePeerUrls = ["http://127.0.0.1:2381"]
-  dir = ""
-  initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-  initialClusterToken = "ClusterToken"
-  listenClientUrls = ["http://127.0.0.1:2378"]
-  listenPeerUrls = ["http://127.0.0.1:2381"]
-  logLevel = "info"
-  name = "etcd2"
-  readyNotifyTimeOut = 0
-
 [hiService]
   name = "etcd2"
 

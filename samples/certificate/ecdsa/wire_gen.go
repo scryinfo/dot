@@ -27,7 +27,8 @@ func InitializeService() (*Line, func(), error) {
 	logger := dot.NewLogger(logConfig)
 	ecdsa := certificate.NewEcdsa(logger)
 	line := &Line{
-		Ecdsa: ecdsa,
+		Ecdsa:  ecdsa,
+		Logger: logger,
 	}
 	return line, func() {
 	}, nil

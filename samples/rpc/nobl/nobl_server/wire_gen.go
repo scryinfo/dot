@@ -38,6 +38,7 @@ func InitializeService() (*Line, func(), error) {
 	line := &Line{
 		HiService:         hiService,
 		ConnectHttpServer: connectServer,
+		Logger:            logger,
 	}
 	return line, func() {
 		cleanup()

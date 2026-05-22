@@ -17,6 +17,7 @@ import (
 type Line struct {
 	HiService         *connectimpl.HiService
 	ConnectHttpServer *rpcdot.ConnectServer
+	Logger            *dot.LoggerType
 }
 
 type LineConfig struct {
@@ -54,7 +55,9 @@ func main() {
 	// dot.InitLogger(new(dot.TestLogConfig()))
 	line, clear, err := InitializeService()
 	if err != nil {
-		dot.Logger.Error().Err(err).Msg("initialize service failed")
+		if line != nil && line.Logger != nil {
+			line.Logger.Error().Err(err).Msg("initialize service failed")
+		}
 		return
 	}
 	if clear != nil {

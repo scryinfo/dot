@@ -16,7 +16,6 @@ import (
 // Injectors from wire.go:
 
 func InitializeService() (*Line, func(), error) {
-	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
 	sConfig, err := sconfig.NewConfig()
 	if err != nil {
 		return nil, nil, err
@@ -27,6 +26,7 @@ func InitializeService() (*Line, func(), error) {
 	}
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
+	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
 	hiServiceConfig := &lineConfig.HiService
 	hiService := connectimpl.NewHiService(connectHttpServerMux, logger, hiServiceConfig)
 	connectServerConfig := &lineConfig.ConnectServer
@@ -36,6 +36,7 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	line := &Line{
+		Logger:        logger,
 		HiService:     hiService,
 		ConnectServer: connectServer,
 	}

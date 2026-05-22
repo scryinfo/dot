@@ -4,6 +4,19 @@
 // see: https://zed.dev/docs/debugger
 [
   {
+    "label": "ecdsa",
+    "type": "go",
+    "adapter": "Delve",
+    "request": "launch",
+    "mode": "debug",
+    "program": "${ZED_WORKTREE_ROOT}/samples/certificate/ecdsa",
+    "cwd": "${ZED_WORKTREE_ROOT}/samples/certificate/ecdsa",
+    "args": ["-GenerateConfig=true"],
+    // "dlvConfig": {
+    //   "args": ["-GenerateConfig=true"],
+    // },
+  },
+  {
     "label": "sconfig",
     "type": "go",
     "adapter": "Delve",

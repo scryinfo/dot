@@ -12,6 +12,7 @@ import (
 
 type Line struct {
 	Ed25519 *certificate.Ed25519
+	Logger  *dot.LoggerType
 }
 
 type LineConfig struct {
@@ -38,7 +39,9 @@ var LineSet = wire.NewSet(
 func main() {
 	line, clear, err := InitializeService()
 	if err != nil {
-		dot.Logger.Error().Err(err).Msg("initialize service failed")
+		if line != nil && line.Logger != nil {
+			line.Logger.Error().Err(err).Msg("initialize service failed")
+		}
 		return
 	}
 	if clear != nil {

@@ -8,7 +8,7 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/line/certificate"
+	"github.com/scryinfo/dot/line/context_ex"
 	"github.com/scryinfo/dot/line/sconfig"
 )
 
@@ -19,17 +19,24 @@ func InitializeService() (*Line, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	lineConfig, err := NewAppConfig(sConfig)
+	lineConfig, err := NewLineConfig(sConfig)
 	if err != nil {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
-	ed25519 := certificate.NewEd25519(logger)
+	v := lineConfig.EtcdServers
+	contextEx := contextex.NewContextEx()
+	v2, cleanup, err := NewEtcds(v, contextEx, logger)
+	if err != nil {
+		return nil, nil, err
+	}
 	line := &Line{
-		Ed25519: ed25519,
-		Logger:  logger,
+		SConfig:     sConfig,
+		Logger:      logger,
+		EtcdServers: v2,
 	}
 	return line, func() {
+		cleanup()
 	}, nil
 }

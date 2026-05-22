@@ -43,7 +43,9 @@ func main() {
 
 	line, clear, err := InitializeService()
 	if err != nil {
-		dot.Logger.Error().Err(err).Msg("initialize service failed")
+		if line != nil && line.Logger != nil {
+			line.Logger.Error().Err(err).Msg("initialize service failed")
+		}
 		return
 	}
 	if clear != nil {

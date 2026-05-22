@@ -52,7 +52,9 @@ var LineSet = wire.NewSet(
 func main() {
 	line, clean, err := InitializeService()
 	if err != nil {
-		dot.Logger.Error().Err(err).Msg("initialize service failed")
+		if line.Logger != nil {
+			line.Logger.Error().Err(err).Msg("initialize service failed")
+		}
 		return
 	}
 	if clean != nil {

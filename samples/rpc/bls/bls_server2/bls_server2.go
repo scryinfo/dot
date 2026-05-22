@@ -20,7 +20,6 @@ import (
 type Line struct {
 	SConfig           dot.SConfig
 	Logger            *dot.LoggerType
-	EtcdServer        *etcddot.Server
 	HiService         *connectimpl.HiService
 	ConnectServer     *rpcdot.ConnectServer
 	ConnectServerEtcd *rpcdot.ConnectServerEtcd
@@ -28,7 +27,6 @@ type Line struct {
 
 type LineConfig struct {
 	Log               dot.LogConfig                  `json:"log" toml:"log" yaml:"log"`
-	EtcdServer        etcddot.ServerConfig           `json:"etcdServer" toml:"etcdServer" yaml:"etcdServer"`
 	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig `json:"connectServerEtcd" toml:"connectServerEtcd" yaml:"connectServerEtcd"`
 	ConnectServer     rpcdot.ConnectServerConfig     `json:"connectServer" toml:"connectServer" yaml:"connectServer"`
 	EtcdClient        etcddot.ClientConfig           `json:"etcdClient" toml:"etcdClient" yaml:"etcdClient"`
@@ -48,7 +46,7 @@ func NewHandlerMiddle() rpcdot.HandlerMiddle {
 
 var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
-	wire.FieldsOf(new(*LineConfig), "Log", "EtcdServer", "ConnectServerEtcd", "ConnectServer", "EtcdClient", "HiService"),
+	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServerEtcd", "ConnectServer", "EtcdClient", "HiService"),
 	NewLineConfig,
 	sconfig.NewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
@@ -56,7 +54,6 @@ var LineSet = wire.NewSet(
 	contextex.NewContextEx,
 	NewHandlerMiddle,
 	connectimpl.NewHiService,
-	etcddot.NewServer,
 	rpcdot.NewConnectServerEtcd,
 	rpcdot.NewConnectHttpServerMux,
 	rpcdot.NewConnetServer,
@@ -67,7 +64,9 @@ func main() {
 	// dot.InitLogger(new(dot.TestLogConfig()))
 	line, clear, err := InitializeService()
 	if err != nil {
-		dot.Logger.Error().Err(err).Msg("initialize service failed")
+		if line != nil && line.Logger != nil {
+			line.Logger.Error().Err(err).Msg("initialize service failed")
+		}
 		return
 	}
 	if clear != nil {
