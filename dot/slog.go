@@ -79,3 +79,8 @@ func TestLogConfig() LogConfig {
 		SetSlog:    true,
 	}
 }
+
+func NewTestLogger() *zerolog.Logger {
+	conf := TestLogConfig()
+	return NewLogger(&conf)
+}
