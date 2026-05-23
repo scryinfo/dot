@@ -51,6 +51,7 @@ func NewLogger(conf *LogConfig) *LoggerType {
 	if conf.SetSlog {
 		slog.SetDefault(slog.New(&FastZerologHandler{logger: Logger}))
 	}
+	Logger.Info().Msgf("log created")
 	return &Logger
 }
 

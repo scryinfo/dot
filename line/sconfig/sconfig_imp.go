@@ -59,7 +59,9 @@ func NewConfig() (*SConfig, error) {
 	conf := &SConfig{
 		simpleConf: viper.New(),
 	}
+	fmt.Println("initing conifg")
 	conf.RootPath()
+	fmt.Printf("config paht: %s/%s", conf.confPath, conf.file)
 	err := conf.create()
 	if err != nil {
 		// the config is the first, and the logger is not initialized, so use fmt.Printf
