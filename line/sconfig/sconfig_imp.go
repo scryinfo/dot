@@ -61,7 +61,7 @@ func NewConfig() (*SConfig, error) {
 	}
 	fmt.Println("initing conifg")
 	conf.RootPath()
-	fmt.Printf("config paht: %s/%s", conf.confPath, conf.file)
+	fmt.Printf("config path: %s/%s\nexe path: %s\nwd path: %s\n", conf.confPath, conf.file, conf.exePath, conf.wdPath)
 	err := conf.create()
 	if err != nil {
 		// the config is the first, and the logger is not initialized, so use fmt.Printf
@@ -106,6 +106,7 @@ func (p *SConfig) RootPath() error {
 				exeName = filepath.Base(mainFile)
 				exeName = exeName[0 : len(exeName)-len(".go")]
 			}
+			fmt.Printf("config is in debug exe path: %s\n", p.exePath)
 		}
 		if sfile.ExistFile(dot.GCmd.ConfigPath) {
 			p.confPath = dot.GCmd.ConfigPath

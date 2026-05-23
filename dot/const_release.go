@@ -3,4 +3,4 @@
 package dot
 
 const IsDebug = false
-const IsRelease = true
+const IsTestServer = false

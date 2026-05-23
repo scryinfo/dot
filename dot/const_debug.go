@@ -1,6 +1,6 @@
-//go:build !release
+//go:build !release && !testserver
 
 package dot
 
 const IsDebug = true
-const IsRelease = false
+const IsTestServer = false
