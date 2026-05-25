@@ -105,12 +105,28 @@ Generate root and sub certificates. "sample/certificate" is an example.
 
 ```bash
 scoop install mingw-winlibs # restart cmd or ide to user new gcc
-# install vcpkg
-git clone https://github.com/microsoft/vcpkg.git
-cd vcpkg
-bootstrap-vcpkg.bat
-# install rocksdb
-vcpkg install rocksdb:x64-mingw-static
+wget https://github.com/facebook/rocksdb/archive/refs/tags/v10.10.1.zip
+unzip v10.10.1.zip
+cd rocksdb-10.10.1
+make static_lib -j$(nproc)
+# set the environment variables
+export CFLAGS="-I${HOME}/rocksdb-10.10.1/include"
+export LDFLAGS="-L${HOME}/rocksdb-10.10.1/lib"
+
+```
+### linux
+
+```bash
+sudo apt install -y libbz2-dev
+sudo apt install -y libbz2-dev liblz4-dev libzstd-dev libsnappy-dev zlib1g-dev
+wget https://github.com/facebook/rocksdb/archive/refs/tags/v10.10.1.zip
+unzip v10.10.1.zip
+cd rocksdb-10.10.1
+make static_lib -j$(nproc)
+# set the environment variables
+export CFLAGS="-I${HOME}/rocksdb-10.10.1/include"
+export LDFLAGS="-L${HOME}/rocksdb-10.10.1/lib"
+
 ```
 
 ## (etcd)[./line/etcd]

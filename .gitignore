@@ -21,6 +21,7 @@ samples/db/tools/dao/
 samples/db/tools/model/has_sub_model.go
 samples/db/tools/model/notice_model.go
 samples/db/tools/model/sub_model.go
+samples/db/rocksdb/rocksdb
 samples/certificate/ecdsa/temp
 samples/certificate/ecdsa/ecdsa
 samples/certificate/ed25519/temp/
@@ -71,3 +72,4 @@ samples/rpc/bls/bls_etcds/default.etcd1
 samples/rpc/bls/bls_etcds/default.etcd2
 samples/rpc/bls/bls_etcds/default.etcd3
 samples/rpc/bls/bls_etcds/default.etcd
+

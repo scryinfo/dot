@@ -11,7 +11,13 @@ else
 endif
 $(info "go: ${go}")
 
+CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
+CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
+go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
+
 .PHONY: clean upgrade format build samples
+
+
 WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sconfig simple \
 	db/redis_client db/rocksdb \
 	rpc/web_rpc/web_rpc_server \
@@ -50,7 +56,7 @@ wire:  $(addsuffix /wire_gen.go, $(WIRES))
 
 define sample_rule
 $1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go
-	cd $1 && ${go} build -o $(notdir $1)$(EXE) ./...
+	cd $1 && ${go_rocksdb} build -o $(notdir $1)$(EXE) ./...
 endef
 $(foreach wire,$(WIRES),$(eval $(call sample_rule,$(wire))))
 samples: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))$(EXE))
