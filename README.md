@@ -99,6 +99,26 @@ Generate root and sub certificates. "sample/certificate" is an example.
 
 ## (db)[./line/db]
 
+### rocksdb
+
+#### window
+
+```bash
+scoop install mingw-winlibs # restart cmd or ide to user new gcc
+# install vcpkg
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+bootstrap-vcpkg.bat
+# install rocksdb
+vcpkg install rocksdb:x64-mingw-static
+```
+
+## (etcd)[./line/etcd]
+
+etcd (client)[go.etcd.io/etcd/client/v3] and (server)[go.etcd.io/etcd/server/v3].
+
+```
+
 ## (etcd)[./line/etcd]
 
 etcd (client)[go.etcd.io/etcd/client/v3] and (server)[go.etcd.io/etcd/server/v3].
@@ -111,8 +131,8 @@ dot for (gin)[github.com/gin-gonic/gin]
 
 ## (rpcdot)[./line/rpcdot]
 
-dot for (grpc)[google.golang.org/grpc] and (connect-rpc)[github.com/connectrpc/connect-go]  
-dot HandlerMiddle: auth middleware for connect-rpc or grpc  
+dot for (grpc)[google.golang.org/grpc] and (connect-rpc)[github.com/connectrpc/connect-go]
+dot HandlerMiddle: auth middleware for connect-rpc or grpc
 dot connect-rpc - HttpClientEx:
 dot connect-rpc - ConnectHttpServerMux:
 dot connect-rpc - ConnectServer:
@@ -122,3 +142,4 @@ dot grpc - GrpcClientEtcd: grpc connect with etcd
 dot grpc - grpc.Server: grpc server
 
 # [Code Style -- Go](https://github.com/scryinfo/scryg/blob/master/codestyle_go.md)
+```
