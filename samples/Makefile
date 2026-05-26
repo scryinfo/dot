@@ -15,7 +15,7 @@ CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
 go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
-.PHONY: clean upgrade format build samples
+.PHONY: clean clean_wire upgrade format build samples
 
 
 WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sconfig simple \
