@@ -61,7 +61,7 @@ func (c *Ui) Start() error {
 		res := c.ResAbsolutePath(it.Value)
 		if len(res) > 0 {
 			logger.Debug().Str("Ui", res).Send()
-			if sfile.IsDir(res) {
+			if sfile.ExistDir(res) {
 				if c.config.NoCompress {
 					c.router.Static(it.RelativePath, res)
 				} else {
@@ -77,7 +77,7 @@ func (c *Ui) Start() error {
 					c.router.GET(urlPattern, handler.Handler)
 					c.router.HEAD(urlPattern, handler.Handler)
 				}
-			} else if sfile.IsFile(res) {
+			} else if sfile.ExistFile(res) {
 				c.router.StaticFile(it.RelativePath, res)
 			} else {
 				logger.Error().Msg("can not: " + it.Value + " realy: " + res)

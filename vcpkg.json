@@ -1,0 +1,16 @@
+{
+  "name": "go-rocksdb-project",
+  "version-string": "1.0.0",
+  "dependencies": [
+    {
+      "name": "rocksdb",
+      "version=": "10.10.1",
+      "features": [
+        "lz4",
+        "snappy",
+        "zstd"
+      ]
+    }
+  ],
+  "builtin-baseline": "aa40adda5352e87655b8583cfb2451d5e9e276fd"
+}

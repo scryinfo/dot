@@ -8,4 +8,6 @@ use (
 	./demo/bench_http
 	./line/db/tools/gdao
 	./line/db/tools/gmodel
+	./line/db/rocksdbdot
+	./samples/db/rocksdb
 )

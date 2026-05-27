@@ -99,35 +99,7 @@ Generate root and sub certificates. "sample/certificate" is an example.
 
 ## (db)[./line/db]
 
-### rocksdb
-
-#### window
-
-```bash
-scoop install mingw-winlibs # restart cmd or ide to user new gcc
-wget https://github.com/facebook/rocksdb/archive/refs/tags/v10.10.1.zip
-unzip v10.10.1.zip
-cd rocksdb-10.10.1
-make static_lib -j$(nproc)
-# set the environment variables
-export CFLAGS="-I${HOME}/rocksdb-10.10.1/include"
-export LDFLAGS="-L${HOME}/rocksdb-10.10.1/lib"
-
-```
-### linux
-
-```bash
-sudo apt install -y libbz2-dev
-sudo apt install -y libbz2-dev liblz4-dev libzstd-dev libsnappy-dev zlib1g-dev
-wget https://github.com/facebook/rocksdb/archive/refs/tags/v10.10.1.zip
-unzip v10.10.1.zip
-cd rocksdb-10.10.1
-make static_lib -j$(nproc)
-# set the environment variables
-export CFLAGS="-I${HOME}/rocksdb-10.10.1/include"
-export LDFLAGS="-L${HOME}/rocksdb-10.10.1/lib"
-
-```
+### [rocksdb](./line/db/rocksdbdot/README.md)
 
 ## (etcd)[./line/etcd]
 

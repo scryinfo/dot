@@ -5,13 +5,14 @@ ifeq ($(OS),Windows_NT)
 	else
 	    go := $(subst \,/,$(shell where.exe go))
 	endif
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lzs
 else
 	go := ${shell which go}
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
 endif
 $(info "go: ${go}")
 
 CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
-CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
 go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
 .PHONY: clean upgrade format build samples
@@ -44,9 +45,9 @@ format:
 	cd line/db/tools/gdao && ${go} fmt ./...
 	cd line/db/tools/gmodel && ${go} fmt ./...
 	cd samples && make format
-build: 
+build:
 	bun install
-	${go_rocksdb} build ./...
+	CGO_ENABLED=1 ${go_rocksdb} build -tags=grocksdb ./...
 	cd demo && ${go} build ./...
 	cd demo/redis && ${go} build ./...
 	cd demo/redis/orm && ${go} build ./...
