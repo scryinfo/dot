@@ -21,7 +21,7 @@ go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
 
 WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sconfig simple \
-	db/redis_client db/rocksdb \
+	db/redis_client \
 	rpc/web_rpc/web_rpc_server \
 	rpc/nobl/nobl_connect_client rpc/nobl/nobl_grpc_client rpc/nobl/nobl_server \
 	rpc/nobls/nobls_connect_client rpc/nobls/nobls_grpc_client rpc/nobls/nobls_server \
@@ -34,10 +34,14 @@ clean:
 	find . -type f \( -executable -o -name "*.log" -o -name "wire_gen.go" \) -delete
 clean_wire:
 	find . -type f \( -executable -o -name "wire_gen.go" \) -delete
+tidy:
+	cd db/rocksdb && ${go} mod tidy
 upgrade:
 	cd rpc/web_rpc/client && bun update --latest
+	cd db/rocksdb && ${go} get -t -u ./... && ${go} mod tidy
 format:
 	cd rpc/web_rpc/client && bun run format
+	cd db/rocksdb && ${go} fmt ./...
 
 DIST_web_rpc_client := rpc/web_rpc/client/dist/index.html
 $(DIST_web_rpc_client): $(shell find rpc/web_rpc/client/src -type f)
@@ -54,21 +58,27 @@ $1/wire_gen.go: $1/$(notdir $1).go
 	cd $1 && wire
 endef
 $(foreach wire,$(WIRES),$(eval $(call wire_rule,$(wire))))
-wire:  $(addsuffix /wire_gen.go, $(WIRES))
+db/rocksdb/wire_gen.go: db/rocksdb/rocksdb.go
+	cd db/rocksdb && wire
+wire:  $(addsuffix /wire_gen.go, $(WIRES)) db/rocksdb/wire_gen.go
 
 define sample_rule
 $1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go
-	cd $1 && ${go_rocksdb} build -o $(notdir $1)$(EXE) ./...
+	cd $1 && ${go} build -o $(notdir $1)$(EXE) ./...
 endef
 $(foreach wire,$(WIRES),$(eval $(call sample_rule,$(wire))))
-samples: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))$(EXE))
+db/rocksdb/rocksdb$(EXE): db/rocksdb/rocksdb.go db/rocksdb/wire_gen.go
+	cd db/rocksdb && ${go_rocksdb} build -o rocksdb$(EXE) ./...
+samples: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))$(EXE)) db/rocksdb/rocksdb$(EXE)
 
 define generate_config_rule
 $1/$(notdir $1)_gen.toml: $1/$(notdir $1).go $1/wire_gen.go
 	cd $1 && ${go} run ./... -- -GenerateConfig
 endef
 $(foreach wire,$(WIRES),$(eval $(call generate_config_rule,$(wire))))
-generate_config: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))_gen.toml)
+db/rocksdb/rocksdb_gen.toml: db/rocksdb/rocksdb.go db/rocksdb/wire_gen.go
+	cd db/rocksdb && ${go_rocksdb} run ./... -- -GenerateConfig
+generate_config: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))_gen.toml) db/rocksdb/rocksdb_gen.toml
 
 gen:
 	cd rpc/proto && make gen

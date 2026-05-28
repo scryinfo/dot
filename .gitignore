@@ -33,6 +33,7 @@ samples/etcd_client/etcd_client
 samples/etcd_server/etcd_server
 samples/etcd_server/default.etcd
 
+samples/rpc/bl/bl_etcds/bl_etcds
 samples/rpc/bl/bl_grpc_client/bl_grpc_client
 samples/rpc/bl/bl_server/bl_server
 samples/rpc/bl/bl_server/default.etcd/
@@ -41,6 +42,7 @@ samples/rpc/bl/bl_server2/default.etcd/
 samples/rpc/bl/bl_server3/bl_server3
 samples/rpc/bl/bl_server3/default.etcd/
 
+samples/rpc/bls/bls_etcds/bls_etcds
 samples/rpc/bls/bls_grpc_client/bls_grpc_client
 samples/rpc/bls/bls_server/bls_server
 samples/rpc/bls/bls_server/default.etcd/
