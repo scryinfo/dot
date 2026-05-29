@@ -1,6 +1,8 @@
-package pebble2
+package pebble2dot
 
 import (
+	"path/filepath"
+
 	"github.com/cockroachdb/pebble/v2"
 	"github.com/scryinfo/dot/dot"
 )
@@ -14,12 +16,17 @@ type Pebble2Config struct {
 }
 
 func NewPebble2(config *Pebble2Config, sconfig dot.SConfig, logger *dot.LoggerType) (*Pebble2, func(), error) {
-	dpPath, err := sconfig.FullPath(config.DbPath)
-	if err != nil {
-		logger.Error().AnErr("cant get full db path", err).Send()
-		return nil, nil, err
+	{
+		dpPath, err := sconfig.FullPath(config.DbPath)
+		if err != nil {
+			config.DbPath = filepath.Join(sconfig.WdPath(), config.DbPath)
+		} else {
+			config.DbPath = dpPath
+		}
 	}
-	db, err := pebble.Open(dpPath, &pebble.Options{})
+	logger.Info().Msgf("pebble path: %s", config.DbPath)
+	opt := pebble.DefaultOptions()
+	db, err := pebble.Open(config.DbPath, opt)
 	if err != nil {
 		return nil, nil, err
 	}

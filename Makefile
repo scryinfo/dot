@@ -1,14 +1,21 @@
 
 ifeq ($(OS),Windows_NT)
+	EXE := .exe
 	ifneq (,$(findstring MINGW,$(UNAME_S)))
 	    go := ${shell which go}
 	else
 	    go := $(subst \,/,$(shell where.exe go))
 	endif
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lzs
+	VCPKG := $(abspath ./../../../vcpkg_installed)
+	ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
+	ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd
+	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 else
 	go := ${shell which go}
+	EXE :=
 	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
+	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 endif
 $(info "go: ${go}")
 
@@ -106,3 +113,6 @@ go_tools:
 	${go} install github.com/mgechev/revive@latest
 	${go} install github.com/fzipp/gocyclo/cmd/gocyclo@latest
 	${go} install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+install_rocksdb:
+	VCPKG_BUILD_TYPE=release d:/lang/vcpkg/vcpkg.exe install --triplet=x64-mingw-static

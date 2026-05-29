@@ -4,12 +4,13 @@
   "dependencies": [
     {
       "name": "rocksdb",
-      "version=": "10.10.1",
-      "features": [
-        "lz4",
-        "snappy",
-        "zstd"
-      ]
+      "features": ["lz4", "snappy", "zstd", "zlib", "bzip2"]
+    }
+  ],
+  "overrides": [
+    {
+      "name": "rocksdb",
+      "version-string": "10.10.1"
     }
   ],
   "builtin-baseline": "aa40adda5352e87655b8583cfb2451d5e9e276fd"

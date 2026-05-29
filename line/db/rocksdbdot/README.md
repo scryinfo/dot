@@ -4,12 +4,31 @@
 
 ```bash
 # in dot/vcpkg.json, config the rocksdb version and features
+{
+  "name": "go-rocksdb-project",
+  "version-string": "1.0.0",
+  "dependencies": [
+    {
+      "name": "rocksdb",
+      "features": ["lz4", "snappy", "zstd"]
+    }
+  ],
+  "overrides": [
+    {
+      "name": "rocksdb",
+      "version-string": "10.10.1"
+    }
+  ],
+  "builtin-baseline": "aa40adda5352e87655b8583cfb2451d5e9e276fd"
+}
+
 # update vcpkg baseline
 vcpkg.exe x-update-baseline --add-initial-baseline
 vcpkg.exe install --triplet=x64-mingw-static
 # set the environment variables
-ROCKSDB_INCLUDE="%VCPKG%/installed/x64-mingw-static/include"
-ROCKSDB_LIB="%VCPKG%/installed/x64-mingw-static/lib"
+VCPKG:="../../../vcpkg_installed"
+ROCKSDB_INCLUDE="%VCPKG%/x64-mingw-static/include"
+ROCKSDB_LIB="%VCPKG%/x64-mingw-static/lib"
 ```
 
 <!--```bash

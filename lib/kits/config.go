@@ -28,3 +28,12 @@ func (c _config) GetMainPackageDir() string {
 	}
 	return ""
 }
+
+// GetCallSourceFile
+func (c _config) GetCallSourceFile() string {
+	_, file, _, ok := runtime.Caller(1)
+	if !ok {
+		return ""
+	}
+	return file
+}

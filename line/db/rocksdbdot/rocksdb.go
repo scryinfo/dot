@@ -1,6 +1,8 @@
 package rocksdbdot
 
 import (
+	"path/filepath"
+
 	"github.com/linxGnu/grocksdb"
 	"github.com/scryinfo/dot/dot"
 )
@@ -19,16 +21,19 @@ func NewRocksDbDot(config *RocksDbDotConfig, sconfig dot.SConfig, logger *dot.Lo
 	if config.DbPath == "" {
 		config.DbPath = "data/rkv"
 	}
-	var err error
-	config.DbPath, err = sconfig.FullPath(config.DbPath)
-	if err != nil {
-		logger.Error().AnErr("FullPath failed", err).Send()
-		return nil, nil, err
+	{
+		dpPath, err := sconfig.FullPath(config.DbPath)
+		if err != nil {
+			config.DbPath = filepath.Join(sconfig.WdPath(), config.DbPath)
+		} else {
+			config.DbPath = dpPath
+		}
 	}
 	opts := grocksdb.NewDefaultOptions()
 	opts.SetCreateIfMissing(true)
 	defer opts.Destroy()
 
+	logger.Info().Msgf("rocksdb path: %s", config.DbPath)
 	db, err := grocksdb.OpenDb(opts, config.DbPath)
 	if err != nil {
 		logger.Error().AnErr("OpenDb failed", err).Send()

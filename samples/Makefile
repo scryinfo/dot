@@ -5,7 +5,7 @@ ifeq ($(OS),Windows_NT)
 	else
 	    go := $(subst \,/,$(shell where.exe go))
 	endif
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -llz4 -lzstd
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd
 else
 	go := ${shell which go}
 	EXE :=

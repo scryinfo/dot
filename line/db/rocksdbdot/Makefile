@@ -5,15 +5,20 @@ ifeq ($(OS),Windows_NT)
 	else
 	    go := $(subst \,/,$(shell where.exe go))
 	endif
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -llz4 -lzstd
+	VCPKG := $(abspath ./../../../vcpkg_installed)
+	ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
+	ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd
+	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 else
 	go := ${shell which go}
 	EXE :=
 	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
+	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 endif
 $(info "go: ${go}")
 
-CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
+
 go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
 .PHONY: clean build rebuild

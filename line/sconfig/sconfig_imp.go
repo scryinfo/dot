@@ -81,18 +81,19 @@ func NewLineConfig[T any](config *SConfig) (*T, error) {
 }
 
 func (p *SConfig) RootPath() error {
-	{
+	if p.wdPath == "" {
 		wd, err := os.Getwd()
 		if err != nil {
 			return err
 		}
 		p.wdPath = wd
 	}
-	exeFile, err := os.Executable()
-	if err != nil {
-		return err
-	}
+
 	{
+		exeFile, err := os.Executable()
+		if err != nil {
+			return err
+		}
 		p.exePath = filepath.Dir(exeFile)
 		binPath := filepath.Dir(p.exePath)
 		exeName := filepath.Base(exeFile)
@@ -108,6 +109,23 @@ func (p *SConfig) RootPath() error {
 			}
 			fmt.Printf("config is in debug exe path: %s\n", p.exePath)
 		}
+		if p.confPath == "" {
+			if sfile.ExistFile(dot.GCmd.ConfigPath) {
+				p.confPath = dot.GCmd.ConfigPath
+			} else if configPath := filepath.Join(p.exePath, exeName+separator+conf); sfile.ExistFile(configPath) {
+				p.confPath = configPath
+			} else if configPath := filepath.Join(p.exePath, conf); sfile.ExistFile(configPath) {
+				p.confPath = configPath
+			} else if configPath := filepath.Join(binPath, exeName+separator+conf); sfile.ExistFile(configPath) { //prefer the path
+				p.confPath = configPath
+			} else if configPath := filepath.Join(binPath, conf); sfile.ExistFile(configPath) {
+				p.confPath = configPath
+			}
+			if len(p.confPath) < 1 {
+				p.confPath = p.exePath
+			}
+		}
+
 		if sfile.ExistFile(dot.GCmd.ConfigPath) {
 			p.confPath = dot.GCmd.ConfigPath
 		} else if configPath := filepath.Join(p.exePath, exeName+separator+conf); sfile.ExistFile(configPath) {
@@ -367,17 +385,28 @@ func (p *SConfig) getFileType() {
 // else join exe path, if the file exists, return the full path,
 // otherwise return an error
 func (p *SConfig) FullPath(file string) (string, error) {
-	if sfile.ExistFile(file) {
+	if sfile.Exist(file) {
 		return filepath.Abs(file)
 	}
-	if sfile.ExistFile(filepath.Join(p.confPath, file)) {
+	if sfile.Exist(filepath.Join(p.confPath, file)) {
 		return filepath.Abs(filepath.Join(p.confPath, file))
 	}
-	if sfile.ExistFile(filepath.Join(p.wdPath, file)) {
+	if sfile.Exist(filepath.Join(p.wdPath, file)) {
 		return filepath.Abs(filepath.Join(p.wdPath, file))
 	}
-	if sfile.ExistFile(filepath.Join(p.exePath, file)) {
+	if sfile.Exist(filepath.Join(p.exePath, file)) {
 		return filepath.Abs(filepath.Join(p.exePath, file))
 	}
 	return "", fmt.Errorf("file %s not found", file)
+}
+
+func NewTestSConfig(confPath, wdPath, exePath string) *SConfig {
+	return &SConfig{
+		confPath:   confPath,
+		wdPath:     wdPath,
+		exePath:    exePath,
+		file:       "config.toml",
+		fileType:   "toml",
+		simpleConf: nil,
+	}
 }

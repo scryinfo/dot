@@ -75,3 +75,4 @@ samples/rpc/bls/bls_etcds/default.etcd1
 samples/rpc/bls/bls_etcds/default.etcd2
 samples/rpc/bls/bls_etcds/default.etcd3
 samples/rpc/bls/bls_etcds/default.etcd
+line/db/pebble2dot/temp/

@@ -1,6 +1,8 @@
 package baderdot
 
 import (
+	"path/filepath"
+
 	"github.com/dgraph-io/badger/v4"
 	"github.com/scryinfo/dot/dot"
 )
@@ -15,15 +17,17 @@ type BaderDbDotConfig struct {
 	Loglevel string `json:"logLevel" toml:"logLevel" yaml:"logLevel" `
 }
 
-func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.LoggerType) (*BaderDbDot, error) {
-	var err error
-	var dbPath string
-	dbPath, err = sconfig.FullPath(config.DbPath)
-	if err != nil {
-		logger.Error().Err(err).Send()
-		return nil, err
+func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.LoggerType) (*BaderDbDot, func(), error) {
+
+	{
+		dpPath, err := sconfig.FullPath(config.DbPath)
+		if err != nil {
+			config.DbPath = filepath.Join(sconfig.WdPath(), config.DbPath)
+		} else {
+			config.DbPath = dpPath
+		}
 	}
-	logger.Info().Msgf("full bader db path: %s", dbPath)
+	logger.Info().Msgf("full bader db path: %s", config.DbPath)
 	logLevel := badger.INFO
 	switch config.Loglevel {
 	case "debug":
@@ -33,12 +37,18 @@ func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.Logg
 	case "error":
 		logLevel = badger.ERROR
 	}
-	dbBadger, err := badger.Open(badger.DefaultOptions(dbPath).WithLogger(&dblogger{Logger: logger}).WithLoggingLevel(logLevel))
+	logger.Info().Msgf("bader db path: %s", config.DbPath)
+	dbBadger, err := badger.Open(badger.DefaultOptions(config.DbPath).WithLogger(&dblogger{Logger: logger}).WithLoggingLevel(logLevel))
 	if err != nil {
 		logger.Error().Err(err).Send()
-		return nil, err
+		return nil, nil, err
 	}
-	return &BaderDbDot{db: dbBadger}, nil
+	return &BaderDbDot{db: dbBadger}, func() {
+		err := dbBadger.Close()
+		if err != nil {
+			logger.Error().Err(err).Send()
+		}
+	}, nil
 }
 
 func (p *BaderDbDot) Db() *badger.DB {

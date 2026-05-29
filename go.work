@@ -10,4 +10,5 @@ use (
 	./line/db/tools/gmodel
 	./line/db/rocksdbdot
 	./samples/db/rocksdb
+	./samples/db/rocksdb_bench
 )
