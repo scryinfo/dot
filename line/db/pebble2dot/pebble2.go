@@ -25,8 +25,10 @@ func NewPebble2(config *Pebble2Config, sconfig dot.SConfig, logger *dot.LoggerTy
 		}
 	}
 	logger.Info().Msgf("pebble path: %s", config.DbPath)
-	opt := pebble.DefaultOptions()
-	db, err := pebble.Open(config.DbPath, opt)
+	opt := pebble.Options{
+		Logger: &pebbleZerologAdapter{logger: logger},
+	}
+	db, err := pebble.Open(config.DbPath, &opt)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -40,4 +42,19 @@ func NewPebble2(config *Pebble2Config, sconfig dot.SConfig, logger *dot.LoggerTy
 
 func (p *Pebble2) Db() *pebble.DB {
 	return p.db
+}
+
+type pebbleZerologAdapter struct {
+	logger *dot.LoggerType
+}
+
+func (a *pebbleZerologAdapter) Infof(format string, args ...any) {
+	a.logger.Info().Msgf(format, args...)
+}
+func (a *pebbleZerologAdapter) Errorf(format string, args ...any) {
+	a.logger.Error().Msgf(format, args...)
+}
+
+func (a *pebbleZerologAdapter) Fatalf(format string, args ...any) {
+	a.logger.Fatal().Msgf(format, args...)
 }

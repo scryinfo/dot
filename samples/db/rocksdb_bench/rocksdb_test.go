@@ -18,9 +18,17 @@ import (
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
+func newLogger() *dot.LoggerType {
+	conf := dot.TestLogConfig()
+	conf.AddStdOut = false
+	conf.SetSlog = false
+	conf.Level = "error"
+	return dot.NewLogger(&conf)
+}
+
 func BenchmarkGorocksdb(b *testing.B) {
 	sourcePath := filepath.Dir(kits.Config.GetCallSourceFile())
-	logger := dot.NewTestLogger()
+	logger := newLogger()
 	logger.Info().Msgf("rocksdb path: %s", filepath.Join(sourcePath, "temp/gorocksdb"))
 
 	config := rocksdbdot.RocksDbDotConfig{
@@ -52,9 +60,10 @@ func BenchmarkGorocksdb(b *testing.B) {
 
 func BenchmarkBadgerdb(b *testing.B) {
 	sourcePath := filepath.Dir(kits.Config.GetCallSourceFile())
-	logger := dot.NewTestLogger()
+	logger := newLogger()
 	config := baderdot.BaderDbDotConfig{
-		DbPath: filepath.Join(sourcePath, "temp/badgerdb"),
+		DbPath:   filepath.Join(sourcePath, "temp/badgerdb"),
+		Loglevel: "error",
 	}
 	if !sfile.ExistDir(config.DbPath) {
 		err := os.MkdirAll(config.DbPath, 0755)
@@ -83,7 +92,7 @@ func BenchmarkBadgerdb(b *testing.B) {
 
 func BenchmarkPebble(b *testing.B) {
 	sourcePath := filepath.Dir(kits.Config.GetCallSourceFile())
-	logger := dot.NewTestLogger()
+	logger := newLogger()
 	config := pebble2dot.Pebble2Config{
 		DbPath: filepath.Join(sourcePath, "temp/pebble"),
 	}

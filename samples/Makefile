@@ -32,21 +32,26 @@ clean:
 	cd rpc/proto && make clean
 	cd rpc/web_rpc/client && rm -rf dist node_modules bun.lock
 	find . -type f \( -executable -o -name "*.log" -o -name "wire_gen.go" \) -delete
+	cd db/rocksdb_bench && make clean
 clean_wire:
 	find . -type f \( -executable -o -name "wire_gen.go" \) -delete
 tidy:
 	cd db/rocksdb && ${go} mod tidy
+	cd db/rocksdb_bench && ${go} mod tidy
 upgrade:
 	cd rpc/web_rpc/client && bun update --latest
 	cd db/rocksdb && ${go} get -t -u ./... && ${go} mod tidy
+	cd db/rocksdb_bench && ${go} get -t -u ./... && ${go} mod tidy
 format:
 	cd rpc/web_rpc/client && bun run format
 	cd db/rocksdb && ${go} fmt ./...
+	cd db/rocksdb_bench && ${go} fmt ./...
 
 DIST_web_rpc_client := rpc/web_rpc/client/dist/index.html
 $(DIST_web_rpc_client): $(shell find rpc/web_rpc/client/src -type f)
 	cd rpc/web_rpc/client && bun install && bun run build
 build: wire samples $(DIST_web_rpc_client)
+	cd db/rocksdb_bench && make build
 
 rebuild: clean gen build
 

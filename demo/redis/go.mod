@@ -2,7 +2,7 @@ module github.com/scryinfo/diamond/demo/go_redis
 
 go 1.26
 
-require github.com/redis/go-redis/v9 v9.19.0
+require github.com/redis/go-redis/v9 v9.20.0
 
 require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect

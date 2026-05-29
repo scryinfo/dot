@@ -24,7 +24,7 @@ go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
 clean:
 	${go} clean
-	rm -f go.sum rocksdb$(EXE)
+	rm -rf go.sum rocksdb$(EXE) temp/ logs/
 build:
 	${go_rocksdb} build ./...
 	${go_rocksdb} test -c -o /dev/null ./...
