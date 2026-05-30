@@ -11,7 +11,7 @@ require (
 	github.com/google/wire v0.7.0
 	github.com/linxGnu/grocksdb v1.10.8
 	github.com/scryinfo/dot v0.9.3
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260529035643-b864147e254f
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260529051651-592772095c84
 	github.com/scryinfo/scryg v0.2.0
 )
 
@@ -38,7 +38,7 @@ require (
 	github.com/knadh/koanf/providers/confmap v1.0.0 // indirect
 	github.com/knadh/koanf/providers/file v1.2.1 // indirect
 	github.com/knadh/koanf/v2 v2.3.4 // indirect
-	github.com/mattn/go-colorable v0.1.14 // indirect
+	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
