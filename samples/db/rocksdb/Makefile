@@ -8,7 +8,7 @@ ifeq ($(OS),Windows_NT)
 	VCPKG := $(abspath ./../../../vcpkg_installed)
 	ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
 	ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 else
 	go := ${shell which go}

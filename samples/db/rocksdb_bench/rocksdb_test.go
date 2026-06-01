@@ -11,7 +11,7 @@ import (
 	"github.com/linxGnu/grocksdb"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
-	"github.com/scryinfo/dot/line/db/baderdot"
+	"github.com/scryinfo/dot/line/db/badgerdot"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/scryinfo/dot/line/db/rocksdbdot"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -61,7 +61,7 @@ func BenchmarkGorocksdb(b *testing.B) {
 func BenchmarkBadgerdb(b *testing.B) {
 	sourcePath := filepath.Dir(kits.Config.GetCallSourceFile())
 	logger := newLogger()
-	config := baderdot.BaderDbDotConfig{
+	config := badgerdot.BaderDbDotConfig{
 		DbPath:   filepath.Join(sourcePath, "temp/badgerdb"),
 		Loglevel: "error",
 	}
@@ -71,7 +71,7 @@ func BenchmarkBadgerdb(b *testing.B) {
 			b.Fatal(err)
 		}
 	}
-	db, cleaner, err := baderdot.NewBaderDot(&config, sconfig.NewTestSConfig(sourcePath, sourcePath, sourcePath), logger)
+	db, cleaner, err := badgerdot.NewBaderDot(&config, sconfig.NewTestSConfig(sourcePath, sourcePath, sourcePath), logger)
 	if err != nil {
 		b.Fatal(err)
 	}

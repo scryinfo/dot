@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/dot/line/certificate"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
@@ -36,7 +37,7 @@ var LineSet = wire.NewSet(
 	NewAppConfig,
 	sconfig.NewConfig,
 	dot.NewLogger,
-	certificate.NewEcdsa,
+	line.CertificateNewEcdsa,
 )
 
 func main() {

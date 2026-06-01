@@ -20,7 +20,7 @@ import (
 
 	"github.com/dgraph-io/badger/v4"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/line/db/baderdot"
+	"github.com/scryinfo/dot/line/db/badgerdot"
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
@@ -513,7 +513,7 @@ func (p *DbBackup) parseBackupFolderId(folder string) (string, string) {
 	}
 }
 
-func NewDbBackup(config *baderdot.BaderDbDotConfig, sconfig dot.SConfig, db *baderdot.BaderDbDot, logger *dot.LoggerType) (*DbBackup, func(), error) {
+func NewDbBackup(config *badgerdot.BaderDbDotConfig, sconfig dot.SConfig, db *badgerdot.BadgerDbDot, logger *dot.LoggerType) (*DbBackup, func(), error) {
 	backupPath, err := sconfig.FullPath(config.BackupPath)
 	if err != nil {
 		return nil, nil, err

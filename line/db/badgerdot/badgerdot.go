@@ -1,4 +1,4 @@
-package baderdot
+package badgerdot
 
 import (
 	"path/filepath"
@@ -7,7 +7,7 @@ import (
 	"github.com/scryinfo/dot/dot"
 )
 
-type BaderDbDot struct {
+type BadgerDbDot struct {
 	db *badger.DB
 }
 type BaderDbDotConfig struct {
@@ -17,7 +17,7 @@ type BaderDbDotConfig struct {
 	Loglevel string `json:"logLevel" toml:"logLevel" yaml:"logLevel" `
 }
 
-func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.LoggerType) (*BaderDbDot, func(), error) {
+func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.LoggerType) (*BadgerDbDot, func(), error) {
 
 	{
 		dpPath, err := sconfig.FullPath(config.DbPath)
@@ -43,7 +43,7 @@ func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.Logg
 		logger.Error().Err(err).Send()
 		return nil, nil, err
 	}
-	return &BaderDbDot{db: dbBadger}, func() {
+	return &BadgerDbDot{db: dbBadger}, func() {
 		err := dbBadger.Close()
 		if err != nil {
 			logger.Error().Err(err).Send()
@@ -51,7 +51,7 @@ func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.Logg
 	}, nil
 }
 
-func (p *BaderDbDot) Db() *badger.DB {
+func (p *BadgerDbDot) Db() *badger.DB {
 	return p.db
 }
 
