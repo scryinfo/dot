@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 
 	"github.com/scryinfo/dot/line/gindot"
@@ -40,10 +41,10 @@ var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
 	wire.FieldsOf(new(*LineConfig), "Log", "Router", "Engine"),
 	NewLineConfig,
-	sconfig.NewConfig,
+	line.SconfigNewConfig,
 	dot.NewLogger,
-	gindot.NewRouter,
-	gindot.NewGinDot,
+	line.GindotNewRouter,
+	line.GindotNewGinDot,
 	NewSampleCtroller,
 )
 

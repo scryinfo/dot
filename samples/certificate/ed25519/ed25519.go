@@ -6,6 +6,7 @@ package main
 import (
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/dot/line/certificate"
 	"github.com/scryinfo/dot/line/sconfig"
 )
@@ -31,9 +32,9 @@ var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
 	wire.FieldsOf(new(*LineConfig), "Log"),
 	NewAppConfig,
-	sconfig.NewConfig,
+	line.SconfigNewConfig,
 	dot.NewLogger,
-	certificate.NewEd25519,
+	line.CertificateNewEd25519,
 )
 
 func main() {

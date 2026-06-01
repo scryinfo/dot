@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/dot/line/db/redis_client"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
@@ -35,11 +36,11 @@ func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 var LineSet = wire.NewSet(
 	NewLineConfig,
 	wire.Struct(new(Line), "*"),
-	sconfig.NewConfig,
+	line.SconfigNewConfig,
 	dot.NewLogger,
 	wire.FieldsOf(new(*LineConfig), "Log", "Redis"),
 	NewRedisSample,
-	redis_client.NewRedisClient,
+	line.DbRedisClientNewRedisClient,
 )
 
 func main() {

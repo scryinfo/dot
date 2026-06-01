@@ -9,8 +9,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/line/certificate"
-	contextex "github.com/scryinfo/dot/line/context_ex"
+	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -42,14 +41,14 @@ var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
 	wire.FieldsOf(new(*LineConfig), "Log", "GrpcClientEtcd", "EtcdClient"),
 	NewLineConfig,
-	sconfig.NewConfig,
+	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
-	certificate.NewBaseCertificate,
+	line.CertificateNewBaseCertificate,
 	dot.NewLogger,
-	contextex.NewContextEx,
-	rpcdot.NewGrpcClientEtcd,
+	line.ContextexNewContextEx,
+	line.RpcdotNewGrpcClientEtcd,
 	NewHiServiceClient,
-	etcddot.NewClient,
+	line.EtcddotNewClient,
 )
 
 func NewHiServiceClient(clientEtcd *rpcdot.GrpcClientEtcd) apiv1grpc.HiServiceClient {

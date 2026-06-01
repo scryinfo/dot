@@ -35,7 +35,7 @@ var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
 	wire.FieldsOf(new(*LineConfig), "Log"),
 	NewAppConfig,
-	sconfig.NewConfig,
+	line.SconfigNewConfig,
 	dot.NewLogger,
 	line.CertificateNewEcdsa,
 )

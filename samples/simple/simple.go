@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
@@ -32,7 +33,7 @@ func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 var LineSet = wire.NewSet(
 	NewLineConfig,
 	wire.Struct(new(Line), "*"),
-	sconfig.NewConfig,
+	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
 	wire.FieldsOf(new(*LineConfig), "Log"),

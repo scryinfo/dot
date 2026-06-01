@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/dot/samples/rpc/go_impl/connectimpl"
@@ -43,11 +44,11 @@ var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
 	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer", "HiService"),
 	NewLineConfig,
-	sconfig.NewConfig,
+	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
-	rpcdot.NewConnetServer,
-	rpcdot.NewConnectHttpServerMux,
+	line.RpcdotNewConnetServer,
+	line.RpcdotNewConnectHttpServerMux,
 	NewHandlerMiddle,
 	connectimpl.NewHiService,
 )

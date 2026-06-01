@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
-	contextex "github.com/scryinfo/dot/line/context_ex"
+	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -48,16 +48,16 @@ var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
 	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServerEtcd", "ConnectServer", "EtcdClient", "HiService"),
 	NewLineConfig,
-	sconfig.NewConfig,
+	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
-	contextex.NewContextEx,
+	line.ContextexNewContextEx,
 	NewHandlerMiddle,
 	connectimpl.NewHiService,
-	rpcdot.NewConnectServerEtcd,
-	rpcdot.NewConnectHttpServerMux,
-	rpcdot.NewConnetServer,
-	etcddot.NewClient,
+	line.RpcdotNewConnectServerEtcd,
+	line.RpcdotNewConnectHttpServerMux,
+	line.RpcdotNewConnetServer,
+	line.EtcddotNewClient,
 )
 
 func main() {
@@ -73,7 +73,7 @@ func main() {
 		defer clear()
 	}
 
-	dot.Logger.Info().Msg("dot ok")
+	line.Logger.Info().Msg("dot ok")
 	//second step ....
 	_ = line
 

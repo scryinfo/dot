@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
-	contextex "github.com/scryinfo/dot/line/context_ex"
+	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
@@ -36,11 +36,11 @@ func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 var LineSet = wire.NewSet(
 	NewLineConfig,
 	wire.Struct(new(Line), "*"),
-	sconfig.NewConfig,
+	line.SconfigNewConfig,
 	dot.NewLogger,
 	wire.FieldsOf(new(*LineConfig), "Log", "EtcdClient"),
-	contextex.NewContextEx,
-	etcddot.NewClient,
+	line.ContextexNewContextEx,
+	line.EtcddotNewClient,
 )
 
 func main() {
