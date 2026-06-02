@@ -513,7 +513,7 @@ func (p *DbBackup) parseBackupFolderId(folder string) (string, string) {
 	}
 }
 
-func NewDbBackup(config *badgerdot.BaderDbDotConfig, sconfig dot.SConfig, db *badgerdot.BadgerDbDot, logger *dot.LoggerType) (*DbBackup, func(), error) {
+func NewDbBackup(config *badgerdot.BadgerDbDotConfig, sconfig dot.SConfig, db *badgerdot.BadgerDbDot, logger *dot.LoggerType) (*DbBackup, func(), error) {
 	backupPath, err := sconfig.FullPath(config.BackupPath)
 	if err != nil {
 		return nil, nil, err

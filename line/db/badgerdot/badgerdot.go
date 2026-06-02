@@ -10,14 +10,14 @@ import (
 type BadgerDbDot struct {
 	db *badger.DB
 }
-type BaderDbDotConfig struct {
+type BadgerDbDotConfig struct {
 	DbPath     string `json:"db_path" toml:"db_path" yaml:"db_path" `
 	BackupPath string `json:"backup_path" toml:"backup_path" yaml:"backup_path" `
 	// info warning debug error
 	Loglevel string `json:"log_level" toml:"log_level" yaml:"log_level" `
 }
 
-func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.LoggerType) (*BadgerDbDot, func(), error) {
+func NewBadgerDot(config *BadgerDbDotConfig, sconfig dot.SConfig, logger *dot.LoggerType) (*BadgerDbDot, func(), error) {
 
 	{
 		dpPath, err := sconfig.FullPath(config.DbPath)
@@ -27,7 +27,7 @@ func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.Logg
 			config.DbPath = dpPath
 		}
 	}
-	logger.Info().Msgf("full bader db path: %s", config.DbPath)
+	logger.Info().Msgf("full badger db path: %s", config.DbPath)
 	logLevel := badger.INFO
 	switch config.Loglevel {
 	case "debug":
@@ -37,7 +37,7 @@ func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.Logg
 	case "error":
 		logLevel = badger.ERROR
 	}
-	logger.Info().Msgf("bader db path: %s", config.DbPath)
+	logger.Info().Msgf("badger db path: %s", config.DbPath)
 	dbBadger, err := badger.Open(badger.DefaultOptions(config.DbPath).WithLogger(&dblogger{Logger: logger}).WithLoggingLevel(logLevel))
 	if err != nil {
 		logger.Error().Err(err).Send()

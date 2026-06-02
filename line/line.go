@@ -21,7 +21,7 @@ var (
 	CertificateNewSm2             = certificate.NewSm2
 
 	ContextexNewContextEx       = contextex.NewContextEx
-	DbBadgerdotNewBaderDot      = badgerdot.NewBaderDot
+	DbBadgerdotNewBadgerDot     = badgerdot.NewBadgerDot
 	DbBadgerdotNewBackup        = backup.NewDbBackup
 	DbPebble2dotNewPebble2      = pebble2dot.NewPebble2
 	DbRedisClientNewRedisClient = redis_client.NewRedisClient
