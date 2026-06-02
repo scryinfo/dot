@@ -19,19 +19,19 @@ var Newer = wire.NewSet(
 )
 
 type ServerConfig struct {
-	Name                string   `json:"name" toml:"name" yaml:"name"`
-	Dir                 string   `json:"dir" toml:"dir" yaml:"dir"`
-	ListenClientUrls    []string `json:"listen_client_urls" toml:"listen_client_urls" yaml:"listen_client_urls"`
-	AdvertiseClientUrls []string `json:"advertise_client_urls" toml:"advertise_client_urls" yaml:"advertise_client_urls"`
-	ListenPeerUrls      []string `json:"listen_peer_urls" toml:"listen_peer_urls" yaml:"listen_peer_urls"`
-	AdvertisePeerUrls   []string `json:"advertise_peer_urls" toml:"advertise_peer_urls" yaml:"advertise_peer_urls"`
+	Name                string   `json:"name" toml:"name" yaml:"name" mapstructure:"name"`
+	Dir                 string   `json:"dir" toml:"dir" yaml:"dir" mapstructure:"dir"`
+	ListenClientUrls    []string `json:"listen_client_urls" toml:"listen_client_urls" yaml:"listen_client_urls" mapstructure:"listen_client_urls"`
+	AdvertiseClientUrls []string `json:"advertise_client_urls" toml:"advertise_client_urls" yaml:"advertise_client_urls" mapstructure:"advertise_client_urls"`
+	ListenPeerUrls      []string `json:"listen_peer_urls" toml:"listen_peer_urls" yaml:"listen_peer_urls" mapstructure:"listen_peer_urls"`
+	AdvertisePeerUrls   []string `json:"advertise_peer_urls" toml:"advertise_peer_urls" yaml:"advertise_peer_urls" mapstructure:"advertise_peer_urls"`
 	// the unique token for the cluster
-	InitialClusterToken string `json:"initial_cluster_token" toml:"initial_cluster_token" yaml:"initial_cluster_token"`
-	InitialCluster      string `json:"initial_cluster" toml:"initial_cluster" yaml:"initial_cluster"`
+	InitialClusterToken string `json:"initial_cluster_token" toml:"initial_cluster_token" yaml:"initial_cluster_token" mapstructure:"initial_cluster_token"`
+	InitialCluster      string `json:"initial_cluster" toml:"initial_cluster" yaml:"initial_cluster" mapstructure:"initial_cluster"`
 	// debug, info, warn, error, panic, or fatal. Default 'info'
-	LogLevel string `json:"log_level" toml:"log_level" yaml:"log_level"`
+	LogLevel string `json:"log_level" toml:"log_level" yaml:"log_level" mapstructure:"log_level"`
 	// etcd ready notify timeout in seconds. Default 0
-	ReadyNotifyTimeout int64 `json:"ready_notify_timeout" toml:"ready_notify_timeout" yaml:"ready_notify_timeout"`
+	ReadyNotifyTimeout int64 `json:"ready_notify_timeout" toml:"ready_notify_timeout" yaml:"ready_notify_timeout" mapstructure:"ready_notify_timeout"`
 }
 
 func NewServer(conf *ServerConfig, ctxEx *contextex.ContextEx, logger *dot.LoggerType) (*Server, func(), error) {

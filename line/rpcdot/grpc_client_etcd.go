@@ -11,9 +11,9 @@ import (
 )
 
 type GrpcClientEtcdConfig struct {
-	Name                     string    `json:"name" toml:"name" yaml:"name"`
-	WithDefaultServiceConfig string    `json:"with_default_service_config" toml:"with_default_service_config" yaml:"with_default_service_config"`
-	Tls                      TlsConfig `json:"tls" toml:"tls" yaml:"tls"`
+	Name                     string    `json:"name" toml:"name" yaml:"name" mapstructure:"name"`
+	WithDefaultServiceConfig string    `json:"with_default_service_config" toml:"with_default_service_config" yaml:"with_default_service_config" mapstructure:"with_default_service_config"`
+	Tls                      TlsConfig `json:"tls" toml:"tls" yaml:"tls" mapstructure:"tls"`
 }
 
 type GrpcClientEtcd struct {

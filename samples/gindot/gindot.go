@@ -24,9 +24,9 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log    dot.LogConfig       `json:"log" toml:"log" yaml:"log"`
-	Router gindot.RouterConfig `json:"router" toml:"router" yaml:"router"`
-	Engine gindot.EngineConfig `json:"engine" toml:"engine" yaml:"engine"`
+	Log    dot.LogConfig       `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	Router gindot.RouterConfig `json:"router" toml:"router" yaml:"router" mapstructure:"router"`
+	Engine gindot.EngineConfig `json:"engine" toml:"engine" yaml:"engine" mapstructure:"engine"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {

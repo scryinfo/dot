@@ -22,8 +22,8 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log           dot.LogConfig               `json:"log" toml:"log" yaml:"log"`
-	ConnectServer rpcdot.ConnectServerConfig  `json:"connect_server" toml:"connect_server" yaml:"connect_server"`
+	Log           dot.LogConfig               `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	ConnectServer rpcdot.ConnectServerConfig  `json:"connect_server" toml:"connect_server" yaml:"connect_server" mapstructure:"connect_server"`
 	HiService     connectimpl.HiServiceConfig `json:"hi_service" toml:"hi_service" yaml:"hi_service"`
 }
 

@@ -25,8 +25,8 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log        dot.LogConfig           `json:"log" toml:"log" yaml:"log"`
-	HttpClient rpcdot.HttpClientConfig `json:"http_client" toml:"http_client" yaml:"http_client"`
+	Log        dot.LogConfig           `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	HttpClient rpcdot.HttpClientConfig `json:"http_client" toml:"http_client" yaml:"http_client" mapstructure:"http_client"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {

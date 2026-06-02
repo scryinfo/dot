@@ -14,7 +14,7 @@ type RocksDbDot struct {
 }
 
 type RocksdbDotConfig struct {
-	DbPath string `json:"db_path" toml:"db_path" yaml:"db_path"`
+	DbPath string `json:"db_path" toml:"db_path" yaml:"db_path" mapstructure:"db_path"`
 }
 
 func NewRocksDbDot(config *RocksdbDotConfig, sconfig dot.SConfig, logger *dot.LoggerType) (*RocksDbDot, func(), error) {

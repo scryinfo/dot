@@ -23,8 +23,8 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log        dot.LogConfig           `json:"log" toml:"log" yaml:"log"`
-	GrpcClient rpcdot.GrpcClientConfig `json:"grpc_client" toml:"grpc_client" yaml:"grpc_client"`
+	Log        dot.LogConfig           `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	GrpcClient rpcdot.GrpcClientConfig `json:"grpc_client" toml:"grpc_client" yaml:"grpc_client" mapstructure:"grpc_client"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {

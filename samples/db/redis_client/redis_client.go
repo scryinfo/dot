@@ -21,8 +21,8 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log   dot.LogConfig            `json:"log" toml:"log" yaml:"log"`
-	Redis redis_client.RedisConfig `json:"redis" toml:"redis" yaml:"redis"`
+	Log   dot.LogConfig            `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	Redis redis_client.RedisConfig `json:"redis" toml:"redis" yaml:"redis" mapstructure:"redis"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {

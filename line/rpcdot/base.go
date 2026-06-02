@@ -26,11 +26,11 @@ const (
 )
 
 type TlsConfig struct {
-	Mode     RpcTls `json:"mode" yaml:"mode" toml:"mode"`
-	Cert     string `json:"cert" yaml:"cert" toml:"cert"`
-	Key      string `json:"key" yaml:"key" toml:"key"`
-	RootCert string `json:"root_cert" yaml:"root_cert" toml:"root_cert"`
-	PeerCert string `json:"peer_cert" yaml:"peer_cert" toml:"peer_cert"`
+	Mode     RpcTls `json:"mode" yaml:"mode" toml:"mode" mapstructure:"mode"`
+	Cert     string `json:"cert" yaml:"cert" toml:"cert" mapstructure:"cert"`
+	Key      string `json:"key" yaml:"key" toml:"key" mapstructure:"key"`
+	RootCert string `json:"root_cert" yaml:"root_cert" toml:"root_cert" mapstructure:"root_cert"`
+	PeerCert string `json:"peer_cert" yaml:"peer_cert" toml:"peer_cert" mapstructure:"peer_cert"`
 }
 
 func (p *TlsConfig) FullPath(sconf dot.SConfig) error {

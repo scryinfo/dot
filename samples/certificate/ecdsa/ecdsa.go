@@ -20,7 +20,7 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log dot.LogConfig `json:"log" toml:"log" yaml:"log"`
+	Log dot.LogConfig `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
 }
 
 func NewAppConfig(config *sconfig.SConfig) (*LineConfig, error) {

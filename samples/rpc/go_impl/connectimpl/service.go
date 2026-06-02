@@ -16,7 +16,7 @@ import (
 )
 
 type HiServiceConfig struct {
-	Name string `json:"name" toml:"name" yaml:"name"`
+	Name string `json:"name" toml:"name" yaml:"name" mapstructure:"name"`
 }
 
 func NewHiService(mux *rpcdot.ConnectHttpServerMux, logger *dot.LoggerType, conf *HiServiceConfig) *HiService {

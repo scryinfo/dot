@@ -20,14 +20,14 @@ import (
 const DecodeTypeID = "7e592fd2-6cd8-4953-8fae-8c3a9915bef7"
 
 type DecodeConfig struct {
-	Help     bool   `json:"help" yaml:"help" toml:"help" ` //输出帮助信息
-	Generate string `json:"generate" yaml:"generate" toml:"generate" `
-	File     string `json:"file" yaml:"file" toml:"file" `
-	OutFile  string `json:"out_file" yaml:"out_file" toml:"out_file" `
+	Help     bool   `json:"help" yaml:"help" toml:"help" mapstructure:"help" ` //输出帮助信息
+	Generate string `json:"generate" yaml:"generate" toml:"generate" mapstructure:"generate" `
+	File     string `json:"file" yaml:"file" toml:"file" mapstructure:"file" `
+	OutFile  string `json:"out_file" yaml:"out_file" toml:"out_file" mapstructure:"out_file" `
 
 	//EndeType string `json:"endeType"` //加密的实现，现支持X25519
-	Ed25519PublicKey    string `json:"ed25519_public_key" yaml:"ed25519_public_key" toml:"ed25519_public_key" ` //用于签名的公钥, hex
-	X25519PrivateKeyKey string `json:"x25519_private_key" yaml:"x25519_private_key" toml:"x25519_private_key" ` //解密用的x25519的私钥， hex
+	Ed25519PublicKey    string `json:"ed25519_public_key" yaml:"ed25519_public_key" toml:"ed25519_public_key" mapstructure:"ed25519_public_key" ` //用于签名的公钥, hex
+	X25519PrivateKeyKey string `json:"x25519_private_key" yaml:"x25519_private_key" toml:"x25519_private_key" mapstructure:"x25519_private_key" ` //解密用的x25519的私钥， hex
 }
 type Decode struct {
 	conf DecodeConfig

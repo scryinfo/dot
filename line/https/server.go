@@ -15,8 +15,8 @@ import (
 const TypeID = "a998357a-3d92-4390-bd5c-ef6fd6e2ba41"
 
 type ConfigTls struct {
-	Addr string          `json:"addr"` // addr smaple:  ":8080"
-	Tls  utils.TlsConfig `json:"tls"`
+	Addr string          `json:"addr" toml:"addr" yaml:"addr" mapstructure:"addr"` // addr smaple:  ":8080"
+	Tls  utils.TlsConfig `json:"tls" toml:"tls" yaml:"tls" mapstructure:"tls"`
 }
 
 type HttpSeverTls struct {

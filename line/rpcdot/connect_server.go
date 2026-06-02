@@ -25,26 +25,26 @@ type HandlerMiddle func(w http.ResponseWriter, r *http.Request) error
 
 type ConnectServerConfig struct {
 	// sample ":8080"
-	Addr                 string        `json:"addr" toml:"addr" yaml:"addr"`
-	ReadTimeout          time.Duration `json:"read_timeout" toml:"read_timeout" yaml:"read_timeout"`
-	WriteTimeout         time.Duration `json:"write_timeout" toml:"write_timeout" yaml:"write_timeout"`
-	MaxConcurrentStreams int           `json:"max_concurrent_streams" toml:"max_concurrent_streams" yaml:"max_concurrent_streams"`
-	AllowedOrigins       []string      `json:"allowed_origins" toml:"allowed_origins" yaml:"allowed_origins"`
-	AllowHeaders         []string      `json:"allow_headers" toml:"allow_headers" yaml:"allow_headers"`
-	AllowMethods         []string      `json:"allow_methods" toml:"allow_methods" yaml:"allow_methods"`
-	AllowCredentials     bool          `json:"allow_credentials" toml:"allow_credentials" yaml:"allow_credentials"`
+	Addr                 string        `json:"addr" toml:"addr" yaml:"addr" mapstructure:"addr"`
+	ReadTimeout          time.Duration `json:"read_timeout" toml:"read_timeout" yaml:"read_timeout" mapstructure:"read_timeout"`
+	WriteTimeout         time.Duration `json:"write_timeout" toml:"write_timeout" yaml:"write_timeout" mapstructure:"write_timeout"`
+	MaxConcurrentStreams int           `json:"max_concurrent_streams" toml:"max_concurrent_streams" yaml:"max_concurrent_streams" mapstructure:"max_concurrent_streams"`
+	AllowedOrigins       []string      `json:"allowed_origins" toml:"allowed_origins" yaml:"allowed_origins" mapstructure:"allowed_origins"`
+	AllowHeaders         []string      `json:"allow_headers" toml:"allow_headers" yaml:"allow_headers" mapstructure:"allow_headers"`
+	AllowMethods         []string      `json:"allow_methods" toml:"allow_methods" yaml:"allow_methods" mapstructure:"allow_methods"`
+	AllowCredentials     bool          `json:"allow_credentials" toml:"allow_credentials" yaml:"allow_credentials" mapstructure:"allow_credentials"`
 	// dont auth these urls,sample: ["/login", "/rpc/test"]
 	// ["*"] dont auth all urls
-	UnAuthUrls []string `json:"un_auth_urls" toml:"un_auth_urls" yaml:"un_auth_urls"`
+	UnAuthUrls []string `json:"un_auth_urls" toml:"un_auth_urls" yaml:"un_auth_urls" mapstructure:"un_auth_urls"`
 	// if it is true, all OPTIONS requests will be returned ok
-	OptionMethods bool `json:"option_methods" toml:"option_methods" yaml:"option_methods"`
+	OptionMethods bool `json:"option_methods" toml:"option_methods" yaml:"option_methods" mapstructure:"option_methods"`
 	// shutdown timeout
-	ShutdownTimeout  time.Duration `json:"shutdown_timeout" toml:"shutdown_timeout" yaml:"shutdown_timeout"`
-	HTTP1            bool          `json:"http1" toml:"http1" yaml:"http1"`
-	HTTP2            bool          `json:"http2" toml:"http2" yaml:"http2"`
-	UnencryptedHTTP2 bool          `json:"unencrypted_http2" toml:"unencrypted_http2" yaml:"unencrypted_http2"`
+	ShutdownTimeout  time.Duration `json:"shutdown_timeout" toml:"shutdown_timeout" yaml:"shutdown_timeout" mapstructure:"shutdown_timeout"`
+	HTTP1            bool          `json:"http1" toml:"http1" yaml:"http1" mapstructure:"http1"`
+	HTTP2            bool          `json:"http2" toml:"http2" yaml:"http2" mapstructure:"http2"`
+	UnencryptedHTTP2 bool          `json:"unencrypted_http2" toml:"unencrypted_http2" yaml:"unencrypted_http2" mapstructure:"unencrypted_http2"`
 
-	Tls TlsConfig `json:"tls" toml:"tls" yaml:"tls"`
+	Tls TlsConfig `json:"tls" toml:"tls" yaml:"tls" mapstructure:"tls"`
 }
 
 type ConnectServer struct {

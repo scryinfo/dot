@@ -30,12 +30,12 @@ func NewConnectServerEtcd(config *ConnectServerEtcdConfig, etcdClient *etcddot.C
 
 type ConnectServerEtcdConfig struct {
 	// the name of the server, used for etcd discovery
-	Name string `json:"name" toml:"name" yaml:"name"`
+	Name string `json:"name" toml:"name" yaml:"name" mapstructure:"name"`
 	// the address of the server, used for etcd discovery
-	Addr string `json:"addr" toml:"addr" yaml:"addr"`
+	Addr string `json:"addr" toml:"addr" yaml:"addr" mapstructure:"addr"`
 	// the ttl of the lease, in seconds,
 	// default is 10 seconds, if the ttl is <= 0
-	Ttl int64 `json:"ttl" toml:"ttl" yaml:"ttl"`
+	Ttl int64 `json:"ttl" toml:"ttl" yaml:"ttl" mapstructure:"ttl"`
 }
 
 type ConnectServerEtcd struct {
