@@ -12,15 +12,15 @@ import (
 )
 
 type ConfigUi struct {
-	UrlRelativePath string `json:"urlRelativePath" yaml:"urlRelativePath"` //relative path of url
-	ResRelativePath string `json:"resRelativePath" yaml:"resRelativePath"` //relative path of resource， The order of locating files is: absolute path, relative path，executable path，current path，user path
+	UrlRelativePath string `json:"url_relative_path" yaml:"url_relative_path" toml:"url_relative_path" mapstructure:"url_relative_path"` //relative path of url
+	ResRelativePath string `json:"res_relative_path" yaml:"res_relative_path" toml:"res_relative_path" mapstructure:"res_relative_path"` //relative path of resource， The order of locating files is: absolute path, relative path，executable path，current path，user path
 	Paths           []struct {
-		RelativePath string `json:"relativePath" yaml:"relativePath"`
-		Value        string `json:"value" yaml:"value"` // the static resource of path, it is file or folder
+		RelativePath string `json:"relative_path" yaml:"relative_path" toml:"relative_path" mapstructure:"relative_path"` //relative path of resource， The order of locating files is: absolute path, relative path，executable path，current path，user path
+		Value        string `json:"value" yaml:"value" toml:"value" mapstructure:"value"`                                 // the static resource of path, it is file or folder
 	} `json:"paths"`
-	MainHTMlName string     `json:"mainHTMlName" yaml:"mainHTMlName"` //maybe home.html or index.html
-	NoCompress   bool       `json:"noCompress" yaml:"noCompress"`
-	Encodings    []Encoding `json:"encodings" yaml:"encodings"` //default are br-->gzip
+	MainHTMlName string     `json:"main_html_name" yaml:"main_html_name" toml:"main_html_name" mapstructure:"main_html_name"` //maybe home.html or index.html
+	NoCompress   bool       `json:"no_compress" yaml:"no_compress" toml:"no_compress" mapstructure:"no_compress"`             //no compress
+	Encodings    []Encoding `json:"encodings" yaml:"encodings" toml:"encodings" mapstructure:"encodings"`                     //default are br-->gzip
 }
 
 // Ui  add static resource into gin

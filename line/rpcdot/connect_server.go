@@ -26,23 +26,23 @@ type HandlerMiddle func(w http.ResponseWriter, r *http.Request) error
 type ConnectServerConfig struct {
 	// sample ":8080"
 	Addr                 string        `json:"addr" toml:"addr" yaml:"addr"`
-	ReadTimeout          time.Duration `json:"readTimeout" toml:"readTimeout" yaml:"readTimeout"`
-	WriteTimeout         time.Duration `json:"writeTimeout" toml:"writeTimeout" yaml:"writeTimeout"`
-	MaxConcurrentStreams int           `json:"maxConcurrentStreams" toml:"maxConcurrentStreams" yaml:"maxConcurrentStreams"`
-	AllowedOrigins       []string      `json:"allowedOrigins" toml:"allowedOrigins" yaml:"allowedOrigins"`
-	AllowHeaders         []string      `json:"allowHeaders" toml:"allowHeaders" yaml:"allowHeaders"`
-	AllowMethods         []string      `json:"allowMethods" toml:"allowMethods" yaml:"allowMethods"`
-	AllowCredentials     bool          `json:"allowCredentials" toml:"allowCredentials" yaml:"allowCredentials"`
+	ReadTimeout          time.Duration `json:"read_timeout" toml:"read_timeout" yaml:"read_timeout"`
+	WriteTimeout         time.Duration `json:"write_timeout" toml:"write_timeout" yaml:"write_timeout"`
+	MaxConcurrentStreams int           `json:"max_concurrent_streams" toml:"max_concurrent_streams" yaml:"max_concurrent_streams"`
+	AllowedOrigins       []string      `json:"allowed_origins" toml:"allowed_origins" yaml:"allowed_origins"`
+	AllowHeaders         []string      `json:"allow_headers" toml:"allow_headers" yaml:"allow_headers"`
+	AllowMethods         []string      `json:"allow_methods" toml:"allow_methods" yaml:"allow_methods"`
+	AllowCredentials     bool          `json:"allow_credentials" toml:"allow_credentials" yaml:"allow_credentials"`
 	// dont auth these urls,sample: ["/login", "/rpc/test"]
 	// ["*"] dont auth all urls
-	UnAuthUrls []string `json:"unAuthUrls" toml:"unAuthUrls" yaml:"unAuthUrls"`
+	UnAuthUrls []string `json:"un_auth_urls" toml:"un_auth_urls" yaml:"un_auth_urls"`
 	// if it is true, all OPTIONS requests will be returned ok
-	OptionMethods bool `json:"optionMethods" toml:"optionMethods" yaml:"optionMethods"`
+	OptionMethods bool `json:"option_methods" toml:"option_methods" yaml:"option_methods"`
 	// shutdown timeout
-	ShutdownTimeout  time.Duration `json:"shutdownTimeout" toml:"shutdownTimeout" yaml:"shutdownTimeout"`
+	ShutdownTimeout  time.Duration `json:"shutdown_timeout" toml:"shutdown_timeout" yaml:"shutdown_timeout"`
 	HTTP1            bool          `json:"http1" toml:"http1" yaml:"http1"`
 	HTTP2            bool          `json:"http2" toml:"http2" yaml:"http2"`
-	UnencryptedHTTP2 bool          `json:"unencryptedHTTP2" toml:"unencryptedHTTP2" yaml:"unencryptedHTTP2"`
+	UnencryptedHTTP2 bool          `json:"unencrypted_http2" toml:"unencrypted_http2" yaml:"unencrypted_http2"`
 
 	Tls TlsConfig `json:"tls" toml:"tls" yaml:"tls"`
 }

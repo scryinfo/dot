@@ -11,15 +11,15 @@ import (
 )
 
 type HttpClientConfig struct {
-	ForceAttemptHTTP2   bool `json:"forceAttemptHTTP2" toml:"forceAttemptHTTP2" yaml:"forceAttemptHTTP2"`
-	DisableCompression  bool `json:"disableCompression" toml:"disableCompression" yaml:"disableCompression"`
-	MaxIdleConns        int  `json:"maxIdleConns" toml:"maxIdleConns" yaml:"maxIdleConns"`
-	MaxIdleConnsPerHost int  `json:"maxIdleConnsPerHost" toml:"maxIdleConnsPerHost" yaml:"maxIdleConnsPerHost"`
-	MaxConnsPerHost     int  `json:"maxConnsPerHost" toml:"maxConnsPerHost" yaml:"maxConnsPerHost"`
+	ForceAttemptHTTP2   bool `json:"force_attempt_http2" toml:"force_attempt_http2" yaml:"force_attempt_http2"`
+	DisableCompression  bool `json:"disable_compression" toml:"disable_compression" yaml:"disable_compression"`
+	MaxIdleConns        int  `json:"max_idle_conns" toml:"max_idle_conns" yaml:"max_idle_conns"`
+	MaxIdleConnsPerHost int  `json:"max_idle_conns_per_host" toml:"max_idle_conns_per_host" yaml:"max_idle_conns_per_host"`
+	MaxConnsPerHost     int  `json:"max_conns_per_host" toml:"max_conns_per_host" yaml:"max_conns_per_host"`
 	// sample "http://localhost:8089"
-	ServerAddress string `json:"serverAddress" toml:"serverAddress" yaml:"serverAddress"`
+	ServerAddress string `json:"server_address" toml:"server_address" yaml:"server_address"`
 
-	Tls TlsConfig
+	Tls TlsConfig `json:"tls" toml:"tls" yaml:"tls"`
 }
 
 func NewHttpClientEx(config *HttpClientConfig, sconf dot.SConfig, baseCert *certificate.BaseCertificate, logger *dot.LoggerType) (*HttpClientEx, error) {

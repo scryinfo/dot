@@ -1,4 +1,10 @@
 
+[engine]
+  addr = ":8089"
+  key_file = ""
+  log_skip_paths = []
+  pem_file = ""
+
 [log]
   add_stdout = true
   compress = false
@@ -9,7 +15,5 @@
   max_size = 1024000
   set_slog = true
 
-[redis]
-  addr = "127.0.0.1:6379"
-  keep_max_version_count = 4
-  version_from_redis = false
+[router]
+  relative_path = "/rpc"

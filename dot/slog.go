@@ -33,7 +33,7 @@ func NewLogger(conf *LogConfig) *LoggerType {
 
 	if IsDebug {
 		var writer io.Writer = rotator
-		if conf.AddStdOut {
+		if conf.AddStdout {
 			consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout}
 			writer = zerolog.MultiLevelWriter(consoleWriter, rotator)
 		}
@@ -41,7 +41,7 @@ func NewLogger(conf *LogConfig) *LoggerType {
 
 	} else {
 		var writer io.Writer = rotator
-		if conf.AddStdOut {
+		if conf.AddStdout {
 			consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout}
 			writer = zerolog.MultiLevelWriter(consoleWriter, rotator)
 		}
@@ -56,16 +56,16 @@ func NewLogger(conf *LogConfig) *LoggerType {
 }
 
 type LogConfig struct {
-	FileName   string `json:"fileName" toml:"fileName" yaml:"fileName"`
-	MaxSize    int    `json:"maxSize" toml:"maxSize" yaml:"maxSize"`
-	MaxBackups int    `json:"maxBackups" toml:"maxBackups" yaml:"maxBackups"`
+	FileName   string `json:"file_name" toml:"file_name" yaml:"file_name"`
+	MaxSize    int    `json:"max_size" toml:"max_size" yaml:"max_size"`
+	MaxBackups int    `json:"max_backups" toml:"max_backups" yaml:"max_backups"`
 	// days
-	MaxAge    int    `json:"maxAge" toml:"maxAge" yaml:"maxAge"`
+	MaxAge    int    `json:"max_age" toml:"max_age" yaml:"max_age"`
 	Compress  bool   `json:"compress" toml:"compress" yaml:"compress"`
 	Level     string `json:"level" toml:"level" yaml:"level"`
-	AddStdOut bool   `json:"addStdOut" toml:"addStdOut" yaml:"addStdOut"`
+	AddStdout bool   `json:"add_stdout" toml:"add_stdout" yaml:"add_stdout"`
 	// 是否把zerolog设置为系统日志
-	SetSlog bool `json:"setSlog" toml:"setSlog" yaml:"setSlog"`
+	SetSlog bool `json:"set_slog" toml:"set_slog" yaml:"set_slog"`
 }
 
 func TestLogConfig() LogConfig {
@@ -76,7 +76,7 @@ func TestLogConfig() LogConfig {
 		MaxAge:     2, // days
 		Compress:   false,
 		Level:      "debug",
-		AddStdOut:  true,
+		AddStdout:  true,
 		SetSlog:    true,
 	}
 }

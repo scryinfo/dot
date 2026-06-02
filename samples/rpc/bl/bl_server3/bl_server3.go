@@ -27,10 +27,10 @@ type Line struct {
 
 type LineConfig struct {
 	Log               dot.LogConfig                  `json:"log" toml:"log" yaml:"log"`
-	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig `json:"connectServerEtcd" toml:"connectServerEtcd" yaml:"connectServerEtcd"`
-	ConnectServer     rpcdot.ConnectServerConfig     `json:"connectServer" toml:"connectServer" yaml:"connectServer"`
-	EtcdClient        etcddot.ClientConfig           `json:"etcdClient" toml:"etcdClient" yaml:"etcdClient"`
-	HiService         connectimpl.HiServiceConfig    `json:"hiService" toml:"hiService" yaml:"hiService"`
+	ConnectServerEtcd rpcdot.ConnectServerEtcdConfig `json:"connect_server_etcd" toml:"connect_server_etcd" yaml:"connect_server_etcd"`
+	ConnectServer     rpcdot.ConnectServerConfig     `json:"connect_server" toml:"connect_server" yaml:"connect_server"`
+	EtcdClient        etcddot.ClientConfig           `json:"etcd_client" toml:"etcd_client" yaml:"etcd_client"`
+	HiService         connectimpl.HiServiceConfig    `json:"hi_service" toml:"hi_service" yaml:"hi_service"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {

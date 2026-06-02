@@ -1,41 +1,41 @@
 [log]
-fileName = "log.log"
-maxSize = 1024000
-maxBackups = 3
-maxAge = 7
+file_name = "log.log"
+max_size = 1024000
+max_backups = 3
+max_age = 7
 compress = false
 level = "info"
-addStdOut = true
-setSlog = true
-[[etcdServers]]
+add_stdout = true
+set_slog = true
+[[etcd_servers]]
 name = "etcd1"
 dir = "default.etcd1"
-listenClientUrls = ["http://127.0.0.1:2379"]
-advertiseClientUrls = ["http://127.0.0.1:2379"]
-listenPeerUrls = ["http://127.0.0.1:2380"]
-advertisePeerUrls = ["http://127.0.0.1:2380"]
-initialClusterToken = "ClusterToken"
-initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-logLevel = "info"
+listen_client_urls = ["http://127.0.0.1:2379"]
+advertise_client_urls = ["http://127.0.0.1:2379"]
+listen_peer_urls = ["http://127.0.0.1:2380"]
+advertise_peer_urls = ["http://127.0.0.1:2380"]
+initial_cluster_token = "ClusterToken"
+initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
+log_level = "info"
 
-[[etcdServers]]
+[[etcd_servers]]
 name = "etcd2"
 dir = "default.etcd2"
-listenClientUrls = ["http://127.0.0.1:2378"]
-advertiseClientUrls = ["http://127.0.0.1:2378"]
-listenPeerUrls = ["http://127.0.0.1:2381"]
-advertisePeerUrls = ["http://127.0.0.1:2381"]
-initialClusterToken = "ClusterToken"
-initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-logLevel = "info"
+listen_client_urls = ["http://127.0.0.1:2378"]
+advertise_client_urls = ["http://127.0.0.1:2378"]
+listen_peer_urls = ["http://127.0.0.1:2381"]
+advertise_peer_urls = ["http://127.0.0.1:2381"]
+initial_cluster_token = "ClusterToken"
+initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
+log_level = "info"
 
-[[etcdServers]]
+[[etcd_servers]]
 name = "etcd3"
 dir = "default.etcd3"
-listenClientUrls = ["http://127.0.0.1:2377"]
-advertiseClientUrls = ["http://127.0.0.1:2377"]
-listenPeerUrls = ["http://127.0.0.1:2382"]
-advertisePeerUrls = ["http://127.0.0.1:2382"]
-initialClusterToken = "ClusterToken"
-initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-logLevel = "info"
+listen_client_urls = ["http://127.0.0.1:2377"]
+advertise_client_urls = ["http://127.0.0.1:2377"]
+listen_peer_urls = ["http://127.0.0.1:2382"]
+advertise_peer_urls = ["http://127.0.0.1:2382"]
+initial_cluster_token = "ClusterToken"
+initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
+log_level = "info"

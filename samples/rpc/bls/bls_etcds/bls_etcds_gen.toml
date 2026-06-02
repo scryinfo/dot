@@ -1,43 +1,43 @@
 
-[[etcdServers]]
-  advertiseClientUrls = ["http://127.0.0.1:2379"]
-  advertisePeerUrls = ["http://127.0.0.1:2380"]
+[[etcd_servers]]
+  advertise_client_urls = ["http://127.0.0.1:2379"]
+  advertise_peer_urls = ["http://127.0.0.1:2380"]
   dir = "default.etcd1"
-  initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-  initialClusterToken = "ClusterToken"
-  listenClientUrls = ["http://127.0.0.1:2379"]
-  listenPeerUrls = ["http://127.0.0.1:2380"]
-  logLevel = "info"
+  initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
+  initial_cluster_token = "ClusterToken"
+  listen_client_urls = ["http://127.0.0.1:2379"]
+  listen_peer_urls = ["http://127.0.0.1:2380"]
+  log_level = "info"
   name = "etcd1"
 
-[[etcdServers]]
-  advertiseClientUrls = ["http://127.0.0.1:2378"]
-  advertisePeerUrls = ["http://127.0.0.1:2381"]
+[[etcd_servers]]
+  advertise_client_urls = ["http://127.0.0.1:2378"]
+  advertise_peer_urls = ["http://127.0.0.1:2381"]
   dir = "default.etcd2"
-  initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-  initialClusterToken = "ClusterToken"
-  listenClientUrls = ["http://127.0.0.1:2378"]
-  listenPeerUrls = ["http://127.0.0.1:2381"]
-  logLevel = "info"
+  initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
+  initial_cluster_token = "ClusterToken"
+  listen_client_urls = ["http://127.0.0.1:2378"]
+  listen_peer_urls = ["http://127.0.0.1:2381"]
+  log_level = "info"
   name = "etcd2"
 
-[[etcdServers]]
-  advertiseClientUrls = ["http://127.0.0.1:2377"]
-  advertisePeerUrls = ["http://127.0.0.1:2382"]
+[[etcd_servers]]
+  advertise_client_urls = ["http://127.0.0.1:2377"]
+  advertise_peer_urls = ["http://127.0.0.1:2382"]
   dir = "default.etcd3"
-  initialCluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-  initialClusterToken = "ClusterToken"
-  listenClientUrls = ["http://127.0.0.1:2377"]
-  listenPeerUrls = ["http://127.0.0.1:2382"]
-  logLevel = "info"
+  initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
+  initial_cluster_token = "ClusterToken"
+  listen_client_urls = ["http://127.0.0.1:2377"]
+  listen_peer_urls = ["http://127.0.0.1:2382"]
+  log_level = "info"
   name = "etcd3"
 
 [log]
-  addStdOut = true
+  add_stdout = true
   compress = false
-  fileName = "log.log"
+  file_name = "log.log"
   level = "info"
-  maxAge = 7
-  maxBackups = 3
-  maxSize = 1024000
-  setSlog = true
+  max_age = 7
+  max_backups = 3
+  max_size = 1024000
+  set_slog = true

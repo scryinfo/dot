@@ -1,21 +1,21 @@
 [log]
-fileName = "log.log"
-maxSize = 1024000
-maxBackups = 3
-maxAge = 7
+file_name = "log.log"
+max_size = 1024000
+max_backups = 3
+max_age = 7
 compress = false
 level = "info"
-addStdOut = true
-setSlog = true
-[etcdClient]
+add_stdout = true
+set_slog = true
+[etcd_client]
 endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]
 # milliseconds
-dialTimeout = 12000
-[grpcClientEtcd]
+dial_timeout = 12000
+[grpc_client_etcd]
 name = "server/samples/rpc_bl"
-[grpcClientEtcd.tls]
+[grpc_client_etcd.tls]
 mode = "secure"
 cert = ""
 key = ""
-rootCert = ""
-peerCert = "../../config/cert/server.cert"
+root_cert = ""
+peer_cert = "../../config/cert/server.cert"

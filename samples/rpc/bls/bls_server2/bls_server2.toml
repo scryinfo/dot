@@ -1,43 +1,43 @@
 [log]
-fileName = "log.log"
-maxSize = 1024000
-maxBackups = 3
-maxAge = 7
+file_name = "log.log"
+max_size = 1024000
+max_backups = 3
+max_age = 7
 compress = false
 level = "info"
-addStdOut = true
-setSlog = true
+add_stdout = true
+set_slog = true
 
-[connectServerEtcd]
+[connect_server_etcd]
 name = "server/samples/rpc_bl"
 addr = "127.0.0.1:8091"
 # seconds tls
 # tls = 10
-[hiService]
+[hi_service]
 name = "etcd2"
-[connectServer]
+[connect_server]
 addr = ":8091"
-readTimeout = 0
-writeTimeout = 0
-maxConcurrentStreams = 100
-allowedOrigins = []
-allowHeaders = []
-allowMethods = ["GET", "POST", "OPTIONS"]
-allowCredentials = true
-unAuthUrls = ["*"]
-optionMethods = true
-shutdownTimeout = 1024000
+read_timeout = 0
+write_timeout = 0
+max_concurrent_streams = 100
+allowed_origins = []
+allow_headers = []
+allow_methods = ["GET", "POST", "OPTIONS"]
+allow_credentials = true
+un_auth_urls = ["*"]
+option_methods = true
+shutdown_timeout = 1024000
 http1 = true
 http2 = true
-unencryptedHTTP2 = true
-[connectServer.tls]
+unencrypted_http2 = true
+[connect_server.tls]
 mode = "secure"
 cert = "../../config/cert/server.cert"
 key = "../../config/cert/server.key"
-rootCert = ""
-peerCert = ""
+root_cert = ""
+peer_cert = ""
 
-[etcdClient]
+[etcd_client]
 endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]
 # milliseconds
-dialTimeout = 12000
+dial_timeout = 12000

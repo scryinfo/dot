@@ -10,7 +10,7 @@ import (
 )
 
 type RouterConfig struct {
-	RelativePath string `json:"relativePath" yaml:"relativePath"`
+	RelativePath string `json:"relative_path" yaml:"relative_path" toml:"relative_path" mapstructure:"relative_path"`
 }
 
 // Router  gin router

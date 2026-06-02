@@ -12,7 +12,7 @@ type Pebble2 struct {
 }
 
 type Pebble2Config struct {
-	DbPath string `json:"dbPath" toml:"dbPath" yaml:"dbPath"`
+	DbPath string `json:"db_path" toml:"db_path" yaml:"db_path"`
 }
 
 func NewPebble2(config *Pebble2Config, sconfig dot.SConfig, logger *dot.LoggerType) (*Pebble2, func(), error) {

@@ -24,8 +24,8 @@ type Line struct {
 
 type LineConfig struct {
 	Log           dot.LogConfig               `json:"log" toml:"log" yaml:"log"`
-	ConnectServer rpcdot.ConnectServerConfig  `json:"connectServer" toml:"connectServer" yaml:"connectServer"`
-	HiService     connectimpl.HiServiceConfig `json:"hiService" toml:"hiService" yaml:"hiService"`
+	ConnectServer rpcdot.ConnectServerConfig  `json:"connect_server" toml:"connect_server" yaml:"connect_server"`
+	HiService     connectimpl.HiServiceConfig `json:"hi_service" toml:"hi_service" yaml:"hi_service"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {

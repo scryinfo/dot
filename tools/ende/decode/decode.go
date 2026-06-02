@@ -20,8 +20,8 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log    dot.LogConfig
-	Decode *ende.DecodeConfig
+	Log    dot.LogConfig      `toml:"log" yaml:"log" json:"log"`
+	Decode *ende.DecodeConfig `toml:"decode" yaml:"decode" json:"decode"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {

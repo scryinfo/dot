@@ -11,10 +11,10 @@ type BadgerDbDot struct {
 	db *badger.DB
 }
 type BaderDbDotConfig struct {
-	DbPath     string `json:"dbPath" toml:"dbPath" yaml:"dbPath" `
-	BackupPath string `json:"backupPath" toml:"backupPath" yaml:"backupPath" `
+	DbPath     string `json:"db_path" toml:"db_path" yaml:"db_path" `
+	BackupPath string `json:"backup_path" toml:"backup_path" yaml:"backup_path" `
 	// info warning debug error
-	Loglevel string `json:"logLevel" toml:"logLevel" yaml:"logLevel" `
+	Loglevel string `json:"log_level" toml:"log_level" yaml:"log_level" `
 }
 
 func NewBaderDot(config *BaderDbDotConfig, sconfig dot.SConfig, logger *dot.LoggerType) (*BadgerDbDot, func(), error) {

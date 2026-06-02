@@ -2,14 +2,9 @@
 [log]
   add_stdout = true
   compress = false
-  file_name = "log.log"
+  file_name = "logs/log.log"
   level = "info"
   max_age = 7
   max_backups = 3
   max_size = 1024000
   set_slog = true
-
-[redis]
-  addr = "127.0.0.1:6379"
-  keep_max_version_count = 4
-  version_from_redis = false

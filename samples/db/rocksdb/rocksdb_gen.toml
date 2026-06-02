@@ -1,13 +1,13 @@
 
 [log]
-  addStdOut = true
+  add_stdout = true
   compress = false
-  fileName = "log.log"
+  file_name = "log.log"
   level = "info"
-  maxAge = 7
-  maxBackups = 3
-  maxSize = 1024000
-  setSlog = true
+  max_age = 7
+  max_backups = 3
+  max_size = 1024000
+  set_slog = true
 
-[rocksDbDot]
-  dbPath = "data/rkvdb"
+[rocksdb_dot]
+  db_path = "data/rkvdb"

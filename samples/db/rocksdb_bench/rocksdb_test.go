@@ -20,7 +20,7 @@ import (
 
 func newLogger() *dot.LoggerType {
 	conf := dot.TestLogConfig()
-	conf.AddStdOut = false
+	conf.AddStdout = false
 	conf.SetSlog = false
 	conf.Level = "error"
 	return dot.NewLogger(&conf)
@@ -31,7 +31,7 @@ func BenchmarkGorocksdb(b *testing.B) {
 	logger := newLogger()
 	logger.Info().Msgf("rocksdb path: %s", filepath.Join(sourcePath, "temp/gorocksdb"))
 
-	config := rocksdbdot.RocksDbDotConfig{
+	config := rocksdbdot.RocksdbDotConfig{
 		DbPath: filepath.Join(sourcePath, "temp/gorocksdb"),
 	}
 	if !sfile.ExistDir(config.DbPath) {

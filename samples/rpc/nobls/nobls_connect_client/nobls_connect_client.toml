@@ -1,22 +1,22 @@
 [log]
-fileName = "log.log"
-maxSize = 1024000
-maxBackups = 3
-maxAge = 7
+file_name = "log.log"
+max_size = 1024000
+max_backups = 3
+max_age = 7
 compress = false
 level = "info"
-addStdOut = true
-setSlog = true
-[httpClient]
-forceAttemptHTTP2 = true
-disableCompression = false
-maxIdleConns = 10
-maxIdleConnsPerHost = 10
-maxConnsPerHost = 10
-serverAddress = "https://localhost:8090"
-[httpClient.tls]
+add_stdout = true
+set_slog = true
+[http_client]
+force_attempt_http2 = true
+disable_compression = false
+max_idle_conns = 10
+max_idle_conns_per_host = 10
+max_conns_per_host = 10
+server_address = "https://localhost:8090"
+[http_client.tls]
 mode = "secure"
 cert = ""
 key = ""
-rootCert = ""
-peerCert = "../../config/cert/server.cert"
+root_cert = ""
+peer_cert = "../../config/cert/server.cert"

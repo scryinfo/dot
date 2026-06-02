@@ -18,12 +18,12 @@ const (
 )
 
 type BunConfig struct {
-	Host     dot.StringFromEnv `json:"host" yaml:"host" mapstructure:"host"`
-	Port     dot.StringFromEnv `json:"port" yaml:"port" mapstructure:"port"`
-	User     dot.StringFromEnv `json:"user" yaml:"user" mapstructure:"user"`
-	Password dot.StringFromEnv `json:"password" yaml:"password" mapstructure:"password"`
-	Database dot.StringFromEnv `json:"database" yaml:"database" mapstructure:"database"`
-	ShowSQL  bool              `json:"showSql" yaml:"showSql" mapstructure:"showSql"`
+	Host     dot.StringFromEnv `json:"host" yaml:"host" mapstructure:"host" toml:"host"`
+	Port     dot.StringFromEnv `json:"port" yaml:"port" mapstructure:"port" toml:"port"`
+	User     dot.StringFromEnv `json:"user" yaml:"user" mapstructure:"user" toml:"user"`
+	Password dot.StringFromEnv `json:"password" yaml:"password" mapstructure:"password" toml:"password"`
+	Database dot.StringFromEnv `json:"database" yaml:"database" mapstructure:"database" toml:"database"`
+	ShowSQL  bool              `json:"show_sql" yaml:"show_sql" mapstructure:"show_sql" toml:"show_sql"`
 }
 
 // ConnWrapper connect wrapper

@@ -1,17 +1,17 @@
 [log]
-fileName = "log.log"
-maxSize = 1024000
-maxBackups = 3
-maxAge = 7
+file_name = "log.log"
+max_size = 1024000
+max_backups = 3
+max_age = 7
 compress = false
 level = "info"
-addStdOut = true
-setSlog = true
-[grpcClient]
-serverAddress = "localhost:8090"
-[grpcClient.tls]
+add_stdout = true
+set_slog = true
+[grpc_client]
+server_address = "localhost:8090"
+[grpc_client.tls]
 mode = "secure"
 cert = ""
 key = ""
-rootCert = ""
-peerCert = "../../config/cert/server.cert"
+root_cert = ""
+peer_cert = "../../config/cert/server.cert"

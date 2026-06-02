@@ -1,45 +1,45 @@
 
-[connectServer]
+[connect_server]
   addr = ":8090"
-  allowCredentials = true
-  allowHeaders = []
-  allowMethods = ["GET", "POST", "OPTIONS"]
-  allowedOrigins = []
+  allow_credentials = true
+  allow_headers = []
+  allow_methods = ["GET", "POST", "OPTIONS"]
+  allowed_origins = []
   http1 = true
   http2 = true
-  maxConcurrentStreams = 100
-  optionMethods = true
-  readTimeout = 0
-  shutdownTimeout = 1024000
-  unAuthUrls = ["*"]
-  unencryptedHTTP2 = true
-  writeTimeout = 0
+  max_concurrent_streams = 100
+  option_methods = true
+  read_timeout = 0
+  shutdown_timeout = 1024000
+  un_auth_urls = ["*"]
+  unencrypted_http2 = true
+  write_timeout = 0
 
-  [connectServer.tls]
+  [connect_server.tls]
     cert = "../../config/cert/server.cert"
     key = "../../config/cert/server.key"
     mode = "secure"
-    peerCert = ""
-    rootCert = ""
+    peer_cert = ""
+    root_cert = ""
 
-[connectServerEtcd]
+[connect_server_etcd]
   addr = "127.0.0.1:8090"
   name = "server/samples/rpc_bl"
   ttl = 0
 
-[etcdClient]
-  dialTimeout = 12000
+[etcd_client]
+  dial_timeout = 12000
   endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]
 
-[hiService]
+[hi_service]
   name = "etcd1"
 
 [log]
-  addStdOut = true
+  add_stdout = true
   compress = false
-  fileName = "log.log"
+  file_name = "log.log"
   level = "info"
-  maxAge = 7
-  maxBackups = 3
-  maxSize = 1024000
-  setSlog = true
+  max_age = 7
+  max_backups = 3
+  max_size = 1024000
+  set_slog = true

@@ -26,7 +26,7 @@ type Line struct {
 
 type LineConfig struct {
 	Log         dot.LogConfig          `json:"log" toml:"log" yaml:"log"`
-	EtcdServers []etcddot.ServerConfig `json:"etcdServers" toml:"etcdServers" yaml:"etcdServers"`
+	EtcdServers []etcddot.ServerConfig `json:"etcd_servers" toml:"etcd_servers" yaml:"etcd_servers"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {

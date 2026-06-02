@@ -3,9 +3,9 @@ module github.com/scryinfo/dot/samples/db/rocksdb_bench
 go 1.26.3
 
 replace (
+	github.com/knadh/koanf => github.com/knadh/koanf/v2 v2.3.5 // Or whichever v2 version you upgraded to
 	github.com/scryinfo/dot => ../../../
 	github.com/scryinfo/dot/line/db/rocksdbdot => ../../../line/db/rocksdbdot
-	github.com/knadh/koanf => github.com/knadh/koanf/v2 v2.3.5 // Or whichever v2 version you upgraded to
 )
 
 require (
@@ -13,7 +13,7 @@ require (
 	github.com/dgraph-io/badger/v4 v4.9.1
 	github.com/linxGnu/grocksdb v1.10.8
 	github.com/scryinfo/dot v0.9.5
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260601013507-89f13c97b92a
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260601035852-97c1afcde0c4
 	github.com/scryinfo/scryg v0.2.0
 )
 

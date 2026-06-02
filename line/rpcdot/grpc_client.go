@@ -11,8 +11,8 @@ import (
 type GrpcClientConfig struct {
 	// sample: localhost:8090,
 	// no https/http:
-	ServerAddress string
-	Tls           TlsConfig
+	ServerAddress string    `toml:"server_address" yaml:"server_address" json:"server_address"`
+	Tls           TlsConfig `toml:"tls" yaml:"tls" json:"tls"`
 }
 
 type GrpcClientEx struct {

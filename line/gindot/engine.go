@@ -17,10 +17,10 @@ import (
 )
 
 type EngineConfig struct {
-	Addr         string   `json:"addr" yaml:"addr"`                 // addr smaple:  ":8080"
-	KeyFile      string   `json:"keyFile" yaml:"keyFile"`           //if it is not abs path, preferred to use the executable path
-	PemFile      string   `json:"pemFile" yaml:"pemFile"`           //if it is not abs path, preferred to use the executable path
-	LogSkipPaths []string `json:"logSkipPaths" yaml:"logSkipPaths"` // not write info log, sample: ["/tt", "/other"]
+	Addr         string   `json:"addr" yaml:"addr" toml:"addr"`                               // addr smaple:  ":8080"
+	KeyFile      string   `json:"key_file" yaml:"key_file" toml:"key_file"`                   //if it is not abs path, preferred to use the executable path
+	PemFile      string   `json:"pem_file" yaml:"pem_file" toml:"pem_file"`                   //if it is not abs path, preferred to use the executable path
+	LogSkipPaths []string `json:"log_skip_paths" yaml:"log_skip_paths" toml:"log_skip_paths"` // not write info log, sample: ["/tt", "/other"]
 }
 
 // GinEngine  gin dot

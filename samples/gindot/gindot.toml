@@ -7,5 +7,12 @@ compress = false
 level = "info"
 add_stdout = true
 set_slog = true
-[rocksdb_dot]
-db_path = "data/rkvdb"
+
+[router]
+relative_path = "/rpc"
+
+[engine]
+addr = ":8089"
+key_file = ""
+pem_file = ""
+log_skip_paths = []

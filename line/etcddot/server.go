@@ -21,24 +21,24 @@ var Newer = wire.NewSet(
 type ServerConfig struct {
 	Name                string   `json:"name" toml:"name" yaml:"name"`
 	Dir                 string   `json:"dir" toml:"dir" yaml:"dir"`
-	ListenClientUrls    []string `json:"listenClientUrls" toml:"listenClientUrls" yaml:"listenClientUrls"`
-	AdvertiseClientUrls []string `json:"advertiseClientUrls" toml:"advertiseClientUrls" yaml:"advertiseClientUrls"`
-	ListenPeerUrls      []string `json:"listenPeerUrls" toml:"listenPeerUrls" yaml:"listenPeerUrls"`
-	AdvertisePeerUrls   []string `json:"advertisePeerUrls" toml:"advertisePeerUrls" yaml:"advertisePeerUrls"`
+	ListenClientUrls    []string `json:"listen_client_urls" toml:"listen_client_urls" yaml:"listen_client_urls"`
+	AdvertiseClientUrls []string `json:"advertise_client_urls" toml:"advertise_client_urls" yaml:"advertise_client_urls"`
+	ListenPeerUrls      []string `json:"listen_peer_urls" toml:"listen_peer_urls" yaml:"listen_peer_urls"`
+	AdvertisePeerUrls   []string `json:"advertise_peer_urls" toml:"advertise_peer_urls" yaml:"advertise_peer_urls"`
 	// the unique token for the cluster
-	InitialClusterToken string `json:"initialClusterToken" toml:"initialClusterToken" yaml:"initialClusterToken"`
-	InitialCluster      string `json:"initialCluster" toml:"initialCluster" yaml:"initialCluster"`
+	InitialClusterToken string `json:"initial_cluster_token" toml:"initial_cluster_token" yaml:"initial_cluster_token"`
+	InitialCluster      string `json:"initial_cluster" toml:"initial_cluster" yaml:"initial_cluster"`
 	// debug, info, warn, error, panic, or fatal. Default 'info'
-	LogLevel string `json:"logLevel" toml:"logLevel" yaml:"logLevel"`
+	LogLevel string `json:"log_level" toml:"log_level" yaml:"log_level"`
 	// etcd ready notify timeout in seconds. Default 0
-	ReadyNotifyTimeOut int64 `json:"readyNotifyTimeOut" toml:"readyNotifyTimeOut" yaml:"readyNotifyTimeOut"`
+	ReadyNotifyTimeout int64 `json:"ready_notify_timeout" toml:"ready_notify_timeout" yaml:"ready_notify_timeout"`
 }
 
 func NewServer(conf *ServerConfig, ctxEx *contextex.ContextEx, logger *dot.LoggerType) (*Server, func(), error) {
-	if conf.ReadyNotifyTimeOut < 0 {
-		conf.ReadyNotifyTimeOut = 180
-	} else if conf.ReadyNotifyTimeOut == 0 {
-		conf.ReadyNotifyTimeOut = math.MaxInt64 / int64(time.Second)
+	if conf.ReadyNotifyTimeout < 0 {
+		conf.ReadyNotifyTimeout = 180
+	} else if conf.ReadyNotifyTimeout == 0 {
+		conf.ReadyNotifyTimeout = math.MaxInt64 / int64(time.Second)
 	}
 
 	cfgEtcd := embed.NewConfig()
@@ -99,8 +99,8 @@ func NewServer(conf *ServerConfig, ctxEx *contextex.ContextEx, logger *dot.Logge
 		select {
 		case <-etcdServer.Server.ReadyNotify():
 			logger.Info().Msg("etcd server is ready")
-		case <-time.After(time.Duration(conf.ReadyNotifyTimeOut) * time.Second):
-			logger.Error().Msgf("etcd server did not become ready within %d seconds", conf.ReadyNotifyTimeOut)
+		case <-time.After(time.Duration(conf.ReadyNotifyTimeout) * time.Second):
+			logger.Error().Msgf("etcd server did not become ready within %d seconds", conf.ReadyNotifyTimeout)
 			etcdServer.Server.Stop()
 		case <-ctxEx.Context().Done():
 			logger.Error().Msg("etcd server did not become ready, context cancelled")

@@ -9,15 +9,15 @@ import (
 
 type RocksDbDot struct {
 	logger *dot.LoggerType
-	config *RocksDbDotConfig
+	config *RocksdbDotConfig
 	db     *grocksdb.DB
 }
 
-type RocksDbDotConfig struct {
-	DbPath string `json:"dbPath" toml:"dbPath" yaml:"dbPath"`
+type RocksdbDotConfig struct {
+	DbPath string `json:"db_path" toml:"db_path" yaml:"db_path"`
 }
 
-func NewRocksDbDot(config *RocksDbDotConfig, sconfig dot.SConfig, logger *dot.LoggerType) (*RocksDbDot, func(), error) {
+func NewRocksDbDot(config *RocksdbDotConfig, sconfig dot.SConfig, logger *dot.LoggerType) (*RocksDbDot, func(), error) {
 	if config.DbPath == "" {
 		config.DbPath = "data/rkv"
 	}

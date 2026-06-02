@@ -18,9 +18,9 @@ import (
 const RedisClientTypeID = "0ae35550-7e37-4afe-866e-b129099759b7"
 
 type RedisConfig struct {
-	Addr                string `json:"addr"`
-	KeepMaxVersionCount int64  `json:"keepMaxVersionCount"` //分类中版本的最大数据量
-	VersionFromRedis    bool   `json:"versionFromRedis"`    //get version from redis or not
+	Addr                string `json:"addr" toml:"addr" yaml:"addr"`
+	KeepMaxVersionCount int64  `json:"keep_max_version_count" toml:"keep_max_version_count" yaml:"keep_max_version_count"` //分类中版本的最大数据量
+	VersionFromRedis    bool   `json:"version_from_redis" toml:"version_from_redis" yaml:"version_from_redis"`             //get version from redis or not
 }
 
 // RedisClient redis client dot
