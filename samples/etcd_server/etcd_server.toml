@@ -17,3 +17,5 @@ advertise_peer_urls = ["http://127.0.0.1:2380"]
 initial_cluster_token = "ClusterToken"
 initial_cluster = "etcd1=http://127.0.0.1:2380"
 log_level = "info"
+ready_notify_timeout = 0
+dir = ''

@@ -1,19 +1,18 @@
-
 [engine]
-  addr = ":8089"
-  key_file = ""
-  log_skip_paths = []
-  pem_file = ""
+addr = ':8089'
+key_file = ''
+log_skip_paths = []
+pem_file = ''
 
 [log]
-  add_stdout = true
-  compress = false
-  file_name = "log.log"
-  level = "info"
-  max_age = 7
-  max_backups = 3
-  max_size = 1024000
-  set_slog = true
+add_stdout = true
+compress = false
+file_name = 'log.log'
+level = 'info'
+max_age = 7
+max_backups = 3
+max_size = 1024000
+set_slog = true
 
 [router]
-  relative_path = "/rpc"
+relative_path = '/rpc'

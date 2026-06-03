@@ -2,10 +2,7 @@ module github.com/scryinfo/dot/line/db/rocksdbdot
 
 go 1.26.3
 
-replace (
-	github.com/knadh/koanf => github.com/knadh/koanf/v2 v2.3.5 // Or whichever v2 version you upgraded to
-	github.com/scryinfo/dot => ../../../
-)
+replace github.com/scryinfo/dot => ../../../
 
 require (
 	github.com/linxGnu/grocksdb v1.10.8

@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/google/wire"
@@ -25,7 +26,11 @@ type LineConfig struct {
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
-	return sconfig.NewLineConfig[LineConfig](config)
+	lineConfig, err := sconfig.NewLineConfig[LineConfig](config)
+	if err != nil {
+		return nil, err
+	}
+	return sconfig.GenerateConfigWithArgs(config, lineConfig)
 }
 
 var LineSet = wire.NewSet(
@@ -40,8 +45,10 @@ var LineSet = wire.NewSet(
 func main() {
 	line, clean, err := InitializeService()
 	if err != nil {
-		if line.Logger != nil {
+		if line != nil && line.Logger != nil {
 			line.Logger.Error().Err(err).Msg("initialize service failed")
+		} else {
+			fmt.Printf("%s\n", err.Error())
 		}
 		return
 	}

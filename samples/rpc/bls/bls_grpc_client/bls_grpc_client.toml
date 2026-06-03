@@ -11,8 +11,11 @@ set_slog = true
 endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]
 # milliseconds
 dial_timeout = 12000
+
 [grpc_client_etcd]
 name = "server/samples/rpc_bl"
+with_default_service_config = ""
+
 [grpc_client_etcd.tls]
 mode = "secure"
 cert = ""

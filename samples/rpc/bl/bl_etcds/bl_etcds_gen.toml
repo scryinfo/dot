@@ -1,43 +1,45 @@
+[[etcd_servers]]
+advertise_client_urls = ['http://127.0.0.1:2379']
+advertise_peer_urls = ['http://127.0.0.1:2380']
+dir = 'default.etcd1'
+initial_cluster = 'etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382'
+initial_cluster_token = 'ClusterToken'
+listen_client_urls = ['http://127.0.0.1:2379']
+listen_peer_urls = ['http://127.0.0.1:2380']
+log_level = 'info'
+name = 'etcd1'
+ready_notify_timeout = 0
 
 [[etcd_servers]]
-  advertise_client_urls = ["http://127.0.0.1:2379"]
-  advertise_peer_urls = ["http://127.0.0.1:2380"]
-  dir = "default.etcd1"
-  initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-  initial_cluster_token = "ClusterToken"
-  listen_client_urls = ["http://127.0.0.1:2379"]
-  listen_peer_urls = ["http://127.0.0.1:2380"]
-  log_level = "info"
-  name = "etcd1"
+advertise_client_urls = ['http://127.0.0.1:2378']
+advertise_peer_urls = ['http://127.0.0.1:2381']
+dir = 'default.etcd2'
+initial_cluster = 'etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382'
+initial_cluster_token = 'ClusterToken'
+listen_client_urls = ['http://127.0.0.1:2378']
+listen_peer_urls = ['http://127.0.0.1:2381']
+log_level = 'info'
+name = 'etcd2'
+ready_notify_timeout = 0
 
 [[etcd_servers]]
-  advertise_client_urls = ["http://127.0.0.1:2378"]
-  advertise_peer_urls = ["http://127.0.0.1:2381"]
-  dir = "default.etcd2"
-  initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-  initial_cluster_token = "ClusterToken"
-  listen_client_urls = ["http://127.0.0.1:2378"]
-  listen_peer_urls = ["http://127.0.0.1:2381"]
-  log_level = "info"
-  name = "etcd2"
-
-[[etcd_servers]]
-  advertise_client_urls = ["http://127.0.0.1:2377"]
-  advertise_peer_urls = ["http://127.0.0.1:2382"]
-  dir = "default.etcd3"
-  initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-  initial_cluster_token = "ClusterToken"
-  listen_client_urls = ["http://127.0.0.1:2377"]
-  listen_peer_urls = ["http://127.0.0.1:2382"]
-  log_level = "info"
-  name = "etcd3"
+advertise_client_urls = ['http://127.0.0.1:2377']
+advertise_peer_urls = ['http://127.0.0.1:2382']
+dir = 'default.etcd3'
+initial_cluster = 'etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382'
+initial_cluster_token = 'ClusterToken'
+listen_client_urls = ['http://127.0.0.1:2377']
+listen_peer_urls = ['http://127.0.0.1:2382']
+log_level = 'info'
+name = 'etcd3'
+ready_notify_timeout = 0
 
 [log]
-  add_stdout = true
-  compress = false
-  file_name = "log.log"
-  level = "info"
-  max_age = 7
-  max_backups = 3
-  max_size = 1024000
-  set_slog = true
+add_stdout = true
+compress = false
+file_name = 'log.log'
+level = 'info'
+max_age = 7
+max_backups = 3
+max_size = 1024000
+set_slog = true

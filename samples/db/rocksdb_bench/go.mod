@@ -53,24 +53,14 @@ require (
 	github.com/hashicorp/vault/api v1.23.0 // indirect
 	github.com/hashicorp/vault/api/auth/approle v0.12.0 // indirect
 	github.com/klauspost/compress v1.18.6 // indirect
-	github.com/knadh/koanf/maps v0.1.2 // indirect
-	github.com/knadh/koanf/parsers/json v1.0.0 // indirect
-	github.com/knadh/koanf/parsers/toml v0.1.0 // indirect
-	github.com/knadh/koanf/parsers/yaml v1.1.0 // indirect
-	github.com/knadh/koanf/providers/confmap v1.0.0 // indirect
-	github.com/knadh/koanf/providers/file v1.2.1 // indirect
-	github.com/knadh/koanf/v2 v2.3.5 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/minio/minlz v1.1.1 // indirect
-	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.3.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect

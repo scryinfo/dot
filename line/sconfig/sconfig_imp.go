@@ -5,11 +5,13 @@ package sconfig
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 
+	"github.com/go-viper/mapstructure/v2"
 	"github.com/spf13/viper"
 
 	"github.com/scryinfo/dot/dot"
@@ -61,7 +63,7 @@ func NewConfig() (*SConfig, error) {
 	}
 	fmt.Println("initing conifg")
 	conf.RootPath()
-	fmt.Printf("config path: %s/%s\nexe path: %s\nwd path: %s\n", conf.confPath, conf.file, conf.exePath, conf.wdPath)
+	fmt.Printf("config file: %s/%s\nexe path: %s\nwd path: %s\n", conf.confPath, conf.file, conf.exePath, conf.wdPath)
 	err := conf.create()
 	if err != nil {
 		// the config is the first, and the logger is not initialized, so use fmt.Printf
@@ -74,7 +76,7 @@ func NewConfig() (*SConfig, error) {
 func NewLineConfig[T any](config *SConfig) (*T, error) {
 	conf, err := Unmarshal[T](config)
 	if err != nil {
-		fmt.Printf("%v", err)
+		log.Fatalf("%v", err)
 		return nil, err
 	}
 	return &conf, nil
@@ -252,7 +254,11 @@ func Unmarshal[T any](c *SConfig) (T, error) {
 	//var data []byte
 	var err error
 	var t T
-	err = c.simpleConf.Unmarshal(&t)
+	err = c.simpleConf.Unmarshal(&t, func(dc *mapstructure.DecoderConfig) {
+		dc.ErrorUnused = true
+		dc.ErrorUnset = true
+		dc.TagName = c.fileType[1:]
+	})
 	return t, err
 }
 

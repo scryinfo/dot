@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -49,15 +50,17 @@ var LineSet = wire.NewSet(
 )
 
 func main() {
-	line, clear, err := InitializeService()
+	line, clean, err := InitializeService()
 	if err != nil {
 		if line != nil && line.Logger != nil {
 			line.Logger.Error().Err(err).Msg("initialize service failed")
+		} else {
+			fmt.Printf("%s\n", err.Error())
 		}
 		return
 	}
-	if clear != nil {
-		defer clear()
+	if clean != nil {
+		defer clean()
 	}
 	_ = line
 	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit

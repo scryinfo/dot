@@ -1,37 +1,35 @@
-
 [connect_server]
-  addr = ":8090"
-  allow_credentials = true
-  allow_headers = []
-  allow_methods = ["GET", "POST", "OPTIONS"]
-  allowed_origins = []
-  http1 = true
-  http2 = true
-  max_concurrent_streams = 100
-  option_methods = true
-  read_timeout = 0
-  shutdown_timeout = 1024000
-  un_auth_urls = ["*"]
-  unencrypted_http2 = true
-  write_timeout = 0
+addr = ':8090'
+allow_credentials = true
+allow_headers = []
+allow_methods = ['GET', 'POST', 'OPTIONS']
+allowed_origins = []
+http1 = true
+http2 = true
+max_concurrent_streams = 100
+option_methods = true
+read_timeout = 0
+shutdown_timeout = 1024000
+un_auth_urls = ['*']
+unencrypted_http2 = true
+write_timeout = 0
 
-  [connect_server.tls]
-    cert = ""
-    key = ""
-    mode = "none"
-    peer_cert = ""
-    root_cert = ""
-    server_cert = ""
+[connect_server.tls]
+cert = ''
+key = ''
+mode = 'none'
+peer_cert = ''
+root_cert = ''
 
 [hi_service]
-  name = "nobl_server"
+name = 'nobl_server'
 
 [log]
-  add_stdout = true
-  compress = false
-  file_name = "log.log"
-  level = "info"
-  max_age = 7
-  max_backups = 3
-  max_size = 1024000
-  set_slog = true
+add_stdout = true
+compress = false
+file_name = 'log.log'
+level = 'info'
+max_age = 7
+max_backups = 3
+max_size = 1024000
+set_slog = true

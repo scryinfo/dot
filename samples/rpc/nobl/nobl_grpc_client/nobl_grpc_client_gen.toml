@@ -1,21 +1,19 @@
-
 [grpc_client]
-  server_address = "localhost:8090"
+server_address = 'localhost:8090'
 
-  [grpc_client.tls]
-    cert = ""
-    key = ""
-    mode = "none"
-    peer_cert = ""
-    root_cert = ""
-    server_cert = ""
+[grpc_client.tls]
+cert = ''
+key = ''
+mode = 'none'
+peer_cert = ''
+root_cert = ''
 
 [log]
-  add_stdout = true
-  compress = false
-  file_name = "log.log"
-  level = "info"
-  max_age = 7
-  max_backups = 3
-  max_size = 1024000
-  set_slog = true
+add_stdout = true
+compress = false
+file_name = 'log.log'
+level = 'info'
+max_age = 7
+max_backups = 3
+max_size = 1024000
+set_slog = true

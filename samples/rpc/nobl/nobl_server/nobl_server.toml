@@ -27,7 +27,7 @@ mode = "none"
 cert = ""
 key = ""
 root_cert = ""
-server_cert = ""
+peer_cert = ""
 
 [hi_service]
 name = "nobl_server"

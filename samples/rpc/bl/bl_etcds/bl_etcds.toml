@@ -17,6 +17,7 @@ advertise_peer_urls = ["http://127.0.0.1:2380"]
 initial_cluster_token = "ClusterToken"
 initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
 log_level = "info"
+ready_notify_timeout = 0
 
 [[etcd_servers]]
 name = "etcd2"
@@ -28,6 +29,7 @@ advertise_peer_urls = ["http://127.0.0.1:2381"]
 initial_cluster_token = "ClusterToken"
 initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
 log_level = "info"
+ready_notify_timeout = 0
 
 [[etcd_servers]]
 name = "etcd3"
@@ -39,3 +41,4 @@ advertise_peer_urls = ["http://127.0.0.1:2382"]
 initial_cluster_token = "ClusterToken"
 initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
 log_level = "info"
+ready_notify_timeout = 0

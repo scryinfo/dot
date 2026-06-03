@@ -10,8 +10,8 @@ set_slog = true
 [connect_server_etcd]
 name = "server/samples/rpc_bl"
 addr = "127.0.0.1:8090"
-# seconds tls
-# tls = 10
+# seconds ttl
+ttl = 10
 [hi_service]
 name = "etcd1"
 [connect_server]
@@ -34,7 +34,7 @@ mode = "none"
 cert = ""
 key = ""
 root_cert = ""
-server_cert = ""
+peer_cert = ""
 
 [etcd_client]
 endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]

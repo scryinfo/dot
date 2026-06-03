@@ -11,10 +11,12 @@ set_slog = true
 [connect_server_etcd]
 name = "server/samples/rpc_bl"
 addr = "127.0.0.1:8092"
-# seconds tls
-# tls = 10
+# seconds ttl
+ttl = 10
+
 [hi_service]
 name = "etcd3"
+
 [connect_server]
 addr = ":8092"
 read_timeout = 0

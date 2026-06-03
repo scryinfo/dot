@@ -2,10 +2,7 @@ module github.com/scryinfo/dot
 
 go 1.26
 
-replace (
-	github.com/knadh/koanf => github.com/knadh/koanf/v2 v2.3.5 // Or whichever v2 version you upgraded to
-	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260226221140-a57be14db171
-)
+replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260226221140-a57be14db171
 
 require (
 	connectrpc.com/connect v1.20.0
@@ -13,17 +10,12 @@ require (
 	github.com/dgraph-io/badger/v4 v4.9.1
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-kit/kit v0.13.0
+	github.com/go-viper/mapstructure/v2 v2.5.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang/gddo v0.0.0-20210115222349-20d68f94ee1f
 	github.com/google/wire v0.7.0
 	github.com/hashicorp/vault/api v1.23.0
 	github.com/hashicorp/vault/api/auth/approle v0.12.0
-	github.com/knadh/koanf/parsers/json v1.0.0
-	github.com/knadh/koanf/parsers/toml v0.1.0
-	github.com/knadh/koanf/parsers/yaml v1.1.0
-	github.com/knadh/koanf/providers/confmap v1.0.0
-	github.com/knadh/koanf/providers/file v1.2.1
-	github.com/knadh/koanf/v2 v2.3.5
 	github.com/pkg/errors v0.9.1
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10
 	github.com/redis/go-redis/v9 v9.20.0
@@ -83,7 +75,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.30.3 // indirect
-	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/goccy/go-json v0.10.6 // indirect
 	github.com/goccy/go-yaml v1.19.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -111,22 +102,18 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
-	github.com/knadh/koanf/maps v0.1.2 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/minio/minlz v1.1.1 // indirect
-	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/oklog/ulid/v2 v2.1.1 // indirect
-	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.3.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect

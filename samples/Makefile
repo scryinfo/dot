@@ -5,17 +5,11 @@ ifeq ($(OS),Windows_NT)
 	else
 	    go := $(subst \,/,$(shell where.exe go))
 	endif
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
 else
 	go := ${shell which go}
 	EXE :=
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
 endif
 $(info "go: ${go}")
-
-CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
-
-go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
 .PHONY: clean clean_wire upgrade format build samples
 
@@ -26,7 +20,8 @@ WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sc
 	rpc/nobl/nobl_connect_client rpc/nobl/nobl_grpc_client rpc/nobl/nobl_server \
 	rpc/nobls/nobls_connect_client rpc/nobls/nobls_grpc_client rpc/nobls/nobls_server \
 	rpc/bl/bl_grpc_client rpc/bl/bl_etcds rpc/bl/bl_server rpc/bl/bl_server2 rpc/bl/bl_server3 \
-	rpc/bls/bls_grpc_client rpc/bls/bls_etcds rpc/bls/bls_server rpc/bls/bls_server2 rpc/bls/bls_server3
+	rpc/bls/bls_grpc_client rpc/bls/bls_etcds rpc/bls/bls_server rpc/bls/bls_server2 rpc/bls/bls_server3 \
+	../tools/ende/decode ../tools/ende/encode
 
 clean:
 	cd rpc/proto && make clean
@@ -73,7 +68,7 @@ $1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go
 endef
 $(foreach wire,$(WIRES),$(eval $(call sample_rule,$(wire))))
 db/rocksdb/rocksdb$(EXE): db/rocksdb/rocksdb.go db/rocksdb/wire_gen.go
-	cd db/rocksdb && ${go_rocksdb} build -o rocksdb$(EXE) ./...
+	cd db/rocksdb && make build
 samples: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))$(EXE)) db/rocksdb/rocksdb$(EXE)
 
 define generate_config_rule
@@ -82,7 +77,7 @@ $1/$(notdir $1)_gen.toml: $1/$(notdir $1).go $1/wire_gen.go
 endef
 $(foreach wire,$(WIRES),$(eval $(call generate_config_rule,$(wire))))
 db/rocksdb/rocksdb_gen.toml: db/rocksdb/rocksdb.go db/rocksdb/wire_gen.go
-	cd db/rocksdb && ${go_rocksdb} run ./... -- -GenerateConfig
+	cd db/rocksdb && make generate_config
 generate_config: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))_gen.toml) db/rocksdb/rocksdb_gen.toml
 
 gen:

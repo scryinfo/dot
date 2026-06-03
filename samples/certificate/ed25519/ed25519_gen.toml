@@ -1,10 +1,9 @@
-
 [log]
-  add_stdout = true
-  compress = false
-  file_name = "logs/log.log"
-  level = "info"
-  max_age = 7
-  max_backups = 3
-  max_size = 1024000
-  set_slog = true
+add_stdout = true
+compress = false
+file_name = 'logs/log.log'
+level = 'info'
+max_age = 7
+max_backups = 3
+max_size = 1024000
+set_slog = true

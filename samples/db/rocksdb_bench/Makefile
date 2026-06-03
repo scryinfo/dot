@@ -14,10 +14,10 @@ else
 	go := ${shell which go}
 	EXE :=
 	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
+	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 endif
 $(info "go: ${go}")
 
-CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
 .PHONY: clean build rebuild

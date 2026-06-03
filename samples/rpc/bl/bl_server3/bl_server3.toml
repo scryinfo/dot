@@ -7,22 +7,16 @@ compress = false
 level = "info"
 add_stdout = true
 set_slog = true
-[etcd_server]
-name = "etcd3"
-listen_client_urls = ["http://127.0.0.1:2377"]
-advertise_client_urls = ["http://127.0.0.1:2377"]
-listen_peer_urls = ["http://127.0.0.1:2382"]
-advertise_peer_urls = ["http://127.0.0.1:2382"]
-initial_cluster_token = "ClusterToken"
-initial_cluster = "etcd1=http://127.0.0.1:2380,etcd2=http://127.0.0.1:2381,etcd3=http://127.0.0.1:2382"
-log_level = "info"
+
 [connect_server_etcd]
 name = "server/samples/rpc_bl"
 addr = "127.0.0.1:8092"
-# seconds tls
-# tls = 10
+# seconds ttl
+ttl = 10
+
 [hi_service]
 name = "etcd3"
+
 [connect_server]
 addr = ":8092"
 read_timeout = 0
@@ -43,7 +37,7 @@ mode = "none"
 cert = ""
 key = ""
 root_cert = ""
-server_cert = ""
+peer_cert = ""
 
 [etcd_client]
 endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]

@@ -1,45 +1,44 @@
-
 [connect_server]
-  addr = ":8090"
-  allow_credentials = true
-  allow_headers = []
-  allow_methods = ["GET", "POST", "OPTIONS"]
-  allowed_origins = []
-  http1 = true
-  http2 = true
-  max_concurrent_streams = 100
-  option_methods = true
-  read_timeout = 0
-  shutdown_timeout = 1024000
-  un_auth_urls = ["*"]
-  unencrypted_http2 = true
-  write_timeout = 0
+addr = ':8090'
+allow_credentials = true
+allow_headers = []
+allow_methods = ['GET', 'POST', 'OPTIONS']
+allowed_origins = []
+http1 = true
+http2 = true
+max_concurrent_streams = 100
+option_methods = true
+read_timeout = 0
+shutdown_timeout = 1024000
+un_auth_urls = ['*']
+unencrypted_http2 = true
+write_timeout = 0
 
-  [connect_server.tls]
-    cert = "../../config/cert/server.cert"
-    key = "../../config/cert/server.key"
-    mode = "secure"
-    peer_cert = ""
-    root_cert = ""
+[connect_server.tls]
+cert = '../../config/cert/server.cert'
+key = '../../config/cert/server.key'
+mode = 'secure'
+peer_cert = ''
+root_cert = ''
 
 [connect_server_etcd]
-  addr = "127.0.0.1:8090"
-  name = "server/samples/rpc_bl"
-  ttl = 0
+addr = '127.0.0.1:8090'
+name = 'server/samples/rpc_bl'
+ttl = 10
 
 [etcd_client]
-  dial_timeout = 12000
-  endpoints = ["http://127.0.0.1:2379", "http://127.0.0.1:2378", "http://127.0.0.1:2377"]
+dial_timeout = 12000
+endpoints = ['http://127.0.0.1:2379', 'http://127.0.0.1:2378', 'http://127.0.0.1:2377']
 
 [hi_service]
-  name = "etcd1"
+name = 'etcd1'
 
 [log]
-  add_stdout = true
-  compress = false
-  file_name = "log.log"
-  level = "info"
-  max_age = 7
-  max_backups = 3
-  max_size = 1024000
-  set_slog = true
+add_stdout = true
+compress = false
+file_name = 'log.log'
+level = 'info'
+max_age = 7
+max_backups = 3
+max_size = 1024000
+set_slog = true

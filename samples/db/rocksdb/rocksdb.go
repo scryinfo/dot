@@ -3,6 +3,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/google/wire"
@@ -48,6 +49,8 @@ func main() {
 	if err != nil {
 		if line != nil && line.Logger != nil {
 			line.Logger.Error().Err(err).Msg("initialize service failed")
+		} else {
+			fmt.Printf("%s\n", err.Error())
 		}
 		return
 	}

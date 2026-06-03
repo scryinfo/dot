@@ -5,6 +5,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"connectrpc.com/connect"
@@ -54,15 +55,17 @@ var LineSet = wire.NewSet(
 
 func main() {
 	// dot.InitLogger(new(dot.TestLogConfig()))
-	line, clear, err := InitializeService()
+	line, clean, err := InitializeService()
 	if err != nil {
 		if line != nil && line.Logger != nil {
 			line.Logger.Error().Err(err).Msg("initialize service failed")
+		} else {
+			fmt.Printf("%s\n", err.Error())
 		}
 		return
 	}
-	if clear != nil {
-		defer clear()
+	if clean != nil {
+		defer clean()
 	}
 
 	dot.Logger.Info().Msg("dot ok")

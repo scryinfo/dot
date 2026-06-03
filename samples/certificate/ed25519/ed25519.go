@@ -4,6 +4,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line"
@@ -38,15 +40,17 @@ var LineSet = wire.NewSet(
 )
 
 func main() {
-	line, clear, err := InitializeService()
+	line, clean, err := InitializeService()
 	if err != nil {
 		if line != nil && line.Logger != nil {
 			line.Logger.Error().Err(err).Msg("initialize service failed")
+		} else {
+			fmt.Printf("%s\n", err.Error())
 		}
 		return
 	}
-	if clear != nil {
-		defer clear()
+	if clean != nil {
+		defer clean()
 	}
 
 	err = makeSample(line.Ed25519)

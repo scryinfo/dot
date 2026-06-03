@@ -1,14 +1,13 @@
-
 [etcd_client]
-  dial_timeout = 5000
-  endpoints = ["http://127.0.0.1:2379"]
+dial_timeout = 5000
+endpoints = ['http://127.0.0.1:2379']
 
 [log]
-  add_stdout = true
-  compress = false
-  file_name = "logs/log.log"
-  level = "info"
-  max_age = 7
-  max_backups = 3
-  max_size = 1024000
-  set_slog = true
+add_stdout = true
+compress = false
+file_name = 'logs/log.log'
+level = 'info'
+max_age = 7
+max_backups = 3
+max_size = 1024000
+set_slog = true
