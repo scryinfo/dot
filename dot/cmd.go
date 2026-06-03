@@ -5,6 +5,8 @@ package dot
 
 import (
 	"flag"
+	"log"
+	"os"
 )
 
 // Cmd type general command line parameters
@@ -33,12 +35,18 @@ const (
 	CmdConfigFile CmdParameterName = "configfile"
 )
 
-// FlagDefines General command parameter initialization
-func FlagDefines() {
-	flag.StringVar(&GCmd.ConfigPath, CmdConfigPath.String(), "", "config path")
-	flag.StringVar(&GCmd.ConfigFile, CmdConfigFile.String(), "", "config file, not include path")
-}
+// // FlagDefines General command parameter initialization
+// func FlagDefines() {
+// 	flag.StringVar(&GCmd.ConfigPath, CmdConfigPath.String(), "", "config path")
+// 	flag.StringVar(&GCmd.ConfigFile, CmdConfigFile.String(), "", "config file, not include path")
+// }
 
 func init() {
-	FlagDefines()
+	fs := flag.NewFlagSet("dot", flag.ContinueOnError)
+	fs.StringVar(&GCmd.ConfigPath, CmdConfigPath.String(), "", "config path")
+	fs.StringVar(&GCmd.ConfigFile, CmdConfigFile.String(), "", "config file, not include path")
+	err := fs.Parse(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
