@@ -1,0 +1,17 @@
+[decode]
+ed25519_public_key = 'f3896b1ce890dc78e0e212e67f48f3aba619d8615acd80848ce8c9b3decda9ed'
+file = 'encode.json_en'
+generate = ''
+help = true
+out_file = 'encode.json'
+x25519_private_key = '70ca0217bbbef282af0cc9706534f88d5a551d1b9cffe115ad4d2b8db7056c71'
+
+[log]
+add_stdout = true
+compress = false
+file_name = 'log.log'
+level = 'info'
+max_age = 7
+max_backups = 3
+max_size = 1024000
+set_slog = true

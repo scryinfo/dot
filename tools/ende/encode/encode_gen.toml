@@ -1,0 +1,18 @@
+[encode]
+ed25519_private_key = 'a2e4dc4fbeeb6c6504c695f8a1c9ed97b9c1f7acdee923c6802230a1a1403f2af3896b1ce890dc78e0e212e67f48f3aba619d8615acd80848ce8c9b3decda9ed'
+ende_type = 'x25519'
+file = 'encode.json'
+generate = ''
+help = true
+out_file = ''
+x25519_peer_key = '6c99f0ecbe3702088b2cf9f130a0980cb9eab2d2f45f83ee2cf819ac88e68e25'
+
+[log]
+add_stdout = true
+compress = false
+file_name = 'log.log'
+level = 'info'
+max_age = 7
+max_backups = 3
+max_size = 1024000
+set_slog = true
