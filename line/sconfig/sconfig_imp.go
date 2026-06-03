@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/go-viper/mapstructure/v2"
@@ -97,6 +96,7 @@ func (p *SConfig) RootPath() error {
 			return err
 		}
 		p.exePath = filepath.Dir(exeFile)
+		checkPath := p.exePath
 		binPath := filepath.Dir(p.exePath)
 		exeName := filepath.Base(exeFile)
 		ext := filepath.Ext(exeFile)
@@ -104,38 +104,36 @@ func (p *SConfig) RootPath() error {
 		if dot.IsDebug {
 			mainFile := kits.Config.GetMainPackageDir()
 			if len(mainFile) > 0 {
-				p.exePath = filepath.Dir(mainFile)
-				binPath = filepath.Dir(p.exePath)
+				checkPath = filepath.Dir(mainFile)
 				exeName = filepath.Base(mainFile)
 				exeName = exeName[0 : len(exeName)-len(".go")]
 			}
-			fmt.Printf("config is in debug exe path: %s\n", p.exePath)
 		}
 		if p.confPath == "" {
 			if sfile.ExistDir(dot.GCmd.ConfigPath) {
 				p.confPath = dot.GCmd.ConfigPath
-			} else if configPath := filepath.Join(p.exePath, exeName+extensionNameToml); sfile.ExistFile(configPath) {
-				p.confPath = p.exePath
+			} else if configPath := filepath.Join(checkPath, exeName+extensionNameToml); sfile.ExistFile(configPath) {
+				p.confPath = checkPath
 				p.file = exeName + extensionNameToml
 				p.fileType = extensionNameToml
-			} else if configPath := filepath.Join(p.exePath, exeName+extensionNameYaml); sfile.ExistFile(configPath) {
-				p.confPath = p.exePath
+			} else if configPath := filepath.Join(checkPath, exeName+extensionNameYaml); sfile.ExistFile(configPath) {
+				p.confPath = checkPath
 				p.file = exeName + extensionNameYaml
 				p.fileType = extensionNameYaml
-			} else if configPath := filepath.Join(p.exePath, exeName+extensionNameJson); sfile.ExistFile(configPath) {
-				p.confPath = p.exePath
+			} else if configPath := filepath.Join(checkPath, exeName+extensionNameJson); sfile.ExistFile(configPath) {
+				p.confPath = checkPath
 				p.file = exeName + extensionNameJson
 				p.fileType = extensionNameJson
-			} else if configPath := filepath.Join(p.exePath, conf+extensionNameToml); sfile.ExistFile(configPath) {
-				p.confPath = p.exePath
+			} else if configPath := filepath.Join(checkPath, conf+extensionNameToml); sfile.ExistFile(configPath) {
+				p.confPath = checkPath
 				p.file = conf + extensionNameToml
 				p.fileType = extensionNameToml
-			} else if configPath := filepath.Join(p.exePath, conf+extensionNameYaml); sfile.ExistFile(configPath) {
-				p.confPath = p.exePath
+			} else if configPath := filepath.Join(checkPath, conf+extensionNameYaml); sfile.ExistFile(configPath) {
+				p.confPath = checkPath
 				p.file = conf + extensionNameYaml
 				p.fileType = extensionNameYaml
-			} else if configPath := filepath.Join(p.exePath, conf+extensionNameJson); sfile.ExistFile(configPath) {
-				p.confPath = p.exePath
+			} else if configPath := filepath.Join(checkPath, conf+extensionNameJson); sfile.ExistFile(configPath) {
+				p.confPath = checkPath
 				p.file = conf + extensionNameJson
 				p.fileType = extensionNameJson
 			} else if configPath := filepath.Join(binPath, exeName+extensionNameToml); sfile.ExistFile(configPath) {
@@ -171,23 +169,9 @@ func (p *SConfig) RootPath() error {
 		if file := filepath.Join(p.confPath, dot.GCmd.ConfigFile); len(dot.GCmd.ConfigFile) > 0 && sfile.ExistFile(file) {
 			p.file = dot.GCmd.ConfigFile
 			p.getFileType()
-		} else if strings.Contains(exeName, "__debug_") {
-			//get source file name as config file name
-			if _, srcFile, _, ok := runtime.Caller(3); ok {
-				p.confPath = filepath.Dir(srcFile)
-				srcName := filepath.Base(srcFile)
-				srcName = srcName[0 : len(srcName)-len(filepath.Ext(srcFile))]
-				if file := filepath.Join(p.confPath, srcName+extensionNameJson); sfile.ExistFile(file) {
-					p.file = srcName + extensionNameJson
-					p.fileType = extensionNameJson
-				} else if file := filepath.Join(p.confPath, srcName+extensionNameToml); sfile.ExistFile(file) {
-					p.file = srcName + extensionNameToml
-					p.fileType = extensionNameToml
-				} else if file := filepath.Join(p.confPath, srcName+extensionNameYaml); sfile.ExistFile(file) {
-					p.file = srcName + extensionNameYaml
-					p.fileType = extensionNameYaml
-				}
-			}
+		} else if p.file == "" {
+			err := fmt.Errorf("config file not found")
+			return err
 		}
 		p.simpleConf.SetConfigFile(p.file)
 		//c.simpleConf.SetConfigType(c.fileType)
