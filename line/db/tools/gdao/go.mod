@@ -3,7 +3,7 @@ module github.com/scryinfo/dot/dots/db/tools/gdao
 go 1.26
 
 require (
-	github.com/scryinfo/dot v0.9.5
+	github.com/scryinfo/dot v0.9.8
 	github.com/scryinfo/scryg v0.2.0
 )
 

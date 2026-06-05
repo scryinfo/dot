@@ -6,7 +6,7 @@ replace github.com/scryinfo/dot => ../../../
 
 require (
 	github.com/linxGnu/grocksdb v1.10.8
-	github.com/scryinfo/dot v0.9.5
+	github.com/scryinfo/dot v0.9.8
 )
 
 require (
