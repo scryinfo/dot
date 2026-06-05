@@ -1,4 +1,4 @@
-package dot
+package line
 
 import (
 	"fmt"
@@ -6,7 +6,22 @@ import (
 	"runtime/debug"
 	"strings"
 	"time"
+
+	"github.com/scryinfo/dot/dot"
 )
+
+// VERSION_PKG :=github.com/scryinfo/dot/line
+// COMMIT_MSG :=${shell git log -1 --pretty=%B}
+// COMMIT_TIME :=${shell git show -s --format=%at}
+// COMMIT_HASH :=${shell git rev-parse --short HEAD}
+// BUILD_TIME :=${shell date +%s}
+
+// build:
+// 	${go} build -tags="release" -buildvcs=true -ldflags="-s -w \
+// 	-X '${VERSION_PKG}.CommitMsg=${COMMIT_MSG}' \
+// 	-X '${VERSION_PKG}.CommitTime=${COMMIT_TIME}' \
+//  -X '${VERSION_PKG}.CommitHash=${COMMIT_HASH}' \
+// 	-X '${VERSION_PKG}.BuildTime=${BUILD_TIME}'" -o dot_line main.go
 
 var (
 	CommitMsg  = "dont get log message"
@@ -90,7 +105,7 @@ type BuildInfo struct {
 	GoVersion  string
 }
 
-func LogBuildInfo(info BuildInfo, logger *LoggerType) {
+func LogBuildInfo(info BuildInfo, logger *dot.LoggerType) {
 	if logger == nil {
 		FmtBuildInfo(info)
 	} else {
