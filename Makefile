@@ -67,6 +67,9 @@ build:
 	cd line/db/rocksdbdot && make build
 	cd samples && make build
 rebuild: clean gen wire build
+test:
+	${go} test -tags="release" ./...
+
 go_fix:
 	${go} fix ./...
 	cd demo && ${go} fix ./...
