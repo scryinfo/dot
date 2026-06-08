@@ -193,9 +193,9 @@ func (p *SConfig) RootPath() error {
 			err := fmt.Errorf("config file not found")
 			return err
 		}
-		// p.simpleConf.SetConfigFile(p.file)
+		p.simpleConf.SetConfigFile(p.file)
 		p.simpleConf.SetConfigType(p.fileType)
-		// p.simpleConf.AddConfigPath(p.confPath)
+		p.simpleConf.AddConfigPath(p.confPath)
 	}
 	f, err := os.Open(filepath.Join(p.confPath, p.file))
 	if err != nil {

@@ -22,7 +22,7 @@ func TestConfig(t *testing.T) {
 
 	configFile := filepath.Join(exeDir, filepath.Base(exeFile[:len(exeFile)-len(filepath.Ext(exeFile))]))
 	configFileExt := configFile + extensionNameToml
-	err = os.WriteFile(configFileExt, []byte("#"), 0644)
+	err = os.WriteFile(configFileExt, []byte(""), 0644)
 	assert.Nil(t, err)
 	fmt.Println("created configFileExt:", configFileExt)
 	defer func() {
@@ -30,10 +30,6 @@ func TestConfig(t *testing.T) {
 	}()
 
 	conf, err := NewConfig()
-	if err != nil {
-		fmt.Printf("err: %+v\n", err)
-	}
-	time.Sleep(1 * time.Second)
 	assert.Nil(t, err)
 	assert.NotNil(t, conf)
 	assert.Equal(t, conf.confPath, filepath.ToSlash(exeDir), "confPath should be exeDir")
