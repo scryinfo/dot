@@ -195,7 +195,6 @@ func (p *SConfig) RootPath() error {
 		}
 		p.simpleConf.SetConfigFile(p.file)
 		p.simpleConf.SetConfigType(p.fileType)
-		p.simpleConf.AddConfigPath(p.confPath)
 	}
 	f, err := os.Open(filepath.Join(p.confPath, p.file))
 	if err != nil {
@@ -248,7 +247,7 @@ func Unmarshal[T any](c *SConfig) (T, error) {
 	err = c.simpleConf.Unmarshal(&t, func(dc *mapstructure.DecoderConfig) {
 		dc.ErrorUnused = true
 		dc.ErrorUnset = true
-		dc.TagName = c.fileType[1:]
+		dc.TagName = c.fileType
 	})
 	return t, err
 }
@@ -257,7 +256,11 @@ func UnmarshalKey[T any](c *SConfig, key string) (T, error) {
 	var err error
 	var t T
 	if c.simpleConf != nil {
-		err = c.simpleConf.UnmarshalKey(key, &t)
+		err = c.simpleConf.UnmarshalKey(key, &t, func(dc *mapstructure.DecoderConfig) {
+			dc.ErrorUnused = true
+			dc.ErrorUnset = true
+			dc.TagName = c.fileType
+		})
 	}
 	return t, err
 }

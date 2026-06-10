@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/scryinfo/dot/lib/kits"
 	"github.com/stretchr/testify/assert"
