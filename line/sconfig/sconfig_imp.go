@@ -61,7 +61,24 @@ func NewConfig() (*SConfig, error) {
 		simpleConf: viper.New(),
 	}
 	fmt.Println("initing conifg")
-	err := conf.RootPath()
+	err := conf.LoadLocal()
+	fmt.Printf("config file: %s/%s\nexe path: %s\nwd path: %s\n", conf.confPath, conf.file, conf.exePath, conf.wdPath)
+	if err != nil {
+		// the config is the first, and the logger is not initialized, so use fmt.Printf
+		fmt.Printf("cant read the config: %+v\n", err)
+	}
+
+	return conf, err
+}
+
+// NewConfig new sConfig
+func NewConfigFromGetter(getter dot.ConfigGetter) (*SConfig, error) {
+	conf := &SConfig{
+		simpleConf: viper.New(),
+		fileType:   getter.FileType(),
+	}
+	fmt.Println("initing conifg")
+	err := conf.Load(getter)
 	fmt.Printf("config file: %s/%s\nexe path: %s\nwd path: %s\n", conf.confPath, conf.file, conf.exePath, conf.wdPath)
 	if err != nil {
 		// the config is the first, and the logger is not initialized, so use fmt.Printf
@@ -80,7 +97,7 @@ func NewLineConfig[T any](config *SConfig) (*T, error) {
 	return &conf, nil
 }
 
-func (p *SConfig) RootPath() error {
+func (p *SConfig) LoadLocal() error {
 	if p.wdPath == "" {
 		wd, err := os.Getwd()
 		if err != nil {
@@ -206,6 +223,11 @@ func (p *SConfig) RootPath() error {
 		}
 	}()
 	return p.simpleConf.ReadConfig(f)
+}
+
+func (p *SConfig) Load(getter dot.ConfigGetter) error {
+	// p.fileType = getter.FileType()
+	return p.simpleConf.ReadConfig(getter)
 }
 
 // ConfigPath  implement

@@ -48,11 +48,18 @@ func (e *StringFromEnv) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
+type ConfigGetter interface {
+	io.Reader
+	io.Closer
+	FileType() string
+}
+
 // SConfig config belongs to one component Dot, but it is so basic, every Dot need it, so define it in dot.go file
 // S represents scryinfo config this name is used frequently, so add s to distinguish it
 type SConfig interface {
-	//RootPath root path
-	RootPath() error
+	//LoadLocal
+	LoadLocal() error
+	Load(getter ConfigGetter) error
 	//Config file path
 	ConfigPath() string
 	// current working directory path

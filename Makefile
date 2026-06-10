@@ -6,7 +6,7 @@ ifeq ($(OS),Windows_NT)
 	else
 	    go := $(subst \,/,$(shell where.exe go))
 	endif
-	VCPKG := $(abspath ./vcpkg_installed)
+	VCPKG := $(subst \,/,$(abspath ./vcpkg_installed))
 	ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
 	ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
 	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
@@ -14,8 +14,10 @@ ifeq ($(OS),Windows_NT)
 else
 	go := ${shell which go}
 	EXE :=
+	VCPKG :=""
 	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
+
 endif
 $(info "go: ${go}")
 
@@ -24,6 +26,11 @@ go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
 .PHONY: clean upgrade format build samples
 
+ifeq ($(OS),Windows_NT)
+VCPKG_INSTALLED:= ${VCPKG}/x64-mingw-static/lib/libz.a
+${VCPKG_INSTALLED}:
+	VCPKG_BUILD_TYPE=release vcpkg.exe install --triplet=x64-mingw-static
+endif
 clean:
 	rm -rf go.sum go.work.sum demo/go.sum node_modules bun.lock
 	${go} clean
@@ -56,7 +63,7 @@ format:
 	cd line/db/tools/gmodel && ${go} fmt ./...
 	cd line/db/rocksdbdot && ${go} fmt ./...
 	cd samples && make format
-build:
+build: ${VCPKG_INSTALLED}
 	bun install
 	${go} build ./...
 	cd demo && ${go} build ./...
@@ -118,4 +125,4 @@ go_tools:
 	${go} install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
 install_rocksdb:
-	VCPKG_BUILD_TYPE=release d:/lang/vcpkg/vcpkg.exe install --triplet=x64-mingw-static
+	VCPKG_BUILD_TYPE=release vcpkg.exe install --triplet=x64-mingw-static
