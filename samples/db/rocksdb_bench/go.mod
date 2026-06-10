@@ -10,10 +10,10 @@ replace (
 
 require (
 	github.com/cockroachdb/pebble/v2 v2.1.6
-	github.com/dgraph-io/badger/v4 v4.9.1
+	github.com/dgraph-io/badger/v4 v4.9.2
 	github.com/linxGnu/grocksdb v1.10.8
-	github.com/scryinfo/dot v0.9.8
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260605070720-11fd49c5149c
+	github.com/scryinfo/dot v0.9.9
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260610035343-4f9b07585e9e
 	github.com/scryinfo/scryg v0.2.0
 )
 
@@ -83,8 +83,8 @@ require (
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/exp v0.0.0-20260603202125-055de637280b // indirect
 	golang.org/x/net v0.55.0 // indirect
-	golang.org/x/sys v0.45.0 // indirect
-	golang.org/x/text v0.37.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
+	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect

@@ -10,8 +10,8 @@ replace (
 require (
 	github.com/google/wire v0.7.0
 	github.com/linxGnu/grocksdb v1.10.8
-	github.com/scryinfo/dot v0.9.8
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260605070720-11fd49c5149c
+	github.com/scryinfo/dot v0.9.9
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260610035343-4f9b07585e9e
 	github.com/scryinfo/scryg v0.2.0
 )
 
@@ -37,7 +37,7 @@ require (
 	github.com/cockroachdb/tokenbucket v0.0.0-20250429170803-42689b6311bb // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.7.0 // indirect
-	github.com/dgraph-io/badger/v4 v4.9.1 // indirect
+	github.com/dgraph-io/badger/v4 v4.9.2 // indirect
 	github.com/dgraph-io/ristretto/v2 v2.4.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
@@ -100,7 +100,7 @@ require (
 	github.com/prometheus/common v0.68.1 // indirect
 	github.com/prometheus/procfs v0.20.1 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
-	github.com/quic-go/quic-go v0.59.1 // indirect
+	github.com/quic-go/quic-go v0.60.0 // indirect
 	github.com/redis/go-redis/v9 v9.20.0 // indirect
 	github.com/rogpeppe/go-internal v1.15.0 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
@@ -140,15 +140,15 @@ require (
 	go.uber.org/zap v1.28.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/arch v0.27.0 // indirect
-	golang.org/x/crypto v0.52.0 // indirect
+	golang.org/x/arch v0.28.0 // indirect
+	golang.org/x/crypto v0.53.0 // indirect
 	golang.org/x/exp v0.0.0-20260603202125-055de637280b // indirect
 	golang.org/x/net v0.55.0 // indirect
-	golang.org/x/sys v0.45.0 // indirect
-	golang.org/x/text v0.37.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
+	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260608224507-4308a22a1bab // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260608224507-4308a22a1bab // indirect
 	google.golang.org/grpc v1.81.1 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
