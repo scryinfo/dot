@@ -3,6 +3,7 @@ package rpcdot
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"slices"
 	"strings"
@@ -24,6 +25,8 @@ func NewConnectHttpServerMux() *ConnectHttpServerMux {
 type HandlerMiddle func(w http.ResponseWriter, r *http.Request) error
 
 type ConnectServerConfig struct {
+	// true : auto run, false: manual run
+	AutoRun bool `json:"auto_run" toml:"auto_run" yaml:"auto_run" mapstructure:"auto_run"`
 	// sample ":8080"
 	Addr                 string        `json:"addr" toml:"addr" yaml:"addr" mapstructure:"addr"`
 	ReadTimeout          time.Duration `json:"read_timeout" toml:"read_timeout" yaml:"read_timeout" mapstructure:"read_timeout"`
@@ -135,14 +138,19 @@ func NewConnetServer(config *ConnectServerConfig, sconf dot.SConfig, connetMux *
 		logger:     logger,
 		started:    atomic.Bool{},
 	}
-	err := d.start(sconf)
+	if config.AutoRun {
+		err := d.StartNoListner(sconf)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
 	return d, func() {
 		d.Shoutdown()
-	}, err
+	}, nil
 }
 
-func (p *ConnectServer) start(sconf dot.SConfig) error {
-	p.logger.Info().Msg("rpc api init")
+func (p *ConnectServer) StartNoListner(sconf dot.SConfig) error {
+	p.logger.Info().Msg("rpc api init without listener")
 	if p.started.Swap(true) {
 		return nil
 	}
@@ -175,6 +183,42 @@ func (p *ConnectServer) start(sconf dot.SConfig) error {
 	}()
 	return nil
 }
+
+func (p *ConnectServer) StartWithListener(sconf dot.SConfig, listner net.Listener) error {
+	p.logger.Info().Msg("rpc api init with listener")
+	if p.started.Swap(true) {
+		return nil
+	}
+	err := p.conf.Tls.FullPath(sconf)
+	if err != nil {
+		return err
+	}
+
+	//check tls cert and key
+	if (p.conf.Tls.Cert != "" && p.conf.Tls.Key == "") || (p.conf.Tls.Cert == "" && p.conf.Tls.Key != "") {
+		return fmt.Errorf("tls cert and key must be both set or both empty")
+	}
+
+	go func() {
+		if p.conf.Tls.NeedsTls() {
+			p.logger.Info().Msgf("rpc tls listen(%s)", p.conf.Addr)
+			if err := p.HTTPServer.ServeTLS(listner, p.conf.Tls.Cert, p.conf.Tls.Key); err != nil {
+				p.logger.Error().Err(err).Send()
+			} else {
+				p.logger.Info().Msg("rpc api done")
+			}
+		} else {
+			p.logger.Info().Msgf("rpc listen(%s)", p.conf.Addr)
+			if err := p.HTTPServer.Serve(listner); err != nil {
+				p.logger.Error().Err(err).Send()
+			} else {
+				p.logger.Info().Msg("rpc api done")
+			}
+		}
+	}()
+	return nil
+}
+
 func (p *ConnectServer) Shoutdown() {
 	if !p.started.Swap(false) {
 		return

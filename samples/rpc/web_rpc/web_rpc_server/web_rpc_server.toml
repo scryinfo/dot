@@ -8,6 +8,8 @@ level = "info"
 add_stdout = true
 set_slog = true
 [connect_server]
+auto_run = true
+auto_run = true
 addr = ":8089"
 read_timeout = 0
 write_timeout = 0

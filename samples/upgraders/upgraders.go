@@ -1,0 +1,85 @@
+// Scry Info.  All rights reserved.
+// license that can be found in the license file.
+
+package main
+
+import (
+	"fmt"
+
+	"github.com/google/wire"
+	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line"
+	"github.com/scryinfo/dot/line/rpcdot"
+	"github.com/scryinfo/dot/line/sconfig"
+	"github.com/scryinfo/dot/line/upgrader"
+	"github.com/scryinfo/dot/samples/rpc/go_impl/connectimpl"
+)
+
+type Line struct {
+	// SConfig           *sconfig.SConfig
+	Logger        *dot.LoggerType
+	HiService     *connectimpl.HiService
+	ConnectServer *rpcdot.ConnectServer
+	Upgrader      *upgrader.UpgraderListener
+	LineConfig    *LineConfig
+	sconfig       *sconfig.SConfig
+}
+
+type LineConfig struct {
+	Log              dot.LogConfig                   `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	ConnectServer    rpcdot.ConnectServerConfig      `json:"connect_server" toml:"connect_server" yaml:"connect_server" mapstructure:"connect_server"`
+	HiService        connectimpl.HiServiceConfig     `json:"hi_service" toml:"hi_service" yaml:"hi_service" mapstructure:"hi_service"`
+	UpgraderListener upgrader.UpgraderListenerConfig `json:"upgrader_listener" toml:"upgrader_listener" yaml:"upgrader_listener" mapstructure:"upgrader_listener"`
+}
+
+func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
+	lineConfig, err := sconfig.NewLineConfig[LineConfig](config)
+	if err != nil {
+		return nil, err
+	}
+	return sconfig.GenerateConfigWithArgs(config, lineConfig)
+}
+
+var LineSet = wire.NewSet(
+	wire.Struct(new(Line), "*"),
+	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer", "HiService", "UpgraderListener"),
+	NewLineConfig,
+	line.SconfigNewConfig,
+	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
+	dot.NewLogger,
+	line.RpcdotNewConnetServer,
+	line.RpcdotNewConnectHttpServerMux,
+	line.RpcdotNewHandlerMiddle,
+	connectimpl.NewHiService,
+	upgrader.NewUpgraderListener,
+)
+
+func main() {
+	// dot.InitLogger(new(dot.TestLogConfig()))
+	line, clean, err := InitializeService()
+	if err != nil {
+		if line != nil && line.Logger != nil {
+			line.Logger.Error().Err(err).Msg("initialize service failed")
+		} else {
+			fmt.Printf("%s\n", err.Error())
+		}
+		return
+	}
+	if clean != nil {
+		defer clean()
+	}
+	if line.LineConfig != nil && !line.LineConfig.ConnectServer.AutoRun {
+		err := line.ConnectServer.StartWithListener(line.sconfig, line.Upgrader.Listener)
+		if err != nil {
+			line.Logger.Error().Err(err).Msg("start connect server failed")
+		}
+	}
+
+	if line.Upgrader != nil && line.Upgrader.WaitFunc != nil {
+		line.Upgrader.WaitFunc(line.ConnectServer.HTTPServer)
+	} else {
+		line.Logger.Error().Msg("upgrader wait func is nil")
+	}
+
+	dot.Logger.Info().Msg("line exist")
+}

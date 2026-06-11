@@ -83,7 +83,7 @@ func NewBothHttpServer(conf *ConnectServerConfig, sconf dot.SConfig, connectMux 
 			started:    atomic.Bool{},
 		},
 	}
-	d.start(sconf)
+	d.StartNoListner(sconf)
 
 	return d, func() {
 		d.Shoutdown()

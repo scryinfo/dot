@@ -6,6 +6,7 @@ replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260226
 
 require (
 	connectrpc.com/connect v1.20.0
+	github.com/cloudflare/tableflip v1.2.3
 	github.com/cockroachdb/pebble/v2 v2.1.6
 	github.com/dgraph-io/badger/v4 v4.9.2
 	github.com/gin-gonic/gin v1.12.0

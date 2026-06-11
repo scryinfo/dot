@@ -63,6 +63,8 @@ samples/rpc/web_rpc/web_rpc_server/web_rpc_server
 samples/sconfig/sconfig
 samples/simple/simple
 
+samples/upgraders/upgraders
+
 line/db/tools/gdao/gdao
 line/db/tools/gmodel/gmodel
 samples/Makefile.gen

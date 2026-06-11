@@ -4,6 +4,7 @@ allow_credentials = true
 allow_headers = []
 allow_methods = ['GET', 'POST', 'OPTIONS']
 allowed_origins = []
+auto_run = true
 http1 = true
 http2 = true
 max_concurrent_streams = 100

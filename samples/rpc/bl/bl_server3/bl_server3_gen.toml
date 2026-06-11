@@ -1,4 +1,5 @@
 [connect_server]
+auto_run = true
 addr = ':8092'
 allow_credentials = true
 allow_headers = []

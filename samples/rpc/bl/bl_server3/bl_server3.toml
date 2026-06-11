@@ -18,6 +18,7 @@ ttl = 10
 name = "etcd3"
 
 [connect_server]
+auto_run = true
 addr = ":8092"
 read_timeout = 0
 write_timeout = 0
