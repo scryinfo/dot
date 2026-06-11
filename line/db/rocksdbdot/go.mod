@@ -6,7 +6,7 @@ replace github.com/scryinfo/dot => ../../../
 
 require (
 	github.com/linxGnu/grocksdb v1.10.8
-	github.com/scryinfo/dot v0.9.9
+	github.com/scryinfo/dot v0.9.10
 )
 
 require (
@@ -30,7 +30,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
-	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/time v0.15.0 // indirect

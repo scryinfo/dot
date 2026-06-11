@@ -3,7 +3,7 @@ module github.com/scryinfo/dot/dots/db/tools/gdao
 go 1.26
 
 require (
-	github.com/scryinfo/dot v0.9.9
+	github.com/scryinfo/dot v0.9.10
 	github.com/scryinfo/scryg v0.2.0
 )
 
@@ -44,7 +44,7 @@ require (
 	go.opentelemetry.io/otel v1.44.0 // indirect
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	golang.org/x/crypto v0.53.0 // indirect
-	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/text v0.38.0 // indirect
 	golang.org/x/time v0.15.0 // indirect

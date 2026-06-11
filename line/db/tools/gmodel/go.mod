@@ -4,7 +4,7 @@ go 1.26
 
 require (
 	github.com/jinzhu/inflection v1.0.0
-	github.com/scryinfo/dot v0.9.9
+	github.com/scryinfo/dot v0.9.10
 	golang.org/x/tools v0.45.0
 )
 
@@ -43,7 +43,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	golang.org/x/crypto v0.53.0 // indirect
 	golang.org/x/mod v0.37.0 // indirect
-	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/text v0.38.0 // indirect
