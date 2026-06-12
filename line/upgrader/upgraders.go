@@ -2,7 +2,6 @@ package upgrader
 
 import (
 	"net"
-	"net/http"
 )
 
 type UpgraderListenerConfig struct {
@@ -12,6 +11,6 @@ type UpgraderListenerConfig struct {
 }
 
 type UpgraderListener struct {
-	Listener net.Listener
-	WaitFunc func(*http.Server) error
+	Listener     net.Listener
+	WaitUpgrader func() error
 }

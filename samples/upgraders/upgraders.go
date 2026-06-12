@@ -54,7 +54,6 @@ var LineSet = wire.NewSet(
 )
 
 func main() {
-	// dot.InitLogger(new(dot.TestLogConfig()))
 	line, clean, err := InitializeService()
 	if err != nil {
 		if line != nil && line.Logger != nil {
@@ -74,8 +73,8 @@ func main() {
 		}
 	}
 
-	if line.Upgrader != nil && line.Upgrader.WaitFunc != nil {
-		line.Upgrader.WaitFunc(line.ConnectServer.HTTPServer)
+	if line.Upgrader != nil && line.Upgrader.WaitUpgrader != nil {
+		line.Upgrader.WaitUpgrader()
 	} else {
 		line.Logger.Error().Msg("upgrader wait func is nil")
 	}

@@ -3,12 +3,9 @@
 package upgrader
 
 import (
-	"context"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/cloudflare/tableflip"
 	"github.com/scryinfo/dot/dot"
@@ -43,19 +40,17 @@ func NewUpgraderListener(cfg *UpgraderListenerConfig, logger *dot.LoggerType) (*
 	}
 	_ = upg.Ready()
 
-	waitFunc := func(server *http.Server) error {
+	waitFunc := func() error {
 		<-upg.Exit()
 
 		logger.Info().Msg("Linux: recieve the signal, shutting down...")
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		return server.Shutdown(ctx)
+		return nil
 	}
 
 	cleanup := func() { upg.Stop() }
 
 	return &UpgraderListener{
-		Listener: ln,
-		WaitFunc: waitFunc,
+		Listener:     ln,
+		WaitUpgrader: waitFunc,
 	}, cleanup, nil
 }
