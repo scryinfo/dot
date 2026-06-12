@@ -43,12 +43,11 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	line := &Line{
-		Logger:        logger,
-		HiService:     hiService,
-		ConnectServer: connectServer,
-		Upgrader:      upgraderListener,
-		LineConfig:    lineConfig,
-		sconfig:       sConfig,
+		Logger:              logger,
+		HiService:           hiService,
+		ConnectServer:       connectServer,
+		Upgrader:            upgraderListener,
+		ConnectServerConfig: connectServerConfig,
 	}
 	return line, func() {
 		cleanup2()

@@ -12,6 +12,10 @@ import (
 )
 
 func NewBothHttpServer(conf *ConnectServerConfig, sconf dot.SConfig, connectMux *http.ServeMux, grpcServer *grpc.Server, logger *dot.LoggerType, middle HandlerMiddle) (*BothHttpServer, func(), error) {
+	err := conf.Tls.FullPath(sconf)
+	if err != nil {
+		return nil, nil, err
+	}
 	if conf.ShutdownTimeout < 0 {
 		conf.ShutdownTimeout = 10 * time.Second
 	}
@@ -83,8 +87,12 @@ func NewBothHttpServer(conf *ConnectServerConfig, sconf dot.SConfig, connectMux 
 			started:    atomic.Bool{},
 		},
 	}
-	d.StartNoListner(sconf)
-
+	if conf.AutoRun {
+		err := d.StartNoListner()
+		if err != nil {
+			return nil, nil, err
+		}
+	}
 	return d, func() {
 		d.Shoutdown()
 	}, nil

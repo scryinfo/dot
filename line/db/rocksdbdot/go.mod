@@ -1,8 +1,8 @@
 module github.com/scryinfo/dot/line/db/rocksdbdot
 
-go 1.26.3
+go 1.26.4
 
-replace github.com/scryinfo/dot => ../../../
+// replace github.com/scryinfo/dot => ../../../
 
 require (
 	github.com/linxGnu/grocksdb v1.10.8

@@ -2,7 +2,8 @@ module github.com/scryinfo/dot
 
 go 1.26
 
-replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260226221140-a57be14db171
+// replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260226221140-a57be14db171
+replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260610212136-7ab31c22f7ad
 
 require (
 	connectrpc.com/connect v1.20.0

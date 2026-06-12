@@ -17,12 +17,11 @@ import (
 
 type Line struct {
 	// SConfig           *sconfig.SConfig
-	Logger        *dot.LoggerType
-	HiService     *connectimpl.HiService
-	ConnectServer *rpcdot.ConnectServer
-	Upgrader      *upgrader.UpgraderListener
-	LineConfig    *LineConfig
-	sconfig       *sconfig.SConfig
+	Logger              *dot.LoggerType
+	HiService           *connectimpl.HiService
+	ConnectServer       *rpcdot.ConnectServer
+	Upgrader            *upgrader.UpgraderListener
+	ConnectServerConfig *rpcdot.ConnectServerConfig
 }
 
 type LineConfig struct {
@@ -68,8 +67,8 @@ func main() {
 	if clean != nil {
 		defer clean()
 	}
-	if line.LineConfig != nil && !line.LineConfig.ConnectServer.AutoRun {
-		err := line.ConnectServer.StartWithListener(line.sconfig, line.Upgrader.Listener)
+	if line.ConnectServerConfig != nil && !line.ConnectServerConfig.AutoRun {
+		err := line.ConnectServer.StartWithListener(line.Upgrader.Listener)
 		if err != nil {
 			line.Logger.Error().Err(err).Msg("start connect server failed")
 		}

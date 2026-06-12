@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot/samples/db/rocksdb_bench
 
-go 1.26.3
+go 1.26.4
 
 replace (
 	github.com/knadh/koanf => github.com/knadh/koanf/v2 v2.3.5 // Or whichever v2 version you upgraded to

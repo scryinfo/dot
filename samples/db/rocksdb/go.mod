@@ -1,11 +1,11 @@
 module github.com/scryinfo/dot/samples/db/rocksdb
 
-go 1.26.3
+go 1.26.4
 
-replace (
-	github.com/scryinfo/dot => ../../../
-	github.com/scryinfo/dot/line/db/rocksdbdot => ../../../line/db/rocksdbdot
-)
+// replace (
+// 	github.com/scryinfo/dot => ../../../
+// 	github.com/scryinfo/dot/line/db/rocksdbdot => ../../../line/db/rocksdbdot
+// )
 
 require (
 	github.com/google/wire v0.7.0

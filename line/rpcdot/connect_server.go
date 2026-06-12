@@ -58,6 +58,10 @@ type ConnectServer struct {
 }
 
 func NewConnetServer(config *ConnectServerConfig, sconf dot.SConfig, connetMux *ConnectHttpServerMux, logger *dot.LoggerType, middle HandlerMiddle) (*ConnectServer, func(), error) {
+	err := config.Tls.FullPath(sconf)
+	if err != nil {
+		return nil, nil, err
+	}
 	if config.ShutdownTimeout < 0 {
 		config.ShutdownTimeout = 10 * time.Second
 	}
@@ -139,7 +143,7 @@ func NewConnetServer(config *ConnectServerConfig, sconf dot.SConfig, connetMux *
 		started:    atomic.Bool{},
 	}
 	if config.AutoRun {
-		err := d.StartNoListner(sconf)
+		err := d.StartNoListner()
 		if err != nil {
 			return nil, nil, err
 		}
@@ -149,14 +153,10 @@ func NewConnetServer(config *ConnectServerConfig, sconf dot.SConfig, connetMux *
 	}, nil
 }
 
-func (p *ConnectServer) StartNoListner(sconf dot.SConfig) error {
+func (p *ConnectServer) StartNoListner() error {
 	p.logger.Info().Msg("rpc api init without listener")
 	if p.started.Swap(true) {
 		return nil
-	}
-	err := p.conf.Tls.FullPath(sconf)
-	if err != nil {
-		return err
 	}
 
 	//check tls cert and key
@@ -184,14 +184,10 @@ func (p *ConnectServer) StartNoListner(sconf dot.SConfig) error {
 	return nil
 }
 
-func (p *ConnectServer) StartWithListener(sconf dot.SConfig, listner net.Listener) error {
+func (p *ConnectServer) StartWithListener(listner net.Listener) error {
 	p.logger.Info().Msg("rpc api init with listener")
 	if p.started.Swap(true) {
 		return nil
-	}
-	err := p.conf.Tls.FullPath(sconf)
-	if err != nil {
-		return err
 	}
 
 	//check tls cert and key
