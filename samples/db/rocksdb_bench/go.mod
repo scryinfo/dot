@@ -12,7 +12,7 @@ require (
 	github.com/cockroachdb/pebble/v2 v2.1.6
 	github.com/dgraph-io/badger/v4 v4.9.2
 	github.com/linxGnu/grocksdb v1.10.8
-	github.com/scryinfo/dot v0.9.10
+	github.com/scryinfo/dot v0.9.11
 	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260612023231-e89f99c0bd3c
 	github.com/scryinfo/scryg v0.2.0
 )

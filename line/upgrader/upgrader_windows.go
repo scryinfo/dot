@@ -12,11 +12,12 @@ import (
 )
 
 func NewUpgraderListener(cfg *UpgraderListenerConfig, logger *dot.LoggerType) (*UpgraderListener, func(), error) {
-	ln, err := net.Listen("tcp", "localhost:8080")
+	ln, err := net.Listen("tcp", cfg.Addr)
 	if err != nil {
 		logger.Error().AnErr("net listen error", err).Send()
 		return nil, nil, err
 	}
+	logger.Info().Msgf("listen addr: %s", cfg.Addr)
 
 	waitFunc := func() error {
 		quit := make(chan os.Signal, 1)

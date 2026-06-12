@@ -38,6 +38,7 @@ func NewUpgraderListener(cfg *UpgraderListenerConfig, logger *dot.LoggerType) (*
 		logger.Error().AnErr("net listen error", err).Send()
 		return nil, nil, err
 	}
+	logger.Info().Msgf("listen addr: %s", cfg.Addr)
 	_ = upg.Ready()
 
 	waitFunc := func() error {
