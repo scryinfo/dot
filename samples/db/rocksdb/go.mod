@@ -11,7 +11,7 @@ require (
 	github.com/google/wire v0.7.0
 	github.com/linxGnu/grocksdb v1.10.8
 	github.com/scryinfo/dot v0.9.12
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260612031603-80e4b0adc2b1
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260612040337-beca0c176e5a
 	github.com/scryinfo/scryg v0.2.0
 )
 

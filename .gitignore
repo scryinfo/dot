@@ -80,3 +80,6 @@ samples/rpc/bls/bls_etcds/default.etcd
 line/db/pebble2dot/temp/
 tools/ende/decode/decode
 tools/ende/encode/encode
+
+cmd/den_config/ed25519_gen/den.pri
+cmd/den_config/ed25519_gen/den.pub
