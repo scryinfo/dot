@@ -1,17 +1,20 @@
 package denconfig
 
 import (
-	"crypto/ed25519"
-	"crypto/sha512"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/ecdh"
+	"crypto/rand"
+	"crypto/sha256"
 	"flag"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 	"path/filepath"
 
-	"golang.org/x/crypto/curve25519"
-
 	"github.com/scryinfo/scryg/sutils/sfile"
+	"golang.org/x/crypto/hkdf"
 )
 
 type Config struct {
@@ -24,8 +27,8 @@ type Config struct {
 
 func ParseFlags() Config {
 	var cfg Config
-	flag.StringVar(&cfg.PrivateFileName, "private", "den.pri", "Ed25519 private file")
-	flag.StringVar(&cfg.PubFileName, "public", "den.pub", "Ed25519 public file")
+	flag.StringVar(&cfg.PrivateFileName, "private", "den_x25519.pri", "x25519 private file")
+	flag.StringVar(&cfg.PubFileName, "public", "den_x25519.pub", "x25519 public file")
 	flag.StringVar(&cfg.ConfigFileName, "config", "config.toml", "config file")
 	flag.Parse()
 	return cfg
@@ -61,23 +64,23 @@ func (p *Config) ConfigFile() error {
 	return nil
 }
 
-func GenEd25519(config *Config) error {
+func GenX25519(config *Config) error {
 	{
 		var err error
 		config.PrivateFileName, err = filepath.Abs(config.PrivateFileName)
 		if err != nil {
-			slog.Error("", err)
+			slog.Error("", "", err)
 			return err
 		}
 		config.PubFileName, err = filepath.Abs(config.PubFileName)
 		if err != nil {
-			slog.Error("", err)
+			slog.Error("", "", err)
 			return err
 		}
 	}
-	pub, priv, err := ed25519.GenerateKey(nil)
+	priv, err := ecdh.X25519().GenerateKey(nil)
 	if err != nil {
-		slog.Error("generate key : ", err)
+		slog.Error("generate key : ", "", err)
 		return err
 	}
 	{
@@ -86,36 +89,36 @@ func GenEd25519(config *Config) error {
 			if !sfile.ExistDir(dd) {
 				err = os.MkdirAll(dd, 0o755)
 				if err != nil {
-					slog.Error("", err)
+					slog.Error("", "", err)
 					return err
 				}
 			}
 		}
 	}
-	err = os.WriteFile(config.PrivateFileName, priv, 0o600)
+	err = os.WriteFile(config.PrivateFileName, priv.Bytes(), 0o600)
 	if err != nil {
-		slog.Error("", err)
+		slog.Error("", "", err)
 		return err
 	}
-	slog.Info(fmt.Sprintf("private key: %s\n len: %d\n %#v", config.PrivateFileName, len(priv), priv))
+	slog.Info(fmt.Sprintf("private key: %s\n len: %d\n %#v", config.PrivateFileName, len(priv.Bytes()), priv))
 	{
 		dd := filepath.Dir(config.PubFileName)
 		if dd != "" {
 			if !sfile.ExistDir(dd) {
 				err = os.MkdirAll(dd, 0o755)
 				if err != nil {
-					slog.Error("", err)
+					slog.Error("", "", err)
 					return err
 				}
 			}
 		}
 	}
-	err = os.WriteFile(config.PubFileName, pub, 0o600)
+	err = os.WriteFile(config.PubFileName, priv.PublicKey().Bytes(), 0o600)
 	if err != nil {
-		slog.Error("", err)
+		slog.Error("", "", err)
 		return err
 	}
-	slog.Info(fmt.Sprintf("public key: %s\n len: %d\n%#v", config.PubFileName, len(pub), pub))
+	slog.Info(fmt.Sprintf("public key: %s\n len: %d\n%#v", config.PubFileName, len(priv.PublicKey().Bytes()), priv.PublicKey()))
 	return nil
 }
 
@@ -127,29 +130,91 @@ func Exit(err error) {
 	os.Exit(code)
 }
 
-func EdPrivToX25519Priv(edPriv ed25519.PrivateKey) ([]byte, error) {
-	// ed25519 私钥结构：[32字节种子][32字节公钥]
-	seed := edPriv[:32]
-	h := sha512.New()
-	h.Write(seed)
-	digest := h.Sum(nil)
-	// X25519 私钥规范裁剪
-	digest[0] &= 248
-	digest[31] &= 127
-	digest[31] |= 64
-	return digest[:32], nil
-}
+const (
+	salt = "_dot_solt&*_"
+	info = "_dot_info*&_"
+)
 
-// Ed25519 公钥 → X25519 公钥
-func EdPubToX25519Pub(edPub ed25519.PublicKey) ([]byte, error) {
-	return curve25519.EdwardsToMontgomery(edPub)
+func deriveKey(sharedSecret []byte) ([]byte, error) {
+	hkdfReader := hkdf.New(sha256.New, sharedSecret, []byte(salt), []byte(info))
+	aesKey := make([]byte, 32)
+	if _, err := io.ReadFull(hkdfReader, aesKey); err != nil {
+		return nil, err
+	}
+	return aesKey, nil
 }
-
-func EncriptionConfig(config []byte, pri ed25519.PrivateKey) (error, []byte) {
-	newPub, newPri, err := ed25519.GenerateKey(nil)
+func Encription(config []byte, pub *ecdh.PublicKey) ([]byte, error) {
+	priv, err := ecdh.X25519().GenerateKey(nil)
 	if err != nil {
-		slog.Error("generate key : ", err)
-		return err, nil
+		slog.Error("generate key : ", "", err)
+		return nil, err
+	}
+	sharedSecret, err := priv.ECDH(pub)
+	if err != nil {
+		slog.Error("ecdh : ", "", err)
+		return nil, err
+	}
+	key, err := deriveKey(sharedSecret)
+	if err != nil {
+		slog.Error("derive key : ", "", err)
+		return nil, err
 	}
 
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return nil, err
+	}
+	nonce := make([]byte, aesGCM.NonceSize())
+	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+		return nil, err
+	}
+
+	cipherText := aesGCM.Seal(nonce, nonce, config, nil)
+	prepub := make([]byte, 0, len(cipherText)+len(pub.Bytes()))
+	prepub = append(prepub, priv.PublicKey().Bytes()...)
+	prepub = append(prepub, cipherText...)
+	return prepub, nil
+}
+func Decription(prepub []byte, priv *ecdh.PrivateKey) ([]byte, error) {
+	if len(prepub) < 32 {
+		return nil, fmt.Errorf("the prepub is too short")
+	}
+
+	pub, err := ecdh.X25519().NewPublicKey(prepub[:32])
+	if err != nil {
+		return nil, err
+	}
+	sharedSecret, err := priv.ECDH(pub)
+	if err != nil {
+		return nil, err
+	}
+	cipherText := prepub[32:]
+	key, err := deriveKey(sharedSecret)
+	if err != nil {
+		return nil, err
+	}
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return nil, err
+	}
+	nonceSize := aesGCM.NonceSize()
+	if len(cipherText) < nonceSize {
+		return nil, fmt.Errorf("the cipher text is too short")
+	}
+	nonce, actualCipherText := cipherText[:nonceSize], cipherText[nonceSize:]
+	plainText, err := aesGCM.Open(nil, nonce, actualCipherText, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return plainText, nil
 }

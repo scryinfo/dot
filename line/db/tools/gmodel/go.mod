@@ -1,4 +1,4 @@
-module github.com/scryinfo/dot/dots/db/tools/gmodel
+module github.com/scryinfo/dot/line/db/tools/gmodel
 
 go 1.26
 

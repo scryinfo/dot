@@ -17,7 +17,7 @@ func main() {
 		return
 	}
 	if !sfile.ExistFile(config.PrivateFileName) {
-		err = denconfig.GenEd25519(&config)
+		err = denconfig.GenX25519(&config)
 		if err != nil {
 			denconfig.Exit(err)
 			return

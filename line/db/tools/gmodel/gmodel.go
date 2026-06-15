@@ -267,7 +267,7 @@ func gmodel(data *tData) []byte {
 package {{.PkgName}}
 import (
 	"fmt"
-	"github.com/scryinfo/dot/dots/db/buns"
+	"github.com/scryinfo/dot/line/db/buns"
 )
 	const (
 		{{$.TypeName}}_Table       = "{{$.TableName}}"
