@@ -81,5 +81,12 @@ line/db/pebble2dot/temp/
 tools/ende/decode/decode
 tools/ende/encode/encode
 
-cmd/den_config/ed25519_gen/den.pri
-cmd/den_config/ed25519_gen/den.pub
+cmd/den_config/x25519_gen/den_x25519.pri
+cmd/den_config/x25519_gen/den_x25519.pub
+cmd/den_config/encription_config/den_x25519.pub
+cmd/den_config/encription_config/den_x25519.pri
+cmd/den_config/encription_config/simple_en.toml
+cmd/den_config/decription_config/den_x25519.pri
+cmd/den_config/decription_config/den_x25519.pub
+cmd/den_config/decription_config/simple_de.toml
+cmd/den_config/decription_config/simple.toml

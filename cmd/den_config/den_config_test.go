@@ -12,9 +12,9 @@ func TestDeencrypt(t *testing.T) {
 	priv, err := ecdh.X25519().GenerateKey(nil)
 	a.Nil(err)
 	data := []byte("testsdk sdfdsf")
-	prepub, err := Encription(data, priv.PublicKey())
+	prepub, err := EncriptionFile(data, priv.PublicKey())
 	a.Nil(err)
-	decrypted, err := Decription(prepub, priv)
+	decrypted, err := DecriptionFile(prepub, priv)
 	a.Nil(err)
 	a.Equal(data, decrypted)
 

@@ -48,9 +48,9 @@ type SConfig struct {
 }
 
 const (
-	extensionNameJson = ".json" //extension name of config file 配置文件的扩展名
-	extensionNameYaml = ".yaml" //extension name of config file 配置文件的扩展名
-	extensionNameToml = ".toml" //extension name of config file 配置文件的扩展名
+	ExtensionNameJson = ".json" //extension name of config file 配置文件的扩展名
+	ExtensionNameYaml = ".yaml" //extension name of config file 配置文件的扩展名
+	ExtensionNameToml = ".toml" //extension name of config file 配置文件的扩展名
 	separator         = "_"     //Separator
 	conf              = "conf"
 )
@@ -136,65 +136,65 @@ func (p *SConfig) LoadLocal() error {
 					return err
 				}
 				fmt.Printf("get conf path from cmd parameter, %s\n", dot.GCmd.ConfigPath)
-			} else if configPath := filepath.Join(checkPath, exeName+extensionNameToml); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(checkPath, exeName+ExtensionNameToml); sfile.ExistFile(configPath) {
 				p.confPath = checkPath
-				p.file = exeName + extensionNameToml
-				p.fileType = extensionNameToml[1:]
+				p.file = exeName + ExtensionNameToml
+				p.fileType = ExtensionNameToml[1:]
 				fmt.Printf("get conf file from check path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(checkPath, exeName+extensionNameYaml); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(checkPath, exeName+ExtensionNameYaml); sfile.ExistFile(configPath) {
 				p.confPath = checkPath
-				p.file = exeName + extensionNameYaml
-				p.fileType = extensionNameYaml[1:]
+				p.file = exeName + ExtensionNameYaml
+				p.fileType = ExtensionNameYaml[1:]
 				fmt.Printf("get conf file from check path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(checkPath, exeName+extensionNameJson); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(checkPath, exeName+ExtensionNameJson); sfile.ExistFile(configPath) {
 				p.confPath = checkPath
-				p.file = exeName + extensionNameJson
-				p.fileType = extensionNameJson[1:]
+				p.file = exeName + ExtensionNameJson
+				p.fileType = ExtensionNameJson[1:]
 				fmt.Printf("get conf file from check path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(checkPath, conf+extensionNameToml); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(checkPath, conf+ExtensionNameToml); sfile.ExistFile(configPath) {
 				p.confPath = checkPath
-				p.file = conf + extensionNameToml
-				p.fileType = extensionNameToml[1:]
+				p.file = conf + ExtensionNameToml
+				p.fileType = ExtensionNameToml[1:]
 				fmt.Printf("get conf file from check path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(checkPath, conf+extensionNameYaml); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(checkPath, conf+ExtensionNameYaml); sfile.ExistFile(configPath) {
 				p.confPath = checkPath
-				p.file = conf + extensionNameYaml
-				p.fileType = extensionNameYaml[1:]
+				p.file = conf + ExtensionNameYaml
+				p.fileType = ExtensionNameYaml[1:]
 				fmt.Printf("get conf file from check path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(checkPath, conf+extensionNameJson); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(checkPath, conf+ExtensionNameJson); sfile.ExistFile(configPath) {
 				p.confPath = checkPath
-				p.file = conf + extensionNameJson
-				p.fileType = extensionNameJson[1:]
+				p.file = conf + ExtensionNameJson
+				p.fileType = ExtensionNameJson[1:]
 				fmt.Printf("get conf file from check path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(binPath, exeName+extensionNameToml); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(binPath, exeName+ExtensionNameToml); sfile.ExistFile(configPath) {
 				p.confPath = binPath
-				p.file = exeName + extensionNameToml
-				p.fileType = extensionNameToml[1:]
+				p.file = exeName + ExtensionNameToml
+				p.fileType = ExtensionNameToml[1:]
 				fmt.Printf("get conf file from bin path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(binPath, exeName+extensionNameYaml); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(binPath, exeName+ExtensionNameYaml); sfile.ExistFile(configPath) {
 				p.confPath = binPath
-				p.file = exeName + extensionNameYaml
-				p.fileType = extensionNameYaml[1:]
+				p.file = exeName + ExtensionNameYaml
+				p.fileType = ExtensionNameYaml[1:]
 				fmt.Printf("get conf file from bin path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(binPath, exeName+extensionNameJson); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(binPath, exeName+ExtensionNameJson); sfile.ExistFile(configPath) {
 				p.confPath = binPath
-				p.file = exeName + extensionNameJson
-				p.fileType = extensionNameJson[1:]
+				p.file = exeName + ExtensionNameJson
+				p.fileType = ExtensionNameJson[1:]
 				fmt.Printf("get conf file from bin path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(p.wdPath, exeName+extensionNameToml); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(p.wdPath, exeName+ExtensionNameToml); sfile.ExistFile(configPath) {
 				p.confPath = p.wdPath
-				p.file = exeName + extensionNameToml
-				p.fileType = extensionNameToml[1:]
+				p.file = exeName + ExtensionNameToml
+				p.fileType = ExtensionNameToml[1:]
 				fmt.Printf("get conf file from wd path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(p.wdPath, exeName+extensionNameYaml); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(p.wdPath, exeName+ExtensionNameYaml); sfile.ExistFile(configPath) {
 				p.confPath = p.wdPath
-				p.file = exeName + extensionNameYaml
-				p.fileType = extensionNameYaml[1:]
+				p.file = exeName + ExtensionNameYaml
+				p.fileType = ExtensionNameYaml[1:]
 				fmt.Printf("get conf file from wd path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(p.wdPath, exeName+extensionNameJson); sfile.ExistFile(configPath) {
+			} else if configPath := filepath.Join(p.wdPath, exeName+ExtensionNameJson); sfile.ExistFile(configPath) {
 				p.confPath = p.wdPath
-				p.file = exeName + extensionNameJson
-				p.fileType = extensionNameJson[1:]
+				p.file = exeName + ExtensionNameJson
+				p.fileType = ExtensionNameJson[1:]
 				fmt.Printf("get conf file from wd path, config path: %s, file: %s, file type: %s\n", p.confPath, p.file, p.fileType)
 			}
 			if len(p.confPath) < 1 {
@@ -389,11 +389,11 @@ func (p *SConfig) getFileType() {
 	if l := len(re); l >= 2 {
 		switch re[l-1] {
 		case "json":
-			p.fileType = extensionNameJson[1:]
+			p.fileType = ExtensionNameJson[1:]
 		case "yaml":
-			p.fileType = extensionNameYaml[1:]
+			p.fileType = ExtensionNameYaml[1:]
 		case "toml":
-			p.fileType = extensionNameToml[1:]
+			p.fileType = ExtensionNameToml[1:]
 		}
 	}
 }

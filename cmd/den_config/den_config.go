@@ -6,65 +6,19 @@ import (
 	"crypto/ecdh"
 	"crypto/rand"
 	"crypto/sha256"
-	"flag"
 	"fmt"
 	"io"
+	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
 
+	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/sfile"
 	"golang.org/x/crypto/hkdf"
 )
 
-type Config struct {
-	PrivateFileName  string
-	PubFileName      string
-	ConfigFileName   string
-	DeConfigFileName string
-	EnConfigFileName string
-}
-
-func ParseFlags() Config {
-	var cfg Config
-	flag.StringVar(&cfg.PrivateFileName, "private", "den_x25519.pri", "x25519 private file")
-	flag.StringVar(&cfg.PubFileName, "public", "den_x25519.pub", "x25519 public file")
-	flag.StringVar(&cfg.ConfigFileName, "config", "config.toml", "config file")
-	flag.Parse()
-	return cfg
-}
-
-func (p *Config) Abs() error {
-	var err error
-	p.ConfigFileName, err = filepath.Abs(p.ConfigFileName)
-	if err != nil {
-		return err
-	}
-	p.PrivateFileName, err = filepath.Abs(p.PrivateFileName)
-	if err != nil {
-		return err
-	}
-	p.PubFileName, err = filepath.Abs(p.PubFileName)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *Config) ConfigFile() error {
-	if p.ConfigFileName == "" {
-		return fmt.Errorf("the config file dont exist: %s", p.ConfigFileName)
-	}
-	dir := filepath.Dir(p.ConfigFileName)
-	ext := filepath.Ext(p.ConfigFileName)
-	name := filepath.Base(p.ConfigFileName)
-	name = name[:len(name)-len(ext)]
-	p.DeConfigFileName = filepath.Join(dir, fmt.Sprintf("%s_de%s", name, ext))
-	p.EnConfigFileName = filepath.Join(dir, fmt.Sprintf("%s_en%s", name, ext))
-	return nil
-}
-
-func GenX25519(config *Config) error {
+func GenX25519(config *ConfigFile) error {
 	{
 		var err error
 		config.PrivateFileName, err = filepath.Abs(config.PrivateFileName)
@@ -143,17 +97,49 @@ func deriveKey(sharedSecret []byte) ([]byte, error) {
 	}
 	return aesKey, nil
 }
-func Encription(config []byte, pub *ecdh.PublicKey) ([]byte, error) {
+func EncriptionFile(plainConfig []byte, pub *ecdh.PublicKey) ([]byte, error) {
 	priv, err := ecdh.X25519().GenerateKey(nil)
 	if err != nil {
-		slog.Error("generate key : ", "", err)
 		return nil, err
 	}
 	sharedSecret, err := priv.ECDH(pub)
 	if err != nil {
-		slog.Error("ecdh : ", "", err)
 		return nil, err
 	}
+	cipherText, err := EncriptionKey(plainConfig, sharedSecret)
+	if err != nil {
+		return nil, err
+	}
+
+	prepub := make([]byte, 0, len(cipherText)+len(pub.Bytes()))
+	prepub = append(prepub, priv.PublicKey().Bytes()...)
+	prepub = append(prepub, cipherText...)
+	return prepub, nil
+}
+func DecriptionFile(prepubConfig []byte, priv *ecdh.PrivateKey) ([]byte, error) {
+	if len(prepubConfig) < 32 {
+		return nil, fmt.Errorf("the prepub is too short")
+	}
+
+	pub, err := ecdh.X25519().NewPublicKey(prepubConfig[:32])
+	if err != nil {
+		return nil, err
+	}
+	sharedSecret, err := priv.ECDH(pub)
+	if err != nil {
+		return nil, err
+	}
+	cipherText := prepubConfig[32:]
+
+	plainText, err := DecriptionKey(cipherText, sharedSecret)
+	if err != nil {
+		return nil, err
+	}
+
+	return plainText, nil
+}
+
+func EncriptionKey(plainValue []byte, sharedSecret []byte) ([]byte, error) {
 	key, err := deriveKey(sharedSecret)
 	if err != nil {
 		slog.Error("derive key : ", "", err)
@@ -173,26 +159,14 @@ func Encription(config []byte, pub *ecdh.PublicKey) ([]byte, error) {
 		return nil, err
 	}
 
-	cipherText := aesGCM.Seal(nonce, nonce, config, nil)
-	prepub := make([]byte, 0, len(cipherText)+len(pub.Bytes()))
-	prepub = append(prepub, priv.PublicKey().Bytes()...)
-	prepub = append(prepub, cipherText...)
-	return prepub, nil
+	cipherText := aesGCM.Seal(nonce, nonce, plainValue, nil)
+	return cipherText, nil
 }
-func Decription(prepub []byte, priv *ecdh.PrivateKey) ([]byte, error) {
-	if len(prepub) < 32 {
-		return nil, fmt.Errorf("the prepub is too short")
+func DecriptionKey(cipherValue []byte, sharedSecret []byte) ([]byte, error) {
+	if len(cipherValue) < 32 {
+		return nil, fmt.Errorf("the cipherText is too short")
 	}
 
-	pub, err := ecdh.X25519().NewPublicKey(prepub[:32])
-	if err != nil {
-		return nil, err
-	}
-	sharedSecret, err := priv.ECDH(pub)
-	if err != nil {
-		return nil, err
-	}
-	cipherText := prepub[32:]
 	key, err := deriveKey(sharedSecret)
 	if err != nil {
 		return nil, err
@@ -207,14 +181,39 @@ func Decription(prepub []byte, priv *ecdh.PrivateKey) ([]byte, error) {
 		return nil, err
 	}
 	nonceSize := aesGCM.NonceSize()
-	if len(cipherText) < nonceSize {
+	if len(cipherValue) < nonceSize {
 		return nil, fmt.Errorf("the cipher text is too short")
 	}
-	nonce, actualCipherText := cipherText[:nonceSize], cipherText[nonceSize:]
+	nonce, actualCipherText := cipherValue[:nonceSize], cipherValue[nonceSize:]
 	plainText, err := aesGCM.Open(nil, nonce, actualCipherText, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return plainText, nil
+}
+
+func ListCdConfigFiles() ([]string, error) {
+	var confs []string
+	var exeDir string
+	{
+		exeFile, err := os.Executable()
+		if err != nil {
+			return nil, err
+		}
+		exeDir = filepath.Dir(exeFile)
+	}
+	entries, err := os.ReadDir(exeDir)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			ex := filepath.Ext(entry.Name())
+			if ex == sconfig.ExtensionNameToml || ex == sconfig.ExtensionNameJson || ex == sconfig.ExtensionNameYaml {
+				confs = append(confs, entry.Name())
+			}
+		}
+	}
+	return confs, nil
 }

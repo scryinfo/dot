@@ -20,7 +20,7 @@ func TestConfig(t *testing.T) {
 	exeDir := filepath.Dir(exeFile)
 
 	configFile := filepath.Join(exeDir, filepath.Base(exeFile[:len(exeFile)-len(filepath.Ext(exeFile))]))
-	configFileExt := configFile + extensionNameToml
+	configFileExt := configFile + ExtensionNameToml
 	err = os.WriteFile(configFileExt, []byte(""), 0644)
 	assert.Nil(t, err)
 	fmt.Println("created configFileExt:", configFileExt)
@@ -35,6 +35,6 @@ func TestConfig(t *testing.T) {
 	assert.Equal(t, conf.wdPath, filepath.ToSlash(filepath.Dir(kits.Config.GetCallSourceFile())), "wdPath should be call source file dir")
 	assert.Equal(t, conf.exePath, filepath.ToSlash(exeDir), "exePath should be exeDir")
 	assert.Equal(t, conf.file, filepath.Base(configFileExt), "file should be config file name")
-	assert.Equal(t, conf.fileType, extensionNameToml[1:], "fileType should be extension name without dot")
+	assert.Equal(t, conf.fileType, ExtensionNameToml[1:], "fileType should be extension name without dot")
 
 }
