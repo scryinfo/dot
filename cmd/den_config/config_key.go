@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
@@ -55,7 +56,7 @@ func (p *ConfigKey) ConfigFile() error {
 }
 
 func (p *ConfigKey) InitExeConfs() error {
-	cs, err := ListCdConfigFiles()
+	cs, err := sconfig.ListCdConfigFiles()
 	if err != nil {
 		return err
 	}

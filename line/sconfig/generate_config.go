@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-viper/mapstructure/v2"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/scryg/sutils/sfile"
 	"github.com/spf13/viper"
@@ -90,7 +89,7 @@ func GenerateConfigWithArgs[T any](config dot.SConfig, rootConfig *T) (*T, error
 // rootConfig: the root config struct
 // returns: whether to make config, error
 func GenerateConfigGo[T any](config dot.SConfig, rootConfig *T) (bool, error) {
-	err := MergeConfig(config, rootConfig)
+	err := StructToConfigFile(config, rootConfig)
 	if err != nil {
 		// dont use the logger here, the logger is not initialized yet
 		fmt.Printf("make config err: %v\n", err)
@@ -101,39 +100,28 @@ func GenerateConfigGo[T any](config dot.SConfig, rootConfig *T) (bool, error) {
 	}
 }
 
-func MergeConfig[T any](sconf dot.SConfig, confg *T) error {
+func StructToConfigFile[T any](sconf dot.SConfig, confg *T) error {
 	name := filepath.Join(sconf.ConfigPath(), sconf.ConfigFile())
 	ext := filepath.Ext(name)
 	newName := name[:len(name)-len(ext)] + "_gen" + ext
-	return MergeConfigToNew(name, confg, newName)
+	return StructToNewConfigFile(confg, newName)
 }
 
-func MergeConfigToNew[T any](file string, pconf *T, newFile string) error {
+func StructToNewConfigFile[T any](pconf *T, newFile string) error {
 	val := reflect.ValueOf(pconf)
 	if val.Kind() != reflect.Pointer {
 		return errors.New("the parameter pconf must be a pointer type")
 	}
 	tagName := "toml"
-	if strings.HasSuffix(file, ".json") {
+	if strings.HasSuffix(newFile, ".json") {
 		tagName = "json"
-	} else if strings.HasSuffix(file, ".yaml") {
+	} else if strings.HasSuffix(newFile, ".yaml") {
 		tagName = "yaml"
 	}
 	config := viper.New()
-	if sfile.ExistFile(file) {
-		config.SetConfigFile(file)
+	if sfile.ExistFile(newFile) {
+		config.SetConfigFile(newFile)
 		config.SetConfigType(tagName)
-		if err := config.ReadInConfig(); err != nil {
-			return err
-		}
-		err := config.Unmarshal(pconf, func(dc *mapstructure.DecoderConfig) {
-			// dc.ErrorUnused = true
-			// dc.ErrorUnset = true
-			dc.TagName = tagName
-		})
-		if err != nil {
-			return err
-		}
 	}
 	kv := config.AllSettings()
 	err := structFields(tagName, kv, reflect.ValueOf(pconf))

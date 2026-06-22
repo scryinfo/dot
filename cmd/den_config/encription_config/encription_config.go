@@ -8,6 +8,7 @@ import (
 	"os"
 
 	denconfig "github.com/scryinfo/dot/cmd/den_config"
+	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
@@ -60,7 +61,7 @@ func main() {
 			return
 		}
 	}
-	chiperConfig, err := denconfig.EncriptionFile(plainConfig, pub)
+	chiperConfig, err := sconfig.EncriptionFile(plainConfig, pub)
 	if err != nil {
 		slog.Error("", "", err)
 		denconfig.Exit(err)

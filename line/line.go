@@ -44,6 +44,7 @@ var (
 	RpcdotNewGrpcClientEx         = rpcdot.NewGrpcClientEx
 	RpcdotNewGrpcServer           = rpcdot.NewGrpcServer
 
-	SconfigNewConfig      = sconfig.NewConfig
-	SconfigNewDataWithNet = sconfig.NewDataWithNet
+	SconfigNewConfig           = sconfig.NewConfig
+	SconfinNewConfigWithDecode = sconfig.NewConfigWithDecode
+	SconfigNewDataWithNet      = sconfig.NewDataWithNet
 )

@@ -4,6 +4,9 @@
 package sconfig
 
 import (
+	"bytes"
+	"crypto/ecdh"
+	"encoding/base64"
 	"fmt"
 	"log"
 	"os"
@@ -51,7 +54,8 @@ const (
 	ExtensionNameJson = ".json" //extension name of config file 配置文件的扩展名
 	ExtensionNameYaml = ".yaml" //extension name of config file 配置文件的扩展名
 	ExtensionNameToml = ".toml" //extension name of config file 配置文件的扩展名
-	separator         = "_"     //Separator
+	ExtensionNamePri  = ".pri"
+	separator         = "_" //Separator
 	conf              = "conf"
 )
 
@@ -65,6 +69,21 @@ func NewConfig() (*SConfig, error) {
 	fmt.Printf("config file: %s/%s\nexe path: %s\nwd path: %s\n", conf.confPath, conf.file, conf.exePath, conf.wdPath)
 	if err != nil {
 		// the config is the first, and the logger is not initialized, so use fmt.Printf
+		fmt.Printf("cant read the config: %+v\n", err)
+	}
+
+	return conf, err
+}
+
+// NewConfig new sConfig
+func NewConfigWithDecode() (*SConfig, error) {
+	conf := &SConfig{
+		simpleConf: viper.New(),
+	}
+	fmt.Println("initing conifg")
+	err := conf.LoadLocalWithDecode()
+	fmt.Printf("config file: %s/%s\nexe path: %s\nwd path: %s\n", conf.confPath, conf.file, conf.exePath, conf.wdPath)
+	if err != nil {
 		fmt.Printf("cant read the config: %+v\n", err)
 	}
 
@@ -98,6 +117,65 @@ func NewLineConfig[T any](config *SConfig) (*T, error) {
 }
 
 func (p *SConfig) LoadLocal() error {
+	err := p.initLocal()
+	if err != nil {
+		return err
+	}
+	f, err := os.Open(filepath.Join(p.confPath, p.file))
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if f != nil {
+			_ = f.Close()
+		}
+	}()
+	return p.simpleConf.ReadConfig(f)
+}
+func (p *SConfig) LoadLocalWithDecode() error {
+	err := p.initLocal()
+	if err != nil {
+		return err
+	}
+	if len(p.file) < 5 {
+		return fmt.Errorf("the config file name < 5")
+	}
+
+	var priv *ecdh.PrivateKey
+	{
+		priName := p.file[:len(p.file)-5] + ExtensionNamePri
+		priFile := filepath.Join(p.confPath, priName)
+		fmt.Printf("pri file:  %s\n", priFile)
+		priBytes, err := os.ReadFile(priFile)
+		if err != nil {
+			return err
+		}
+		priv, err = ecdh.X25519().NewPrivateKey(priBytes)
+		if err != nil {
+			return err
+		}
+	}
+	var chiperConfig []byte
+	{
+		chiperConfig, err = os.ReadFile(filepath.Join(p.confPath, p.file))
+		if err != nil {
+			return err
+		}
+		chiperConfig, err = base64.StdEncoding.DecodeString(string(chiperConfig))
+		if err != nil {
+			return err
+		}
+	}
+	plainConfig, err := DecriptionFile(chiperConfig, priv)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("plainConfig:  %s\n", string(plainConfig))
+	configReader := bytes.NewReader(plainConfig)
+	return p.simpleConf.ReadConfig(configReader)
+}
+
+func (p *SConfig) initLocal() error {
 	if p.wdPath == "" {
 		wd, err := os.Getwd()
 		if err != nil {
@@ -213,16 +291,7 @@ func (p *SConfig) LoadLocal() error {
 		p.simpleConf.SetConfigFile(p.file)
 		p.simpleConf.SetConfigType(p.fileType)
 	}
-	f, err := os.Open(filepath.Join(p.confPath, p.file))
-	if err != nil {
-		return err
-	}
-	defer func() {
-		if f != nil {
-			_ = f.Close()
-		}
-	}()
-	return p.simpleConf.ReadConfig(f)
+	return nil
 }
 
 func (p *SConfig) Load(getter dot.ConfigGetter) error {

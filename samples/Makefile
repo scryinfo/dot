@@ -14,7 +14,7 @@ $(info "go: ${go}")
 .PHONY: clean clean_wire upgrade format build samples
 
 
-WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sconfig simple \
+WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sconfig sconfig_de simple \
 	db/redis_client \
 	rpc/web_rpc/web_rpc_server \
 	rpc/nobl/nobl_connect_client rpc/nobl/nobl_grpc_client rpc/nobl/nobl_server \

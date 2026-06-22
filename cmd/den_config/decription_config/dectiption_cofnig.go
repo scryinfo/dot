@@ -8,6 +8,7 @@ import (
 	"os"
 
 	denconfig "github.com/scryinfo/dot/cmd/den_config"
+	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
 
@@ -40,13 +41,13 @@ func main() {
 
 	var priv *ecdh.PrivateKey
 	{
-		pubKey, err := os.ReadFile(config.PrivateFileName)
+		priBytes, err := os.ReadFile(config.PrivateFileName)
 		if err != nil {
 			slog.Error("", "", err)
 			denconfig.Exit(err)
 			return
 		}
-		priv, err = ecdh.X25519().NewPrivateKey(pubKey)
+		priv, err = ecdh.X25519().NewPrivateKey(priBytes)
 		if err != nil {
 			slog.Error("", "", err)
 			denconfig.Exit(err)
@@ -68,7 +69,7 @@ func main() {
 			return
 		}
 	}
-	plainConfig, err := denconfig.DecriptionFile(chiperConfig, priv)
+	plainConfig, err := sconfig.DecriptionFile(chiperConfig, priv)
 	if err != nil {
 		slog.Error("", "", err)
 		denconfig.Exit(err)
