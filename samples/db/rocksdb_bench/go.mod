@@ -13,7 +13,7 @@ require (
 	github.com/dgraph-io/badger/v4 v4.9.2
 	github.com/linxGnu/grocksdb v1.10.8
 	github.com/scryinfo/dot v0.9.12
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260615035300-17394cc0240f
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260617035701-48155b291a10
 	github.com/scryinfo/scryg v0.2.0
 )
 
@@ -25,7 +25,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cockroachdb/crlib v0.0.0-20251122031428-fe658a2dbda1 // indirect
-	github.com/cockroachdb/errors v1.13.0 // indirect
+	github.com/cockroachdb/errors v1.14.0 // indirect
 	github.com/cockroachdb/logtags v0.0.0-20241215232642-bb51bb14a506 // indirect
 	github.com/cockroachdb/redact v1.1.8 // indirect
 	github.com/cockroachdb/swiss v0.0.0-20251224182025-b0f6560f979b // indirect
@@ -33,7 +33,7 @@ require (
 	github.com/dgraph-io/ristretto/v2 v2.4.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
-	github.com/getsentry/sentry-go v0.46.2 // indirect
+	github.com/getsentry/sentry-go v0.47.0 // indirect
 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -61,11 +61,11 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/pelletier/go-toml/v2 v2.3.1 // indirect
+	github.com/pelletier/go-toml/v2 v2.4.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
-	github.com/prometheus/common v0.68.1 // indirect
+	github.com/prometheus/common v0.69.0 // indirect
 	github.com/prometheus/procfs v0.20.1 // indirect
 	github.com/rogpeppe/go-internal v1.15.0 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect

@@ -36,6 +36,10 @@ tidy:
 	cd db/rocksdb_bench && ${go} mod tidy
 upgrade:
 	cd rpc/web_rpc/client && bun update --latest
+	cd db/rocksdb && ${go} get -t ./... && ${go} mod tidy
+	cd db/rocksdb_bench && ${go} get -t ./... && ${go} mod tidy
+upgrade_latest:
+	cd rpc/web_rpc/client && bun update --latest
 	cd db/rocksdb && ${go} get -t -u ./... && ${go} mod tidy
 	cd db/rocksdb_bench && ${go} get -t -u ./... && ${go} mod tidy
 format:

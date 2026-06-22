@@ -46,6 +46,15 @@ tidy:
 	cd line/db/rocksdbdot && ${go} mod tidy
 	cd samples && make tidy
 upgrade:
+	${go} get -t ./... && ${go} mod tidy
+	cd demo && ${go} get -t ./... && ${go} mod tidy
+	cd demo/redis && ${go} get -t ./... && ${go} mod tidy
+	cd demo/redis/orm && ${go} get -t ./... && ${go} mod tidy
+	cd line/db/tools/gdao && ${go} get -t ./... && ${go} mod tidy
+	cd line/db/tools/gmodel && ${go} get -t ./... && ${go} mod tidy
+	cd line/db/rocksdbdot && ${go} get -t ./... && ${go} mod tidy
+	cd samples && make upgrade
+upgrade_latest:
 	${go} get -t -u ./... && ${go} mod tidy
 	cd demo && ${go} get -t -u ./... && ${go} mod tidy
 	cd demo/redis && ${go} get -t -u ./... && ${go} mod tidy
@@ -53,7 +62,7 @@ upgrade:
 	cd line/db/tools/gdao && ${go} get -t -u ./... && ${go} mod tidy
 	cd line/db/tools/gmodel && ${go} get -t -u ./... && ${go} mod tidy
 	cd line/db/rocksdbdot && ${go} get -t -u ./... && ${go} mod tidy
-	cd samples && make upgrade
+	cd samples && make upgrade_latest
 format:
 	${go} fmt ./...
 	cd demo && ${go} fmt ./...
