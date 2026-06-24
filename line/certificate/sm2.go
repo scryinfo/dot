@@ -4,12 +4,13 @@
 package certificate
 
 import (
+	"crypto/ecdsa"
 	"crypto/rand"
-	"crypto/x509"
 	"fmt"
 
+	"github.com/emmansun/gmsm/sm2"
+	"github.com/emmansun/gmsm/smx509"
 	"github.com/pkg/errors"
-	"github.com/tjfoc/gmsm/sm2"
 
 	"github.com/scryinfo/dot/dot"
 )
@@ -20,7 +21,7 @@ type Sm2 struct {
 	certificate BaseCertificate
 }
 
-func NewRsa(logger *dot.LoggerType) *Sm2 {
+func NewSm2(logger *dot.LoggerType) *Sm2 {
 	return &Sm2{
 		logger:      logger,
 		certificate: BaseCertificate{logger: logger},
@@ -29,21 +30,21 @@ func NewRsa(logger *dot.LoggerType) *Sm2 {
 
 // GenerateRoot Generate ca certificate and private key
 // keyFile private key, pemFile ca certificate file
-func (c *Sm2) GenerateRoot(rootPri *sm2.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
+func (c *Sm2) GenerateRoot(rootPri *sm2.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*smx509.Certificate, error) {
 
-	rootCert, err := c.certificate.GenerateRoot(x509.PureEd25519, dnsName, orgName)
+	rootCert, err := c.certificate.GenerateRootGm(smx509.UnknownSignatureAlgorithm, dnsName, orgName)
 	if err != nil {
 		return nil, err
 	}
-	err = c.certificate.GenerateRootFile(rootPri, rootCert, rootPri.Public(), keyFile, pemFile)
+	err = c.certificate.GenerateRootFileGm(rootPri, rootCert, &rootPri.PublicKey, keyFile, pemFile)
 
 	return rootCert, err
 }
 
 // GenerateLeaf Generate subcertificate and private key
 // keyFile private file, pemFile subcertificate file
-func (c *Sm2) GenerateLeaf(rootCert *x509.Certificate, rootPri *sm2.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
-	leaf, err := c.certificate.GenerateLeafCertificate(x509.PureEd25519, dnsName, orgName)
+func (c *Sm2) GenerateLeaf(rootCert *smx509.Certificate, rootPri *sm2.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*smx509.Certificate, error) {
+	leaf, err := c.certificate.GenerateLeafCertificateGm(smx509.UnknownSignatureAlgorithm, dnsName, orgName)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +52,7 @@ func (c *Sm2) GenerateLeaf(rootCert *x509.Certificate, rootPri *sm2.PrivateKey, 
 	if err != nil {
 		return nil, err
 	}
-	err = c.certificate.GenerateLeafFile(leafPri, leaf, leafPri.Public(), keyFile, pemFile, rootCert, rootPri)
+	err = c.certificate.GenerateLeafFileGm(leafPri, leaf, &leafPri.PublicKey, keyFile, pemFile, rootCert, rootPri)
 	return leaf, err
 }
 
@@ -71,13 +72,13 @@ func (c *Sm2) PrivateKey(keyFile string) (*sm2.PrivateKey, error) {
 }
 
 // PublicKey Read public key from certFile
-func (c *Sm2) PublicKey(certFile string) (*sm2.PublicKey, error) {
-	cer, err := c.certificate.LoadCertificate(certFile)
+func (c *Sm2) PublicKey(certFile string) (*ecdsa.PublicKey, error) {
+	cer, err := c.certificate.LoadCertificateGm(certFile)
 	if err != nil {
 		return nil, err
 	}
 
-	if tpub, ok := cer.PublicKey.(*sm2.PublicKey); ok {
+	if tpub, ok := cer.PublicKey.(*ecdsa.PublicKey); ok {
 		return tpub, nil
 	} else {
 		return nil, errors.New("do not sm2.PublicKey")

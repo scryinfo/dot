@@ -9,20 +9,20 @@ import (
 	"testing"
 
 	"github.com/scryinfo/dot/dot"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestEd25519_GenerateECDSAKey(t *testing.T) {
 	ec := NewEd25519(dot.NewLogger(&dot.LogConfig{}))
 
 	rootKey, err := MakeEd25519Key()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Nil(t, err)
 
 	keyFile := "root.key"
 	certFile := "root.cert"
 	{
-		exPath, _ := os.Executable()
+		exPath, err := os.Executable()
+		assert.Nil(t, err)
 		exPath = filepath.Dir(exPath)
 		keyFile = filepath.Join(exPath, keyFile)
 		certFile = filepath.Join(exPath, certFile)
@@ -33,30 +33,15 @@ func TestEd25519_GenerateECDSAKey(t *testing.T) {
 		_ = os.Remove(keyFile)
 		_ = os.Remove(certFile)
 	}()
-
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Nil(t, err)
 
 	loadKey, err := ec.PrivateKey(keyFile)
-	if err != nil {
-		t.Error(err)
-	}
-	if err == nil {
-		if !rootKey.Equal(loadKey) {
-			t.Error(err)
-		}
-	}
+	assert.Nil(t, err)
+	assert.True(t, rootKey.Equal(loadKey))
 
 	caPub, err := ec.PublicKey(certFile)
-	if err != nil {
-		t.Error(err)
-	}
-	if err == nil {
-		if !caPub.Equal(rootKey.Public()) {
-			t.Error(err)
-		}
-	}
+	assert.Nil(t, err)
+	assert.True(t, caPub.Equal(rootKey.Public()))
 
 }
 
@@ -65,9 +50,7 @@ func TestEd25519_GenerateCertKey(t *testing.T) {
 	ec := NewEd25519(dot.NewLogger(&dot.LogConfig{}))
 
 	rootKey, err := MakeEd25519Key()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Nil(t, err)
 
 	rootKeyFile := "root.key"
 	rootCertFile := "cert.cert"
@@ -90,32 +73,20 @@ func TestEd25519_GenerateCertKey(t *testing.T) {
 		_ = os.Remove(leafCertFile)
 	}()
 
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Nil(t, err)
 
 	_, err = ec.GenerateLeaf(rootCert, rootKey, leafKeyFile, leafCertFile, []string{"scry"}, []string{"scry"})
 	defer func() {
 		_ = os.Remove(leafKeyFile)
 		_ = os.Remove(leafCertFile)
 	}()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Nil(t, err)
 
 	leafKey, err := ec.PrivateKey(leafKeyFile)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Nil(t, err)
 
 	caPub, err := ec.PublicKey(leafCertFile)
-	if err != nil {
-		t.Error(err)
-	}
-	if err == nil {
-		if !caPub.Equal(leafKey.Public()) {
-			t.Error(err)
-		}
-	}
+	assert.Nil(t, err)
+	assert.True(t, caPub.Equal(leafKey.Public()))
 
 }

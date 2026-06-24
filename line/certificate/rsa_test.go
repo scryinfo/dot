@@ -12,10 +12,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEcdsa_GenerateECDSAKey(t *testing.T) {
-	ec := NewEcdsa(dot.NewLogger(&dot.LogConfig{}))
+func TestRsa_GenerateRsaKey(t *testing.T) {
+	ec := NewRsa(dot.NewLogger(&dot.LogConfig{}))
 
-	rootKey, err := MakeECDSAKey()
+	rootKey, err := MakeRsaKey()
 	assert.Nil(t, err)
 
 	keyFile := "root.key"
@@ -42,13 +42,14 @@ func TestEcdsa_GenerateECDSAKey(t *testing.T) {
 	caPub, err := ec.PublicKey(certFile)
 	assert.Nil(t, err)
 	assert.True(t, rootKey.PublicKey.Equal(caPub))
+
 }
 
-func TestEcdsa_GenerateCertKey(t *testing.T) {
+func TestRsa_GenerateCertKey(t *testing.T) {
 
-	ec := NewEcdsa(dot.NewLogger(&dot.LogConfig{}))
+	ec := NewRsa(dot.NewLogger(&dot.LogConfig{}))
 
-	rootKey, err := MakeECDSAKey()
+	rootKey, err := MakeRsaKey()
 	assert.Nil(t, err)
 
 	rootKeyFile := "root.key"

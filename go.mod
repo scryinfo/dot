@@ -7,9 +7,11 @@ replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260610
 
 require (
 	connectrpc.com/connect v1.20.0
+	github.com/alicebob/miniredis/v2 v2.38.0
 	github.com/cloudflare/tableflip v1.2.3
 	github.com/cockroachdb/pebble/v2 v2.1.6
 	github.com/dgraph-io/badger/v4 v4.9.2
+	github.com/emmansun/gmsm v0.43.0
 	github.com/gin-gonic/gin v1.12.0
 	github.com/go-kit/kit v0.13.0
 	github.com/go-viper/mapstructure/v2 v2.5.0
@@ -25,7 +27,6 @@ require (
 	github.com/scryinfo/scryg v0.2.0
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
-	github.com/tjfoc/gmsm v1.4.1
 	github.com/uptrace/bun v1.2.18
 	github.com/uptrace/bun/dialect/pgdialect v1.2.18
 	github.com/uptrace/bun/driver/pgdriver v1.2.18
@@ -141,6 +142,7 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xiang90/probing v0.0.0-20221125231312-a49e3df8f510 // indirect
+	github.com/yuin/gopher-lua v1.1.1 // indirect
 	go.etcd.io/bbolt v1.5.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.6.12 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.6.12 // indirect

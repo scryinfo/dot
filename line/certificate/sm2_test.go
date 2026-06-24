@@ -12,10 +12,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEcdsa_GenerateECDSAKey(t *testing.T) {
-	ec := NewEcdsa(dot.NewLogger(&dot.LogConfig{}))
+func TestSm2_GenerateSm2Key(t *testing.T) {
+	ec := NewSm2(dot.NewLogger(&dot.LogConfig{}))
 
-	rootKey, err := MakeECDSAKey()
+	rootKey, err := MakeSm2Key()
 	assert.Nil(t, err)
 
 	keyFile := "root.key"
@@ -37,18 +37,19 @@ func TestEcdsa_GenerateECDSAKey(t *testing.T) {
 
 	loadKey, err := ec.PrivateKey(keyFile)
 	assert.Nil(t, err)
-	assert.True(t, rootKey.Equal(loadKey))
+	assert.True(t, rootKey.D.Cmp(loadKey.D) == 0)
 
 	caPub, err := ec.PublicKey(certFile)
 	assert.Nil(t, err)
-	assert.True(t, rootKey.PublicKey.Equal(caPub))
+	assert.True(t, rootKey.PublicKey.X.Cmp(caPub.X) == 0 && rootKey.PublicKey.Y.Cmp(caPub.Y) == 0)
+
 }
 
-func TestEcdsa_GenerateCertKey(t *testing.T) {
+func TestSm2_GenerateCertKey(t *testing.T) {
 
-	ec := NewEcdsa(dot.NewLogger(&dot.LogConfig{}))
+	ec := NewSm2(dot.NewLogger(&dot.LogConfig{}))
 
-	rootKey, err := MakeECDSAKey()
+	rootKey, err := MakeSm2Key()
 	assert.Nil(t, err)
 
 	rootKeyFile := "root.key"
@@ -84,5 +85,5 @@ func TestEcdsa_GenerateCertKey(t *testing.T) {
 
 	caPub, err := ec.PublicKey(leafCertFile)
 	assert.Nil(t, err)
-	assert.True(t, leafKey.PublicKey.Equal(caPub))
+	assert.True(t, leafKey.PublicKey.X.Cmp(caPub.X) == 0 && leafKey.PublicKey.Y.Cmp(caPub.Y) == 0)
 }

@@ -22,7 +22,7 @@ type Rsa struct {
 	certificate BaseCertificate
 }
 
-func NewSm2(logger *dot.LoggerType) *Rsa {
+func NewRsa(logger *dot.LoggerType) *Rsa {
 	return &Rsa{
 		logger:      logger,
 		certificate: BaseCertificate{logger: logger},
@@ -33,7 +33,7 @@ func NewSm2(logger *dot.LoggerType) *Rsa {
 // keyFile private key, pemFile ca certificate file
 func (c *Rsa) GenerateRoot(rootPri *rsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
 
-	rootCert, err := c.certificate.GenerateRoot(x509.PureEd25519, dnsName, orgName)
+	rootCert, err := c.certificate.GenerateRoot(x509.SHA256WithRSA, dnsName, orgName)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *Rsa) GenerateRoot(rootPri *rsa.PrivateKey, keyFile string, pemFile stri
 // GenerateLeaf Generate subcertificate and private key
 // keyFile private file, pemFile subcertificate file
 func (c *Rsa) GenerateLeaf(rootCert *x509.Certificate, rootPri *rsa.PrivateKey, keyFile string, pemFile string, dnsName []string, orgName []string) (*x509.Certificate, error) {
-	leaf, err := c.certificate.GenerateLeafCertificate(x509.PureEd25519, dnsName, orgName)
+	leaf, err := c.certificate.GenerateLeafCertificate(x509.SHA256WithRSA, dnsName, orgName)
 	if err != nil {
 		return nil, err
 	}

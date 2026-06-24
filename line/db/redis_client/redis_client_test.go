@@ -4,11 +4,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/alicebob/miniredis/v2"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRedisClient_GetVersions(t *testing.T) {
-	redisClient := makeTestRedisClientFalse()
+	mRedis := miniredis.RunT(t)
+	redisClient := makeTestRedisClientFalse(mRedis.Addr())
 	assert.NotEqual(t, nil, redisClient)
 	category := "test"
 	version := "1.0"
@@ -61,7 +63,7 @@ func TestRedisClient_GetVersions(t *testing.T) {
 		assert.Equal(t, []string{}, getVersions)
 	}
 
-	redisClient = makeTestRedisClientTrue()
+	redisClient = makeTestRedisClientTrue(mRedis.Addr())
 	assert.NotEqual(t, nil, redisClient)
 	{
 		redisClient.SetVersion(category, version)
@@ -117,24 +119,24 @@ var (
 	clientCancelFalse func()
 )
 
-func makeTestRedisClientTrue() *RedisClient {
+func makeTestRedisClientTrue(addr string) *RedisClient {
 	if clientTrue != nil {
 		return clientTrue
 	}
 	config := &RedisConfig{
-		Addr:                "127.0.0.1:6379",
+		Addr:                addr,
 		KeepMaxVersionCount: 3,
 		VersionFromRedis:    true,
 	}
 	clientTrue, clientCancelTrue, _ = NewRedisClient(config)
 	return clientTrue
 }
-func makeTestRedisClientFalse() *RedisClient {
+func makeTestRedisClientFalse(addr string) *RedisClient {
 	if clientFalse != nil {
 		return clientFalse
 	}
 	config := &RedisConfig{
-		Addr:                "127.0.0.1:6379",
+		Addr:                addr,
 		KeepMaxVersionCount: 3,
 		VersionFromRedis:    false,
 	}

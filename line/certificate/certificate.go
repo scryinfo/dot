@@ -19,6 +19,9 @@ import (
 
 	"github.com/pkg/errors"
 
+	"github.com/emmansun/gmsm/pkcs8"
+	"github.com/emmansun/gmsm/sm2"
+	"github.com/emmansun/gmsm/smx509"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/scryg/sutils/sfile"
 )
@@ -64,6 +67,36 @@ func (c *BaseCertificate) GenerateRoot(signatureAlgorithm x509.SignatureAlgorith
 	return rootCert, err
 }
 
+// GenerateRoot Generate root certificate
+func (c *BaseCertificate) GenerateRootGm(signatureAlgorithm smx509.SignatureAlgorithm, dnsName []string, orgName []string) (*smx509.Certificate, error) {
+	serialNumber, err := c.makeSerialNumber()
+	if err != nil {
+		return nil, err
+	}
+
+	rootCert := &smx509.Certificate{
+		SerialNumber: serialNumber,
+		Subject: pkix.Name{
+			Country:       []string{"cn"},
+			Locality:      []string{"scry"},
+			Province:      []string{"scry"},
+			Organization:  orgName,
+			StreetAddress: []string{"scry"},
+			PostalCode:    []string{"scry"},
+			CommonName:    "scry",
+		},
+		DNSNames:              dnsName,
+		NotBefore:             time.Now(),
+		NotAfter:              time.Now().AddDate(100, 0, 0),
+		BasicConstraintsValid: true,
+		IsCA:                  true,
+		SignatureAlgorithm:    signatureAlgorithm,
+		ExtKeyUsage:           []smx509.ExtKeyUsage{smx509.ExtKeyUsageClientAuth, smx509.ExtKeyUsageServerAuth},
+		KeyUsage:              smx509.KeyUsageKeyEncipherment | smx509.KeyUsageDigitalSignature | smx509.KeyUsageCertSign,
+	}
+	return rootCert, err
+}
+
 // GenerateRootFile
 // keyFile private key, pemFile from certificate file
 func (c *BaseCertificate) GenerateRootFile(pri any, rootCert *x509.Certificate, pub any, keyFile string, pemFile string) error {
@@ -90,10 +123,60 @@ func (c *BaseCertificate) GenerateRootFile(pri any, rootCert *x509.Certificate, 
 	return c.KeyFile(pri, keyFile)
 }
 
+// GenerateRootFile
+// keyFile private key, pemFile from certificate file
+func (c *BaseCertificate) GenerateRootFileGm(pri *sm2.PrivateKey, rootCert *smx509.Certificate, pub *ecdsa.PublicKey, keyFile string, pemFile string) error {
+	{
+		certBytes, err := smx509.CreateCertificate(rand.Reader, rootCert, rootCert, pub, pri)
+		if err != nil {
+			return err
+		}
+
+		file := ""
+		file, err = wdFileAndMakeDirs(pemFile)
+		if err != nil {
+			return err
+		}
+		certOut, err := os.Create(file)
+		if err != nil {
+			return err
+		}
+		defer certOut.Close()
+		if err = pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: certBytes}); err != nil {
+			return err
+		}
+	}
+	return c.KeyFileGm(pri, keyFile)
+}
+
 // KeyFile
 // keyFile private file
 func (c *BaseCertificate) KeyFile(leafPri any, keyFile string) error {
 	privBytes, err := x509.MarshalPKCS8PrivateKey(leafPri)
+	if err != nil {
+		return err
+	}
+	file := ""
+	file, err = wdFileAndMakeDirs(keyFile)
+	if err != nil {
+		return err
+	}
+	keyOut, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		return err
+	}
+	defer keyOut.Close()
+	if err = pem.Encode(keyOut, &pem.Block{Type: "PRIVATE KEY", Bytes: privBytes}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// KeyFile
+// keyFile private file
+func (c *BaseCertificate) KeyFileGm(leafPri *sm2.PrivateKey, keyFile string) error {
+	privBytes, err := pkcs8.MarshalPrivateKey(leafPri, nil, nil)
 	if err != nil {
 		return err
 	}
@@ -145,6 +228,37 @@ func (c *BaseCertificate) GenerateLeafCertificate(signatureAlgorithm x509.Signat
 	return leafCert, nil
 }
 
+// GenerateLeafCertificate Generate subcertificate and private key
+// keyFile private file, pemFile subcertificate file
+func (c *BaseCertificate) GenerateLeafCertificateGm(signatureAlgorithm smx509.SignatureAlgorithm, dnsName []string, orgName []string) (*smx509.Certificate, error) {
+	serialNumber, err := c.makeSerialNumber()
+	if err != nil {
+		return nil, err
+	}
+	leafCert := &smx509.Certificate{
+		SerialNumber: serialNumber,
+		Subject: pkix.Name{
+			Country:       []string{"cn"},
+			Locality:      []string{"scry"},
+			Province:      []string{"scry"},
+			Organization:  orgName,
+			StreetAddress: []string{"scry"},
+			PostalCode:    []string{"scry"},
+			CommonName:    "scry",
+		},
+		DNSNames:              dnsName,
+		NotBefore:             time.Now(),
+		NotAfter:              time.Now().AddDate(100, 0, 0),
+		BasicConstraintsValid: true,
+		IsCA:                  false,
+		SignatureAlgorithm:    signatureAlgorithm,
+		ExtKeyUsage:           []smx509.ExtKeyUsage{smx509.ExtKeyUsageClientAuth, smx509.ExtKeyUsageServerAuth},
+		KeyUsage:              smx509.KeyUsageKeyEncipherment | smx509.KeyUsageDigitalSignature | smx509.KeyUsageCertSign,
+	}
+
+	return leafCert, nil
+}
+
 // GenerateECDSALeafFile Generate subcertificate and private key
 // keyFile private file, pemFile subcertificate file
 func (c *BaseCertificate) GenerateLeafFile(leafPri any, leafCert *x509.Certificate, leafPub any, keyFile string, pemFile string, rootCert *x509.Certificate, rootPri any) error {
@@ -173,6 +287,34 @@ func (c *BaseCertificate) GenerateLeafFile(leafPri any, leafCert *x509.Certifica
 	return c.KeyFile(leafPri, keyFile)
 }
 
+// GenerateECDSALeafFile Generate subcertificate and private key
+// keyFile private file, pemFile subcertificate file
+func (c *BaseCertificate) GenerateLeafFileGm(leafPri *sm2.PrivateKey, leafCert *smx509.Certificate, leafPub *ecdsa.PublicKey, keyFile string, pemFile string, rootCert *smx509.Certificate, rootPri *sm2.PrivateKey) error {
+
+	{
+		certBytes, err := smx509.CreateCertificate(rand.Reader, leafCert, rootCert, leafPub, rootPri)
+		if err != nil {
+			return err
+		}
+
+		file := ""
+		file, err = wdFileAndMakeDirs(pemFile)
+		if err != nil {
+			return err
+		}
+		certOut, err := os.Create(file)
+		if err != nil {
+			return err
+		}
+		defer certOut.Close()
+		if err = pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: certBytes}); err != nil {
+			return err
+		}
+	}
+
+	return c.KeyFileGm(leafPri, keyFile)
+}
+
 func (c *BaseCertificate) LoadPrivateKey(keyFile string) (any, error) {
 	data, err := os.ReadFile(keyFile)
 	if err != nil {
@@ -186,10 +328,16 @@ func (c *BaseCertificate) LoadPrivateKey(keyFile string) (any, error) {
 
 	key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
-		if rsaKey, err2 := x509.ParsePKCS1PrivateKey(block.Bytes); err2 == nil {
+		if rsaKey, err := x509.ParsePKCS1PrivateKey(block.Bytes); err == nil {
 			return rsaKey, nil
 		}
-		return nil, err
+		if err != nil {
+			if rsaKey, err := pkcs8.ParsePKCS8PrivateKey(block.Bytes); err == nil {
+				return rsaKey, nil
+			}
+			return nil, err
+		}
+
 	}
 
 	return key, nil
@@ -204,6 +352,8 @@ func (c *BaseCertificate) KeyType(key any) {
 	case ed25519.PrivateKey:
 
 	case ecdh.PrivateKey:
+
+	case *sm2.PrivateKey:
 
 		// case *mlkem768.PrivateKey: //go 1.27
 	}
@@ -229,6 +379,35 @@ func (c *BaseCertificate) LoadCertificate(pemFile string) (cert *x509.Certificat
 
 	if block.Type == "CERTIFICATE" {
 		cert, err = x509.ParseCertificate(block.Bytes)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, errors.New("must be CERTIFICATE")
+	}
+	return cert, err
+}
+
+// LoadCertificate Read certificate from pemFile
+func (c *BaseCertificate) LoadCertificateGm(pemFile string) (cert *smx509.Certificate, err error) {
+	file, err := wdFile(pemFile)
+
+	if err != nil || len(file) < 1 {
+		return nil, errors.New("file do not exist")
+	}
+
+	bs, err := os.ReadFile(file)
+	if err != nil {
+		return nil, err
+	}
+
+	block, _ := pem.Decode(bs)
+	if block == nil || block.Bytes == nil {
+		return nil, errors.New("do not parse the data of file")
+	}
+
+	if block.Type == "CERTIFICATE" {
+		cert, err = smx509.ParseCertificate(block.Bytes)
 		if err != nil {
 			return nil, err
 		}
