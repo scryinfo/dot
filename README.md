@@ -55,7 +55,8 @@ func main() {
 		if line.Logger != nil {
 			line.Logger.Error().Err(err).Msg("initialize service failed")
 		} else {
-			fmt.Printf("%s\n", err.Error())
+			dot.Logger.Info().Msg(err.Error())
+			fmt.Println()
 		}
 		return
 	}

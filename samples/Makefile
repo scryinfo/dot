@@ -50,7 +50,7 @@ format:
 DIST_web_rpc_client := rpc/web_rpc/client/dist/index.html
 $(DIST_web_rpc_client): $(shell find rpc/web_rpc/client/src -type f)
 	cd rpc/web_rpc/client && bun install && bun run build
-build: wire samples $(DIST_web_rpc_client)
+build: wire $(DIST_web_rpc_client)
 	cd db/rocksdb_bench && make build
 
 rebuild: clean gen build
@@ -84,6 +84,8 @@ $(foreach wire,$(WIRES),$(eval $(call generate_config_rule,$(wire))))
 db/rocksdb/rocksdb_gen.toml: db/rocksdb/rocksdb.go db/rocksdb/wire_gen.go
 	cd db/rocksdb && make generate_config
 generate_config: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))_gen.toml) db/rocksdb/rocksdb_gen.toml
+clear_config:
+	rm -f $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))_gen.toml) db/rocksdb/rocksdb_gen.toml
 
 gen:
 	cd rpc/proto && make gen

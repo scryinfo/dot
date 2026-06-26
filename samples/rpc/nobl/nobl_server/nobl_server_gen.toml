@@ -4,6 +4,7 @@ allow_credentials = true
 allow_headers = []
 allow_methods = ['GET', 'POST', 'OPTIONS']
 allowed_origins = []
+auto_run = true
 http1 = true
 http2 = true
 max_concurrent_streams = 100
@@ -26,6 +27,7 @@ name = 'nobl_server'
 
 [log]
 add_stdout = true
+add_stdout_in_debug = false
 compress = false
 file_name = 'log.log'
 level = 'info'

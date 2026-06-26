@@ -61,7 +61,7 @@ func GenerateConfigWithArgs[T any](config dot.SConfig, rootConfig *T) (*T, error
 					if err == nil {
 						generateConfig = v
 					} else {
-						fmt.Printf("cant parse GenerateConfig value: %s, set the GenerateConfig to false, err: %v\n", suf, err)
+						dot.Logger.Error().Err(err).Msgf("cant parse GenerateConfig value: %s, set the GenerateConfig to false", suf)
 						generateConfig = false
 					}
 					break
@@ -92,10 +92,10 @@ func GenerateConfigGo[T any](config dot.SConfig, rootConfig *T) (bool, error) {
 	err := StructToConfigFile(config, rootConfig)
 	if err != nil {
 		// dont use the logger here, the logger is not initialized yet
-		fmt.Printf("make config err: %v\n", err)
+		dot.Logger.Error().AnErr("make config", err).Send()
 		return false, err
 	} else {
-		fmt.Println("make config success")
+		dot.Logger.Info().Msg("make config success")
 		return true, nil
 	}
 }

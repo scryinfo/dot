@@ -14,6 +14,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/db/buns"
 	"github.com/scryinfo/dot/line/db/tools"
 	"github.com/scryinfo/scryg/sutils/sfile"
@@ -62,7 +63,7 @@ func parms(data *tData) {
 	flag.BoolVar(&v, "version", false, "show version")
 	flag.Parse()
 	if v {
-		fmt.Println("version: ", appVersion)
+		dot.Logger.Info().Msgf("version: %s", appVersion)
 		os.Exit(0)
 	}
 

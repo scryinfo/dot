@@ -5,7 +5,6 @@ import (
 	"crypto/ed25519"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"os"
 	"syscall"
 
@@ -151,6 +150,6 @@ func (c *Encode) parseEnParameter() bool {
 		logger.Error().Err(err).Send()
 		return false
 	}
-	fmt.Printf("encode successful, file: %s\n", c.conf.OutFile)
+	dot.Logger.Info().Msgf("encode successful, file: %s\n", c.conf.OutFile)
 	return true
 }

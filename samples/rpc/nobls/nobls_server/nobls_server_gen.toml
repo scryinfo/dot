@@ -27,6 +27,7 @@ name = 'nobls_server'
 
 [log]
 add_stdout = true
+add_stdout_in_debug = false
 compress = false
 file_name = 'log.log'
 level = 'info'

@@ -4,10 +4,11 @@ import (
 	"crypto/ed25519"
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
-	sx255192 "github.com/scryinfo/dot/lib/scrypto/sx25519"
 	"io"
 	"log"
+
+	"github.com/scryinfo/dot/dot"
+	sx255192 "github.com/scryinfo/dot/lib/scrypto/sx25519"
 )
 
 const (
@@ -68,14 +69,14 @@ func GenerateKey(name string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("ed25519 keys\nprivate: %s\npublic: %s\n", hex.EncodeToString(privateKey), hex.EncodeToString(publicKey))
+		dot.Logger.Info().Msgf("ed25519 keys\nprivate: %s\npublic: %s\n", hex.EncodeToString(privateKey), hex.EncodeToString(publicKey))
 		break
 	case generate_x25519:
 		privateKey, publicKey, err := GenerateX25519Key(nil)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("x25519 keys\nprivate: %s\npublic: %s\n", hex.EncodeToString(privateKey), hex.EncodeToString(publicKey))
+		dot.Logger.Info().Msgf("x25519 keys\nprivate: %s\npublic: %s\n", hex.EncodeToString(privateKey), hex.EncodeToString(publicKey))
 		break
 	default:
 		break

@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -74,7 +73,6 @@ func DecriptionFile(prepubConfig []byte, priv *ecdh.PrivateKey) ([]byte, error) 
 func EncriptionKey(plainValue []byte, sharedSecret []byte) ([]byte, error) {
 	key, err := deriveKey(sharedSecret)
 	if err != nil {
-		slog.Error("derive key : ", "", err)
 		return nil, err
 	}
 

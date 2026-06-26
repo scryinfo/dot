@@ -9,6 +9,7 @@ x25519_peer_key = '6c99f0ecbe3702088b2cf9f130a0980cb9eab2d2f45f83ee2cf819ac88e68
 
 [log]
 add_stdout = true
+add_stdout_in_debug = false
 compress = false
 file_name = 'log.log'
 level = 'info'

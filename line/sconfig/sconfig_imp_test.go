@@ -4,11 +4,11 @@
 package sconfig
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +23,7 @@ func TestConfig(t *testing.T) {
 	configFileExt := configFile + ExtensionNameToml
 	err = os.WriteFile(configFileExt, []byte(""), 0644)
 	assert.Nil(t, err)
-	fmt.Println("created configFileExt:", configFileExt)
+	dot.Logger.Info().Msgf("created configFileExt: %s", configFileExt)
 	defer func() {
 		os.Remove(configFileExt)
 	}()

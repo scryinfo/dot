@@ -11,7 +11,7 @@ import (
 func TestRedisClient_GetVersions(t *testing.T) {
 	mRedis := miniredis.RunT(t)
 	redisClient := makeTestRedisClientFalse(mRedis.Addr())
-	assert.NotEqual(t, nil, redisClient)
+	assert.NotNil(t, redisClient)
 	category := "test"
 	version := "1.0"
 	itemKey1 := "tkey"
@@ -20,10 +20,10 @@ func TestRedisClient_GetVersions(t *testing.T) {
 	{
 		redisClient.SetVersion(category, version)
 		getVersion, err := redisClient.GetVersion(category)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		assert.Equal(t, version, getVersion)
 		getVersions, err := redisClient.GetVersions(category)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		assert.Equal(t, version, getVersions[0])
 		time.Sleep(2 * time.Second)
 	}
@@ -33,14 +33,14 @@ func TestRedisClient_GetVersions(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, "", getValue)
 		_, err = redisClient.Set(category, version, itemKey1, value1, 0)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 
 		getValue, err = redisClient.Get(category, version, itemKey1)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		assert.Equal(t, value1, getValue)
 
 		count, err := redisClient.Del(category, version, itemKey1)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		assert.Equal(t, int64(1), count)
 		getValue, err = redisClient.Get(category, version, itemKey1)
 		assert.NotNil(t, err)
@@ -50,7 +50,7 @@ func TestRedisClient_GetVersions(t *testing.T) {
 	{
 		redisClient.Set(category, version, itemKey1, value1, 0)
 		err := redisClient.CleanVersion(category, version)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		getValue, err := redisClient.Get(category, version, itemKey1)
 		assert.NotNil(t, err)
 		assert.Equal(t, "", getValue)
@@ -59,7 +59,7 @@ func TestRedisClient_GetVersions(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, "", getVersion)
 		getVersions, err := redisClient.GetVersions(category)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		assert.Equal(t, []string{}, getVersions)
 	}
 
@@ -68,10 +68,10 @@ func TestRedisClient_GetVersions(t *testing.T) {
 	{
 		redisClient.SetVersion(category, version)
 		getVersion, err := redisClient.GetVersion(category)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		assert.Equal(t, version, getVersion)
 		getVersions, err := redisClient.GetVersions(category)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		assert.Equal(t, version, getVersions[0])
 	}
 
@@ -80,14 +80,14 @@ func TestRedisClient_GetVersions(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, "", getValue)
 		_, err = redisClient.Set(category, version, itemKey1, value1, 0)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 
 		getValue, err = redisClient.Get(category, version, itemKey1)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		assert.Equal(t, value1, getValue)
 
 		count, err := redisClient.Del(category, version, itemKey1)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		assert.Equal(t, int64(1), count)
 		getValue, err = redisClient.Get(category, version, itemKey1)
 		assert.NotNil(t, err)
@@ -97,7 +97,7 @@ func TestRedisClient_GetVersions(t *testing.T) {
 	{
 		redisClient.Set(category, version, itemKey1, value1, 0)
 		err := redisClient.CleanVersion(category, version)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		getValue, err := redisClient.Get(category, version, itemKey1)
 		assert.NotNil(t, err)
 		assert.Equal(t, "", getValue)
@@ -106,7 +106,7 @@ func TestRedisClient_GetVersions(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, "", getVersion)
 		getVersions, err := redisClient.GetVersions(category)
-		assert.Equal(t, nil, err)
+		assert.Nil(t, err)
 		assert.Equal(t, []string{}, getVersions)
 	}
 	cleanup()

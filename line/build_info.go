@@ -1,7 +1,6 @@
 package line
 
 import (
-	"fmt"
 	"os"
 	"runtime/debug"
 	"strings"
@@ -122,5 +121,5 @@ func LogBuildInfo(info BuildInfo, logger *dot.LoggerType) {
 }
 
 func FmtBuildInfo(info BuildInfo) {
-	fmt.Printf("commit msg: %s\ncommit time: %s\nbuild time: %s\ncommit hash: %s\nversion: %s\ngo version: %s\n", info.CommitMsg, info.CommitTime, info.BuildTime, info.CommitHash, info.Version, info.GoVersion)
+	dot.Logger.Info().Msgf("commit msg: %s\ncommit time: %s\nbuild time: %s\ncommit hash: %s\nversion: %s\ngo version: %s\n", info.CommitMsg, info.CommitTime, info.BuildTime, info.CommitHash, info.Version, info.GoVersion)
 }

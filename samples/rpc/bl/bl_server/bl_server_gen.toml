@@ -1,10 +1,10 @@
 [connect_server]
-auto_run = true
 addr = ':8090'
 allow_credentials = true
 allow_headers = []
 allow_methods = ['GET', 'POST', 'OPTIONS']
 allowed_origins = []
+auto_run = true
 http1 = true
 http2 = true
 max_concurrent_streams = 100
@@ -36,6 +36,7 @@ name = 'etcd1'
 
 [log]
 add_stdout = true
+add_stdout_in_debug = false
 compress = false
 file_name = 'log.log'
 level = 'info'

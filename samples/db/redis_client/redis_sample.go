@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -33,7 +32,7 @@ func (c *RedisSample) basicDemo() {
 	// simulate query in cache first (no result)
 	v1, err := c.RedisClient.ClientV9().Get(c.RedisClient.Context(), basicDemoKey).Result()
 	if err != redis.Nil {
-		fmt.Println("Example: get value not run as suppose, error:", err)
+		dot.Logger.Error().AnErr("Example: get value not run as suppose, error:", err)
 		os.Exit(-1)
 	}
 
@@ -45,11 +44,11 @@ func (c *RedisSample) basicDemo() {
 	checkError("Example: get value failed", err)
 
 	time.Sleep(time.Second)
-	fmt.Printf("v1: , v2: %s| <- suppose |\n", basicDemoValue)
-	fmt.Printf("v1: %s, v2: %s\n", v1, v2)
+	dot.Logger.Info().Msgf("v1: %s, v2: %s| <- suppose |\n", v1, v2)
+	dot.Logger.Info().Msgf("v1: %s, v2: %s\n", v1, v2)
 
-	fmt.Println("Node: Basic demo passed.")
-	fmt.Println("-------")
+	dot.Logger.Info().Msg("Node: Basic demo passed.")
+	dot.Logger.Info().Msg("-------")
 
 }
 
@@ -63,7 +62,7 @@ func (c *RedisSample) versionControlDemo() {
 	// get version
 	v, err := c.RedisClient.GetVersion(versionControlDemoKey)
 	checkError("Example: get version failed", err)
-	fmt.Printf("Version get suppose: %s, actually: %s\n", versionControlDemoVersionOne, v)
+	dot.Logger.Info().Msgf("Version get suppose: %s, actually: %s\n", versionControlDemoVersionOne, v)
 
 	// set(update) version
 	checkError("Example: set version failed", c.RedisClient.SetVersion(versionControlDemoKey, versionControlDemoVersionTwo))
@@ -71,7 +70,7 @@ func (c *RedisSample) versionControlDemo() {
 	// get version
 	v, err = c.RedisClient.GetVersion(versionControlDemoKey)
 	checkError("Example: get version failed", err)
-	fmt.Printf("Version get suppose: %s, actually: %s\n", versionControlDemoVersionTwo, v)
+	dot.Logger.Info().Msgf("Version get suppose: %s, actually: %s\n", versionControlDemoVersionTwo, v)
 
 	// set version 3 times
 	for i := 3; i < 6; i++ {
@@ -82,11 +81,11 @@ func (c *RedisSample) versionControlDemo() {
 	versions, err := c.RedisClient.GetVersions(versionControlDemoKey)
 	checkError("Example: get all versions failed", err)
 
-	fmt.Println("All versions: 5 <- 4 <- 3 <- 2| <- suppose |")
-	fmt.Println("All versions:", versions)
+	dot.Logger.Info().Msg("All versions: 5 <- 4 <- 3 <- 2| <- suppose |")
+	dot.Logger.Info().Msgf("All versions: %v", versions)
 
-	fmt.Println("Node: version control demo passed.")
-	fmt.Println("-------")
+	dot.Logger.Info().Msg("Node: version control demo passed.")
+	dot.Logger.Info().Msg("-------")
 
 }
 

@@ -5,7 +5,6 @@ import (
 	"crypto/ed25519"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"os"
 	"syscall"
 
@@ -138,7 +137,7 @@ func (c *Decode) parseEnParameter() bool {
 		return false
 	}
 
-	fmt.Printf("decode successful, file: %s\n", c.conf.OutFile)
+	dot.Logger.Info().Msgf("decode successful, file: %s\n", c.conf.OutFile)
 
 	return true
 }

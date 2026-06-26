@@ -4,6 +4,7 @@ endpoints = ['http://127.0.0.1:2379']
 
 [log]
 add_stdout = true
+add_stdout_in_debug = false
 compress = false
 file_name = 'logs/log.log'
 level = 'info'

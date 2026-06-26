@@ -26,9 +26,11 @@ go_rocksdb :=  CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 clean:
 	${go} clean
 	rm -f go.sum rocksdb$(EXE) rocksdb_gen.toml wire_gen.go
-build:
-	wire
+rocksdb$(EXE):
 	${go_rocksdb} build -o rocksdb$(EXE) ./...
+wire_gen.go:
+	wire
+build:wire_gen.go rocksdb$(EXE)
 
 rebuild: clean build
 

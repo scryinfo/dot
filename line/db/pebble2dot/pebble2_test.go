@@ -11,6 +11,7 @@ import (
 	"github.com/scryinfo/dot/lib/kits"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/sfile"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPebble2(t *testing.T) {
@@ -21,18 +22,12 @@ func TestPebble2(t *testing.T) {
 	}
 	if !sfile.ExistDir(config.DbPath) {
 		err := os.MkdirAll(config.DbPath, 0755)
-		if err != nil {
-			t.Fatal(err)
-		}
+		assert.Nil(t, err)
 	}
-	db, cleaner, err := NewPebble2(&config, sconfig.NewTestSConfig(sourcePath, sourcePath, sourcePath), logger)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer cleaner()
+	db, fClear, err := NewPebble2(&config, sconfig.NewTestSConfig(sourcePath, sourcePath, sourcePath), logger)
+	assert.Nil(t, err)
+	defer fClear()
 	opt := &pebble.WriteOptions{}
 	err = db.Db().Set(binary.LittleEndian.AppendUint32(nil, uint32(10)), []byte("value"), opt)
-	if err != nil {
-		t.Fatal(err)
-	}
+	assert.Nil(t, err)
 }
