@@ -1,6 +1,7 @@
 {
   "name": "dot",
   "workspaces": [
-    "samples/rpc/web_rpc/client"
+    "samples/rpc/web_rpc/client",
+    "line/db/pebble_serverdot/kv_ts"
   ]
 }
