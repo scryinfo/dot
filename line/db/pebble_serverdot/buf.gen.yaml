@@ -1,8 +1,8 @@
 version: v2
 # see, https://buf.build/plugins/protobuf
-inputs:
-  - directory: .
-  - module: buf.build/googleapis/googleapis
+# inputs:
+#   - directory: .
+#   - module: buf.build/googleapis/googleapis
 plugins:
   - local: protoc-gen-go
     # - remote: buf.build/protocolbuffers/go:v1.36.11
@@ -28,14 +28,11 @@ plugins:
     opt:
       - paths=source_relative
   # TypeScript/Web Plugins
-  - remote: buf.build/bufbuild/es:v2.12.0
-    out: ./kv_ts/src/kv_gen
-    opt:
-      - target=ts
-    inputs:
-      - directory: .
-      - module: buf.build/googleapis/googleapis
-      # - import_extension=none
+  # - remote: buf.build/bufbuild/es:v2.12.0
+  #   out: ./kv_ts/src/kv_gen
+  #   opt:
+  #     - target=ts
+  # - import_extension=none
   # - local: ../cashbox_backend/node_modules/.bin/protoc-gen-es
   #   out: ../cashbox_backend/src
   #   opt:

@@ -14,6 +14,7 @@ clean:
 	rm -rf ./kv_gen/connect/* ./kv_gen/gogrpc/* ./kv_ts/src/kv_gen/
 gen:
 	buf generate
+	buf generate --template ./buf.gen_ts.yaml
 	# protoc --proto_path=./ --go_opt=paths=source_relative --go_out=./kv_gen/gogrpc --go-grpc_opt=paths=source_relative --go-grpc_out=./kv_gen/gogrpc kv/v1/kv.proto
 
 buf_dep:
