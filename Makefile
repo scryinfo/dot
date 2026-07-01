@@ -36,6 +36,7 @@ clean:
 	${go} clean
 	cd demo && ${go} clean
 	cd samples && make clean
+	cd line/db/pebble_serverdot && make clean
 tidy:
 	${go} mod tidy
 	cd demo && ${go} mod tidy
@@ -54,6 +55,7 @@ upgrade:
 	cd line/db/tools/gmodel && ${go} get -t ./... && ${go} mod tidy
 	cd line/db/rocksdbdot && ${go} get -t ./... && ${go} mod tidy
 	cd samples && make upgrade
+	cd line/db/pebble_serverdot && make upgrade
 upgrade_latest:
 	${go} get -t -u ./... && ${go} mod tidy
 	cd demo && ${go} get -t -u ./... && ${go} mod tidy
@@ -72,6 +74,7 @@ format:
 	cd line/db/tools/gmodel && ${go} fmt ./...
 	cd line/db/rocksdbdot && ${go} fmt ./...
 	cd samples && make format
+	cd line/db/pebble_serverdot && make format
 build: ${VCPKG_INSTALLED}
 	bun install
 	CGO_ENABLED=0 ${go} build ./...
@@ -82,6 +85,7 @@ build: ${VCPKG_INSTALLED}
 	cd line/db/tools/gmodel && ${go} build ./...
 	cd line/db/rocksdbdot && make build
 	cd samples && make build
+	cd line/db/pebble_serverdot && make build
 rebuild: clean gen wire build
 test:
 	${go} test -tags="release" ./...
@@ -100,6 +104,7 @@ samples:
 	cd samples && make samples
 gen:
 	cd samples && make gen
+	cd line/db/pebble_serverdot && make gen
 
 lint:
 	${go} vet ./...

@@ -5,19 +5,9 @@ inputs:
   - module: buf.build/googleapis/googleapis
 plugins:
   # TypeScript/Web Plugins
-  - remote: buf.build/bufbuild/es:v2.12.0
+  - remote: buf.build/bufbuild/es:v2.12.1
     out: ./kv_ts/src/kv_gen
     opt:
       - target=ts
-      # - import_extension=none
-  # - local: ../cashbox_backend/node_modules/.bin/protoc-gen-es
-  #   out: ../cashbox_backend/src
-  #   opt:
-  #     - target=ts
-  #     - import_extension=none
-  #     # - json_types=true
-  # - local: ../cashbox_backend/node_modules/.bin/protoc-gen-connect-es
-  #   out: ../cashbox_backend/src
-  #   opt: target=ts
 managed:
   enabled: true

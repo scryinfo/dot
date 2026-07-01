@@ -11,7 +11,7 @@ endif
 $(info ${go})
 
 clean:
-	rm -rf ./kv_gen/connect/* ./kv_gen/gogrpc/* ./kv_ts/src/kv_gen/
+	rm -rf ./kv_gen/connect/* ./kv_gen/gogrpc/* ./kv_ts/src/kv_gen/ kv_ts/dist/ kv_ts/node_modules/
 gen:
 	buf generate
 	buf generate --template ./buf.gen_ts.yaml
@@ -21,7 +21,12 @@ buf_dep:
 	buf dep update
 build:
 	${go} build ./...
-
+	cd kv_ts && bun run build
+upgrade:
+	cd kv_ts && bun update --latest
+format:
+	${go} fmt ./...
+	cd kv_ts && bun format
 go_tools:
 	${go} install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	${go} install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
