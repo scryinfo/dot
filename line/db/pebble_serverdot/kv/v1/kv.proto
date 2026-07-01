@@ -1,0 +1,81 @@
+syntax = "proto3";
+package kv.v1;
+
+import "google/api/annotations.proto";
+
+// option go_package = "github.com/scryinfo/dot/samples/rpc/go_out/connect/api/v1;apiv1";
+option go_package = "github.com/scryinfo/dot/line/db/pebble_serverdot/kv_gen/connect/kv/v1;kvv1";
+
+message KvPair {
+  bytes key = 1;
+  bytes value = 2;
+  int64 expire_at = 3;
+}
+
+message SetRequest {
+  bytes key = 1;
+  bytes value = 2;
+  int64 ttl_ms = 3;
+}
+message SetResponse {}
+
+message GetRequest {
+  bytes key = 1;
+}
+message GetResponse {
+  bytes value = 1;
+  bool found = 2;
+}
+
+message DeleteRequest {
+  bytes key = 1;
+}
+message DeleteResponse {}
+
+message ScanRequest {
+  bytes start = 1;
+  bytes end = 2;
+  int32 limit = 3;
+}
+message ScanResponse {
+  repeated KvPair list = 1;
+}
+
+message BatchSetRequest {
+  repeated SetRequest entries = 1;
+}
+message BatchSetResponse {}
+
+service KvService {
+  rpc Set(SetRequest) returns (SetResponse);
+  rpc Get(GetRequest) returns (GetResponse);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+  rpc Scan(ScanRequest) returns (ScanResponse);
+  rpc BatchSet(BatchSetRequest) returns (BatchSetResponse);
+}
+service KvHttpService {
+  rpc Set(SetRequest) returns (SetResponse) {
+    option (google.api.http) = {
+      post: "/v1/set"
+      body: "*"
+    };
+  }
+  rpc Get(GetRequest) returns (GetResponse) {
+    option (google.api.http) = {get: "/v1/get/{key}"};
+  }
+  rpc Delete(DeleteRequest) returns (DeleteResponse) {
+    option (google.api.http) = {delete: "/v1/del/{key}"};
+  }
+  rpc Scan(ScanRequest) returns (ScanResponse) {
+    option (google.api.http) = {
+      post: "/v1/scan"
+      body: "*"
+    };
+  }
+  rpc BatchSet(BatchSetRequest) returns (BatchSetResponse) {
+    option (google.api.http) = {
+      post: "/v1/batchset"
+      body: "*"
+    };
+  }
+}
