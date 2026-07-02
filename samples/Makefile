@@ -15,7 +15,7 @@ $(info "go: ${go}")
 
 
 WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sconfig sconfig_de simple \
-	db/redis_client \
+	db/redis_client db/pebble2 db/pebble_connect_client db/pebble_connect_server db/badger \
 	rpc/web_rpc/web_rpc_server \
 	rpc/nobl/nobl_connect_client rpc/nobl/nobl_grpc_client rpc/nobl/nobl_server \
 	rpc/nobls/nobls_connect_client rpc/nobls/nobls_grpc_client rpc/nobls/nobls_server \

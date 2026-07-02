@@ -1,0 +1,13 @@
+[log]
+add_stdout = true
+add_stdout_in_debug = false
+compress = false
+file_name = 'log.log'
+level = 'info'
+max_age = 7
+max_backups = 3
+max_size = 1024000
+set_slog = true
+
+[pebble2]
+db_path = 'data/pebble2'

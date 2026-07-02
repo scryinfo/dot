@@ -6,6 +6,7 @@ import (
 	"github.com/scryinfo/dot/line/db/badgerdot"
 	"github.com/scryinfo/dot/line/db/badgerdot/backup"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
+	pebbleservice "github.com/scryinfo/dot/line/db/pebble_service"
 	"github.com/scryinfo/dot/line/db/redis_client"
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/gindot"
@@ -20,11 +21,13 @@ var (
 	CertificateNewRsa             = certificate.NewRsa
 	CertificateNewSm2             = certificate.NewSm2
 
-	ContextexNewContextEx       = contextex.NewContextEx
-	DbBadgerdotNewBadgerDot     = badgerdot.NewBadgerDot
-	DbBadgerdotNewBackup        = backup.NewDbBackup
-	DbPebble2dotNewPebble2      = pebble2dot.NewPebble2
-	DbRedisClientNewRedisClient = redis_client.NewRedisClient
+	ContextexNewContextEx                  = contextex.NewContextEx
+	DbBadgerdotNewBadgerDot                = badgerdot.NewBadgerDot
+	DbBadgerdotNewBackup                   = backup.NewDbBackup
+	DbPebble2dotNewPebble2                 = pebble2dot.NewPebble2
+	DbPebbleServiceNewPebbleConnectService = pebbleservice.NewPebbleConnectService
+	DbPebbleServiceNewPebbleGrpcService    = pebbleservice.NewPebbleGrpcService
+	DbRedisClientNewRedisClient            = redis_client.NewRedisClient
 	// dont difine rocksdb
 	EtcddotNewClient = etcddot.NewClient
 	EtcddotNewServer = etcddot.NewServer
