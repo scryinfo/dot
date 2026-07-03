@@ -58,7 +58,7 @@ func (v KvValue) ExpireAt() uint64 {
 }
 
 func (v KvValue) HasExpire() bool {
-	return int64(binary.LittleEndian.Uint64(v[typeOffset:])) < time.Now().Unix()
+	return v[0] > 0 && int64(binary.LittleEndian.Uint64(v[typeOffset:])) < time.Now().Unix()
 }
 
 func (v KvValue) HasTtl() bool {

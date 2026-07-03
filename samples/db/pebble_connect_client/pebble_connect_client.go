@@ -4,13 +4,17 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"fmt"
 	"os"
 
+	"connectrpc.com/connect"
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line"
 	pebbleservice "github.com/scryinfo/dot/line/db/pebble_service"
+	kvv1 "github.com/scryinfo/dot/line/db/pebble_service/kv_gen/connect/kv/v1"
 	"github.com/scryinfo/dot/line/db/pebble_service/kv_gen/connect/kv/v1/kvv1connect"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -18,9 +22,9 @@ import (
 )
 
 type Line struct {
-	SConfig       dot.SConfig
-	Logger        *dot.LoggerType
-	PebbleService kvv1connect.KvServiceClient
+	SConfig      dot.SConfig
+	Logger       *dot.LoggerType
+	PebbleClient kvv1connect.KvServiceClient
 }
 
 type LineConfig struct {
@@ -63,8 +67,25 @@ func main() {
 		defer clean()
 	}
 	dot.Logger.Info().Msg("line run")
+	key := []byte("test")
+	value := []byte("test value")
+	_, err = line.PebbleClient.Set(context.Background(), &connect.Request[kvv1.SetRequest]{Msg: &kvv1.SetRequest{
+		Key: key, Value: value, TtlSeconds: 0,
+	}})
+	if err != nil {
+		dot.Logger.Error().Err(err).Send()
+		return
+	}
 
-	_ = line
+	res, err := line.PebbleClient.Get(context.Background(), &connect.Request[kvv1.GetRequest]{Msg: &kvv1.GetRequest{Key: key}})
+	if err != nil {
+		dot.Logger.Error().Err(err).Send()
+		return
+	}
+	if !bytes.Equal(value, res.Msg.Value) {
+		dot.Logger.Error().Msg("the get value is not eq value")
+		return
+	}
 
 	ssignal.WaitCtrlC(func(s os.Signal) bool {
 		return false

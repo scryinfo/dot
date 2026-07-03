@@ -9,6 +9,7 @@ import (
 	"github.com/scryinfo/dot/line/db/pebble2dot"
 	kvv1 "github.com/scryinfo/dot/line/db/pebble_service/kv_gen/connect/kv/v1"
 	"github.com/scryinfo/dot/line/db/pebble_service/kv_gen/connect/kv/v1/kvv1connect"
+	"github.com/scryinfo/dot/line/rpcdot"
 )
 
 var _ kvv1connect.KvServiceHandler = (*PebbleConnectService)(nil)
@@ -18,8 +19,19 @@ type PebbleConnectService struct {
 	db *pebble.DB
 }
 
-func NewPebbleConnectService(db *pebble2dot.Pebble2) *PebbleConnectService {
-	return &PebbleConnectService{db: db.Db()}
+// func NewHiService(mux *rpcdot.ConnectHttpServerMux, logger *dot.LoggerType, conf *HiServiceConfig) *HiService {
+// 	d := &HiService{logger: logger, name: conf.Name}
+
+// 	path, handle := apiv1connect.NewHiServiceHandler(d)
+// 	mux.Handle(path, handle)
+// 	return d
+// }
+
+func NewPebbleConnectService(db *pebble2dot.Pebble2, mux *rpcdot.ConnectHttpServerMux) *PebbleConnectService {
+	service := &PebbleConnectService{db: db.Db()}
+	path, handle := kvv1connect.NewKvServiceHandler(service)
+	mux.Handle(path, handle)
+	return service
 }
 
 func (p *PebbleConnectService) Set(ctx context.Context, req *connect.Request[kvv1.SetRequest]) (*connect.Response[kvv1.SetResponse], error) {

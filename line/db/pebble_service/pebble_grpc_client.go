@@ -1,7 +1,7 @@
 package pebbleservice
 
 import (
-	kvv1 "github.com/scryinfo/dot/line/db/pebble_service/kv_gen/gogrpc/kv/v1"
+	kvv1 "github.com/scryinfo/dot/line/db/pebble_service/kv_gen/connect/kv/v1"
 	"github.com/scryinfo/dot/line/rpcdot"
 )
 

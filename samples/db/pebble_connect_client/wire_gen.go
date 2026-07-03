@@ -35,9 +35,9 @@ func InitializeService() (*Line, func(), error) {
 	}
 	kvServiceClient := pebbleservice.NewPebbleConnectClient(httpClientEx)
 	line := &Line{
-		SConfig:       sConfig,
-		Logger:        logger,
-		PebbleService: kvServiceClient,
+		SConfig:      sConfig,
+		Logger:       logger,
+		PebbleClient: kvServiceClient,
 	}
 	return line, func() {
 	}, nil

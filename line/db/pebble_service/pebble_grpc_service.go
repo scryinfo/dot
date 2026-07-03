@@ -6,7 +6,7 @@ import (
 
 	"github.com/cockroachdb/pebble/v2"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
-	kvv1 "github.com/scryinfo/dot/line/db/pebble_service/kv_gen/gogrpc/kv/v1"
+	kvv1 "github.com/scryinfo/dot/line/db/pebble_service/kv_gen/connect/kv/v1"
 )
 
 var _ kvv1.KvServiceServer = (*PebbleGrpcService)(nil)

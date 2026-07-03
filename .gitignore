@@ -92,3 +92,4 @@ cmd/den_config/decription_config/simple_de.toml
 cmd/den_config/decription_config/simple.toml
 line/db/pebble_service/kv_gen/connect/
 line/db/pebble_service/kv_ts/src/kv_gen/
+samples/db/pebble_connect_server/data/pebble2
