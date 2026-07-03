@@ -47,6 +47,7 @@ var LineSet = wire.NewSet(
 	wire.FieldsOf(new(*LineConfig), "Log", "Pebble2", "GrpcServer"),
 	line.DbPebble2dotNewPebble2,
 	line.DbPebbleServiceNewPebbleGrpcService,
+	line.RpcdotNewGrpcServer,
 )
 
 func main() {

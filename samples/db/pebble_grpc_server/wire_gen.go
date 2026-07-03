@@ -9,7 +9,7 @@ package main
 import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
-	pebbleservice "github.com/scryinfo/dot/line/db/pebble_service"
+	"github.com/scryinfo/dot/line/db/pebble_service"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 )
@@ -32,21 +32,18 @@ func InitializeService() (*Line, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
-	pebbleConnectService := pebbleservice.NewPebbleConnectService(pebble2, connectHttpServerMux)
-	connectServerConfig := &lineConfig.GrpcServer
-	handlerMiddle := NewHandlerMiddle()
-	connectServer, cleanup2, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, logger, handlerMiddle)
+	grpcServerConfig := &lineConfig.GrpcServer
+	grpcServer, cleanup2, err := rpcdot.NewGrpcServer(grpcServerConfig, sConfig, logger)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
+	pebbleGrpcService := pebbleservice.NewPebbleGrpcService(pebble2, grpcServer)
 	line := &Line{
-		SConfig:           sConfig,
-		Logger:            logger,
-		Pebble:            pebble2,
-		PebbleService:     pebbleConnectService,
-		ConnectHttpServer: connectServer,
+		SConfig:       sConfig,
+		Logger:        logger,
+		Pebble:        pebble2,
+		PebbleService: pebbleGrpcService,
 	}
 	return line, func() {
 		cleanup2()

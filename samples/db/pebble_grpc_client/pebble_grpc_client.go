@@ -81,8 +81,10 @@ func main() {
 		return
 	}
 	if !bytes.Equal(value, res.Value) {
-		dot.Logger.Error().Msg("the get value is not eq value")
+		dot.Logger.Error().Msg("the get value dont eq value")
 		return
+	} else {
+		dot.Logger.Info().Msg("the get value eq value")
 	}
 
 	ssignal.WaitCtrlC(func(s os.Signal) bool {
