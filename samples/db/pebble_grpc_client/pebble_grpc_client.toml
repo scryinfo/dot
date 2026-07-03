@@ -1,0 +1,19 @@
+[log]
+file_name = "log.log"
+max_size = 1024000
+max_backups = 3
+max_age = 7
+compress = false
+level = "info"
+add_stdout_in_debug = false
+add_stdout = true
+set_slog = true
+
+[grpc_client]
+server_address = "localhost:8090"
+[grpc_client.tls]
+mode = "none"
+cert = ""
+key = ""
+root_cert = ""
+peer_cert = ""

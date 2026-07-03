@@ -7,6 +7,8 @@ import (
 	"github.com/cockroachdb/pebble/v2"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
 	kvv1 "github.com/scryinfo/dot/line/db/pebble_service/kv_gen/connect/kv/v1"
+	"github.com/scryinfo/dot/line/rpcdot"
+	"google.golang.org/grpc"
 )
 
 var _ kvv1.KvServiceServer = (*PebbleGrpcService)(nil)
@@ -16,8 +18,12 @@ type PebbleGrpcService struct {
 	db *pebble.DB
 }
 
-func NewPebbleGrpcService(db *pebble2dot.Pebble2) *PebbleGrpcService {
-	return &PebbleGrpcService{db: db.Db()}
+func NewPebbleGrpcService(db *pebble2dot.Pebble2, grpcServer *rpcdot.GrpcServer) *PebbleGrpcService {
+	service := &PebbleGrpcService{db: db.Db()}
+	grpcServer.ResisterOrLazy(func(server *grpc.Server) {
+		server.RegisterService(&kvv1.KvService_ServiceDesc, service)
+	})
+	return service
 }
 
 func (p *PebbleGrpcService) Set(ctx context.Context, req *kvv1.SetRequest) (*kvv1.SetResponse, error) {

@@ -1,0 +1,24 @@
+[log]
+file_name = "log.log"
+max_size = 1024000
+max_backups = 3
+max_age = 7
+compress = false
+level = "info"
+add_stdout_in_debug = false
+add_stdout = true
+set_slog = true
+
+[pebble2]
+db_path = "data/pebble2"
+
+[grpc_server]
+auto_run = true
+addr = ":8090"
+shutdown_timeout = 1024000
+[grpc_server.tls]
+mode = "none"
+cert = ""
+key = ""
+root_cert = ""
+peer_cert = ""
