@@ -328,16 +328,15 @@ func (c *BaseCertificate) LoadPrivateKey(keyFile string) (any, error) {
 
 	key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
-		if rsaKey, err := x509.ParsePKCS1PrivateKey(block.Bytes); err == nil {
+		var rsaKey *rsa.PrivateKey
+		if rsaKey, err = x509.ParsePKCS1PrivateKey(block.Bytes); err == nil {
 			return rsaKey, nil
 		}
-		if err != nil {
-			if rsaKey, err := pkcs8.ParsePKCS8PrivateKey(block.Bytes); err == nil {
-				return rsaKey, nil
-			}
-			return nil, err
+		var rsaKeyAny any
+		if rsaKeyAny, err = pkcs8.ParsePKCS8PrivateKey(block.Bytes); err == nil {
+			return rsaKeyAny, nil
 		}
-
+		return nil, err
 	}
 
 	return key, nil
