@@ -98,7 +98,7 @@ func (p *GrpcServer) _startWithListener(listner net.Listener) error {
 					return
 				}
 				certPool := x509.NewCertPool()
-				{
+				if p.conf.Tls.RootCert != "" {
 					caCert, err := os.ReadFile(p.conf.Tls.RootCert)
 					if err != nil {
 						p.logger.Error().Err(err).Send()
@@ -109,7 +109,7 @@ func (p *GrpcServer) _startWithListener(listner net.Listener) error {
 						return
 					}
 				}
-				{
+				if p.conf.Tls.PeerCert != "" {
 					caCert, err := os.ReadFile(p.conf.Tls.PeerCert)
 					if err != nil {
 						p.logger.Error().Err(err).Send()
