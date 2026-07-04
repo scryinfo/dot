@@ -151,7 +151,7 @@ func BenchmarkPebbleEmbedded(b *testing.B) {
 	sourcePath := filepath.Dir(kits.Config.GetCallSourceFile())
 	logger := newLogger()
 	config := pebble2dot.Pebble2Config{
-		DbPath: filepath.Join(sourcePath, "temp/pebble"),
+		DbPath: filepath.Join(sourcePath, "data/pebble_embedded"),
 	}
 	if !sfile.ExistDir(config.DbPath) {
 		err := os.MkdirAll(config.DbPath, 0755)

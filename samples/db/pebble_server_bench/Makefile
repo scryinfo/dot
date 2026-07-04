@@ -5,31 +5,32 @@ ifeq ($(OS),Windows_NT)
 	else
 	    go := $(subst \,/,$(shell where.exe go))
 	endif
-	VCPKG := $(abspath ./../../../vcpkg_installed)
-	ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
-	ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
-	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
+	EXE := .exe
 else
 	go := ${shell which go}
 	EXE :=
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
-	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 endif
 $(info "go: ${go}")
-
-go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
 .PHONY: clean build rebuild
 
 clean:
 	${go} clean
-	rm -rf go.sum rocksdb$(EXE) temp/ logs/
+	rm -rf go.sum connect_server_8090${EXE} connect_server_8092${EXE} grpc_server_8091${EXE} temp/ logs/ log*.log
 build:
 	${go_rocksdb} build ./...
 	${go_rocksdb} test -c -o /dev/null ./...
 
 rebuild: clean build
 
+server:
+	${go} build -o connect_server_8090${EXE} ../pebble_connect_server/...
+	cp connect_server_8090${EXE} connect_server_8092${EXE}
+	${go} build -o grpc_server_8091${EXE} ../pebble_grpc_server/...
+
+run_servers:
+	setsid ./connect_server_8090${EXE} -configpath=./
+	setsid ./connect_server_8092${EXE} -configpath=./
+	setsid ./grpc_server_8091${EXE} -configpath=./
 bench:
-	${go_rocksdb} test -bench=. -run=^$$ -count=3 -benchmem -benchtime=3s
+	${go} test -bench=. -run=^$$ -count=3 -benchmem -benchtime=3s

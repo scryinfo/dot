@@ -94,3 +94,7 @@ line/db/pebble_service/kv_gen/connect/
 line/db/pebble_service/kv_ts/src/kv_gen/
 samples/db/pebble_connect_server/data/pebble2
 samples/db/pebble_grpc_server/data/pebble2
+samples/db/pebble_server_bench/connect_server_8090
+samples/db/pebble_server_bench/connect_server_8092
+samples/db/pebble_server_bench/grpc_server_8091
+samples/db/pebble_server_bench/data/pebble2/
