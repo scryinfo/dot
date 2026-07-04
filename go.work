@@ -11,4 +11,5 @@ use (
 	./line/db/rocksdbdot
 	./samples/db/rocksdb
 	./samples/db/rocksdb_bench
+	./samples/db/pebble_server_bench
 )
