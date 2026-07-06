@@ -8,12 +8,12 @@ ifeq ($(OS),Windows_NT)
 	VCPKG := $(abspath ./../../../vcpkg_installed)
 	ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
 	ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -static -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 else
 	go := ${shell which go}
 	EXE :=
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -static -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 endif
 $(info "go: ${go}")
