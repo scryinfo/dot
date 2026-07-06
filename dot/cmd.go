@@ -7,6 +7,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 // Cmd type general command line parameters
@@ -46,6 +47,10 @@ func init() {
 	fs.StringVar(&GCmd.ConfigPath, CmdConfigPath.String(), "", "config path")
 	fs.StringVar(&GCmd.ConfigFile, CmdConfigFile.String(), "", "config file, not include path")
 	err := fs.Parse(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
+	GCmd.ConfigPath, err = filepath.Abs(GCmd.ConfigPath)
 	if err != nil {
 		log.Fatal(err)
 	}

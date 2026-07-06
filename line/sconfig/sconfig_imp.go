@@ -189,105 +189,57 @@ func (p *SConfig) initLocal() error {
 		}
 		dot.Logger.Info().Msgf("exe file: %s", exeFile)
 		p.exePath = filepath.ToSlash(filepath.Dir(exeFile))
-		checkPath := p.exePath
 		binPath := filepath.Dir(p.exePath)
 		exeName := filepath.Base(exeFile)
-		ext := filepath.Ext(exeFile)
-		exeName = exeName[0 : len(exeName)-len(ext)]
+		exeName = exeName[0 : len(exeName)-len(filepath.Ext(exeFile))]
+		if dot.GCmd.ConfigPath != "" {
+			if !p.ExistConfig(dot.GCmd.ConfigPath, exeName) {
+				err := fmt.Errorf("the command parameter config file: %s not found in config path: %s", dot.GCmd.ConfigFile, dot.GCmd.ConfigPath)
+				dot.Logger.Error().Err(err).Send()
+				return err
+			} else {
+				return nil
+			}
+		}
+		if p.ExistConfig(p.exePath, exeName) {
+			return nil
+		}
+		if p.ExistConfig(p.exePath, conf) {
+			return nil
+		}
+		if p.ExistConfig(binPath, exeName) {
+			return nil
+		}
+		if p.ExistConfig(binPath, conf) {
+			return nil
+		}
+		if p.ExistConfig(p.wdPath, exeName) {
+			return nil
+		}
+		if p.ExistConfig(p.wdPath, conf) {
+			return nil
+		}
 		if dot.IsDebug {
 			mainFile := kits.Config.GetMainPackageFile()
 			if len(mainFile) > 0 {
 				mainFile = filepath.ToSlash(mainFile)
-				checkPath = filepath.Dir(mainFile)
+				checkPath := filepath.Dir(mainFile)
 				exeName = filepath.Base(mainFile)
 				exeName = exeName[0 : len(exeName)-len(".go")]
 				dot.Logger.Info().Msgf("check path is from main file: %s", mainFile)
-			}
-		}
-		if p.confPath == "" {
-			if sfile.ExistDir(dot.GCmd.ConfigPath) {
-				var err error
-				p.confPath, err = filepath.Abs(dot.GCmd.ConfigPath)
-				if err != nil {
-					return err
+				if p.ExistConfig(checkPath, exeName) {
+					return nil
 				}
-				dot.Logger.Info().Msgf("get conf path from cmd parameter, %s", dot.GCmd.ConfigPath)
-			} else if configPath := filepath.Join(checkPath, exeName+ExtensionNameToml); sfile.ExistFile(configPath) {
-				p.confPath = checkPath
-				p.file = exeName + ExtensionNameToml
-				p.fileType = ExtensionNameToml[1:]
-				dot.Logger.Info().Msgf("get conf file from check path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(checkPath, exeName+ExtensionNameYaml); sfile.ExistFile(configPath) {
-				p.confPath = checkPath
-				p.file = exeName + ExtensionNameYaml
-				p.fileType = ExtensionNameYaml[1:]
-				dot.Logger.Info().Msgf("get conf file from check path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(checkPath, exeName+ExtensionNameJson); sfile.ExistFile(configPath) {
-				p.confPath = checkPath
-				p.file = exeName + ExtensionNameJson
-				p.fileType = ExtensionNameJson[1:]
-				dot.Logger.Info().Msgf("get conf file from check path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(checkPath, conf+ExtensionNameToml); sfile.ExistFile(configPath) {
-				p.confPath = checkPath
-				p.file = conf + ExtensionNameToml
-				p.fileType = ExtensionNameToml[1:]
-				dot.Logger.Info().Msgf("get conf file from check path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(checkPath, conf+ExtensionNameYaml); sfile.ExistFile(configPath) {
-				p.confPath = checkPath
-				p.file = conf + ExtensionNameYaml
-				p.fileType = ExtensionNameYaml[1:]
-				dot.Logger.Info().Msgf("get conf file from check path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(checkPath, conf+ExtensionNameJson); sfile.ExistFile(configPath) {
-				p.confPath = checkPath
-				p.file = conf + ExtensionNameJson
-				p.fileType = ExtensionNameJson[1:]
-				dot.Logger.Info().Msgf("get conf file from check path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(binPath, exeName+ExtensionNameToml); sfile.ExistFile(configPath) {
-				p.confPath = binPath
-				p.file = exeName + ExtensionNameToml
-				p.fileType = ExtensionNameToml[1:]
-				dot.Logger.Info().Msgf("get conf file from bin path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(binPath, exeName+ExtensionNameYaml); sfile.ExistFile(configPath) {
-				p.confPath = binPath
-				p.file = exeName + ExtensionNameYaml
-				p.fileType = ExtensionNameYaml[1:]
-				dot.Logger.Info().Msgf("get conf file from bin path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(binPath, exeName+ExtensionNameJson); sfile.ExistFile(configPath) {
-				p.confPath = binPath
-				p.file = exeName + ExtensionNameJson
-				p.fileType = ExtensionNameJson[1:]
-				dot.Logger.Info().Msgf("get conf file from bin path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(p.wdPath, exeName+ExtensionNameToml); sfile.ExistFile(configPath) {
-				p.confPath = p.wdPath
-				p.file = exeName + ExtensionNameToml
-				p.fileType = ExtensionNameToml[1:]
-				dot.Logger.Info().Msgf("get conf file from wd path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(p.wdPath, exeName+ExtensionNameYaml); sfile.ExistFile(configPath) {
-				p.confPath = p.wdPath
-				p.file = exeName + ExtensionNameYaml
-				p.fileType = ExtensionNameYaml[1:]
-				dot.Logger.Info().Msgf("get conf file from wd path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			} else if configPath := filepath.Join(p.wdPath, exeName+ExtensionNameJson); sfile.ExistFile(configPath) {
-				p.confPath = p.wdPath
-				p.file = exeName + ExtensionNameJson
-				p.fileType = ExtensionNameJson[1:]
-				dot.Logger.Info().Msgf("get conf file from wd path, config path: %s, file: %s, file type: %s", p.confPath, p.file, p.fileType)
-			}
-			if len(p.confPath) < 1 {
-				p.confPath = p.exePath
+				if !p.ExistConfig(checkPath, conf) {
+					return nil
+				}
 			}
 		}
-
-		if file := filepath.Join(p.confPath, dot.GCmd.ConfigFile); len(dot.GCmd.ConfigFile) > 0 && sfile.ExistFile(file) {
-			p.file = dot.GCmd.ConfigFile
-			p.getFileType()
-			dot.Logger.Info().Msgf("get conf file from cmd config file: %s", dot.GCmd.ConfigFile)
-		} else if p.file == "" {
+		if p.confPath == "" || p.file == "" {
 			err := fmt.Errorf("config file not found")
+			dot.Logger.Error().Err(err).Send()
 			return err
 		}
-		p.simpleConf.SetConfigFile(p.file)
-		p.simpleConf.SetConfigType(p.fileType)
 	}
 	return nil
 }
@@ -325,6 +277,51 @@ func (p *SConfig) ExistKey(key string) bool {
 		re = p.simpleConf.InConfig(key)
 	}
 	return re
+}
+
+func (p *SConfig) ExistConfig(path string, name string) bool {
+	if dot.GCmd.ConfigFile != "" {
+		extName := filepath.Ext(dot.GCmd.ConfigFile)
+		if extName != ExtensionNameToml && extName != ExtensionNameYaml && extName != ExtensionNameJson {
+			dot.Logger.Error().Msgf("unsupported config file type: %s, config path: %s, config file: %s", extName, path, dot.GCmd.ConfigFile)
+			return false
+		}
+		if configPath := filepath.Join(path, dot.GCmd.ConfigFile); sfile.ExistFile(configPath) {
+			p.confPath = path
+			p.file = dot.GCmd.ConfigFile
+			p.fileType = filepath.Ext(dot.GCmd.ConfigFile)[1:]
+			p.simpleConf.SetConfigFile(p.file)
+			p.simpleConf.SetConfigType(p.fileType)
+			dot.Logger.Info().Msgf("cmd parameter found config file: %s", filepath.Join(p.confPath, p.file))
+			return true
+		}
+	}
+	if configPath := filepath.Join(path, name+ExtensionNameToml); sfile.ExistFile(configPath) {
+		p.confPath = path
+		p.file = name + ExtensionNameToml
+		p.fileType = ExtensionNameToml[1:]
+		p.simpleConf.SetConfigFile(p.file)
+		p.simpleConf.SetConfigType(p.fileType)
+		dot.Logger.Info().Msgf("path found config file: %s", filepath.Join(p.confPath, p.file))
+		return true
+	} else if configPath := filepath.Join(path, name+ExtensionNameYaml); sfile.ExistFile(configPath) {
+		p.confPath = path
+		p.file = name + ExtensionNameYaml
+		p.fileType = ExtensionNameYaml[1:]
+		p.simpleConf.SetConfigFile(p.file)
+		p.simpleConf.SetConfigType(p.fileType)
+		dot.Logger.Info().Msgf("path found config file: %s", filepath.Join(p.confPath, p.file))
+		return true
+	} else if configPath := filepath.Join(path, name+ExtensionNameJson); sfile.ExistFile(configPath) {
+		p.confPath = path
+		p.file = name + ExtensionNameJson
+		p.fileType = ExtensionNameJson[1:]
+		p.simpleConf.SetConfigFile(p.file)
+		p.simpleConf.SetConfigType(p.fileType)
+		dot.Logger.Info().Msgf("path found config file: %s", filepath.Join(p.confPath, p.file))
+		return true
+	}
+	return false
 }
 
 // Unmarshal implement
