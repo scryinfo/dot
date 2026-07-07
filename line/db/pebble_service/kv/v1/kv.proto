@@ -6,6 +6,14 @@ package kv.v1;
 // option go_package = "github.com/scryinfo/dot/samples/rpc/go_out/connect/api/v1;apiv1";
 option go_package = "github.com/scryinfo/dot/line/db/pebble_service/kv_gen/connect/kv/v1;kvv1";
 
+message KvPairSync {
+  bytes key = 1;
+  bytes value = 2;
+  // seconds since epoch
+  uint64 expire_at = 3;
+  SyncMode sync = 4;
+}
+
 message KvPair {
   bytes key = 1;
   bytes value = 2;
@@ -13,11 +21,22 @@ message KvPair {
   uint64 expire_at = 3;
 }
 
+enum SyncMode {
+  Auto = 0;
+  SYNC = 1;
+  ASYNC = 2;
+}
+
+message SetRequestSync {
+  bytes key = 1;
+  bytes value = 2;
+  uint32 ttl_seconds = 3;
+  SyncMode sync = 4;
+}
 message SetRequest {
   bytes key = 1;
   bytes value = 2;
   uint32 ttl_seconds = 3;
-  bool sync = 4;
 }
 message SetResponse {}
 
@@ -28,7 +47,10 @@ message GetResponse {
   bytes value = 1;
   bool found = 2;
 }
-
+message DeleteRequestSync {
+  bytes key = 1;
+  SyncMode sync = 2;
+}
 message DeleteRequest {
   bytes key = 1;
 }
@@ -42,12 +64,19 @@ message ScanRequest {
 message ScanResponse {
   repeated KvPair list = 1;
 }
-
+message BatchSetRequestSync {
+  repeated SetRequest entries = 1;
+  SyncMode sync = 2;
+}
 message BatchSetRequest {
   repeated SetRequest entries = 1;
 }
 message BatchSetResponse {}
 
+message BatchSetKvPairRequestSync {
+  repeated KvPair entries = 1;
+  SyncMode sync = 2;
+}
 message BatchSetKvPairRequest {
   repeated KvPair entries = 1;
 }
@@ -62,6 +91,12 @@ service KvService {
   rpc Scan(ScanRequest) returns (ScanResponse);
   rpc BatchSet(BatchSetRequest) returns (BatchSetResponse);
   rpc BatchSetKvPair(BatchSetKvPairRequest) returns (BatchSetKvPairResponse);
+
+  rpc SetSync(SetRequestSync) returns (SetResponse);
+  rpc SetKvPairSync(KvPairSync) returns (SetResponse);
+  rpc DeleteSync(DeleteRequestSync) returns (DeleteResponse);
+  rpc BatchSetSync(BatchSetRequestSync) returns (BatchSetResponse);
+  rpc BatchSetKvPairSync(BatchSetKvPairRequestSync) returns (BatchSetKvPairResponse);
 }
 
 // service KvHttpService {

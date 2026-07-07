@@ -5,11 +5,12 @@ ifeq ($(OS),Windows_NT)
 	else
 	    go := $(subst \,/,$(shell where.exe go))
 	endif
-	VCPKG := $(abspath ./../../../vcpkg_installed)
-	ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
-	ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -static -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
-	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
+	override VCPKG := $(abspath ./../../../vcpkg_installed)
+	override ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
+	override ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
+	# -static -static-libgcc -static-libstdc++
+	override CGO_LDFLAGS := -static -L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
+	override CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 else
 	go := ${shell which go}
 	EXE :=
@@ -24,10 +25,10 @@ go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
 clean:
 	${go} clean
-	rm -rf go.sum rocksdb$(EXE) temp/ logs/
-build:
-	${go_rocksdb} build ./...
-	${go_rocksdb} test -c -o /dev/null ./...
+	rm -rf go.sum rocksdb_bench$(EXE) temp/ logs/
+rocksdb_bench$(EXE):
+	CGO_ENABLED=1 ${go_rocksdb} test -ldflags="-extldflags=-Wl,--no-warnings" -c -o rocksdb_bench$(EXE) ./...
+build: rocksdb_bench$(EXE)
 
 rebuild: clean build
 

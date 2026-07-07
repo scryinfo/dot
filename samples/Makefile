@@ -52,6 +52,7 @@ $(DIST_web_rpc_client): $(shell find rpc/web_rpc/client/src -type f)
 	cd rpc/web_rpc/client && bun install && bun run build
 build: wire $(DIST_web_rpc_client)
 	cd db/rocksdb_bench && make build
+	cd db/rocksdb && make build
 
 rebuild: clean gen build
 

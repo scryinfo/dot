@@ -42,8 +42,34 @@ func (p *PebbleGrpcService) Set(ctx context.Context, req *kvv1.SetRequest) (*kvv
 	}
 	return &kvv1.SetResponse{}, nil
 }
+func (p *PebbleGrpcService) SetSync(ctx context.Context, req *kvv1.SetRequestSync) (*kvv1.SetResponse, error) {
+	opt := p.opt
+	switch req.Sync {
+	case kvv1.SyncMode_SYNC:
+		opt = pebble.Sync
+	case kvv1.SyncMode_ASYNC:
+		opt = pebble.NoSync
+	}
+	if err := p.db.Set(req.Key, NewValueTTL(req.Value, TtlTime(req.TtlSeconds)).AsBytes(), opt); err != nil {
+		return nil, err
+	}
+	return &kvv1.SetResponse{}, nil
+}
 func (p *PebbleGrpcService) SetKvPair(ctx context.Context, req *kvv1.KvPair) (*kvv1.SetResponse, error) {
 	if err := p.db.Set(req.Key, NewValueKvPair(req.Value, req.ExpireAt).AsBytes(), p.opt); err != nil {
+		return nil, err
+	}
+	return &kvv1.SetResponse{}, nil
+}
+func (p *PebbleGrpcService) SetKvPairSync(ctx context.Context, req *kvv1.KvPairSync) (*kvv1.SetResponse, error) {
+	opt := p.opt
+	switch req.Sync {
+	case kvv1.SyncMode_SYNC:
+		opt = pebble.Sync
+	case kvv1.SyncMode_ASYNC:
+		opt = pebble.NoSync
+	}
+	if err := p.db.Set(req.Key, NewValueKvPair(req.Value, req.ExpireAt).AsBytes(), opt); err != nil {
 		return nil, err
 	}
 	return &kvv1.SetResponse{}, nil
@@ -75,7 +101,19 @@ func (p *PebbleGrpcService) Delete(ctx context.Context, req *kvv1.DeleteRequest)
 	}
 	return &kvv1.DeleteResponse{}, nil
 }
-
+func (p *PebbleGrpcService) DeleteSync(ctx context.Context, req *kvv1.DeleteRequestSync) (*kvv1.DeleteResponse, error) {
+	opt := p.opt
+	switch req.Sync {
+	case kvv1.SyncMode_SYNC:
+		opt = pebble.Sync
+	case kvv1.SyncMode_ASYNC:
+		opt = pebble.NoSync
+	}
+	if err := p.db.Delete(req.Key, opt); err != nil {
+		return nil, err
+	}
+	return &kvv1.DeleteResponse{}, nil
+}
 func (p *PebbleGrpcService) Scan(ctx context.Context, req *kvv1.ScanRequest) (*kvv1.ScanResponse, error) {
 
 	iterOpts := &pebble.IterOptions{
@@ -124,6 +162,29 @@ func (p *PebbleGrpcService) BatchSet(ctx context.Context, req *kvv1.BatchSetRequ
 	}
 	return &kvv1.BatchSetResponse{}, nil
 }
+
+func (p *PebbleGrpcService) BatchSetSync(ctx context.Context, req *kvv1.BatchSetRequestSync) (*kvv1.BatchSetResponse, error) {
+	tx := p.db.NewBatch()
+	defer tx.Close()
+	opt := p.opt
+	switch req.Sync {
+	case kvv1.SyncMode_SYNC:
+		opt = pebble.Sync
+	case kvv1.SyncMode_ASYNC:
+		opt = pebble.NoSync
+	}
+	for _, e := range req.Entries {
+		kvValue := NewValueTTL(e.Value, TtlTime(e.TtlSeconds))
+		err := tx.Set(e.Key, kvValue.AsBytes(), opt)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err := tx.Commit(opt); err != nil {
+		return nil, err
+	}
+	return &kvv1.BatchSetResponse{}, nil
+}
 func (p *PebbleGrpcService) BatchSetKvPair(ctx context.Context, req *kvv1.BatchSetKvPairRequest) (*kvv1.BatchSetKvPairResponse, error) {
 	tx := p.db.NewBatch()
 	defer tx.Close()
@@ -135,6 +196,29 @@ func (p *PebbleGrpcService) BatchSetKvPair(ctx context.Context, req *kvv1.BatchS
 		}
 	}
 	if err := tx.Commit(p.opt); err != nil {
+		return nil, err
+	}
+	return &kvv1.BatchSetKvPairResponse{}, nil
+}
+
+func (p *PebbleGrpcService) BatchSetKvPairSync(ctx context.Context, req *kvv1.BatchSetKvPairRequestSync) (*kvv1.BatchSetKvPairResponse, error) {
+	tx := p.db.NewBatch()
+	defer tx.Close()
+	opt := p.opt
+	switch req.Sync {
+	case kvv1.SyncMode_SYNC:
+		opt = pebble.Sync
+	case kvv1.SyncMode_ASYNC:
+		opt = pebble.NoSync
+	}
+	for _, e := range req.Entries {
+		kvValue := NewValueKvPair(e.Value, e.ExpireAt)
+		err := tx.Set(e.Key, kvValue.AsBytes(), opt)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err := tx.Commit(opt); err != nil {
 		return nil, err
 	}
 	return &kvv1.BatchSetKvPairResponse{}, nil

@@ -49,12 +49,42 @@ func (p *PebbleConnectService) Set(ctx context.Context, req *connect.Request[kvv
 	}
 	return &connect.Response[kvv1.SetResponse]{}, nil
 }
+
+func (p *PebbleConnectService) SetSync(ctx context.Context, req *connect.Request[kvv1.SetRequestSync]) (*connect.Response[kvv1.SetResponse], error) {
+	opt := p.opt
+	switch req.Msg.Sync {
+	case kvv1.SyncMode_SYNC:
+		opt = pebble.Sync
+	case kvv1.SyncMode_ASYNC:
+		opt = pebble.NoSync
+	}
+	if err := p.db.Set(req.Msg.Key, NewValueTTL(req.Msg.Value, TtlTime(req.Msg.TtlSeconds)).AsBytes(), opt); err != nil {
+		return nil, err
+	}
+	return &connect.Response[kvv1.SetResponse]{}, nil
+}
+
 func (p *PebbleConnectService) SetKvPair(ctx context.Context, req *connect.Request[kvv1.KvPair]) (*connect.Response[kvv1.SetResponse], error) {
 	if err := p.db.Set(req.Msg.Key, NewValueKvPair(req.Msg.Value, req.Msg.ExpireAt).AsBytes(), p.opt); err != nil {
 		return nil, err
 	}
 	return &connect.Response[kvv1.SetResponse]{}, nil
 }
+
+func (p *PebbleConnectService) SetKvPairSync(ctx context.Context, req *connect.Request[kvv1.KvPairSync]) (*connect.Response[kvv1.SetResponse], error) {
+	opt := p.opt
+	switch req.Msg.Sync {
+	case kvv1.SyncMode_SYNC:
+		opt = pebble.Sync
+	case kvv1.SyncMode_ASYNC:
+		opt = pebble.NoSync
+	}
+	if err := p.db.Set(req.Msg.Key, NewValueKvPair(req.Msg.Value, req.Msg.ExpireAt).AsBytes(), opt); err != nil {
+		return nil, err
+	}
+	return &connect.Response[kvv1.SetResponse]{}, nil
+}
+
 func (p *PebbleConnectService) Get(ctx context.Context, req *connect.Request[kvv1.GetRequest]) (*connect.Response[kvv1.GetResponse], error) {
 	value, closer, err := p.db.Get(req.Msg.Key)
 	if err == pebble.ErrNotFound {
@@ -78,6 +108,20 @@ func (p *PebbleConnectService) Get(ctx context.Context, req *connect.Request[kvv
 
 func (p *PebbleConnectService) Delete(ctx context.Context, req *connect.Request[kvv1.DeleteRequest]) (*connect.Response[kvv1.DeleteResponse], error) {
 	if err := p.db.Delete(req.Msg.Key, p.opt); err != nil {
+		return nil, err
+	}
+	return &connect.Response[kvv1.DeleteResponse]{}, nil
+}
+
+func (p *PebbleConnectService) DeleteSync(ctx context.Context, req *connect.Request[kvv1.DeleteRequestSync]) (*connect.Response[kvv1.DeleteResponse], error) {
+	opt := p.opt
+	switch req.Msg.Sync {
+	case kvv1.SyncMode_SYNC:
+		opt = pebble.Sync
+	case kvv1.SyncMode_ASYNC:
+		opt = pebble.NoSync
+	}
+	if err := p.db.Delete(req.Msg.Key, opt); err != nil {
 		return nil, err
 	}
 	return &connect.Response[kvv1.DeleteResponse]{}, nil
@@ -131,6 +175,30 @@ func (p *PebbleConnectService) BatchSet(ctx context.Context, req *connect.Reques
 	}
 	return &connect.Response[kvv1.BatchSetResponse]{}, nil
 }
+
+func (p *PebbleConnectService) BatchSetSync(ctx context.Context, req *connect.Request[kvv1.BatchSetRequestSync]) (*connect.Response[kvv1.BatchSetResponse], error) {
+	tx := p.db.NewBatch()
+	defer tx.Close()
+	opt := p.opt
+	switch req.Msg.Sync {
+	case kvv1.SyncMode_SYNC:
+		opt = pebble.Sync
+	case kvv1.SyncMode_ASYNC:
+		opt = pebble.NoSync
+	}
+	for _, e := range req.Msg.Entries {
+		kvValue := NewValueTTL(e.Value, TtlTime(e.TtlSeconds))
+		err := tx.Set(e.Key, kvValue.AsBytes(), opt)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err := tx.Commit(opt); err != nil {
+		return nil, err
+	}
+	return &connect.Response[kvv1.BatchSetResponse]{}, nil
+}
+
 func (p *PebbleConnectService) BatchSetKvPair(ctx context.Context, req *connect.Request[kvv1.BatchSetKvPairRequest]) (*connect.Response[kvv1.BatchSetKvPairResponse], error) {
 	tx := p.db.NewBatch()
 	defer tx.Close()
@@ -142,6 +210,29 @@ func (p *PebbleConnectService) BatchSetKvPair(ctx context.Context, req *connect.
 		}
 	}
 	if err := tx.Commit(p.opt); err != nil {
+		return nil, err
+	}
+	return &connect.Response[kvv1.BatchSetKvPairResponse]{}, nil
+}
+
+func (p *PebbleConnectService) BatchSetKvPairSync(ctx context.Context, req *connect.Request[kvv1.BatchSetKvPairRequestSync]) (*connect.Response[kvv1.BatchSetKvPairResponse], error) {
+	tx := p.db.NewBatch()
+	defer tx.Close()
+	opt := p.opt
+	switch req.Msg.Sync {
+	case kvv1.SyncMode_SYNC:
+		opt = pebble.Sync
+	case kvv1.SyncMode_ASYNC:
+		opt = pebble.NoSync
+	}
+	for _, e := range req.Msg.Entries {
+		kvValue := NewValueKvPair(e.Value, e.ExpireAt)
+		err := tx.Set(e.Key, kvValue.AsBytes(), opt)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if err := tx.Commit(opt); err != nil {
 		return nil, err
 	}
 	return &connect.Response[kvv1.BatchSetKvPairResponse]{}, nil
