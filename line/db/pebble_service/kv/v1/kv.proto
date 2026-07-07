@@ -17,6 +17,7 @@ message SetRequest {
   bytes key = 1;
   bytes value = 2;
   uint32 ttl_seconds = 3;
+  bool sync = 4;
 }
 message SetResponse {}
 

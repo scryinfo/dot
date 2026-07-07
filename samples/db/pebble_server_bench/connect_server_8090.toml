@@ -34,3 +34,6 @@ cert = ""
 key = ""
 root_cert = ""
 peer_cert = ""
+
+[pebble_connect]
+sync = false

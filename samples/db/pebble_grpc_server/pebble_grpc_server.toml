@@ -22,3 +22,6 @@ cert = ""
 key = ""
 root_cert = ""
 peer_cert = ""
+
+[pebble_grpc]
+sync = true

@@ -15,11 +15,21 @@ var _ kvv1.KvServiceServer = (*PebbleGrpcService)(nil)
 
 type PebbleGrpcService struct {
 	kvv1.UnimplementedKvServiceServer
-	db *pebble.DB
+	db  *pebble.DB
+	opt *pebble.WriteOptions
 }
 
-func NewPebbleGrpcService(db *pebble2dot.Pebble2, grpcServer *rpcdot.GrpcServer) *PebbleGrpcService {
+type PebbleGrpcConfig struct {
+	Sync bool `toml:"sync" json:"sync" yaml:"sync" mapstructure:"sync"`
+}
+
+func NewPebbleGrpcService(config *PebbleGrpcConfig, db *pebble2dot.Pebble2, grpcServer *rpcdot.GrpcServer) *PebbleGrpcService {
 	service := &PebbleGrpcService{db: db.Db()}
+	if config.Sync {
+		service.opt = pebble.Sync
+	} else {
+		service.opt = pebble.NoSync
+	}
 	grpcServer.ResisterOrLazy(func(server *grpc.Server) {
 		server.RegisterService(&kvv1.KvService_ServiceDesc, service)
 	})
@@ -27,13 +37,13 @@ func NewPebbleGrpcService(db *pebble2dot.Pebble2, grpcServer *rpcdot.GrpcServer)
 }
 
 func (p *PebbleGrpcService) Set(ctx context.Context, req *kvv1.SetRequest) (*kvv1.SetResponse, error) {
-	if err := p.db.Set(req.Key, NewValueTTL(req.Value, TtlTime(req.TtlSeconds)).AsBytes(), pebble.Sync); err != nil {
+	if err := p.db.Set(req.Key, NewValueTTL(req.Value, TtlTime(req.TtlSeconds)).AsBytes(), p.opt); err != nil {
 		return nil, err
 	}
 	return &kvv1.SetResponse{}, nil
 }
 func (p *PebbleGrpcService) SetKvPair(ctx context.Context, req *kvv1.KvPair) (*kvv1.SetResponse, error) {
-	if err := p.db.Set(req.Key, NewValueKvPair(req.Value, req.ExpireAt).AsBytes(), pebble.Sync); err != nil {
+	if err := p.db.Set(req.Key, NewValueKvPair(req.Value, req.ExpireAt).AsBytes(), p.opt); err != nil {
 		return nil, err
 	}
 	return &kvv1.SetResponse{}, nil
@@ -60,7 +70,7 @@ func (p *PebbleGrpcService) Get(ctx context.Context, req *kvv1.GetRequest) (*kvv
 }
 
 func (p *PebbleGrpcService) Delete(ctx context.Context, req *kvv1.DeleteRequest) (*kvv1.DeleteResponse, error) {
-	if err := p.db.Delete(req.Key, pebble.Sync); err != nil {
+	if err := p.db.Delete(req.Key, p.opt); err != nil {
 		return nil, err
 	}
 	return &kvv1.DeleteResponse{}, nil
@@ -104,12 +114,12 @@ func (p *PebbleGrpcService) BatchSet(ctx context.Context, req *kvv1.BatchSetRequ
 	defer tx.Close()
 	for _, e := range req.Entries {
 		kvValue := NewValueTTL(e.Value, TtlTime(e.TtlSeconds))
-		err := tx.Set(e.Key, kvValue.AsBytes(), pebble.Sync)
+		err := tx.Set(e.Key, kvValue.AsBytes(), p.opt)
 		if err != nil {
 			return nil, err
 		}
 	}
-	if err := tx.Commit(pebble.Sync); err != nil {
+	if err := tx.Commit(p.opt); err != nil {
 		return nil, err
 	}
 	return &kvv1.BatchSetResponse{}, nil
@@ -119,12 +129,12 @@ func (p *PebbleGrpcService) BatchSetKvPair(ctx context.Context, req *kvv1.BatchS
 	defer tx.Close()
 	for _, e := range req.Entries {
 		kvValue := NewValueKvPair(e.Value, e.ExpireAt)
-		err := tx.Set(e.Key, kvValue.AsBytes(), pebble.Sync)
+		err := tx.Set(e.Key, kvValue.AsBytes(), p.opt)
 		if err != nil {
 			return nil, err
 		}
 	}
-	if err := tx.Commit(pebble.Sync); err != nil {
+	if err := tx.Commit(p.opt); err != nil {
 		return nil, err
 	}
 	return &kvv1.BatchSetKvPairResponse{}, nil

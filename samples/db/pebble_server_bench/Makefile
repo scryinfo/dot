@@ -10,7 +10,7 @@ ifeq ($(OS),Windows_NT)
 else
 	go := ${shell which go}
 	EXE :=
-	KILL_CMD = pkill -x $(1)
+	KILL_CMD = pkill -f '^\./$(1).*' || true
 endif
 
 $(info "go: ${go}")
@@ -19,7 +19,7 @@ $(info "go: ${go}")
 
 clean:
 	${go} clean
-	rm -rf go.sum connect_server_8090${EXE} connect_server_8092${EXE} grpc_server_8091${EXE} temp/ logs/ log*.log
+	rm -rf go.sum connect_server_8090${EXE} connect_server_8092${EXE} grpc_server_8091${EXE} temp/ logs/ log*.log data/
 build:
 	${go_rocksdb} build ./...
 	${go_rocksdb} test -c -o /dev/null ./...
@@ -27,14 +27,15 @@ build:
 rebuild: clean build
 
 servers:
-	${go} build -o connect_server_8090${EXE} ../pebble_connect_server/...
-	cp connect_server_8090${EXE} connect_server_8092${EXE}
-	${go} build -o grpc_server_8091${EXE} ../pebble_grpc_server/...
+	${go} build -ldflags="-s -w" -o connect_server_8090${EXE} ../pebble_connect_server/...
+	cp -f connect_server_8090${EXE} connect_server_8092${EXE}
+	${go} build -ldflags="-s -w" -o grpc_server_8091${EXE} ../pebble_grpc_server/...
 
 run_servers:
-	./connect_server_8090${EXE} -configpath=./ &
-	./connect_server_8092${EXE} -configpath=./ &
-	./grpc_server_8091${EXE} -configpath=./ &
+	./connect_server_8090${EXE} -configpath=./ & \
+	./connect_server_8092${EXE} -configpath=./ & \
+	./grpc_server_8091${EXE} -configpath=./ & \
+	sleep 1
 stop_servers:
 	$(call KILL_CMD,connect_server_8090$(EXE))
 	$(call KILL_CMD,connect_server_8092$(EXE))

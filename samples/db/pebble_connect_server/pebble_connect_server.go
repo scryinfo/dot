@@ -26,9 +26,10 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log           dot.LogConfig              `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
-	Pebble2       pebble2dot.Pebble2Config   `json:"pebble2" toml:"pebble2" yaml:"pebble2" mapstructure:"pebble2"`
-	ConnectServer rpcdot.ConnectServerConfig `json:"connect_server" toml:"connect_server" yaml:"connect_server" mapstructure:"connect_server"`
+	Log           dot.LogConfig                     `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	Pebble2       pebble2dot.Pebble2Config          `json:"pebble2" toml:"pebble2" yaml:"pebble2" mapstructure:"pebble2"`
+	ConnectServer rpcdot.ConnectServerConfig        `json:"connect_server" toml:"connect_server" yaml:"connect_server" mapstructure:"connect_server"`
+	PebbleConnect pebbleservice.PebbleConnectConfig `json:"pebble_connect" toml:"pebble_connect" yaml:"pebble_connect" mapstructure:"pebble_connect"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -45,7 +46,7 @@ var LineSet = wire.NewSet(
 	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
-	wire.FieldsOf(new(*LineConfig), "Log", "Pebble2", "ConnectServer"),
+	wire.FieldsOf(new(*LineConfig), "Log", "Pebble2", "ConnectServer", "PebbleConnect"),
 	line.DbPebble2dotNewPebble2,
 	line.DbPebbleServiceNewPebbleConnectService,
 	line.RpcdotNewConnetServer,

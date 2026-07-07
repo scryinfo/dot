@@ -25,9 +25,10 @@ type Line struct {
 }
 
 type LineConfig struct {
-	Log        dot.LogConfig            `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
-	Pebble2    pebble2dot.Pebble2Config `json:"pebble2" toml:"pebble2" yaml:"pebble2" mapstructure:"pebble2"`
-	GrpcServer rpcdot.GrpcServerConfig  `json:"grpc_server" toml:"grpc_server" yaml:"grpc_server" mapstructure:"grpc_server"`
+	Log        dot.LogConfig                  `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	Pebble2    pebble2dot.Pebble2Config       `json:"pebble2" toml:"pebble2" yaml:"pebble2" mapstructure:"pebble2"`
+	GrpcServer rpcdot.GrpcServerConfig        `json:"grpc_server" toml:"grpc_server" yaml:"grpc_server" mapstructure:"grpc_server"`
+	PebbleGrpc pebbleservice.PebbleGrpcConfig `json:"pebble_grpc" toml:"pebble_grpc" yaml:"pebble_grpc" mapstructure:"pebble_grpc"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -44,7 +45,7 @@ var LineSet = wire.NewSet(
 	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
-	wire.FieldsOf(new(*LineConfig), "Log", "Pebble2", "GrpcServer"),
+	wire.FieldsOf(new(*LineConfig), "Log", "Pebble2", "GrpcServer", "PebbleGrpc"),
 	line.DbPebble2dotNewPebble2,
 	line.DbPebbleServiceNewPebbleGrpcService,
 	line.RpcdotNewGrpcServer,
