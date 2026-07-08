@@ -137,6 +137,7 @@ go_tools:
 	${go} install github.com/mgechev/revive@latest
 	${go} install github.com/fzipp/gocyclo/cmd/gocyclo@latest
 	${go} install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	${go} install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
 install_rocksdb:
 	VCPKG_BUILD_TYPE=release vcpkg.exe install --triplet=x64-mingw-static

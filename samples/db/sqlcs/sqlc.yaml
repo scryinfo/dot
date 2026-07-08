@@ -1,0 +1,10 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema: "db/schema.sql"
+    queries: "db/query.sql"
+    gen:
+      go:
+        package: "db"
+        out: "db"
+        sql_package: "pgx/v5" # 也可以选 pgx (如果是 pg 数据库)
