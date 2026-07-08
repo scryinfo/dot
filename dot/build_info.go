@@ -1,21 +1,19 @@
-package line
+package dot
 
 import (
 	"os"
 	"runtime/debug"
 	"strings"
 	"time"
-
-	"github.com/scryinfo/dot/dot"
 )
 
-// VERSION_PKG :=github.com/scryinfo/dot/line
+// VERSION_PKG :=github.com/scryinfo/dot/dot
 // COMMIT_MSG :=${shell git log -1 --pretty=%B}
 // COMMIT_TIME :=${shell git show -s --format=%at}
 // COMMIT_HASH :=${shell git rev-parse --short HEAD}
 // BUILD_TIME :=${shell date +%s}
 
-// build:
+// build:dotdot
 // 	${go} build -tags="release" -buildvcs=true -ldflags="-s -w \
 // 	-X '${VERSION_PKG}.CommitMsg=${COMMIT_MSG}' \
 // 	-X '${VERSION_PKG}.CommitTime=${COMMIT_TIME}' \
@@ -33,7 +31,12 @@ var (
 
 const timeFormat = "2006-01-02 15:04:05"
 
-func GetBuildInfo() BuildInfo {
+func OutBuildInfo(logger *LoggerType) *BuildInfo {
+	info := GetBuildInfo()
+	LogBuildInfo(info, logger)
+	return info
+}
+func GetBuildInfo() *BuildInfo {
 	info := BuildInfo{
 		CommitMsg:  CommitMsg,
 		CommitTime: CommitTime,
@@ -92,7 +95,7 @@ func GetBuildInfo() BuildInfo {
 			}
 		}
 	}
-	return info
+	return &info
 }
 
 type BuildInfo struct {
@@ -104,9 +107,9 @@ type BuildInfo struct {
 	GoVersion  string
 }
 
-func LogBuildInfo(info BuildInfo, logger *dot.LoggerType) {
+func LogBuildInfo(info *BuildInfo, logger *LoggerType) {
 	if logger == nil {
-		FmtBuildInfo(info)
+		fmtBuildInfo(info)
 	} else {
 		logger.Info().Fields(map[string]interface{}{
 			"commitMsg":  info.CommitMsg,
@@ -120,6 +123,6 @@ func LogBuildInfo(info BuildInfo, logger *dot.LoggerType) {
 
 }
 
-func FmtBuildInfo(info BuildInfo) {
-	dot.Logger.Info().Msgf("commit msg: %s\ncommit time: %s\nbuild time: %s\ncommit hash: %s\nversion: %s\ngo version: %s\n", info.CommitMsg, info.CommitTime, info.BuildTime, info.CommitHash, info.Version, info.GoVersion)
+func fmtBuildInfo(info *BuildInfo) {
+	Logger.Info().Msgf("commit msg: %s\ncommit time: %s\nbuild time: %s\ncommit hash: %s\nversion: %s\ngo version: %s\n", info.CommitMsg, info.CommitTime, info.BuildTime, info.CommitHash, info.Version, info.GoVersion)
 }

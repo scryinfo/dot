@@ -122,9 +122,9 @@ go_tools:
 	${go} install github.com/google/wire/cmd/wire@latest
 	${go} install github.com/bufbuild/buf/cmd/buf@latest
 	${go} install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	${go} install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
-	${go} install github.com/planetscale/vtprotobuf/cmd/protoc-gen-go-vtproto@latest
-	${go} install github.com/mfridman/protoc-gen-go-json@latest
+	# ${go} install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
+	# ${go} install github.com/planetscale/vtprotobuf/cmd/protoc-gen-go-vtproto@latest
+	# ${go} install github.com/mfridman/protoc-gen-go-json@latest
 	${go} install github.com/fatih/gomodifytags@latest
 	${go} install golang.org/x/tools/gopls@latest
 	${go} install honnef.co/go/tools/cmd/staticcheck@latest

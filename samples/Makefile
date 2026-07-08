@@ -70,7 +70,7 @@ wire:  $(addsuffix /wire_gen.go, $(WIRES)) db/rocksdb/wire_gen.go
 
 define sample_rule
 $1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go
-	cd $1 && ${go} build -o $(notdir $1)$(EXE) ./...
+	cd $1 && ${go} build -buildvcs=true -o $(notdir $1)$(EXE) ./...
 endef
 $(foreach wire,$(WIRES),$(eval $(call sample_rule,$(wire))))
 db/rocksdb/rocksdb$(EXE): db/rocksdb/rocksdb.go db/rocksdb/wire_gen.go
