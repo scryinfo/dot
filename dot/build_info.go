@@ -44,6 +44,7 @@ func GetBuildInfo() *BuildInfo {
 		CommitHash: CommitHash,
 		Version:    Version,
 		GoVersion:  GoVersion,
+		Modified:   true,
 	}
 	if info.CommitTime != "" {
 		ts, err := time.Parse(time.RFC3339, info.CommitTime)
@@ -90,6 +91,8 @@ func GetBuildInfo() *BuildInfo {
 								info.CommitTime = ts.Format(timeFormat)
 							}
 						}
+					case "vcs.modified":
+						info.Modified = setting.Value == "true"
 					}
 				}
 			}
@@ -105,24 +108,16 @@ type BuildInfo struct {
 	CommitHash string
 	Version    string
 	GoVersion  string
+	Modified   bool
 }
 
 func LogBuildInfo(info *BuildInfo, logger *LoggerType) {
-	if logger == nil {
-		fmtBuildInfo(info)
-	} else {
-		logger.Info().Fields(map[string]interface{}{
-			"commitMsg":  info.CommitMsg,
-			"commitTime": info.CommitTime,
-			"buildTime":  info.BuildTime,
-			"commitHash": info.CommitHash,
-			"version":    info.Version,
-			"goVersion":  info.GoVersion,
-		}).Msg("")
-	}
-
-}
-
-func fmtBuildInfo(info *BuildInfo) {
-	Logger.Info().Msgf("commit msg: %s\ncommit time: %s\nbuild time: %s\ncommit hash: %s\nversion: %s\ngo version: %s\n", info.CommitMsg, info.CommitTime, info.BuildTime, info.CommitHash, info.Version, info.GoVersion)
+	logger.Info().Str("commitMsg", info.CommitMsg).
+		Str("commitTime", info.CommitTime).
+		Str("buildTime", info.BuildTime).
+		Str("commitHash", info.CommitHash).
+		Str("version", info.Version).
+		Str("goVersion", info.GoVersion).
+		Bool("modified", info.Modified).
+		Send()
 }
