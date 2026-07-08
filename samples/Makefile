@@ -32,7 +32,19 @@ WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sc
 clean:
 	cd rpc/proto && make clean
 	cd rpc/web_rpc/client && rm -rf dist node_modules bun.lock
-	find . -type f \( -executable -o -name "*.log" -o -name "wire_gen.go" \) -delete
+	find . -type f \( -executable -o -name "*.log" -o -name "wire_gen.go" -o -name "*_gen.toml" \) -delete
+	cd certificate/ecdsa && rm -rf logs/ temp
+	cd db/pebble_connect_server && rm -rf logs/ data temp
+	cd db/pebble_grpc_server && rm -rf logs/ data temp
+	cd db/pebble_server_bench && rm -rf logs/ temp
+	cd rpc/bl/bl_etcds && rm -rf default.etcd*
+	cd rpc/bl/bl_server && rm -rf default.etcd
+	cd rpc/bl/bl_server2 && rm -rf default.etcd
+	cd rpc/bl/bl_server3 && rm -rf default.etcd
+	cd rpc/bls/bls_etcds && rm -rf default.etcd*
+	cd rpc/bls/bls_server && rm -rf default.etcd
+	cd rpc/bls/bls_server2 && rm -rf default.etcd
+	cd rpc/bls/bls_server3 && rm -rf default.etcd
 	cd db/rocksdb_bench && make clean
 clean_wire:
 	find . -type f \( -executable -o -name "wire_gen.go" \) -delete

@@ -7,6 +7,7 @@
 **/node_modules
 **/dist
 **/__debug_bin*
+**/*_gen.toml
 vcpkg_installed/
 
 /tools/dotconf/run_out/
