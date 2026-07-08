@@ -50,8 +50,10 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	GCmd.ConfigPath, err = filepath.Abs(GCmd.ConfigPath)
-	if err != nil {
-		log.Fatal(err)
+	if GCmd.ConfigPath != "" {
+		GCmd.ConfigPath, err = filepath.Abs(GCmd.ConfigPath)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
