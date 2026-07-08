@@ -9,6 +9,11 @@ else
 	go := ${shell which go}
 	EXE :=
 endif
+VERSION_PKG :=github.com/scryinfo/dot/dot
+COMMIT_MSG :=${shell git log -1 --pretty=%B}
+COMMIT_TIME :=${shell git show -s --format=%at}
+COMMIT_HASH :=${shell git rev-parse --short HEAD}
+BUILD_TIME :=${shell date +%s}
 $(info "go: ${go}")
 
 .PHONY: clean clean_wire upgrade format build samples
@@ -70,7 +75,11 @@ wire:  $(addsuffix /wire_gen.go, $(WIRES)) db/rocksdb/wire_gen.go
 
 define sample_rule
 $1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go
-	cd $1 && ${go} build -buildvcs=true -o $(notdir $1)$(EXE) ./...
+	cd $1 && ${go} build -tags="release" -buildvcs=true -ldflags="-s -w \
+ 		-X '${VERSION_PKG}.CommitMsg=${COMMIT_MSG}' \
+  		-X '${VERSION_PKG}.CommitTime=${COMMIT_TIME}' \
+    	-X '${VERSION_PKG}.CommitHash=${COMMIT_HASH}' \
+     	-X '${VERSION_PKG}.BuildTime=${BUILD_TIME}'" -o $(notdir $1)$(EXE) ./...
 endef
 $(foreach wire,$(WIRES),$(eval $(call sample_rule,$(wire))))
 db/rocksdb/rocksdb$(EXE): db/rocksdb/rocksdb.go db/rocksdb/wire_gen.go
