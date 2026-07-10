@@ -53,10 +53,6 @@ tidy:
 	cd db/rocksdb_bench && ${go} mod tidy
 upgrade:
 	cd rpc/web_rpc/client && bun update --latest
-	cd db/rocksdb && ${go} get -t ./... && ${go} mod tidy
-	cd db/rocksdb_bench && ${go} get -t ./... && ${go} mod tidy
-upgrade_latest:
-	cd rpc/web_rpc/client && bun update --latest
 	cd db/rocksdb && ${go} get -t -u ./... && ${go} mod tidy
 	cd db/rocksdb_bench && ${go} get -t -u ./... && ${go} mod tidy
 format:
@@ -72,9 +68,6 @@ build: wire $(DIST_web_rpc_client)
 	cd db/rocksdb && make build
 
 rebuild: clean gen build
-
-clean_wire:
-	find . -type f -name "wire_gen.go" -delete
 
 define wire_rule
 $1/wire_gen.go: $1/$(notdir $1).go

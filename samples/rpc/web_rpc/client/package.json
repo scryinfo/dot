@@ -22,33 +22,18 @@
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",
     "@types/jsdom": "^28.0.3",
-    "@types/node": "^26.1.0",
+    "@types/node": "^26.1.1",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vue/test-utils": "^2.4.11",
     "@vue/tsconfig": "^0.9.1",
     "jsdom": "^29.1.1",
     "npm-run-all2": "^9.0.2",
     "oxfmt": "^0.58.0",
-    "typescript": "~6.0.3",
-    "vite": "^8.1.3",
+    "typescript": "6.0.3",
+    "vite": "^8.1.4",
     "vite-plugin-vue-devtools": "^8.1.5",
     "vitest": "^4.1.10",
-    "vue-tsc": "^3.3.6"
-  },
-  "overrides": {
-    "@vue/compat": "beta",
-    "@vue/compiler-core": "beta",
-    "@vue/compiler-dom": "beta",
-    "@vue/compiler-sfc": "beta",
-    "@vue/compiler-ssr": "beta",
-    "@vue/compiler-vapor": "beta",
-    "@vue/reactivity": "beta",
-    "@vue/runtime-core": "beta",
-    "@vue/runtime-dom": "beta",
-    "@vue/runtime-vapor": "beta",
-    "@vue/server-renderer": "beta",
-    "@vue/shared": "beta",
-    "vue": "beta"
+    "vue-tsc": "^3.3.7"
   },
   "engines": {
     "node": ">=22.12.0"
