@@ -1,6 +1,8 @@
 CREATE TABLE users (
-    id         BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name       VARCHAR(255) NOT NULL,
-    bio        TEXT,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id           UUID NOT NULL PRIMARY KEY DEFAULT uuidv7(),
+    first_name   VARCHAR NOT NULL DEFAULT '',
+    last_name    VARCHAR NOT NULL DEFAULT '',
+    display_name VARCHAR NOT NULL DEFAULT '',
+    bio          TEXT DEFAULT '',
+    created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
