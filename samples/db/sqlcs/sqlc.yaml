@@ -8,6 +8,8 @@ sql:
         package: "db"
         out: "db"
         sql_package: "pgx/v5" # 也可以选 pgx (如果是 pg 数据库)
-        overrides:
-          - db_type: "uuid"
-            go_type: "github.com/google/uuid.UUID"
+        # emit_prepared_queries: true
+        # emit_methods_with_db_argument: true
+        bindings:
+          - table: "users"
+            go_type: "github.com/scryinfo/dot/samples/db/sqlcs/proto/data_gen/connect/data/v1.User"

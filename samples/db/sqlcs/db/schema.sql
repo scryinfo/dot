@@ -4,5 +4,5 @@ CREATE TABLE users (
     last_name    VARCHAR NOT NULL DEFAULT '',
     display_name VARCHAR NOT NULL DEFAULT '',
     bio          TEXT DEFAULT '',
-    created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at   bigint NOT NULL DEFAULT 0
 );

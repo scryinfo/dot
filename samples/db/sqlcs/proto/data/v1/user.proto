@@ -1,0 +1,40 @@
+syntax = "proto3";
+package kv.v1;
+
+// import "google/api/annotations.proto";
+
+option go_package = "github.com/scryinfo/dot/samples/db/sqlcs/proto/data_gen/connect/data/v1;datav1";
+
+message User {
+  bytes id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string display_name = 4;
+  string bio = 5;
+  // seconds since epoch
+  uint64 expire_at = 6;
+}
+message AddUserRequest {
+  User user = 1;
+}
+message AddUserResponse {
+  User user = 1;
+}
+
+message GetRequest {
+  bytes user_id = 1;
+}
+message GetResponse {
+  User user = 1;
+}
+
+message DeleteRequest {
+  bytes id = 1;
+}
+message DeleteResponse {}
+
+service UserService {
+  rpc AddUser(AddUserRequest) returns (AddUserResponse);
+  rpc Get(GetRequest) returns (GetResponse);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+}

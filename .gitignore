@@ -102,3 +102,4 @@ samples/db/pebble_server_bench/data/pebble2/
 samples/db/pebble_server_bench/data/
 samples/db/rocksdb_bench/temp/
 samples/db/rocksdb_bench/rocksdb_bench
+samples/db/sqlcs/proto/data_gen/connect/
