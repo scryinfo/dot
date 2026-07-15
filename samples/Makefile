@@ -104,3 +104,4 @@ clear_config:
 
 gen:
 	cd rpc/proto && make gen
+	cd db/sqlcs && make gen

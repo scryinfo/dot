@@ -7,9 +7,12 @@ sql:
       go:
         package: "db"
         out: "db"
-        sql_package: "pgx/v5" # 也可以选 pgx (如果是 pg 数据库)
+        sql_package: "pgx/v5"
         # emit_prepared_queries: true
         # emit_methods_with_db_argument: true
-        bindings:
-          - table: "users"
-            go_type: "github.com/scryinfo/dot/samples/db/sqlcs/proto/data_gen/connect/data/v1.User"
+        # overrides:
+        #   - db_type: "users"
+        #     go_type:
+        #       import: "github.com/scryinfo/dot/samples/db/sqlcs/proto/data_gen/connect/data/v1"
+        #       package: "datav1"
+        #       type: "User"

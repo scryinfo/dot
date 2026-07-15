@@ -103,3 +103,7 @@ samples/db/pebble_server_bench/data/
 samples/db/rocksdb_bench/temp/
 samples/db/rocksdb_bench/rocksdb_bench
 samples/db/sqlcs/proto/data_gen/connect/
+samples/db/sqlcs/db/query.sql.go
+samples/db/sqlcs/db/models.go
+samples/db/sqlcs/db/db.go
+samples/db/sqlcs/db/gen_to/
