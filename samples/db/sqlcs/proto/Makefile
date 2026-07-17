@@ -14,7 +14,6 @@ clean:
 	rm -rf ./data_gen/connect/*
 gen:
 	buf generate
-
 buf_dep:
 	buf dep update
 build:

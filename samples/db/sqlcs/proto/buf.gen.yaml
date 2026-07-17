@@ -4,59 +4,33 @@ version: v2
 #   - directory: .
 #   - module: buf.build/googleapis/googleapis
 plugins:
-  # - local: protoc-gen-go
-  - remote: buf.build/protocolbuffers/go:v1.36.11
+  - local: protoc-gen-go
+  # - remote: buf.build/protocolbuffers/go:v1.36.11
     out: ./data_gen/connect
     opt:
       - paths=source_relative
-  # - local: protoc-gen-go-vtproto
-  - remote: buf.build/community/planetscale-vtprotobuf:v0.6.0
+  - local: protoc-gen-go-vtproto
+  # - remote: buf.build/community/planetscale-vtprotobuf:v0.6.0
     out: ./data_gen/connect
     opt:
       - paths=source_relative
       - features=marshal+unmarshal+size
-  # - local: protoc-gen-go-json
-  - remote: buf.build/community/mfridman-go-json:v1.6.0
+  - local: protoc-gen-go-json
+  # - remote: buf.build/community/mfridman-go-json:v1.6.0
     out: ./data_gen/connect
     opt:
       - paths=source_relative
       - allow_unknown_fields=true
       - allow_unknown=true
-  # - local: protoc-gen-connect-go
-  - remote: buf.build/connectrpc/go:v1.20.0
+  - local: protoc-gen-connect-go
+  # - remote: buf.build/connectrpc/go:v1.20.0
     out: ./data_gen/connect
     opt:
       - paths=source_relative
-
-  - remote: buf.build/grpc/go:v1.6.2
+  - local: protoc-gen-go-grpc
+  # - remote: buf.build/grpc/go:v1.6.2
     out: ./data_gen/connect
     opt:
       - paths=source_relative
-      # - Mkv/v1/kv.proto=github.com/scryinfo/dot/line/db/pebble_service/kv_gen/gogrpc/kv/v1;kvv1
-  # - remote: buf.build/protocolbuffers/go:v1.36.11
-  #   out: ./kv_gen/gogrpc
-  #   opt:
-  #     - paths=source_relative
-  #     - Mkv/v1/kv.proto=github.com/scryinfo/dot/line/db/pebble_service/kv_gen/gogrpc/kv/v1;kvv1
-  # - remote: buf.build/community/planetscale-vtprotobuf:v0.6.0
-  #   out: ./kv_gen/gogrpc
-  #   opt:
-  #     - paths=source_relative
-  #     - Mkv/v1/kv.proto=github.com/scryinfo/dot/line/db/pebble_service/kv_gen/gogrpc/kv/v1;kvv1
-  # TypeScript/Web Plugins
-  # - remote: buf.build/bufbuild/es:v2.12.1
-  #   out: ./kv_ts/src/kv_gen
-  #   opt:
-  #     - target=ts
-  # - import_extension=none
-  # - local: ../cashbox_backend/node_modules/.bin/protoc-gen-es
-  #   out: ../cashbox_backend/src
-  #   opt:
-  #     - target=ts
-  #     - import_extension=none
-  #     # - json_types=true
-  # - local: ../cashbox_backend/node_modules/.bin/protoc-gen-connect-es
-  #   out: ../cashbox_backend/src
-  #   opt: target=ts
 managed:
   enabled: true

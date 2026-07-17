@@ -4,8 +4,8 @@ inputs:
   - directory: .
   - module: buf.build/googleapis/googleapis
 plugins:
-  # TypeScript/Web Plugins
-  - remote: buf.build/bufbuild/es:v2.12.1
+  - local: protoc-gen-es
+  # - remote: buf.build/bufbuild/es:v2.12.1
     out: ./kv_ts/src/kv_gen
     opt:
       - target=ts

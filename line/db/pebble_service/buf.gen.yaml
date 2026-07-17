@@ -4,31 +4,31 @@ version: v2
 #   - directory: .
 #   - module: buf.build/googleapis/googleapis
 plugins:
-  # - local: protoc-gen-go
-  - remote: buf.build/protocolbuffers/go:v1.36.11
+  - local: protoc-gen-go
+  # - remote: buf.build/protocolbuffers/go:v1.36.11
     out: ./kv_gen/connect
     opt:
       - paths=source_relative
-  # - local: protoc-gen-go-vtproto
-  - remote: buf.build/community/planetscale-vtprotobuf:v0.6.0
+  - local: protoc-gen-go-vtproto
+  # - remote: buf.build/community/planetscale-vtprotobuf:v0.6.0
     out: ./kv_gen/connect
     opt:
       - paths=source_relative
       - features=marshal+unmarshal+size
-  # - local: protoc-gen-go-json
-  - remote: buf.build/community/mfridman-go-json:v1.6.0
+  - local: protoc-gen-go-json
+  # - remote: buf.build/community/mfridman-go-json:v1.6.0
     out: ./kv_gen/connect
     opt:
       - paths=source_relative
       - allow_unknown_fields=true
       - allow_unknown=true
-  # - local: protoc-gen-connect-go
-  - remote: buf.build/connectrpc/go:v1.20.0
+  - local: protoc-gen-connect-go
+  # - remote: buf.build/connectrpc/go:v1.20.0
     out: ./kv_gen/connect
     opt:
       - paths=source_relative
-
-  - remote: buf.build/grpc/go:v1.6.2
+  - local: protoc-gen-go-grpc
+  # - remote: buf.build/grpc/go:v1.6.2
     out: ./kv_gen/connect
     opt:
       - paths=source_relative
