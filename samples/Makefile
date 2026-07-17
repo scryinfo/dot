@@ -46,19 +46,23 @@ clean:
 	cd rpc/bls/bls_server2 && rm -rf default.etcd
 	cd rpc/bls/bls_server3 && rm -rf default.etcd
 	cd db/rocksdb_bench && make clean
+	cd db/pebble_server_bench && make clean
 clean_wire:
 	find . -type f \( -executable -o -name "wire_gen.go" \) -delete
 tidy:
 	cd db/rocksdb && ${go} mod tidy
 	cd db/rocksdb_bench && ${go} mod tidy
+	cd db/pebble_server_bench && ${go} mod tidy
 upgrade:
 	cd rpc/web_rpc/client && bun update --latest
 	cd db/rocksdb && ${go} get -t -u ./... && ${go} mod tidy
 	cd db/rocksdb_bench && ${go} get -t -u ./... && ${go} mod tidy
+	cd db/pebble_server_bench && ${go} get -t -u ./... && ${go} mod tidy
 format:
 	cd rpc/web_rpc/client && bun run format
 	cd db/rocksdb && ${go} fmt ./...
 	cd db/rocksdb_bench && ${go} fmt ./...
+	cd db/pebble_server_bench && ${go} fmt ./...
 
 DIST_web_rpc_client := rpc/web_rpc/client/dist/index.html
 $(DIST_web_rpc_client): $(shell find rpc/web_rpc/client/src -type f)
@@ -66,6 +70,7 @@ $(DIST_web_rpc_client): $(shell find rpc/web_rpc/client/src -type f)
 build: wire $(DIST_web_rpc_client)
 	cd db/rocksdb_bench && make build
 	cd db/rocksdb && make build
+	cd db/pebble_server_bench && make build
 
 rebuild: clean gen build
 

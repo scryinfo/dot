@@ -5,25 +5,32 @@ ifeq ($(OS),Windows_NT)
 	else
 	    go := $(subst \,/,$(shell where.exe go))
 	endif
-	EXE := .exe
+	override VCPKG := $(abspath ./../../../vcpkg_installed)
+	override ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
+	override ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
+	# -static -static-libgcc -static-libstdc++
+	override CGO_LDFLAGS := -static -L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
+	override CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 	KILL_CMD = taskkill /F /IM $(1) /T
 else
 	go := ${shell which go}
 	EXE :=
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -static -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
+	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 	KILL_CMD = pkill -f '^\./$(1).*' || true
 endif
-
 $(info "go: ${go}")
+go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
 
 .PHONY: clean build rebuild
 
 clean:
 	${go} clean
-	rm -rf go.sum connect_server_8090${EXE} connect_server_8092${EXE} grpc_server_8091${EXE} temp/ logs/ log*.log data/
-build:
-	${go_rocksdb} build ./...
-	${go_rocksdb} test -c -o /dev/null ./...
+	rm -rf go.sum connect_server_8090${EXE} connect_server_8092${EXE} grpc_server_8091${EXE} pebble_server_bench${EXE} temp/ logs/ log*.log data/
+build: pebble_server_bench${EXE}
 
+pebble_server_bench${EXE}:
+	${go_rocksdb} test -c -o pebble_server_bench${EXE} ./...
 rebuild: clean build
 
 servers:
