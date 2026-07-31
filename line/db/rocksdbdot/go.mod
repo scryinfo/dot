@@ -6,7 +6,7 @@ go 1.26.4
 
 require (
 	github.com/linxGnu/grocksdb v1.10.8
-	github.com/scryinfo/dot v0.9.13
+	github.com/scryinfo/dot v0.9.14
 )
 
 require (
@@ -26,7 +26,7 @@ require (
 	github.com/hashicorp/vault/api v1.23.0 // indirect
 	github.com/hashicorp/vault/api/auth/approle v0.12.0 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
-	github.com/mattn/go-isatty v0.0.22 // indirect
+	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
@@ -39,7 +39,7 @@ require (
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/spf13/viper v1.21.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
-	go.yaml.in/yaml/v3 v3.0.4 // indirect
+	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.40.0 // indirect
