@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package api.v1;
+
+option go_package = "github.com/scryinfo/dot/samples/oidcs/go_out/connect/api/v1;apiv1";
+
+message CheckRequest {
+  string name = 1;
+}
+
+message CheckResponse {
+  string name = 1;
+}
+
+message LoginRequest {
+  string name = 1;
+}
+
+message LoginResponse {
+  string name = 1;
+}
+
+message LogoutRequest {
+  string data = 1;
+}
+
+message LogoutResponse {
+  string data = 1;
+}
+
+message CallbackRequest {
+  string data = 1;
+}
+
+message CallbackResponse {
+  string data = 1;
+}
+
+message ReshreshRequest {
+  string data = 1;
+}
+
+message ReshreshResponse {
+  string data = 1;
+}
+
+service AuthService {
+  rpc Check(CheckRequest) returns (CheckResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Callback(CallbackRequest) returns (CallbackResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  rpc Reshresh(ReshreshRequest) returns (ReshreshResponse);
+}

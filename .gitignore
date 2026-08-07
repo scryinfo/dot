@@ -108,3 +108,4 @@ samples/db/sqlcs/db/models.go
 samples/db/sqlcs/db/db.go
 samples/db/sqlcs/db/gen_to/
 samples/db/pebble_server_bench/pebble_server_bench
+samples/oidcs/go_out/

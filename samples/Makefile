@@ -27,6 +27,7 @@ WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sc
 	rpc/bl/bl_grpc_client rpc/bl/bl_etcds rpc/bl/bl_server rpc/bl/bl_server2 rpc/bl/bl_server3 \
 	rpc/bls/bls_grpc_client rpc/bls/bls_etcds rpc/bls/bls_server rpc/bls/bls_server2 rpc/bls/bls_server3 \
  	not_stop_upgrader \
+  	oidcs/oidc_server oidcs/app_server \
 	../tools/ende/decode ../tools/ende/encode
 
 clean:
@@ -47,6 +48,7 @@ clean:
 	cd rpc/bls/bls_server3 && rm -rf default.etcd
 	cd db/rocksdb_bench && make clean
 	cd db/pebble_server_bench && make clean
+	cd oidcs/app_proto && make clean
 clean_wire:
 	find . -type f \( -executable -o -name "wire_gen.go" \) -delete
 tidy:
@@ -110,3 +112,4 @@ clear_config:
 gen:
 	cd rpc/proto && make gen
 	cd db/sqlcs && make gen
+	cd oidcs/app_proto && make gen
