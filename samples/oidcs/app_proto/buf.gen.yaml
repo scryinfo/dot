@@ -26,21 +26,17 @@ plugins:
     out: ../go_out/connect
     opt:
       - paths=source_relative
+  - local: protoc-gen-go-grpc
+    # - remote: buf.build/grpc/go:v1.6.2
+    out: ../go_out/connect
+    opt:
+      - paths=source_relative
   # TypeScript/Web Plugins
   - local: protoc-gen-es
     # - remote: buf.build/bufbuild/es:v2.12.1
     out: ../app/src
     opt:
       - target=ts
-      # - import_extension=none
-  # - local: ../cashbox_backend/node_modules/.bin/protoc-gen-es
-  #   out: ../cashbox_backend/src
-  #   opt:
-  #     - target=ts
-  #     - import_extension=none
-  #     # - json_types=true
-  # - local: ../cashbox_backend/node_modules/.bin/protoc-gen-connect-es
-  #   out: ../cashbox_backend/src
-  #   opt: target=ts
+
 managed:
   enabled: true

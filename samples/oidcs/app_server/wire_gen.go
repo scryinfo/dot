@@ -8,6 +8,7 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 )
 
@@ -24,10 +25,20 @@ func InitializeService() (*Line, func(), error) {
 	}
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
+	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
+	authService := NewAuthService(connectHttpServerMux, logger)
+	connectServerConfig := &lineConfig.ConnectServer
+	handlerMiddle := rpcdot.NewHandlerMiddle()
+	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, logger, handlerMiddle)
+	if err != nil {
+		return nil, nil, err
+	}
 	line := &Line{
-		SConfig: sConfig,
-		Logger:  logger,
+		Logger:        logger,
+		AuthService:   authService,
+		ConnectServer: connectServer,
 	}
 	return line, func() {
+		cleanup()
 	}, nil
 }

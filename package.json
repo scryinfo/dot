@@ -2,6 +2,7 @@
   "name": "dot",
   "workspaces": [
     "samples/rpc/web_rpc/client",
-    "line/db/pebble_service/kv_ts"
+    "line/db/pebble_service/kv_ts",
+    "samples/oidcs/app"
   ]
 }

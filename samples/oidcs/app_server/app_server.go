@@ -10,17 +10,21 @@ import (
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line"
+	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
 type Line struct {
-	SConfig dot.SConfig
-	Logger  *dot.LoggerType
+	// SConfig           *sconfig.SConfig
+	Logger        *dot.LoggerType
+	AuthService   *AuthService
+	ConnectServer *rpcdot.ConnectServer
 }
 
 type LineConfig struct {
-	Log dot.LogConfig `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	Log           dot.LogConfig              `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	ConnectServer rpcdot.ConnectServerConfig `json:"connect_server" toml:"connect_server" yaml:"connect_server" mapstructure:"connect_server"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -32,15 +36,20 @@ func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 }
 
 var LineSet = wire.NewSet(
-	NewLineConfig,
 	wire.Struct(new(Line), "*"),
+	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer"),
+	NewLineConfig,
 	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
-	wire.FieldsOf(new(*LineConfig), "Log"),
+	line.RpcdotNewConnetServer,
+	line.RpcdotNewConnectHttpServerMux,
+	line.RpcdotNewHandlerMiddle,
+	NewAuthService,
 )
 
 func main() {
+	// dot.InitLogger(new(dot.TestLogConfig()))
 	line, clean, err := InitializeService()
 	if err != nil {
 		if line != nil {
@@ -54,12 +63,12 @@ func main() {
 	if clean != nil {
 		defer clean()
 	}
-	dot.Logger.Info().Msg("line run")
 
+	dot.Logger.Info().Msg("dot ok")
+	//second step ....
 	_ = line
 
-	ssignal.WaitCtrlC(func(s os.Signal) bool {
+	ssignal.WaitCtrlC(func(s os.Signal) bool { //third wait for exit
 		return false
 	})
-	dot.Logger.Info().Msg("line exist")
 }
