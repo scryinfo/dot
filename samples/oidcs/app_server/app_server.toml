@@ -8,6 +8,7 @@ level = "info"
 add_stdout_in_debug = false
 add_stdout = true
 set_slog = true
+
 [connect_server]
 auto_run = true
 addr = ":8089"
@@ -30,5 +31,3 @@ cert = ''
 mode = 'none'
 peer_cert = ''
 root_cert = ''
-[hi_service]
-name = "web_rpc_server"

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package api.v1;
+
+option go_package = "github.com/scryinfo/dot/samples/oidcs/go_out/connect/api/v1;apiv1";
+
+
+message Reqbase {
+  int64 ts = 1;
+}
+
+message Resbase {
+  string message = 1;
+  int32 error_id = 2;
+  int64 ts = 3;
+}

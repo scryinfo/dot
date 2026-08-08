@@ -4,44 +4,56 @@ package api.v1;
 
 option go_package = "github.com/scryinfo/dot/samples/oidcs/go_out/connect/api/v1;apiv1";
 
+import "api/v1/reqsbase.proto";
+
 message CheckRequest {
-  string name = 1;
+  Reqbase reqbase = 1;
+  string name = 2;
 }
 
 message CheckResponse {
-  string name = 1;
+  Resbase resbase = 1;
+  string name = 2;
 }
 
 message LoginRequest {
-  string name = 1;
+  Reqbase reqbase = 1;
+  string name = 2;
 }
 
 message LoginResponse {
-  string name = 1;
+  Resbase resbase = 1;
+  string redirect_url = 2;
 }
 
 message LogoutRequest {
-  string data = 1;
+  Reqbase reqbase = 1;
+  string data = 2;
 }
 
 message LogoutResponse {
-  string data = 1;
+  Resbase resbase = 1;
+  string data = 2;
 }
 
 message CallbackRequest {
-  string data = 1;
+  Reqbase reqbase = 1;
+  string data = 2;
 }
 
 message CallbackResponse {
-  string data = 1;
+  Resbase resbase = 1;
+  string data = 2;
 }
 
 message ReshreshRequest {
-  string data = 1;
+  Reqbase reqbase = 1;
+  string data = 2;
 }
 
 message ReshreshResponse {
-  string data = 1;
+  Resbase resbase = 1;
+  string data = 2;
 }
 
 service AuthService {
