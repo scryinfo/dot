@@ -48,7 +48,7 @@ clean:
 	cd rpc/bls/bls_server3 && rm -rf default.etcd
 	cd db/rocksdb_bench && make clean
 	cd db/pebble_server_bench && make clean
-	cd oidcs/app_proto && make clean
+
 clean_wire:
 	find . -type f \( -executable -o -name "wire_gen.go" \) -delete
 tidy:
@@ -112,4 +112,3 @@ clear_config:
 gen:
 	cd rpc/proto && make gen
 	cd db/sqlcs && make gen
-	cd oidcs/app_proto && make gen

@@ -37,6 +37,7 @@ clean:
 	cd demo && make clean
 	cd samples && make clean
 	cd line/db/pebble_service && make clean
+	cd line/oidcdot/proto && make clean
 tidy:
 	${go} mod tidy
 	cd demo && make tidy
@@ -53,6 +54,7 @@ upgrade:
 	cd line/db/rocksdbdot && ${go} get -t -u ./... && ${go} mod tidy
 	cd samples && make upgrade
 	cd line/db/pebble_service && make upgrade
+	cd line/oidcdot/oicd_ts && bun update --latest
 format:
 	${go} fmt ./...
 	cd demo && make format
@@ -87,6 +89,7 @@ samples:
 gen:
 	cd samples && make gen
 	cd line/db/pebble_service && make gen
+	cd line/oidcdot/proto && make gen
 
 lint:
 	${go} vet ./...

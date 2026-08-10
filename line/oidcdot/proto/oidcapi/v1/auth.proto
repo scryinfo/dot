@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package api.v1;
+package oidcapi.v1;
 
-option go_package = "github.com/scryinfo/dot/samples/oidcs/go_out/connect/api/v1;apiv1";
+import "oidcapi/v1/reqsbase.proto";
 
-import "api/v1/reqsbase.proto";
+option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
 
 message CheckRequest {
   Reqbase reqbase = 1;
@@ -23,7 +23,8 @@ message LoginRequest {
 
 message LoginResponse {
   Resbase resbase = 1;
-  string redirect_url = 2;
+  string state = 2;
+  string redirect_url = 3;
 }
 
 message LogoutRequest {
@@ -56,10 +57,25 @@ message ReshreshResponse {
   string data = 2;
 }
 
+message StartDeviceAuthRequest {
+  Reqbase reqbase = 1;
+  string data = 2;
+}
+
+message StartDeviceAuthResponse {
+  Resbase resbase = 1;
+  string data = 2;
+}
+
 service AuthService {
   rpc Check(CheckRequest) returns (CheckResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Callback(CallbackRequest) returns (CallbackResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
   rpc Reshresh(ReshreshRequest) returns (ReshreshResponse);
+
+  // rpc StartDeviceAuth(StartDeviceAuthRequest) returns (StartDeviceAuthResponse);
 }
+
+// service AuthDeviceService {
+// }

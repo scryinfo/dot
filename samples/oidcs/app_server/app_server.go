@@ -10,6 +10,7 @@ import (
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line"
+	"github.com/scryinfo/dot/line/oidcdot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
@@ -18,7 +19,7 @@ import (
 type Line struct {
 	// SConfig           *sconfig.SConfig
 	Logger        *dot.LoggerType
-	AuthService   *AuthService
+	AuthService   *oidcdot.AuthService
 	ConnectServer *rpcdot.ConnectServer
 }
 
@@ -45,7 +46,7 @@ var LineSet = wire.NewSet(
 	line.RpcdotNewConnetServer,
 	line.RpcdotNewConnectHttpServerMux,
 	line.RpcdotNewHandlerMiddle,
-	NewAuthService,
+	oidcdot.NewAuthService,
 )
 
 func main() {

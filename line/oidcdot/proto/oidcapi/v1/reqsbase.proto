@@ -1,9 +1,8 @@
 syntax = "proto3";
 
-package api.v1;
+package oidcapi.v1;
 
-option go_package = "github.com/scryinfo/dot/samples/oidcs/go_out/connect/api/v1;apiv1";
-
+option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
 
 message Reqbase {
   int64 ts = 1;

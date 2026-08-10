@@ -110,3 +110,5 @@ samples/db/sqlcs/db/gen_to/
 samples/db/pebble_server_bench/pebble_server_bench
 samples/oidcs/go_out/
 samples/oidcs/app/src/api/
+line/oidcdot/oidc_gen/oidcapi/
+line/oidcdot/oidc_ts/src/oidcapi/

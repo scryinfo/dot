@@ -8,6 +8,7 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/oidcdot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 )
@@ -26,7 +27,7 @@ func InitializeService() (*Line, func(), error) {
 	logConfig := &lineConfig.Log
 	logger := dot.NewLogger(logConfig)
 	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
-	authService := NewAuthService(connectHttpServerMux, logger)
+	authService := oidcdot.NewAuthService(connectHttpServerMux, logger)
 	connectServerConfig := &lineConfig.ConnectServer
 	handlerMiddle := rpcdot.NewHandlerMiddle()
 	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, logger, handlerMiddle)
