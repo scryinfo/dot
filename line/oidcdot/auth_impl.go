@@ -7,13 +7,15 @@ import (
 	"github.com/scryinfo/dot/dot"
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
 	"github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1/oidcapiv1connect"
+	"github.com/scryinfo/dot/line/oidcdot/oidc_impl"
 	"github.com/scryinfo/dot/line/rpcdot"
+	"github.com/zitadel/oidc/v4/pkg/client/rp"
 )
 
 var _ oidcapiv1connect.AuthServiceHandler = (*AuthService)(nil)
 
-func NewAuthService(mux *rpcdot.ConnectHttpServerMux, logger *dot.LoggerType) *AuthService {
-	d := &AuthService{logger: logger}
+func NewAuthService(mux *rpcdot.ConnectHttpServerMux, provider *OidcProvider, logger *dot.LoggerType) *AuthService {
+	d := &AuthService{logger: logger, provider: provider}
 
 	path, handle := oidcapiv1connect.NewAuthServiceHandler(d)
 	mux.Handle(path, handle)
@@ -21,11 +23,12 @@ func NewAuthService(mux *rpcdot.ConnectHttpServerMux, logger *dot.LoggerType) *A
 }
 
 type AuthService struct {
-	logger *dot.LoggerType
+	logger   *dot.LoggerType
+	provider *OidcProvider
 }
 
 // Callback implements [apiv1connect.AuthServiceHandler].
-func (a *AuthService) Callback(context.Context, *connect.Request[oidcapiv1.CallbackRequest]) (*connect.Response[oidcapiv1.CallbackResponse], error) {
+func (a *AuthService) OidcCallback(context.Context, *connect.Request[oidcapiv1.OidcCallbackRequest]) (*connect.Response[oidcapiv1.OidcCallbackResponse], error) {
 	panic("unimplemented")
 }
 
@@ -35,8 +38,18 @@ func (a *AuthService) Check(context.Context, *connect.Request[oidcapiv1.CheckReq
 }
 
 // Login implements [apiv1connect.AuthServiceHandler].
-func (a *AuthService) Login(context.Context, *connect.Request[oidcapiv1.LoginRequest]) (*connect.Response[oidcapiv1.LoginResponse], error) {
-	panic("unimplemented")
+func (a *AuthService) Login(ctx context.Context, req *connect.Request[oidcapiv1.LoginRequest]) (*connect.Response[oidcapiv1.LoginResponse], error) {
+	res := &oidcapiv1.LoginResponse{
+		Resbase: &oidcapiv1.Resbase{},
+	}
+	err := oidc_impl.NewUuidV7Resbase(req.Msg.Reqbase, res.Resbase)
+	if err != nil {
+		a.logger.Error().Err(err).Send()
+		return nil, err
+	}
+	res.State = oidc_impl.NewState()
+	res.RedirectUrl = rp.AuthURL(res.State, a.provider.provider)
+	return connect.NewResponse(res), nil
 }
 
 // Logout implements [apiv1connect.AuthServiceHandler].

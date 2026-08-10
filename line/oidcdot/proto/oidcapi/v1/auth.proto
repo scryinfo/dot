@@ -37,12 +37,12 @@ message LogoutResponse {
   string data = 2;
 }
 
-message CallbackRequest {
+message OidcCallbackRequest {
   Reqbase reqbase = 1;
   string data = 2;
 }
 
-message CallbackResponse {
+message OidcCallbackResponse {
   Resbase resbase = 1;
   string data = 2;
 }
@@ -70,7 +70,7 @@ message StartDeviceAuthResponse {
 service AuthService {
   rpc Check(CheckRequest) returns (CheckResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
-  rpc Callback(CallbackRequest) returns (CallbackResponse);
+  rpc OidcCallback(OidcCallbackRequest) returns (OidcCallbackResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
   rpc Reshresh(ReshreshRequest) returns (ReshreshResponse);
 

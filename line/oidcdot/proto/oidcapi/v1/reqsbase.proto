@@ -5,11 +5,15 @@ package oidcapi.v1;
 option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
 
 message Reqbase {
-  int64 ts = 1;
+  uint64 req_id_low = 1; //uuid v7
+  uint64 req_id_high = 2; //uuid v7
 }
 
 message Resbase {
-  string message = 1;
-  int32 error_id = 2;
-  int64 ts = 3;
+  uint64 req_id_low = 1; //uuid v7
+  uint64 req_id_high = 2; //uuid v7
+  uint64 res_id_low = 3; //uuid v7
+  uint64 res_id_high = 4; //uuid v7
+  int32 error_id = 5;
+  string message = 6;
 }
