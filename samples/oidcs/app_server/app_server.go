@@ -26,6 +26,7 @@ type Line struct {
 type LineConfig struct {
 	Log           dot.LogConfig              `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
 	ConnectServer rpcdot.ConnectServerConfig `json:"connect_server" toml:"connect_server" yaml:"connect_server" mapstructure:"connect_server"`
+	OidcProvider  oidcdot.OidcProviderConfig `json:"oidc_provider" toml:"oidc_provider" yaml:"oidc_provider" mapstructure:"oidc_provider"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -38,7 +39,7 @@ func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 
 var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
-	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer"),
+	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer", "OidcProvider"),
 	NewLineConfig,
 	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
@@ -47,6 +48,7 @@ var LineSet = wire.NewSet(
 	line.RpcdotNewConnectHttpServerMux,
 	line.RpcdotNewHandlerMiddle,
 	oidcdot.NewAuthService,
+	oidcdot.NewOidcProvider,
 )
 
 func main() {
