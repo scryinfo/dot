@@ -39,12 +39,16 @@ message LogoutResponse {
 
 message OidcCallbackRequest {
   Reqbase reqbase = 1;
-  string data = 2;
+  string code = 2;
+  string state = 3;
 }
 
 message OidcCallbackResponse {
   Resbase resbase = 1;
-  string data = 2;
+  string access_token = 2;
+  string id_token = 3;
+  string user_id = 4;
+  string email = 5;
 }
 
 message ReshreshRequest {

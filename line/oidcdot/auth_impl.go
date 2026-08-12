@@ -10,6 +10,7 @@ import (
 	"github.com/scryinfo/dot/line/oidcdot/oidc_impl"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/zitadel/oidc/v4/pkg/client/rp"
+	"github.com/zitadel/oidc/v4/pkg/oidc"
 )
 
 var _ oidcapiv1connect.AuthServiceHandler = (*AuthService)(nil)
@@ -28,8 +29,30 @@ type AuthService struct {
 }
 
 // Callback implements [apiv1connect.AuthServiceHandler].
-func (a *AuthService) OidcCallback(context.Context, *connect.Request[oidcapiv1.OidcCallbackRequest]) (*connect.Response[oidcapiv1.OidcCallbackResponse], error) {
-	panic("unimplemented")
+func (a *AuthService) OidcCallback(ctx context.Context, req *connect.Request[oidcapiv1.OidcCallbackRequest]) (*connect.Response[oidcapiv1.OidcCallbackResponse], error) {
+	res := &oidcapiv1.OidcCallbackResponse{
+		Resbase: &oidcapiv1.Resbase{},
+	}
+	err := oidc_impl.NewUuidV7Resbase(req.Msg.Reqbase, res.Resbase)
+	if err != nil {
+		a.logger.Error().Err(err).Send()
+		return nil, err
+	}
+	token, err := rp.CodeExchange[*oidc.IDTokenClaims](ctx, req.Msg.Code, a.provider.provider)
+	if err != nil {
+		a.logger.Error().AnErr("code exchange failed", err).Send()
+		return nil, err
+	}
+	userInfo, err := rp.Userinfo[*oidc.UserInfo](ctx, token.AccessToken, token.TokenType, token.IDTokenClaims.GetSubject(), a.provider.provider)
+	if err != nil {
+		a.logger.Error().AnErr("userinfo failed", err).Send()
+		return nil, err
+	}
+	res.AccessToken = token.AccessToken
+	res.IdToken = token.IDToken
+	res.UserId = userInfo.Subject
+	res.Email = userInfo.Email
+	return connect.NewResponse(res), nil
 }
 
 // Check implements [apiv1connect.AuthServiceHandler].
