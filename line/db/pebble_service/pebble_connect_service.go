@@ -19,9 +19,6 @@ type PebbleConnectService struct {
 	db  *pebble.DB
 	opt *pebble.WriteOptions
 }
-type PebbleConnectConfig struct {
-	Sync bool `toml:"sync" json:"sync" yaml:"sync" mapstructure:"sync"`
-}
 
 // func NewHiService(mux *rpcdot.ConnectHttpServerMux, logger *dot.LoggerType, conf *HiServiceConfig) *HiService {
 // 	d := &HiService{logger: logger, name: conf.Name}
@@ -31,13 +28,8 @@ type PebbleConnectConfig struct {
 // 	return d
 // }
 
-func NewPebbleConnectService(config *PebbleConnectConfig, db *pebble2dot.Pebble2, mux *rpcdot.ConnectHttpServerMux) *PebbleConnectService {
-	service := &PebbleConnectService{db: db.Db()}
-	if config.Sync {
-		service.opt = pebble.Sync
-	} else {
-		service.opt = pebble.NoSync
-	}
+func NewPebbleConnectService(db *pebble2dot.Pebble2, mux *rpcdot.ConnectHttpServerMux) *PebbleConnectService {
+	service := &PebbleConnectService{db: db.Db(), opt: db.DefaultWriteOpt()}
 	path, handle := kvv1connect.NewKvServiceHandler(service)
 	mux.Handle(path, handle)
 	return service

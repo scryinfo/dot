@@ -8,11 +8,13 @@ import (
 )
 
 type Pebble2 struct {
-	db *pebble.DB
+	db          *pebble.DB
+	writeOption *pebble.WriteOptions
 }
 
 type Pebble2Config struct {
 	DbPath string `json:"db_path" toml:"db_path" yaml:"db_path" mapstructure:"db_path"`
+	Sync   bool   `toml:"sync" json:"sync" yaml:"sync" mapstructure:"sync"`
 }
 
 func NewPebble2(config *Pebble2Config, sconfig dot.SConfig, logger *dot.LoggerType) (*Pebble2, func(), error) {
@@ -32,7 +34,11 @@ func NewPebble2(config *Pebble2Config, sconfig dot.SConfig, logger *dot.LoggerTy
 	if err != nil {
 		return nil, nil, err
 	}
-	return &Pebble2{db: db}, func() {
+	writeOpt := pebble.NoSync
+	if config.Sync {
+		writeOpt = pebble.Sync
+	}
+	return &Pebble2{db: db, writeOption: writeOpt}, func() {
 		err := db.Close()
 		if err != nil {
 			logger.Error().AnErr("cant close db", err).Send()
@@ -42,6 +48,9 @@ func NewPebble2(config *Pebble2Config, sconfig dot.SConfig, logger *dot.LoggerTy
 
 func (p *Pebble2) Db() *pebble.DB {
 	return p.db
+}
+func (p *Pebble2) DefaultWriteOpt() *pebble.WriteOptions {
+	return p.writeOption
 }
 
 type pebbleZerologAdapter struct {

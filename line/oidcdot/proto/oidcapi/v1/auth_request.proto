@@ -22,8 +22,13 @@ message AuthRequest {
   string response_type = 12; //oidc.ResponseType
   string response_mode = 13; //oidc.ResponseMode
   string nonce = 14;
-  // OIDCCodeChallenge CodeChallenge = 15;
+  OIDCCodeChallenge code_challenge = 15;
 
   bool done = 16;
   google.protobuf.Timestamp auth_time = 17;
+}
+
+message OIDCCodeChallenge {
+  string challenge = 1;
+  string method = 2;
 }
