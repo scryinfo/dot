@@ -11,6 +11,7 @@ set_slog = true
 
 [pebble2]
 db_path = "data/pebble_8092"
+sync = false
 
 [connect_server]
 auto_run = true
@@ -34,6 +35,3 @@ cert = ""
 key = ""
 root_cert = ""
 peer_cert = ""
-
-[pebble_connect]
-sync = false

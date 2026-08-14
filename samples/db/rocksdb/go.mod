@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot/samples/db/rocksdb
 
-go 1.26.4
+go 1.26.6
 
 replace (
 	github.com/scryinfo/dot => ../../../
@@ -104,6 +104,7 @@ require (
 	github.com/quic-go/quic-go v0.61.0 // indirect
 	github.com/redis/go-redis/v9 v9.21.0 // indirect
 	github.com/rogpeppe/go-internal v1.15.0 // indirect
+	github.com/rs/xid v1.6.0 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect

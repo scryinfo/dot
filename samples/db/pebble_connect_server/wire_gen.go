@@ -32,9 +32,8 @@ func InitializeService() (*Line, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	pebbleConnectConfig := &lineConfig.PebbleConnect
 	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
-	pebbleConnectService := pebbleservice.NewPebbleConnectService(pebbleConnectConfig, pebble2, connectHttpServerMux)
+	pebbleConnectService := pebbleservice.NewPebbleConnectService(pebble2, connectHttpServerMux)
 	connectServerConfig := &lineConfig.ConnectServer
 	handlerMiddle := NewHandlerMiddle()
 	connectServer, cleanup2, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, logger, handlerMiddle)
