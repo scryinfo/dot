@@ -9,13 +9,13 @@ import (
 )
 
 type AuthRequest struct {
-	ApiAuthRequest *oidcapiv1.AuthRequest
+	*oidcapiv1.AuthRequest
 }
 
 var _ op.AuthRequest = (*AuthRequest)(nil)
 
 func (p *AuthRequest) GetID() string {
-	return p.ApiAuthRequest.Id
+	return p.AuthRequest.Id
 }
 
 func (p *AuthRequest) GetACR() string {
@@ -24,58 +24,58 @@ func (p *AuthRequest) GetACR() string {
 
 func (p *AuthRequest) GetAMR() []string {
 	// this example only uses password for authentication
-	if p.ApiAuthRequest.Done {
+	if p.AuthRequest.Done {
 		return []string{"pwd"}
 	}
 	return nil
 }
 
 func (p *AuthRequest) GetAudience() []string {
-	return []string{p.ApiAuthRequest.ApplicationId} // this example will always just use the client_id as audience
+	return []string{p.AuthRequest.ApplicationId} // this example will always just use the client_id as audience
 }
 
 func (p *AuthRequest) GetAuthTime() time.Time {
-	return p.ApiAuthRequest.AuthTime.AsTime()
+	return p.AuthRequest.AuthTime.AsTime()
 }
 
 func (p *AuthRequest) GetClientID() string {
-	return p.ApiAuthRequest.ApplicationId
+	return p.AuthRequest.ApplicationId
 }
 
 func (p *AuthRequest) GetCodeChallenge() *oidc.CodeChallenge {
-	return CodeChallengeToOIDC(p.ApiAuthRequest.CodeChallenge)
+	return CodeChallengeToOIDC(p.AuthRequest.CodeChallenge)
 }
 
 func (p *AuthRequest) GetNonce() string {
-	return p.ApiAuthRequest.Nonce
+	return p.AuthRequest.Nonce
 }
 
 func (p *AuthRequest) GetRedirectURI() string {
-	return p.ApiAuthRequest.CallbackUri
+	return p.AuthRequest.CallbackUri
 }
 
 func (p *AuthRequest) GetResponseType() oidc.ResponseType {
-	return oidc.ResponseType(p.ApiAuthRequest.ResponseType)
+	return oidc.ResponseType(p.AuthRequest.ResponseType)
 }
 
 func (p *AuthRequest) GetResponseMode() oidc.ResponseMode {
-	return oidc.ResponseMode(p.ApiAuthRequest.ResponseMode)
+	return oidc.ResponseMode(p.AuthRequest.ResponseMode)
 }
 
 func (p *AuthRequest) GetScopes() []string {
-	return p.ApiAuthRequest.Scopes
+	return p.AuthRequest.Scopes
 }
 
 func (p *AuthRequest) GetState() string {
-	return p.ApiAuthRequest.TransferState
+	return p.AuthRequest.TransferState
 }
 
 func (p *AuthRequest) GetSubject() string {
-	return p.ApiAuthRequest.UserId
+	return p.AuthRequest.UserId
 }
 
 func (p *AuthRequest) Done() bool {
-	return p.ApiAuthRequest.Done
+	return p.AuthRequest.Done
 }
 
 func CodeChallengeToOIDC(challenge *oidcapiv1.OIDCCodeChallenge) *oidc.CodeChallenge {

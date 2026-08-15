@@ -14,11 +14,11 @@ type AuthRequestDao struct {
 	dao_pebble2.Daobase[AuthRequest, *AuthRequest]
 }
 
-func ProvideBanPlayersDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *AuthRequestDao {
+func NewBanPlayersDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *AuthRequestDao {
 	return &AuthRequestDao{
 		Daobase: dao_pebble2.NewDaobase(db, logger, func(id daobase.IdType) AuthRequest {
 			return AuthRequest{
-				ApiAuthRequest: &oidcapiv1.AuthRequest{
+				AuthRequest: &oidcapiv1.AuthRequest{
 					Id: string(id),
 					// Ts: kits.Tss.Ts(),
 				},
@@ -32,34 +32,49 @@ func ProvideBanPlayersDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *AuthR
 var _ daobase.Modal = (*AuthRequest)(nil)
 
 func (o *AuthRequest) UnmarshalJSON(data []byte) error {
-	return o.ApiAuthRequest.UnmarshalJSON(data)
+	if o.AuthRequest == nil {
+		o.AuthRequest = &oidcapiv1.AuthRequest{}
+	}
+	return o.AuthRequest.UnmarshalJSON(data)
 }
 
 func (o *AuthRequest) MarshalJSON() ([]byte, error) {
-	return o.ApiAuthRequest.MarshalJSON()
+	if o == nil || o.AuthRequest == nil {
+		return []byte("null"), nil
+	}
+	return o.AuthRequest.MarshalJSON()
 }
 func MakeByProto(p *oidcapiv1.AuthRequest) *AuthRequest {
-	return &AuthRequest{ApiAuthRequest: p}
+	return &AuthRequest{AuthRequest: p}
 }
 func (m *AuthRequest) ToProto() *oidcapiv1.AuthRequest {
-	return m.ApiAuthRequest
+	return m.AuthRequest
 }
 
 // GetId implements [daobase.Modal].
 // Subtle: this method shadows the method (*BanPlayers).GetId of BanPlayersM.BanPlayers.
 func (m *AuthRequest) GetId() daobase.IdType {
-	return daobase.IdType(m.ApiAuthRequest.Id)
+	return daobase.IdType(m.AuthRequest.Id)
 }
 
 // SetId implements [daobase.Modal].
 func (m *AuthRequest) SetId(id daobase.IdType) {
-	m.ApiAuthRequest.Id = string(id)
+	m.AuthRequest.Id = string(id)
 }
 
 func NewAuthRequest() AuthRequest {
 	return AuthRequest{
-		ApiAuthRequest: &oidcapiv1.AuthRequest{
+		AuthRequest: &oidcapiv1.AuthRequest{
 			Id: kits.Ids.NewXId(),
+			// Ts: kits.Tss.Ts(),
+		},
+	}
+}
+
+func NewAuthRequestById(id daobase.IdType) AuthRequest {
+	return AuthRequest{
+		AuthRequest: &oidcapiv1.AuthRequest{
+			Id: string(id),
 			// Ts: kits.Tss.Ts(),
 		},
 	}
@@ -67,12 +82,12 @@ func NewAuthRequest() AuthRequest {
 
 // Key implements [daobase.Modal].
 func (m *AuthRequest) Key() []byte {
-	return append(m.Prefix(), kits.UnsafeToBytes(string(m.ApiAuthRequest.Id))...)
+	return append(m.Prefix(), kits.UnsafeToBytes(string(m.AuthRequest.Id))...)
 }
 
 // Prefix implements [daobase.Modal].
 func (m *AuthRequest) Prefix() []byte {
-	return daokeys.PrefixBanPlayers
+	return daokeys.PrefixAuthRequest
 }
 
 // Value implements [daobase.Modal].

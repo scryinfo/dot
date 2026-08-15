@@ -19,6 +19,9 @@ type StoragerConfig struct {
 type Storage struct {
 	db  *pebble2dot.Pebble2
 	log *dot.LoggerType
+
+	AuthRequestDao     *AuthRequestDao
+	CodeAuthRequestDao *CodeAuthRequestDao
 }
 
 // AuthRequestByCode implements [op.Storage].
@@ -136,9 +139,11 @@ func (s *Storage) ValidateJWTProfileScopes(ctx context.Context, userID string, s
 	panic("unimplemented")
 }
 
-func NewStorager(config *StoragerConfig, db *pebble2dot.Pebble2, logger *dot.LoggerType) (*Storage, error) {
+func NewStorager(config *StoragerConfig, db *pebble2dot.Pebble2, logger *dot.LoggerType, authRequestDao *AuthRequestDao, codeAuthRequestDao *CodeAuthRequestDao) (*Storage, error) {
 	return &Storage{
-		db:  db,
-		log: logger,
+		db:                 db,
+		log:                logger,
+		AuthRequestDao:     authRequestDao,
+		CodeAuthRequestDao: codeAuthRequestDao,
 	}, nil
 }

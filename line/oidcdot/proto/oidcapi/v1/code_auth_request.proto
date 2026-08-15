@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package oidcapi.v1;
+
+option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
