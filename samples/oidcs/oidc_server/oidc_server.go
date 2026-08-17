@@ -10,17 +10,20 @@ import (
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line"
+	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
 type Line struct {
-	SConfig dot.SConfig
-	Logger  *dot.LoggerType
+	SConfig       dot.SConfig
+	Logger        *dot.LoggerType
+	ConnectServer *rpcdot.ConnectServer
 }
 
 type LineConfig struct {
-	Log dot.LogConfig `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	Log           dot.LogConfig              `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
+	ConnectServer rpcdot.ConnectServerConfig `json:"connect_server" toml:"connect_server" yaml:"connect_server" mapstructure:"connect_server"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -37,7 +40,10 @@ var LineSet = wire.NewSet(
 	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
-	wire.FieldsOf(new(*LineConfig), "Log"),
+	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer"),
+	line.RpcdotNewConnetServer,
+	line.RpcdotNewConnectHttpServerMux,
+	line.RpcdotNewHandlerMiddle,
 )
 
 func main() {

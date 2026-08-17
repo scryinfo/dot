@@ -11,3 +11,4 @@ set_slog = true
 
 [pebble2]
 db_path = "data/pebble2"
+sync = true

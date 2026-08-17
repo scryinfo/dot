@@ -31,3 +31,9 @@ cert = ''
 mode = 'none'
 peer_cert = ''
 root_cert = ''
+
+[oidc_provider]
+oidc_issuer   = "http://localhost:8090"
+client_id     = "your-client-id"
+client_secret = "your-client-secret"
+redirect_url  = "your-redirect-url"

@@ -32,14 +32,13 @@ func InitializeService() (*Line, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	pebbleGrpcConfig := &lineConfig.PebbleGrpc
 	grpcServerConfig := &lineConfig.GrpcServer
 	grpcServer, cleanup2, err := rpcdot.NewGrpcServer(grpcServerConfig, sConfig, logger)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	pebbleGrpcService := pebbleservice.NewPebbleGrpcService(pebbleGrpcConfig, pebble2, grpcServer)
+	pebbleGrpcService := pebbleservice.NewPebbleGrpcService(pebble2, grpcServer)
 	line := &Line{
 		SConfig:       sConfig,
 		Logger:        logger,
