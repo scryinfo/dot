@@ -25,7 +25,7 @@ func (m *ModalSample) FromValue(bs []byte) error {
 
 // Key implements [Modal].
 func (m *ModalSample) Key() []byte {
-	return append(m.Prefix(), kits.UnsafeToBytes(string(m.Id))...)
+	return append(m.Prefix(), kits.StringToBytes(string(m.Id))...)
 }
 
 // Prefix implements [Modal].

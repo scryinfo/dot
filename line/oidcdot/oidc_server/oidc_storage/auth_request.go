@@ -82,7 +82,7 @@ func NewAuthRequestById(id daobase.IdType) AuthRequest {
 
 // Key implements [daobase.Modal].
 func (m *AuthRequest) Key() []byte {
-	return append(m.Prefix(), kits.UnsafeToBytes(string(m.AuthRequest.Id))...)
+	return append(m.Prefix(), kits.StringToBytes(string(m.AuthRequest.Id))...)
 }
 
 // Prefix implements [daobase.Modal].

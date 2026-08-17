@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package oidcapi.v1;
+
+option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
+
+message User {
+  string id = 1;
+  string username = 2;
+  string password = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string email = 6;
+  bool email_verified = 7;
+  string phone = 8;
+  bool phone_verified = 9;
+  string preferred_language = 10;
+  bool is_admin = 11;
+}
+
+message Identity {
+  string id = 1;
+  string user_id = 2;
+  string provider = 3;
+  string subject = 4;
+  string email = 5;
+}
+
+message UserIdentities {
+  string user_id = 1;
+  repeated string identities = 2;
+}

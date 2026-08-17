@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package oidcapi.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
+
+message Token {
+  string id = 1;
+  string application_id = 2;
+  string subject = 3;
+  string refresh_token_id = 4;
+  repeated string audience = 5;
+  google.protobuf.Timestamp expiration = 6;
+  repeated string scopes = 7;
+}
+
+message RefreshToken {
+  string id = 1;
+  string token = 2;
+  google.protobuf.Timestamp auth_time = 3;
+  repeated string amr = 4;
+  repeated string audience = 5;
+  string user_id = 6;
+  string application_id = 7;
+  google.protobuf.Timestamp expiration = 8;
+  repeated string scopes = 9;
+  string access_token = 10; // Token.id
+}

@@ -3,3 +3,8 @@ syntax = "proto3";
 package oidcapi.v1;
 
 option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
+
+// message CodeAuthRequest {
+//   string code = 1;
+//   string auth_request_id = 2;
+// }

@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package oidcapi.v1;
+
+import "google/protobuf/duration.proto";
+
+option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
+
+enum ApplicationType {
+  APPLICATION_TYPE_UNSPECIFIED = 0;
+  APPLICATION_TYPE_WEB = 1; // op.ApplicationTypeWeb
+  APPLICATION_TYPE_USER_AGENT = 2; // op.ApplicationTypeUserAgent
+  APPLICATION_TYPE_NATIVE = 3; // op.ApplicationTypeNative
+}
+
+enum AuthMethod {
+  AUTH_METHOD_UNSPECIFIED = 0;
+  AUTH_METHOD_BASIC = 1; // oidc.AuthMethodBasic
+  AUTH_METHOD_POST = 2; // oidc.AuthMethodPost
+  AUTH_METHOD_NONE = 3; // oidc.AuthMethodNone
+  AUTH_METHOD_PRIVATE_KEY_JWT = 4; // oidc.AuthMethodPrivateKeyJWT
+}
+
+enum AccessTokenType {
+  ACCESS_TOKEN_TYPE_UNSPECIFIED = 0;
+  ACCESS_TOKEN_TYPE_BEARER = 1; // oidc.AccessTokenTypeBearer
+  ACCESS_TOKEN_TYPE_JWT = 2; // oidc.AccessTokenTypeJWT
+}
+
+enum ResponseType {
+  RESPONSE_TYPE_UNSPECIFIED = 0;
+  RESPONSE_TYPE_QUERY = 1; // oidc.ResponseTypeQuery
+  RESPONSE_TYPE_FRAGMENT = 2; // oidc.ResponseTypeFragment
+  RESPONSE_TYPE_FORM_POST = 3; // oidc.ResponseTypeFormPost
+}
+
+enum GrantType {
+  GRANT_TYPE_UNSPECIFIED = 0;
+  GRANT_TYPE_CODE = 1; // oidc.GrantTypeCode
+  GRANT_TYPE_REFRESH_TOKEN = 2; // oidc.GrantTypeRefreshToken
+  GRANT_TYPE_CLIENT_CREDENTIALS = 3; // oidc.GrantTypeClientCredentials
+  GRANT_TYPE_BEARER = 4; // oidc.GrantTypeBearer
+  GRANT_TYPE_TOKEN_EXCHANGE = 5; // oidc.GrantTypeTokenExchange
+  GRANT_TYPE_IMPLICIT = 6; // oidc.GrantTypeImplicit
+  GRANT_TYPE_DEVICE_CODE = 7; // oidc.GrantTypeDeviceCode
+}
+
+message OidcClient {
+  string id = 1;
+  string secret = 2;
+  repeated string redirect_uris = 3;
+  ApplicationType application_type = 4;
+  AuthMethod auth_method = 5;
+  string login_url = 6;
+  repeated ResponseType response_types = 7;
+  repeated GrantType grant_types = 8;
+  AccessTokenType access_token_type = 9;
+  bool dev_mode = 10;
+  bool id_token_userinfo_claims_assertion = 11;
+  google.protobuf.Duration clock_skew = 12;
+  repeated string post_logout_redirect_uri_globs = 13;
+  repeated string redirect_uri_globs = 14;
+}

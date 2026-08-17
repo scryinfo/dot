@@ -1,8 +1,14 @@
 package daokeys
 
 var (
-	PrefixAuthCode    = []byte("admin:auth_code:")
-	PrefixAuthRequest = []byte("admin:auth_request:")
+	PrefixAuthCode       = []byte("oidc:auth_code:")
+	PrefixAuthRequest    = []byte("oidc:auth_request:")
+	PrefixUser           = []byte("oidc:user:")
+	PrefixIdentity       = []byte("oidc:identity:")
+	PrefixUserIdentities = []byte("oidc:user_identities:")
+	PrefixToken          = []byte("oidc:token:")
+	PrefixRefreshToken   = []byte("oidc:refresh_token:")
+	PrefixOidcClient     = []byte("oidc:client:")
 
 	// PrefixMessage     = []byte("admin:message:")
 	// PrefixMessageBody = []byte("admin:message_body:")

@@ -26,7 +26,7 @@ func (m *ModalBodySample) FromValueBody(bs []byte) error {
 
 // KeyBody implements [ModalBody].
 func (m *ModalBodySample) KeyBody() []byte {
-	return append(m.PrefixBody(), kits.UnsafeToBytes(string(m.Id))...)
+	return append(m.PrefixBody(), kits.StringToBytes(string(m.Id))...)
 }
 
 // PrefixBody implements [ModalBody].
@@ -46,7 +46,7 @@ func (m *ModalBodySample) FromValue(bs []byte) error {
 
 // Key implements [Modal].
 func (m *ModalBodySample) Key() []byte {
-	return append(m.Prefix(), kits.UnsafeToBytes(string(m.Id))...)
+	return append(m.Prefix(), kits.StringToBytes(string(m.Id))...)
 }
 
 // Prefix implements [Modal].

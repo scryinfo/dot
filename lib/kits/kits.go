@@ -1,6 +1,9 @@
 package kits
 
-import "time"
+import (
+	"time"
+	"unsafe"
+)
 
 type _Tss struct{}
 
@@ -24,4 +27,14 @@ func (c _Tss) TsNanoseconds() int64 {
 // milliseconds
 func (c _Tss) TsMilliseconds() int64 {
 	return time.Now().UnixMilli()
+}
+
+// inline
+func StringToBytes(data string) []byte {
+	return unsafe.Slice(unsafe.StringData(data), len(data))
+}
+
+// inline
+func BytesToString(data []byte) string {
+	return unsafe.String(unsafe.SliceData(data), len(data))
 }

@@ -40,7 +40,7 @@ func ModalPrefix[T any, PT ModalPtr[T]]() []byte {
 }
 
 func ModalKey[T any, PT ModalPtr[T]](id IdType) []byte {
-	return append(ModalPrefix[T, PT](), kits.UnsafeToBytes(string(id))...)
+	return append(ModalPrefix[T, PT](), kits.StringToBytes(string(id))...)
 }
 
 func ModalPrefixBody[T any, PT interface {
@@ -54,7 +54,7 @@ func ModalKeyBody[T any, PT interface {
 	*T
 	ModalBody
 }](id IdType) []byte {
-	return append(ModalPrefixBody[T, PT](), kits.UnsafeToBytes(string(id))...)
+	return append(ModalPrefixBody[T, PT](), kits.StringToBytes(string(id))...)
 }
 
 // inline

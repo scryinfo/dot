@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"time"
-	"unsafe"
 
 	"github.com/rs/xid"
 )
@@ -28,9 +27,4 @@ func (c _Ids) NewAuthCode() string {
 		panic("rand.Read: " + err.Error())
 	}
 	return base64.RawURLEncoding.EncodeToString(buf)
-}
-
-// inline
-func UnsafeToBytes(data string) []byte {
-	return *(*[]byte)(unsafe.Pointer(&data))
 }

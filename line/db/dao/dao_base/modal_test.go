@@ -26,7 +26,7 @@ type data2 struct {
 
 // Key implements [Modal].
 func (d *data2) Key() []byte {
-	return append(d.Prefix(), kits.UnsafeToBytes(string(d.Id))...)
+	return append(d.Prefix(), kits.StringToBytes(string(d.Id))...)
 }
 
 // Prefix implements [Modal].

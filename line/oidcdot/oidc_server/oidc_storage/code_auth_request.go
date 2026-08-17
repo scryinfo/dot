@@ -70,7 +70,7 @@ func NewCodeAuthRequestById(id daobase.IdType) CodeAuthRequest {
 
 // Key implements [daobase.Modal].
 func (m *CodeAuthRequest) Key() []byte {
-	return append(m.Prefix(), kits.UnsafeToBytes(string(m.Code))...)
+	return append(m.Prefix(), kits.StringToBytes(string(m.Code))...)
 }
 
 // Prefix implements [daobase.Modal].
