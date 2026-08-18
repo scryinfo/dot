@@ -69,3 +69,7 @@ func main() {
 	})
 	dot.Logger.Info().Msg("line exist")
 }
+
+func makeTestData(line *Line) {
+
+}
