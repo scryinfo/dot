@@ -113,3 +113,13 @@ samples/oidcs/app/src/api/
 line/oidcdot/oidc_gen/oidcapi/
 line/oidcdot/oidc_ts/src/oidcapi/
 samples/rpc/go_out/
+samples/db/badger/badger
+samples/db/pebble2/pebble2
+samples/db/pebble_connect_client/pebble_connect_client
+samples/db/pebble_connect_server/pebble_connect_server
+samples/db/pebble_grpc_client/pebble_grpc_client
+samples/db/pebble_grpc_server/pebble_grpc_server
+samples/not_stop_upgrader/not_stop_upgrader
+samples/oidcs/app_server/app_server
+samples/oidcs/oidc_server/oidc_server
+samples/sconfig_de/sconfig_de
