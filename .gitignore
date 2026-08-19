@@ -112,3 +112,4 @@ samples/oidcs/go_out/
 samples/oidcs/app/src/api/
 line/oidcdot/oidc_gen/oidcapi/
 line/oidcdot/oidc_ts/src/oidcapi/
+samples/rpc/go_out/
