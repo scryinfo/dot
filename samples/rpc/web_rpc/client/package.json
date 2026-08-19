@@ -13,27 +13,27 @@
     "format": "oxfmt . --write"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^2.13.0",
+    "@bufbuild/protobuf": "^2.14.0",
     "@connectrpc/connect": "^2.1.2",
     "@connectrpc/connect-web": "^2.1.2",
-    "vue": "^3.5.40",
+    "vue": "^3.5.41",
     "vue-router": "^5.2.0"
   },
   "devDependencies": {
-    "@tsconfig/node24": "^24.0.4",
-    "@types/jsdom": "^28.0.3",
-    "@types/node": "^26.1.2",
+    "@tsconfig/node24": "^24.0.5",
+    "@types/jsdom": "^30.0.0",
+    "@types/node": "^26.2.0",
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/test-utils": "^2.4.11",
     "@vue/tsconfig": "^0.9.1",
     "jsdom": "^30.0.1",
     "npm-run-all2": "^9.0.3",
-    "oxfmt": "^0.61.0",
-    "typescript": "6.0.3",
-    "vite": "^8.2.0",
+    "oxfmt": "^0.64.0",
+    "typescript": "6.0.2",
+    "vite": "^8.2.1",
     "vite-plugin-vue-devtools": "^8.2.1",
-    "vitest": "^4.1.10",
-    "vue-tsc": "^3.3.8"
+    "vitest": "^4.1.11",
+    "vue-tsc": "^3.3.10"
   },
   "engines": {
     "node": ">=22.12.0"

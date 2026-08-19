@@ -50,6 +50,7 @@ tidy:
 	cd db/pebble_server_bench && command go mod tidy
 upgrade:
 	cd rpc/web_rpc/client && bun update --latest
+	cd oidcs/app && bun update --latest
 	cd db/rocksdb && command go get -t -u ./... && command go mod tidy
 	cd db/rocksdb_bench && command go get -t -u ./... && command go mod tidy
 	cd db/pebble_server_bench && command go get -t -u ./... && command go mod tidy

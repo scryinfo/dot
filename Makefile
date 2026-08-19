@@ -31,6 +31,9 @@ clean:
 	cd samples && make clean
 	cd line/db/pebble_service && make clean
 	cd line/oidcdot/proto && make clean
+clean_web:
+	find . -name "node_modules" -type d -prune -exec rm -rf {} +
+	find . -name "dist" -type d -prune -exec rm -rf {} +
 tidy:
 	command go mod tidy
 	cd demo && make tidy
@@ -48,6 +51,8 @@ upgrade:
 	cd samples && make upgrade
 	cd line/db/pebble_service && make upgrade
 	cd line/oidcdot/oicd_ts && bun update --latest
+	cd line/db/pebble_service/kv_ts && bun update --latest
+
 format:
 	command go fmt ./...
 	cd demo && make format
