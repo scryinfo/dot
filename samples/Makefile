@@ -62,7 +62,7 @@ format:
 DIST_web_rpc_client := rpc/web_rpc/client/dist/index.html
 $(DIST_web_rpc_client): $(shell find rpc/web_rpc/client/src -type f)
 	cd rpc/web_rpc/client && bun install && bun run build
-build: wire $(DIST_web_rpc_client)
+build: samples $(DIST_web_rpc_client)
 	cd db/rocksdb_bench && make build
 	cd db/rocksdb && make build
 	cd db/pebble_server_bench && make build

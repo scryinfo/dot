@@ -14,14 +14,14 @@ import (
 	"github.com/scryinfo/dot/line/etcddot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
-	apiv1grpc "github.com/scryinfo/dot/samples/rpc/go_out/gogrpc/api/v1"
+	apiv1 "github.com/scryinfo/dot/samples/rpc/go_out/connect/api/v1"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
 type Line struct {
 	SConfig         *sconfig.SConfig
 	Logger          *dot.LoggerType
-	HiServiceClient apiv1grpc.HiServiceClient
+	HiServiceClient apiv1.HiServiceClient
 }
 
 type LineConfig struct {
@@ -52,8 +52,8 @@ var LineSet = wire.NewSet(
 	line.CertificateNewBaseCertificate,
 )
 
-func NewHiServiceClient(clientEtcd *rpcdot.GrpcClientEtcd) apiv1grpc.HiServiceClient {
-	return apiv1grpc.NewHiServiceClient(clientEtcd.Client())
+func NewHiServiceClient(clientEtcd *rpcdot.GrpcClientEtcd) apiv1.HiServiceClient {
+	return apiv1.NewHiServiceClient(clientEtcd.Client())
 }
 
 func main() {
@@ -74,19 +74,19 @@ func main() {
 
 	line.Logger.Info().Msg("dot ok")
 	//second step ....
-	res, err := line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt"})
+	res, err := line.HiServiceClient.Hi(context.Background(), &apiv1.HiRequest{Name: "ttt"})
 	if err != nil {
 		line.Logger.Error().Err(err).Msg("hi failed")
 		return
 	}
 	line.Logger.Info().Msg(res.Name)
-	res, err = line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt2"})
+	res, err = line.HiServiceClient.Hi(context.Background(), &apiv1.HiRequest{Name: "ttt2"})
 	if err != nil {
 		line.Logger.Error().Err(err).Msg("hi failed")
 		return
 	}
 	line.Logger.Info().Msg(res.Name)
-	res, err = line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "ttt3"})
+	res, err = line.HiServiceClient.Hi(context.Background(), &apiv1.HiRequest{Name: "ttt3"})
 	if err != nil {
 		line.Logger.Error().Err(err).Msg("hi failed")
 		return

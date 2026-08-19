@@ -13,14 +13,14 @@ import (
 	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
-	apiv1grpc "github.com/scryinfo/dot/samples/rpc/go_out/gogrpc/api/v1"
+	apiv1 "github.com/scryinfo/dot/samples/rpc/go_out/connect/api/v1"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
 type Line struct {
 	SConfig         *sconfig.SConfig
 	Logger          *dot.LoggerType
-	HiServiceClient apiv1grpc.HiServiceClient
+	HiServiceClient apiv1.HiServiceClient
 }
 
 type LineConfig struct {
@@ -35,8 +35,8 @@ func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 	}
 	return sconfig.GenerateConfigWithArgs(config, lineConfig)
 }
-func NewHiServiceClient(clientEx *rpcdot.GrpcClientEx) apiv1grpc.HiServiceClient {
-	return apiv1grpc.NewHiServiceClient(clientEx.Client())
+func NewHiServiceClient(clientEx *rpcdot.GrpcClientEx) apiv1.HiServiceClient {
+	return apiv1.NewHiServiceClient(clientEx.Client())
 }
 
 var LineSet = wire.NewSet(
@@ -71,7 +71,7 @@ func main() {
 	//second step ....
 	_ = line
 
-	res, err := line.HiServiceClient.Hi(context.Background(), &apiv1grpc.HiRequest{Name: "test"})
+	res, err := line.HiServiceClient.Hi(context.Background(), &apiv1.HiRequest{Name: "test"})
 	if err != nil {
 		dot.Logger.Error().Err(err).Msg("hi failed")
 		return
