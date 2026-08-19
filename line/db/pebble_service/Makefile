@@ -1,14 +1,5 @@
 
-ifeq ($(OS),Windows_NT)
-	ifneq (,$(findstring MINGW,$(UNAME_S)))
-	    go := ${shell which go}
-	else
-	    go := $(subst \,/,$(shell where.exe go))
-	endif
-else
-	go := ${shell which go}
-endif
-$(info ${go})
+.PHONY: clean gen build buf_dep upgrade format go_tools
 
 clean:
 	rm -rf ./kv_gen/connect/* ./kv_gen/gogrpc/* ./kv_ts/src/kv_gen/ kv_ts/dist/ kv_ts/node_modules/
@@ -19,14 +10,16 @@ gen:
 
 buf_dep:
 	buf dep update
-build:
-	${go} build ./...
+build_kv_ts:=kv_ts/dist/index.html
+build: ${build_kv_ts}
+	command go build ./...
+${build_kv_ts}:
 	cd kv_ts && bun run build
 upgrade:
 	cd kv_ts && bun update --latest
 format:
-	${go} fmt ./...
+	command go fmt ./...
 	cd kv_ts && bun format
 go_tools:
-	${go} install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	${go} install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	command go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	command go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest

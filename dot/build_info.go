@@ -14,7 +14,7 @@ import (
 // BUILD_TIME :=${shell date +%s}
 
 // build:dotdot
-// 	${go} build -tags="release" -buildvcs=true -ldflags="-s -w \
+// 	command go build -tags="release" -buildvcs=true -ldflags="-s -w \
 // 	-X '${VERSION_PKG}.CommitMsg=${COMMIT_MSG}' \
 // 	-X '${VERSION_PKG}.CommitTime=${COMMIT_TIME}' \
 //  -X '${VERSION_PKG}.CommitHash=${COMMIT_HASH}' \

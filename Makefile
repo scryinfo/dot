@@ -1,28 +1,21 @@
 
 ifeq ($(OS),Windows_NT)
 	EXE := .exe
-	ifneq (,$(findstring MINGW,$(UNAME_S)))
-	    go := ${shell which go}
-	else
-	    go := $(subst \,/,$(shell where.exe go))
-	endif
 	VCPKG := $(subst \,/,$(abspath ./vcpkg_installed))
 	ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
 	ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
 	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 else
-	go := ${shell which go}
 	EXE :=
 	VCPKG :=""
 	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 
 endif
-$(info "go: ${go}")
 
 CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
-go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" ${go}
+go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" command go
 
 .PHONY: clean upgrade format build samples
 
@@ -33,55 +26,55 @@ ${VCPKG_INSTALLED}:
 endif
 clean:
 	rm -rf go.sum go.work.sum demo/go.sum node_modules bun.lock
-	${go} clean
+	command go clean
 	cd demo && make clean
 	cd samples && make clean
 	cd line/db/pebble_service && make clean
 	cd line/oidcdot/proto && make clean
 tidy:
-	${go} mod tidy
+	command go mod tidy
 	cd demo && make tidy
-	cd line/db/tools/gdao && ${go} mod tidy
-	cd line/db/tools/gmodel && ${go} mod tidy
-	cd line/db/rocksdbdot && ${go} mod tidy
+	cd line/db/tools/gdao && command go mod tidy
+	cd line/db/tools/gmodel && command go mod tidy
+	cd line/db/rocksdbdot && command go mod tidy
 	cd samples && make tidy
 
 upgrade:
-	${go} get -t -u ./... && ${go} mod tidy
+	command go get -t -u ./... && command go mod tidy
 	cd demo && make upgrade
-	cd line/db/tools/gdao && ${go} get -t -u ./... && ${go} mod tidy
-	cd line/db/tools/gmodel && ${go} get -t -u ./... && ${go} mod tidy
-	cd line/db/rocksdbdot && ${go} get -t -u ./... && ${go} mod tidy
+	cd line/db/tools/gdao && command go get -t -u ./... && command go mod tidy
+	cd line/db/tools/gmodel && command go get -t -u ./... && command go mod tidy
+	cd line/db/rocksdbdot && command go get -t -u ./... && command go mod tidy
 	cd samples && make upgrade
 	cd line/db/pebble_service && make upgrade
 	cd line/oidcdot/oicd_ts && bun update --latest
 format:
-	${go} fmt ./...
+	command go fmt ./...
 	cd demo && make format
-	cd line/db/tools/gdao && ${go} fmt ./...
-	cd line/db/tools/gmodel && ${go} fmt ./...
-	cd line/db/rocksdbdot && ${go} fmt ./...
+	cd line/db/tools/gdao && command go fmt ./...
+	cd line/db/tools/gmodel && command go fmt ./...
+	cd line/db/rocksdbdot && command go fmt ./...
 	cd samples && make format
 	cd line/db/pebble_service && make format
 build: ${VCPKG_INSTALLED}
 	bun install
-	${go} build ./...
+	# command go build -ldflags="-s -w" ./...
 	cd demo && make build
-	cd line/db/tools/gdao && ${go} build ./...
-	cd line/db/tools/gmodel && ${go} build ./...
+	cd line/db/tools/gdao && command go build ./...
+	cd line/db/tools/gmodel && command go build ./...
 	cd line/db/rocksdbdot && make build
 	cd samples && make build
 	cd line/db/pebble_service && make build
 rebuild: clean gen wire build
 test:
-	${go} test -tags="release" ./...
+	command go test -tags="release" ./...
 
 go_fix:
-	${go} fix ./...
+	command go fix ./...
 	cd demo && make go_fix
-	cd line/db/tools/gdao && ${go} fix ./...
-	cd line/db/tools/gmodel && ${go} fix ./...
-	cd line/db/rocksdbdot && ${go} fix ./...
+	cd line/db/tools/gdao && command go fix ./...
+	cd line/db/tools/gmodel && command go fix ./...
+	cd line/db/rocksdbdot && command go fix ./...
 wire:
 	cd samples && make wire
 samples:
@@ -92,7 +85,7 @@ gen:
 	cd line/oidcdot/proto && make gen
 
 lint:
-	${go} vet ./...
+	command go vet ./...
 	govulncheck ./...
 	staticcheck ./...
 	nilaway ./...
@@ -104,28 +97,28 @@ lint_more:
 	golangci-lint run ./...
 
 go_tools:
-	${go} install github.com/google/wire/cmd/wire@latest
-	${go} install github.com/bufbuild/buf/cmd/buf@latest
-	${go} install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	${go} install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
-	${go} install github.com/planetscale/vtprotobuf/cmd/protoc-gen-go-vtproto@latest
-	${go} install github.com/mfridman/protoc-gen-go-json@latest
-	${go} install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	${go} install github.com/fatih/gomodifytags@latest
-	${go} install golang.org/x/tools/gopls@latest
-	${go} install honnef.co/go/tools/cmd/staticcheck@latest
-	${go} install github.com/cweill/gotests/gotests@latest
-	${go} install github.com/josharian/impl@latest
-	${go} install github.com/go-delve/delve/cmd/dlv@latest
-	${go} install go.uber.org/nilaway/cmd/nilaway@latest
-	${go} install golang.org/x/vuln/cmd/govulncheck@latest
-	${go} install github.com/securego/gosec/v2/cmd/gosec@latest
-	${go} install github.com/mgechev/revive@latest
-	${go} install github.com/fzipp/gocyclo/cmd/gocyclo@latest
-	${go} install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	${go} install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-	${go} install github.com/nao1215/gup@latest
-	${go} install github.com/jmattheis/goverter/cmd/goverter@latest
+	command go install github.com/google/wire/cmd/wire@latest
+	command go install github.com/bufbuild/buf/cmd/buf@latest
+	command go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	command go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
+	command go install github.com/planetscale/vtprotobuf/cmd/protoc-gen-go-vtproto@latest
+	command go install github.com/mfridman/protoc-gen-go-json@latest
+	command go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	command go install github.com/fatih/gomodifytags@latest
+	command go install golang.org/x/tools/gopls@latest
+	command go install honnef.co/go/tools/cmd/staticcheck@latest
+	command go install github.com/cweill/gotests/gotests@latest
+	command go install github.com/josharian/impl@latest
+	command go install github.com/go-delve/delve/cmd/dlv@latest
+	command go install go.uber.org/nilaway/cmd/nilaway@latest
+	command go install golang.org/x/vuln/cmd/govulncheck@latest
+	command go install github.com/securego/gosec/v2/cmd/gosec@latest
+	command go install github.com/mgechev/revive@latest
+	command go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
+	command go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	command go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+	command go install github.com/nao1215/gup@latest
+	command go install github.com/jmattheis/goverter/cmd/goverter@latest
 bun_tools:
 	bun install -g @bufbuild/protoc-gen-es
 install_rocksdb:

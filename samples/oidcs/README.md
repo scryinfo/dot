@@ -8,13 +8,13 @@
 
 ```bash
 go := go
-${go} install github.com/google/wire/cmd/wire@latest
-${go} install github.com/bufbuild/buf/cmd/buf@latest
-${go} install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-${go} install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
-${go} install github.com/planetscale/vtprotobuf/cmd/protoc-gen-go-vtproto@latest
-${go} install github.com/mfridman/protoc-gen-go-json@latest
-${go} install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+command go install github.com/google/wire/cmd/wire@latest
+command go install github.com/bufbuild/buf/cmd/buf@latest
+command go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+command go install connectrpc.com/connect/cmd/protoc-gen-connect-go@latest
+command go install github.com/planetscale/vtprotobuf/cmd/protoc-gen-go-vtproto@latest
+command go install github.com/mfridman/protoc-gen-go-json@latest
+command go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 bun install -g @bufbuild/protoc-gen-es
 ```

@@ -1,12 +1,6 @@
 ifeq ($(OS),Windows_NT)
 	EXE := .exe
-	ifneq (,$(findstring MINGW,$(UNAME_S)))
-	    go := ${shell which go}
-	else
-	    go := $(subst \,/,$(shell where.exe go))
-	endif
 else
-	go := ${shell which go}
 	EXE :=
 endif
 VERSION_PKG :=github.com/scryinfo/dot/dot
@@ -14,7 +8,6 @@ COMMIT_MSG :=${shell git log -1 --pretty=%B}
 COMMIT_TIME :=${shell git show -s --format=%at}
 COMMIT_HASH :=${shell git rev-parse --short HEAD}
 BUILD_TIME :=${shell date +%s}
-$(info "go: ${go}")
 
 .PHONY: clean clean_wire upgrade format build samples
 
@@ -52,19 +45,19 @@ clean:
 clean_wire:
 	find . -type f \( -executable -o -name "wire_gen.go" \) -delete
 tidy:
-	cd db/rocksdb && ${go} mod tidy
-	cd db/rocksdb_bench && ${go} mod tidy
-	cd db/pebble_server_bench && ${go} mod tidy
+	cd db/rocksdb && command go mod tidy
+	cd db/rocksdb_bench && command go mod tidy
+	cd db/pebble_server_bench && command go mod tidy
 upgrade:
 	cd rpc/web_rpc/client && bun update --latest
-	cd db/rocksdb && ${go} get -t -u ./... && ${go} mod tidy
-	cd db/rocksdb_bench && ${go} get -t -u ./... && ${go} mod tidy
-	cd db/pebble_server_bench && ${go} get -t -u ./... && ${go} mod tidy
+	cd db/rocksdb && command go get -t -u ./... && command go mod tidy
+	cd db/rocksdb_bench && command go get -t -u ./... && command go mod tidy
+	cd db/pebble_server_bench && command go get -t -u ./... && command go mod tidy
 format:
 	cd rpc/web_rpc/client && bun run format
-	cd db/rocksdb && ${go} fmt ./...
-	cd db/rocksdb_bench && ${go} fmt ./...
-	cd db/pebble_server_bench && ${go} fmt ./...
+	cd db/rocksdb && command go fmt ./...
+	cd db/rocksdb_bench && command go fmt ./...
+	cd db/pebble_server_bench && command go fmt ./...
 
 DIST_web_rpc_client := rpc/web_rpc/client/dist/index.html
 $(DIST_web_rpc_client): $(shell find rpc/web_rpc/client/src -type f)
@@ -87,7 +80,7 @@ wire:  $(addsuffix /wire_gen.go, $(WIRES)) db/rocksdb/wire_gen.go
 
 define sample_rule
 $1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go
-	cd $1 && ${go} build -tags="release" -buildvcs=true -ldflags="-s -w \
+	cd $1 && command go build -tags="release" -buildvcs=true -ldflags="-s -w \
  		-X '${VERSION_PKG}.CommitMsg=${COMMIT_MSG}' \
   		-X '${VERSION_PKG}.CommitTime=${COMMIT_TIME}' \
     	-X '${VERSION_PKG}.CommitHash=${COMMIT_HASH}' \
@@ -100,7 +93,7 @@ samples: $(foreach wire,$(WIRES),$(wire)/$(notdir $(wire))$(EXE)) db/rocksdb/roc
 
 define generate_config_rule
 $1/$(notdir $1)_gen.toml: $1/$(notdir $1).go $1/wire_gen.go
-	cd $1 && ${go} run ./... -- -GenerateConfig
+	cd $1 && command go run ./... -- -GenerateConfig
 endef
 $(foreach wire,$(WIRES),$(eval $(call generate_config_rule,$(wire))))
 db/rocksdb/rocksdb_gen.toml: db/rocksdb/rocksdb.go db/rocksdb/wire_gen.go
