@@ -24,15 +24,15 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	rocksdbDotConfig := &lineConfig.RocksdbDot
-	rocksDbDot, cleanup, err := rocksdbdot.NewRocksDbDot(rocksdbDotConfig, sConfig, logger)
+	rocksDbDot, cleanup, err := rocksdbdot.NewRocksDbDot(rocksdbDotConfig, sConfig, v)
 	if err != nil {
 		return nil, nil, err
 	}
 	line := &Line{
 		SConfig: sConfig,
-		Logger:  logger,
+		Logger:  v,
 		Db:      rocksDbDot,
 	}
 	return line, func() {

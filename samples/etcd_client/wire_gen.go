@@ -24,15 +24,15 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	clientConfig := &lineConfig.EtcdClient
-	client, cleanup, err := etcddot.NewClient(clientConfig, logger)
+	client, cleanup, err := etcddot.NewClient(clientConfig, v)
 	if err != nil {
 		return nil, nil, err
 	}
 	line := &Line{
 		SConfig:    sConfig,
-		Logger:     logger,
+		Logger:     v,
 		EtcdClient: client,
 	}
 	return line, func() {

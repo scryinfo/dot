@@ -23,10 +23,10 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	line := &Line{
 		SConfig: sConfig,
-		Logger:  logger,
+		Logger:  v,
 	}
 	return line, func() {
 	}, nil

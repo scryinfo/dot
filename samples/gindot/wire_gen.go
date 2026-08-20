@@ -24,10 +24,10 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	routerConfig := &lineConfig.Router
 	engineConfig := &lineConfig.Engine
-	engine, err := gindot.NewGinDot(engineConfig, logger)
+	engine, err := gindot.NewGinDot(engineConfig, v)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -41,7 +41,7 @@ func InitializeService() (*Line, func(), error) {
 	}
 	line := &Line{
 		SConfig:        sConfig,
-		Logger:         logger,
+		Logger:         v,
 		SampleCtroller: sampleCtroller,
 	}
 	return line, func() {

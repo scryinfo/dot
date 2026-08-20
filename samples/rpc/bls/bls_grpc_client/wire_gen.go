@@ -26,15 +26,15 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	grpcClientEtcdConfig := &lineConfig.GrpcClientEtcd
-	baseCertificate := certificate.NewBaseCertificate(logger)
+	baseCertificate := certificate.NewBaseCertificate(v)
 	clientConfig := &lineConfig.EtcdClient
-	client, cleanup, err := etcddot.NewClient(clientConfig, logger)
+	client, cleanup, err := etcddot.NewClient(clientConfig, v)
 	if err != nil {
 		return nil, nil, err
 	}
-	grpcClientEtcd, err := rpcdot.NewGrpcClientEtcd(grpcClientEtcdConfig, sConfig, baseCertificate, client, logger)
+	grpcClientEtcd, err := rpcdot.NewGrpcClientEtcd(grpcClientEtcdConfig, sConfig, baseCertificate, client, v)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
@@ -42,7 +42,7 @@ func InitializeService() (*Line, func(), error) {
 	hiServiceClient := NewHiServiceClient(grpcClientEtcd)
 	line := &Line{
 		SConfig:         sConfig,
-		Logger:          logger,
+		Logger:          v,
 		HiServiceClient: hiServiceClient,
 	}
 	return line, func() {

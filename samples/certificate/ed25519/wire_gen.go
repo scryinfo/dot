@@ -24,11 +24,11 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
-	ed25519 := certificate.NewEd25519(logger)
+	v := dot.NewLogger(logConfig)
+	ed25519 := certificate.NewEd25519(v)
 	line := &Line{
 		Ed25519: ed25519,
-		Logger:  logger,
+		Logger:  v,
 	}
 	return line, func() {
 	}, nil

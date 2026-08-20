@@ -24,7 +24,7 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	redisConfig := &lineConfig.Redis
 	redisClient, cleanup, err := redis_client.NewRedisClient(redisConfig)
 	if err != nil {
@@ -33,7 +33,7 @@ func InitializeService() (*Line, func(), error) {
 	redisSample := NewRedisSample(redisClient)
 	line := &Line{
 		SConfig:     sConfig,
-		Logger:      logger,
+		Logger:      v,
 		RedisSample: redisSample,
 	}
 	return line, func() {

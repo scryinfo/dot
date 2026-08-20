@@ -24,17 +24,17 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	connectServerConfig := &lineConfig.ConnectServer
 	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
 	handlerMiddle := rpcdot.NewHandlerMiddle()
-	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, logger, handlerMiddle)
+	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, v, handlerMiddle)
 	if err != nil {
 		return nil, nil, err
 	}
 	line := &Line{
 		SConfig:       sConfig,
-		Logger:        logger,
+		Logger:        v,
 		ConnectServer: connectServer,
 	}
 	return line, func() {

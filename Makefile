@@ -50,7 +50,7 @@ upgrade:
 	cd line/db/rocksdbdot && command go get -t -u ./... && command go mod tidy
 	cd samples && make upgrade
 	cd line/db/pebble_service && make upgrade
-	cd line/oidcdot/oicd_ts && bun update --latest
+	cd line/oidcdot/oidc_ts && bun update --latest
 	cd line/db/pebble_service/kv_ts && bun update --latest
 
 format:

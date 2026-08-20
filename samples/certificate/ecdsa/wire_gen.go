@@ -24,11 +24,11 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
-	ecdsa := certificate.NewEcdsa(logger)
+	v := dot.NewLogger(logConfig)
+	ecdsa := certificate.NewEcdsa(v)
 	line := &Line{
 		Ecdsa:  ecdsa,
-		Logger: logger,
+		Logger: v,
 	}
 	return line, func() {
 	}, nil

@@ -26,17 +26,17 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	httpClientConfig := &lineConfig.HttpClient
-	baseCertificate := certificate.NewBaseCertificate(logger)
-	httpClientEx, err := rpcdot.NewHttpClientEx(httpClientConfig, sConfig, baseCertificate, logger)
+	baseCertificate := certificate.NewBaseCertificate(v)
+	httpClientEx, err := rpcdot.NewHttpClientEx(httpClientConfig, sConfig, baseCertificate, v)
 	if err != nil {
 		return nil, nil, err
 	}
 	kvServiceClient := pebbleservice.NewPebbleConnectClient(httpClientEx)
 	line := &Line{
 		SConfig:      sConfig,
-		Logger:       logger,
+		Logger:       v,
 		PebbleClient: kvServiceClient,
 	}
 	return line, func() {

@@ -26,24 +26,24 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
 	hiServiceConfig := &lineConfig.HiService
-	hiService := connectimpl.NewHiService(connectHttpServerMux, logger, hiServiceConfig)
+	hiService := connectimpl.NewHiService(connectHttpServerMux, v, hiServiceConfig)
 	connectServerConfig := &lineConfig.ConnectServer
 	handlerMiddle := rpcdot.NewHandlerMiddle()
-	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, logger, handlerMiddle)
+	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, v, handlerMiddle)
 	if err != nil {
 		return nil, nil, err
 	}
 	upgraderListenerConfig := &lineConfig.UpgraderListener
-	upgraderListener, cleanup2, err := notstopupgrade.NewUpgraderListener(upgraderListenerConfig, logger)
+	upgraderListener, cleanup2, err := notstopupgrade.NewUpgraderListener(upgraderListenerConfig, v)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
 	line := &Line{
-		Logger:              logger,
+		Logger:              v,
 		HiService:           hiService,
 		ConnectServer:       connectServer,
 		Upgrader:            upgraderListener,

@@ -26,17 +26,17 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	grpcClientConfig := &lineConfig.GrpcClient
-	baseCertificate := certificate.NewBaseCertificate(logger)
-	grpcClientEx, cleanup, err := rpcdot.NewGrpcClientEx(grpcClientConfig, sConfig, logger, baseCertificate)
+	baseCertificate := certificate.NewBaseCertificate(v)
+	grpcClientEx, cleanup, err := rpcdot.NewGrpcClientEx(grpcClientConfig, sConfig, v, baseCertificate)
 	if err != nil {
 		return nil, nil, err
 	}
 	kvServiceClient := pebbleservice.NewPebbleGrpcClient(grpcClientEx)
 	line := &Line{
 		SConfig:      sConfig,
-		Logger:       logger,
+		Logger:       v,
 		PebbleClient: kvServiceClient,
 	}
 	return line, func() {

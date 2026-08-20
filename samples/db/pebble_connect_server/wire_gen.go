@@ -26,9 +26,9 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	pebble2Config := &lineConfig.Pebble2
-	pebble2, cleanup, err := pebble2dot.NewPebble2(pebble2Config, sConfig, logger)
+	pebble2, cleanup, err := pebble2dot.NewPebble2(pebble2Config, sConfig, v)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -36,14 +36,14 @@ func InitializeService() (*Line, func(), error) {
 	pebbleConnectService := pebbleservice.NewPebbleConnectService(pebble2, connectHttpServerMux)
 	connectServerConfig := &lineConfig.ConnectServer
 	handlerMiddle := NewHandlerMiddle()
-	connectServer, cleanup2, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, logger, handlerMiddle)
+	connectServer, cleanup2, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, v, handlerMiddle)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
 	line := &Line{
 		SConfig:           sConfig,
-		Logger:            logger,
+		Logger:            v,
 		Pebble:            pebble2,
 		PebbleService:     pebbleConnectService,
 		ConnectHttpServer: connectServer,

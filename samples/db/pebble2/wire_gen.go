@@ -24,15 +24,15 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	pebble2Config := &lineConfig.Pebble2
-	pebble2, cleanup, err := pebble2dot.NewPebble2(pebble2Config, sConfig, logger)
+	pebble2, cleanup, err := pebble2dot.NewPebble2(pebble2Config, sConfig, v)
 	if err != nil {
 		return nil, nil, err
 	}
 	line := &Line{
 		SConfig: sConfig,
-		Logger:  logger,
+		Logger:  v,
 		Pebble:  pebble2,
 	}
 	return line, func() {

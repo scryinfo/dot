@@ -26,24 +26,24 @@ func InitializeService() (*Line, func(), error) {
 		return nil, nil, err
 	}
 	logConfig := &lineConfig.Log
-	logger := dot.NewLogger(logConfig)
+	v := dot.NewLogger(logConfig)
 	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
 	hiServiceConfig := &lineConfig.HiService
-	hiService := connectimpl.NewHiService(connectHttpServerMux, logger, hiServiceConfig)
+	hiService := connectimpl.NewHiService(connectHttpServerMux, v, hiServiceConfig)
 	connectServerConfig := &lineConfig.ConnectServer
 	handlerMiddle := NewHandlerMiddle()
-	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, logger, handlerMiddle)
+	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, v, handlerMiddle)
 	if err != nil {
 		return nil, nil, err
 	}
 	connectServerEtcdConfig := &lineConfig.ConnectServerEtcd
 	clientConfig := &lineConfig.EtcdClient
-	client, cleanup2, err := etcddot.NewClient(clientConfig, logger)
+	client, cleanup2, err := etcddot.NewClient(clientConfig, v)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
 	}
-	connectServerEtcd, cleanup3, err := rpcdot.NewConnectServerEtcd(connectServerEtcdConfig, client, connectServer, logger)
+	connectServerEtcd, cleanup3, err := rpcdot.NewConnectServerEtcd(connectServerEtcdConfig, client, connectServer, v)
 	if err != nil {
 		cleanup2()
 		cleanup()
@@ -51,7 +51,7 @@ func InitializeService() (*Line, func(), error) {
 	}
 	line := &Line{
 		SConfig:           sConfig,
-		Logger:            logger,
+		Logger:            v,
 		HiService:         hiService,
 		ConnectServer:     connectServer,
 		ConnectServerEtcd: connectServerEtcd,
