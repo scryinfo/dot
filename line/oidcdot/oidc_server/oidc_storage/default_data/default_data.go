@@ -7,6 +7,7 @@ import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/db/badgerdot"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
+	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 )
 
 type DefaultDataPebble2 struct {
@@ -14,11 +15,11 @@ type DefaultDataPebble2 struct {
 
 func NewDefaultDataPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) DefaultDataPebble2 {
 	{
-		userDao := NewUserDaoPebble2(db, logger)
+		userDao := oidc_storage.NewUserDaoPebble2(db, logger)
 		for i, _ := range defaultData.Users {
 			userDao.Add(&defaultData.Users[i])
 		}
-		clientDao := NewOidcClientDaoPebble2(db, logger)
+		clientDao := oidc_storage.NewOidcClientDaoPebble2(db, logger)
 		for i, _ := range defaultData.Clients {
 			clientDao.Add(&defaultData.Clients[i])
 		}
@@ -32,11 +33,11 @@ type DefaultDataBadger struct {
 
 func NewDefaultDataBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) DefaultDataBadger {
 	{
-		userDao := NewUserDaoBadger(db, logger)
+		userDao := oidc_storage.NewUserDaoBadger(db, logger)
 		for i, _ := range defaultData.Users {
 			userDao.Add(&defaultData.Users[i])
 		}
-		clientDao := NewOidcClientDaoBadger(db, logger)
+		clientDao := oidc_storage.NewOidcClientDaoBadger(db, logger)
 		for i, _ := range defaultData.Clients {
 			clientDao.Add(&defaultData.Clients[i])
 		}
@@ -45,8 +46,8 @@ func NewDefaultDataBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) Def
 }
 
 type DefaultData struct {
-	Clients []OidcClient `json:"clients"`
-	Users   []User       `json:"users"`
+	Clients []oidc_storage.OidcClient `json:"clients"`
+	Users   []oidc_storage.User       `json:"users"`
 }
 
 //go:embed default_data.json

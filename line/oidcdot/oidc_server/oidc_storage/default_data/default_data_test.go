@@ -6,29 +6,30 @@ import (
 	"testing"
 
 	"github.com/scryinfo/dot/lib/kits"
+	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
 func TestDefaultData(t *testing.T) {
 	data := DefaultData{
-		Clients: make([]OidcClient, 0, 2),
-		Users:   make([]User, 0, 4),
+		Clients: make([]oidc_storage.OidcClient, 0, 2),
+		Users:   make([]oidc_storage.User, 0, 4),
 	}
 	{
-		data.Clients = append(data.Clients, OidcClient{
+		data.Clients = append(data.Clients, oidc_storage.OidcClient{
 			Id:           kits.Ids.NewXId(),
 			Secret:       "66",
 			ShowName:     "client1",
 			RedirectUris: []string{"http://localhost:8089/callback"},
 		})
-		data.Clients = append(data.Clients, OidcClient{
+		data.Clients = append(data.Clients, oidc_storage.OidcClient{
 			Id:           kits.Ids.NewXId(),
 			Secret:       "66",
 			ShowName:     "client2",
 			RedirectUris: []string{"http://localhost:8089/callback"},
 		})
-		data.Users = append(data.Users, User{
+		data.Users = append(data.Users, oidc_storage.User{
 			Id:                kits.Ids.NewXId(),
 			Username:          "test1",
 			Password:          "66",
@@ -40,7 +41,7 @@ func TestDefaultData(t *testing.T) {
 			PhoneVerified:     false,
 			PreferredLanguage: language.English.String(),
 		})
-		data.Users = append(data.Users, User{
+		data.Users = append(data.Users, oidc_storage.User{
 			Id:                kits.Ids.NewXId(),
 			Username:          "test2",
 			Password:          "66",
@@ -52,7 +53,7 @@ func TestDefaultData(t *testing.T) {
 			PhoneVerified:     false,
 			PreferredLanguage: language.English.String(),
 		})
-		data.Users = append(data.Users, User{
+		data.Users = append(data.Users, oidc_storage.User{
 			Id:                kits.Ids.NewXId(),
 			Username:          "test3",
 			Password:          "66",
@@ -64,7 +65,7 @@ func TestDefaultData(t *testing.T) {
 			PhoneVerified:     false,
 			PreferredLanguage: language.English.String(),
 		})
-		data.Users = append(data.Users, User{
+		data.Users = append(data.Users, oidc_storage.User{
 			Id:                kits.Ids.NewXId(),
 			Username:          "test4",
 			Password:          "66",
@@ -78,13 +79,13 @@ func TestDefaultData(t *testing.T) {
 		})
 		for i, _ := range data.Clients {
 			c := &data.Clients[i]
-			p, err := PasswordHash.HashPassword(c.Secret)
+			p, err := oidc_storage.PasswordHash.HashPassword(c.Secret)
 			assert.Nil(t, err)
 			c.Secret = p
 		}
 		for i, _ := range data.Users {
 			u := &data.Users[i]
-			p, err := PasswordHash.HashPassword(u.Password)
+			p, err := oidc_storage.PasswordHash.HashPassword(u.Password)
 			assert.Nil(t, err)
 			u.Password = p
 		}
