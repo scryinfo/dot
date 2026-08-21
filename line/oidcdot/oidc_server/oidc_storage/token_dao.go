@@ -11,12 +11,12 @@ import (
 )
 
 type TokenDao struct {
-	dao_pebble2.Daobase[Token, *Token]
+	daobase.Dao[Token, *Token]
 }
 
 func NewTokenDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *TokenDao {
 	return &TokenDao{
-		Daobase: dao_pebble2.NewDaobase(db, logger, NewTokenById),
+		Dao: dao_pebble2.NewPointDaobase(db, logger, NewTokenById),
 	}
 }
 

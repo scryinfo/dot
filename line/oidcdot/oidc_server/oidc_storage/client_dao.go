@@ -3,6 +3,8 @@ package oidc_storage
 import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
+	"github.com/scryinfo/dot/line/db/badgerdot"
+	"github.com/scryinfo/dot/line/db/badgerdot/dao_badger"
 	daobase "github.com/scryinfo/dot/line/db/dao/dao_base"
 	daokeys "github.com/scryinfo/dot/line/db/dao/dao_keys"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
@@ -11,12 +13,18 @@ import (
 )
 
 type OidcClientDao struct {
-	dao_pebble2.Daobase[OidcClient, *OidcClient]
+	daobase.Dao[OidcClient, *OidcClient]
 }
 
-func NewOidcClientDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *OidcClientDao {
+func NewOidcClientDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *OidcClientDao {
 	return &OidcClientDao{
-		Daobase: dao_pebble2.NewDaobase(db, logger, NewOidcClientById),
+		Dao: dao_pebble2.NewPointDaobase(db, logger, NewOidcClientById),
+	}
+}
+
+func NewOidcClientDaoBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) *OidcClientDao {
+	return &OidcClientDao{
+		Dao: dao_badger.NewPointDaobase(db, logger, NewOidcClientById),
 	}
 }
 

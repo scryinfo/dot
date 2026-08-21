@@ -1,101 +1,93 @@
 package oidc_storage
 
 import (
-	"github.com/scryinfo/dot/dot"
-	"github.com/scryinfo/dot/lib/kits"
-	daobase "github.com/scryinfo/dot/line/db/dao/dao_base"
-	daokeys "github.com/scryinfo/dot/line/db/dao/dao_keys"
-	"github.com/scryinfo/dot/line/db/pebble2dot"
-	"github.com/scryinfo/dot/line/db/pebble2dot/dao_pebble2"
+	"time"
+
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
+	"github.com/zitadel/oidc/v4/pkg/oidc"
+	"github.com/zitadel/oidc/v4/pkg/op"
 )
 
-type AuthRequestDao struct {
-	dao_pebble2.Daobase[AuthRequest, *AuthRequest]
+type AuthRequest struct {
+	*oidcapiv1.AuthRequest
 }
 
-func NewBanPlayersDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *AuthRequestDao {
-	return &AuthRequestDao{
-		Daobase: dao_pebble2.NewDaobase(db, logger, func(id daobase.IdType) AuthRequest {
-			return AuthRequest{
-				AuthRequest: &oidcapiv1.AuthRequest{
-					Id: string(id),
-					// Ts: kits.Tss.Ts(),
-				},
-			}
-		}),
+var _ op.AuthRequest = (*AuthRequest)(nil)
+
+func (p *AuthRequest) GetID() string {
+	return p.AuthRequest.Id
+}
+
+func (p *AuthRequest) GetACR() string {
+	return "" // we won't handle acr in this example
+}
+
+func (p *AuthRequest) GetAMR() []string {
+	// this example only uses password for authentication
+	if p.AuthRequest.Done {
+		return []string{"pwd"}
 	}
+	return nil
 }
 
-// dao
+func (p *AuthRequest) GetAudience() []string {
+	return []string{p.AuthRequest.ApplicationId} // this example will always just use the client_id as audience
+}
 
-var _ daobase.Modal = (*AuthRequest)(nil)
+func (p *AuthRequest) GetAuthTime() time.Time {
+	return p.AuthRequest.AuthTime.AsTime()
+}
 
-func (o *AuthRequest) UnmarshalJSON(data []byte) error {
-	if o.AuthRequest == nil {
-		o.AuthRequest = &oidcapiv1.AuthRequest{}
+func (p *AuthRequest) GetClientID() string {
+	return p.AuthRequest.ApplicationId
+}
+
+func (p *AuthRequest) GetCodeChallenge() *oidc.CodeChallenge {
+	return CodeChallengeToOIDC(p.AuthRequest.CodeChallenge)
+}
+
+func (p *AuthRequest) GetNonce() string {
+	return p.AuthRequest.Nonce
+}
+
+func (p *AuthRequest) GetRedirectURI() string {
+	return p.AuthRequest.CallbackUri
+}
+
+func (p *AuthRequest) GetResponseType() oidc.ResponseType {
+	return oidc.ResponseType(p.AuthRequest.ResponseType)
+}
+
+func (p *AuthRequest) GetResponseMode() oidc.ResponseMode {
+	return oidc.ResponseMode(p.AuthRequest.ResponseMode)
+}
+
+func (p *AuthRequest) GetScopes() []string {
+	return p.AuthRequest.Scopes
+}
+
+func (p *AuthRequest) GetState() string {
+	return p.AuthRequest.TransferState
+}
+
+func (p *AuthRequest) GetSubject() string {
+	return p.AuthRequest.UserId
+}
+
+func (p *AuthRequest) Done() bool {
+	return p.AuthRequest.Done
+}
+
+func CodeChallengeToOIDC(challenge *oidcapiv1.OIDCCodeChallenge) *oidc.CodeChallenge {
+	if challenge == nil {
+		return nil
 	}
-	return o.AuthRequest.UnmarshalJSON(data)
-}
-
-func (o *AuthRequest) MarshalJSON() ([]byte, error) {
-	if o == nil || o.AuthRequest == nil {
-		return []byte("null"), nil
+	challengeMethod := oidc.CodeChallengeMethodPlain
+	if challenge.Method == "S256" {
+		challengeMethod = oidc.CodeChallengeMethodS256
 	}
-	return o.AuthRequest.MarshalJSON()
-}
-func MakeByProto(p *oidcapiv1.AuthRequest) *AuthRequest {
-	return &AuthRequest{AuthRequest: p}
-}
-func (m *AuthRequest) ToProto() *oidcapiv1.AuthRequest {
-	return m.AuthRequest
-}
-
-// GetId implements [daobase.Modal].
-// Subtle: this method shadows the method (*BanPlayers).GetId of BanPlayersM.BanPlayers.
-func (m *AuthRequest) GetId() daobase.IdType {
-	return daobase.IdType(m.AuthRequest.Id)
-}
-
-// SetId implements [daobase.Modal].
-func (m *AuthRequest) SetId(id daobase.IdType) {
-	m.AuthRequest.Id = string(id)
-}
-
-func NewAuthRequest() AuthRequest {
-	return AuthRequest{
-		AuthRequest: &oidcapiv1.AuthRequest{
-			Id: kits.Ids.NewXId(),
-			// Ts: kits.Tss.Ts(),
-		},
+	return &oidc.CodeChallenge{
+		Challenge: challenge.Challenge,
+		Method:    challengeMethod,
 	}
-}
-
-func NewAuthRequestById(id daobase.IdType) AuthRequest {
-	return AuthRequest{
-		AuthRequest: &oidcapiv1.AuthRequest{
-			Id: string(id),
-			// Ts: kits.Tss.Ts(),
-		},
-	}
-}
-
-// Key implements [daobase.Modal].
-func (m *AuthRequest) Key() []byte {
-	return append(m.Prefix(), kits.StringToBytes(string(m.AuthRequest.Id))...)
-}
-
-// Prefix implements [daobase.Modal].
-func (m *AuthRequest) Prefix() []byte {
-	return daokeys.PrefixAuthRequest
-}
-
-// Value implements [daobase.Modal].
-func (m *AuthRequest) Value() ([]byte, error) {
-	return daobase.Value(m)
-}
-
-// FromValue implements [daobase.Modal].
-func (m *AuthRequest) FromValue(bs []byte) error {
-	return daobase.FromValue(m, bs)
 }

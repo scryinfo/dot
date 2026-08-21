@@ -11,12 +11,12 @@ import (
 )
 
 type RefreshTokenDao struct {
-	dao_pebble2.Daobase[RefreshToken, *RefreshToken]
+	daobase.Dao[RefreshToken, *RefreshToken]
 }
 
 func NewRefreshTokenDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *RefreshTokenDao {
 	return &RefreshTokenDao{
-		Daobase: dao_pebble2.NewDaobase(db, logger, NewRefreshTokenById),
+		Dao: dao_pebble2.NewPointDaobase(db, logger, NewRefreshTokenById),
 	}
 }
 

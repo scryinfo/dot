@@ -25,9 +25,23 @@ func NewDaobase[T any, PT daobase.ModalPtr[T]](db *pebble2dot.Pebble2, logger *d
 		Logger: logger,
 	}
 }
+func NewPointDaobase[T any, PT daobase.ModalPtr[T]](db *pebble2dot.Pebble2, logger *dot.LoggerType, makePT func(id daobase.IdType) T) *Daobase[T, PT] {
+	return &Daobase[T, PT]{
+		Db:     db,
+		MakePT: makePT,
+		Logger: logger,
+	}
+}
 
 func NewDaoBodybase[T any, PT daobase.ModalBodyPtr[T]](db *pebble2dot.Pebble2, logger *dot.LoggerType, makePT func(id daobase.IdType) T) DaoBodybase[T, PT] {
 	return DaoBodybase[T, PT]{
+		Db:     db,
+		MakePT: makePT,
+		Logger: logger,
+	}
+}
+func NewPointDaoBodybase[T any, PT daobase.ModalBodyPtr[T]](db *pebble2dot.Pebble2, logger *dot.LoggerType, makePT func(id daobase.IdType) T) *DaoBodybase[T, PT] {
+	return &DaoBodybase[T, PT]{
 		Db:     db,
 		MakePT: makePT,
 		Logger: logger,

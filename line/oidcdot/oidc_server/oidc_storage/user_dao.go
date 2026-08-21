@@ -3,6 +3,8 @@ package oidc_storage
 import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
+	"github.com/scryinfo/dot/line/db/badgerdot"
+	"github.com/scryinfo/dot/line/db/badgerdot/dao_badger"
 	daobase "github.com/scryinfo/dot/line/db/dao/dao_base"
 	daokeys "github.com/scryinfo/dot/line/db/dao/dao_keys"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
@@ -11,12 +13,18 @@ import (
 )
 
 type UserDao struct {
-	dao_pebble2.Daobase[User, *User]
+	daobase.Dao[User, *User]
 }
 
-func NewUserDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *UserDao {
+func NewUserDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *UserDao {
 	return &UserDao{
-		Daobase: dao_pebble2.NewDaobase(db, logger, NewUserById),
+		Dao: dao_pebble2.NewPointDaobase(db, logger, NewUserById),
+	}
+}
+
+func NewUserDaoBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) *UserDao {
+	return &UserDao{
+		Dao: dao_badger.NewPointDaobase(db, logger, NewUserById),
 	}
 }
 

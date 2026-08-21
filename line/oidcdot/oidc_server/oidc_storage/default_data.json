@@ -1,0 +1,28 @@
+{
+  "clients": [
+    { "id": "da3q5ifip8rhvi5asnt0", "secret": "66" },
+    { "id": "da3q5ifip8rhvi5asntg", "secret": "66" }
+  ],
+  "users": [
+    {
+      "id": "da3q5ifip8rhvi5asnu0",
+      "username": "test1",
+      "password": "$argon2id$v=19$m=65536,t=1,p=4$5gIOZX3jew7orBfqQpgrCA$u4kT7w+sp36N3b1Lho6Oo5+7qXN5CozkZwe7FbVV/uk"
+    },
+    {
+      "id": "da3q5ifip8rhvi5asnug",
+      "username": "test2",
+      "password": "$argon2id$v=19$m=65536,t=1,p=4$+ljL8jQlaywW3DTElT4gmw$76QVavl9HmUtOfqYHTwlsUd+q5S9x3HqPjeskzMVgRE"
+    },
+    {
+      "id": "da3q5ifip8rhvi5asnv0",
+      "username": "test3",
+      "password": "$argon2id$v=19$m=65536,t=1,p=4$TkyDDPqr+bFF8e69BTnYHg$bWJETKx0GTnxAaUdizUSLF/3qhweCI/ERtRKLn6h4jY"
+    },
+    {
+      "id": "da3q5ifip8rhvi5asnvg",
+      "username": "test4",
+      "password": "$argon2id$v=19$m=65536,t=1,p=4$CRPkyoCZ18spcpDDwINgwg$zeXKKgBQY3IFZHdIuFHi0ao/7mnXDaxq7ObsOv1fmcA"
+    }
+  ]
+}

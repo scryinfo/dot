@@ -11,12 +11,12 @@ import (
 )
 
 type UserIdentitiesDao struct {
-	dao_pebble2.Daobase[UserIdentities, *UserIdentities]
+	daobase.Dao[UserIdentities, *UserIdentities]
 }
 
 func NewUserIdentitiesDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *UserIdentitiesDao {
 	return &UserIdentitiesDao{
-		Daobase: dao_pebble2.NewDaobase(db, logger, NewUserIdentitiesById),
+		Dao: dao_pebble2.NewPointDaobase(db, logger, NewUserIdentitiesById),
 	}
 }
 
