@@ -1,14 +1,14 @@
 package daobase
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 
 	"github.com/scryinfo/dot/lib/kits"
 )
 
 type ModalBodySample struct {
 	ModalBase
-	Body json.RawMessage `json:"body"`
+	Body jsontext.Value `json:"body"`
 }
 
 func NewModalBodySample() ModalBodySample {

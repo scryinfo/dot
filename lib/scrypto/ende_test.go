@@ -1,9 +1,10 @@
 package scrypto
 
 import (
-	"encoding/json"
-	"github.com/stretchr/testify/assert"
+	"encoding/json/v2"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestEndeData(t *testing.T) {

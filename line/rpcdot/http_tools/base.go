@@ -1,7 +1,7 @@
 package httptools
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"net/http"
 	"strings"
@@ -43,7 +43,7 @@ func HttpErrorResponse(w http.ResponseWriter, message string, code int) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	err := json.NewEncoder(w).Encode(&ResUpload{
+	err := json.MarshalWrite(w, &ResUpload{
 		Base: ResBase{
 			Message:  message,
 			ErrorIdd: code,
@@ -58,7 +58,7 @@ func HttpErrorResponse(w http.ResponseWriter, message string, code int) {
 func HttpOkResponse[T any](w http.ResponseWriter, res T) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(w).Encode(&res)
+	err := json.MarshalWrite(w, &res)
 	if err != nil {
 		dot.Logger.Error().AnErr("cant encode error response: ", err).Send()
 	}

@@ -70,14 +70,12 @@ func GenerateKey(name string) {
 			log.Fatal(err)
 		}
 		dot.Logger.Info().Msgf("ed25519 keys\nprivate: %s\npublic: %s\n", hex.EncodeToString(privateKey), hex.EncodeToString(publicKey))
-		break
 	case generate_x25519:
 		privateKey, publicKey, err := GenerateX25519Key(nil)
 		if err != nil {
 			log.Fatal(err)
 		}
 		dot.Logger.Info().Msgf("x25519 keys\nprivate: %s\npublic: %s\n", hex.EncodeToString(privateKey), hex.EncodeToString(publicKey))
-		break
 	default:
 		break
 	}

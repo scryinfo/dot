@@ -4,7 +4,7 @@ import (
 	"crypto"
 	"crypto/ed25519"
 	"encoding/hex"
-	"encoding/json"
+	"encoding/json/v2"
 	"os"
 	"syscall"
 

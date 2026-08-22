@@ -1,7 +1,7 @@
 package daobase
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"

@@ -2,7 +2,7 @@ package oidc_storage
 
 import (
 	_ "embed"
-	"encoding/json"
+	"encoding/json/v2"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/db/badgerdot"

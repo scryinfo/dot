@@ -2,9 +2,10 @@ package jsonrpc2
 
 import (
 	"context"
-	"encoding/json"
-	"github.com/go-kit/kit/transport/http/jsonrpc"
+	"encoding/json/v2"
 	"net/url"
+
+	"github.com/go-kit/kit/transport/http/jsonrpc"
 )
 
 func CallOne(urlStr string, out any, method string, params ...any) error {

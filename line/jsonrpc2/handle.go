@@ -3,7 +3,8 @@ package jsonrpc2
 import (
 	"bytes"
 	"context"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"maps"
 	"net/http"
 	"reflect"
@@ -42,12 +43,12 @@ func NewHandles(servives map[string]any) http.Handler {
 }
 
 // json rpc的解码函数
-func nopDecoder(ctx context.Context, j json.RawMessage) (any, error) {
+func nopDecoder(ctx context.Context, j jsontext.Value) (any, error) {
 	return j, nil
 }
 
 // json rpc的编码函数
-func nopEncoder(ctx context.Context, req any) (json.RawMessage, error) {
+func nopEncoder(ctx context.Context, req any) (jsontext.Value, error) {
 	bs, err := json.Marshal(req)
 	return bs, err
 }
@@ -78,7 +79,7 @@ func makeJsonrpc(preName string, server any) jsonrpc.EndpointCodecMap {
 				}()
 				inType := fn.In(1)
 				inValue := reflect.New(inType)
-				bs, ok := request.(json.RawMessage)
+				bs, ok := request.(jsontext.Value)
 				if ok && !bytes.Equal(bs, []byte("[null]")) { //"[null]", 就是 nil
 					err = json.Unmarshal(bs, inValue.Interface())
 					if err != nil {
