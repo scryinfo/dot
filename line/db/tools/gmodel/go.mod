@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot/line/db/tools/gmodel
 
-go 1.26
+go 1.27.0
 
 require (
 	github.com/jinzhu/inflection v1.0.0

@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot/line/db/tools/gdao
 
-go 1.26
+go 1.27.0
 
 require (
 	github.com/scryinfo/dot v0.9.14

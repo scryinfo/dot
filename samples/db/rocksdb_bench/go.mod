@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot/samples/db/rocksdb_bench
 
-go 1.26.6
+go 1.27.0
 
 replace (
 	github.com/knadh/koanf => github.com/knadh/koanf/v2 v2.3.5 // Or whichever v2 version you upgraded to
@@ -13,7 +13,7 @@ require (
 	github.com/dgraph-io/badger/v4 v4.9.6
 	github.com/linxGnu/grocksdb v1.10.8
 	github.com/scryinfo/dot v0.9.14
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260819044248-55d13825971c
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260821034758-c7a5f5c2ebce
 	github.com/scryinfo/scryg v0.2.0
 )
 
@@ -28,7 +28,7 @@ require (
 	github.com/cockroachdb/errors v1.14.0 // indirect
 	github.com/cockroachdb/logtags v0.0.0-20241215232642-bb51bb14a506 // indirect
 	github.com/cockroachdb/redact v1.1.8 // indirect
-	github.com/cockroachdb/swiss v0.0.0-20251224182025-b0f6560f979b // indirect
+	github.com/cockroachdb/swiss v0.0.0-20260820225851-333444432258 // indirect
 	github.com/cockroachdb/tokenbucket v0.0.0-20250429170803-42689b6311bb // indirect
 	github.com/dgraph-io/ristretto/v2 v2.4.2 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
@@ -83,7 +83,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.45.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/crypto v0.55.0 // indirect
-	golang.org/x/exp v0.0.0-20260813180055-c1d0aacb2297 // indirect
+	golang.org/x/exp v0.0.0-20260820142414-ca536658362e // indirect
 	golang.org/x/net v0.58.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.41.0 // indirect

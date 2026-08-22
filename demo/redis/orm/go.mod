@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot/demo/redis/orm
 
-go 1.26
+go 1.27.0
 
 require github.com/albrow/zoom v0.19.1
 

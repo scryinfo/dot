@@ -42,12 +42,12 @@ func NewRocksDbDot(config *RocksdbDotConfig, sconfig dot.SConfig, logger *dot.Lo
 	logger.Info().Msgf("DB opened: %s", config.DbPath)
 
 	return &RocksDbDot{
-			logger: logger,
-			config: config,
-			db:     db,
-		}, func() {
-			defer db.Close()
-		}, nil
+		logger: logger,
+		config: config,
+		db:     db,
+	}, func() {
+		defer db.Close()
+	}, nil
 }
 
 func (r *RocksDbDot) Db() *grocksdb.DB {

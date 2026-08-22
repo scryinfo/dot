@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot/demo
 
-go 1.26
+go 1.27.0
 
 require (
 	github.com/scryinfo/scryg v0.2.0

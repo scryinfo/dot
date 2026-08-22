@@ -21,6 +21,7 @@ clean:
 	rm -rf go.sum rocksdb_bench$(EXE) temp/ logs/
 rocksdb_bench$(EXE):
 	CGO_ENABLED=1 ${go_rocksdb} test -ldflags="-extldflags=-Wl,--no-warnings" -c -o rocksdb_bench$(EXE) ./...
+
 build: rocksdb_bench$(EXE)
 
 rebuild: clean build

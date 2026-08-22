@@ -30,10 +30,10 @@
     "npm-run-all2": "^9.0.3",
     "oxfmt": "^0.64.0",
     "typescript": "6.0.2",
-    "vite": "^8.2.1",
+    "vite": "^8.2.2",
     "vite-plugin-vue-devtools": "^8.2.1",
     "vitest": "^4.1.11",
-    "vue-tsc": "^3.3.10"
+    "vue-tsc": "^3.3.11"
   },
   "engines": {
     "node": ">=22.12.0"

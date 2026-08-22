@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot
 
-go 1.26
+go 1.27.0
 
 // replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260226221140-a57be14db171
 replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260610212136-7ab31c22f7ad
@@ -13,7 +13,7 @@ require (
 	github.com/dgraph-io/badger/v4 v4.9.6
 	github.com/emmansun/gmsm v0.44.1
 	github.com/gin-gonic/gin v1.12.0
-	github.com/go-chi/chi/v5 v5.3.1
+	github.com/go-chi/chi/v5 v5.3.2
 	github.com/go-jose/go-jose/v4 v4.1.4
 	github.com/go-kit/kit v0.13.0
 	github.com/go-viper/mapstructure/v2 v2.5.0
@@ -33,7 +33,7 @@ require (
 	github.com/scryinfo/scryg v0.2.0
 	github.com/sirupsen/logrus v1.10.1
 	github.com/spf13/viper v1.21.0
-	github.com/stretchr/testify v1.12.0
+	github.com/stretchr/testify v1.12.1
 	github.com/uptrace/bun v1.2.18
 	github.com/uptrace/bun/dialect/pgdialect v1.2.18
 	github.com/uptrace/bun/driver/pgdriver v1.2.18
@@ -69,7 +69,7 @@ require (
 	github.com/cockroachdb/errors v1.14.0 // indirect
 	github.com/cockroachdb/logtags v0.0.0-20241215232642-bb51bb14a506 // indirect
 	github.com/cockroachdb/redact v1.1.8 // indirect
-	github.com/cockroachdb/swiss v0.0.0-20251224182025-b0f6560f979b // indirect
+	github.com/cockroachdb/swiss v0.0.0-20260820225851-333444432258 // indirect
 	github.com/cockroachdb/tokenbucket v0.0.0-20250429170803-42689b6311bb // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.7.0 // indirect
@@ -175,12 +175,12 @@ require (
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	golang.org/x/arch v0.30.0 // indirect
-	golang.org/x/exp v0.0.0-20260813180055-c1d0aacb2297 // indirect
+	golang.org/x/exp v0.0.0-20260820142414-ca536658362e // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260818201246-1b0934165a6f // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260818201246-1b0934165a6f // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
 	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3 // indirect
 	mellium.im/sasl v0.3.2 // indirect
 	sigs.k8s.io/yaml v1.6.0 // indirect

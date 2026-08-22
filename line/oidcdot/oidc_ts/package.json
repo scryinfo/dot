@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "typescript": "~6.0.2",
-    "vite": "^8.2.0"
+    "vite": "^8.2.2"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^2.13.0"
+    "@bufbuild/protobuf": "^2.14.0"
   }
 }
