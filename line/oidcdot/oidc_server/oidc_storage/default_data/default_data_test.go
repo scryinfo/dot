@@ -3,15 +3,23 @@ package oidc_storage
 import (
 	"encoding/json/v2"
 	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
+	"github.com/scryinfo/dot/line/db/badgerdot"
+	daobase "github.com/scryinfo/dot/line/db/dao/dao_base"
+	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
+	"github.com/scryinfo/dot/line/sconfig"
+	"github.com/scryinfo/scryg/sutils/sfile"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
-func TestDefaultData(t *testing.T) {
+func TestGenerateDefaultData(t *testing.T) {
 	data := DefaultData{
 		Clients: make([]oidc_storage.OidcClient, 0, 2),
 		Users:   make([]oidc_storage.User, 0, 4),
@@ -93,4 +101,76 @@ func TestDefaultData(t *testing.T) {
 	bs, err := json.Marshal(data)
 	assert.Nil(t, err)
 	fmt.Println(string(bs))
+	fmt.Printf("\n\n")
+}
+
+func TestInitPebble2(t *testing.T) {
+	db, fClear, err := newTestPebble2(t)
+	defer fClear()
+	assert.Nil(t, err)
+	InitPebble2(db, logger)
+	defaultData, err := Get()
+	assert.Nil(t, err)
+	{
+		userDao := oidc_storage.NewUserDaoPebble2(db, logger)
+		users, err := userDao.NextPage(&daobase.PageMeta{PageSize: int32(len(defaultData.Users) + 1)})
+		assert.Nil(t, err)
+		assert.Equal(t, len(defaultData.Users), len(users))
+		assert.Equal(t, defaultData.Users, users)
+	}
+	{
+		clientDao := oidc_storage.NewOidcClientDaoPebble2(db, logger)
+		clients, err := clientDao.NextPage(&daobase.PageMeta{PageSize: int32(len(defaultData.Clients) + 1)})
+		assert.Nil(t, err)
+		assert.Equal(t, len(defaultData.Clients), len(clients))
+		assert.Equal(t, defaultData.Clients, clients)
+	}
+
+}
+func TestInitBadger(t *testing.T) {
+	db, fClear, err := newTestBadger(t)
+	defer fClear()
+	assert.Nil(t, err)
+	InitBadger(db, logger)
+	defaultData, err := Get()
+	assert.Nil(t, err)
+	{
+		userDao := oidc_storage.NewUserDaoBadger(db, logger)
+		users, err := userDao.NextPage(&daobase.PageMeta{PageSize: int32(len(defaultData.Users) + 1)})
+		assert.Nil(t, err)
+		assert.Equal(t, len(defaultData.Users), len(users))
+		assert.Equal(t, defaultData.Users, users)
+	}
+	{
+		clientDao := oidc_storage.NewOidcClientDaoBadger(db, logger)
+		clients, err := clientDao.NextPage(&daobase.PageMeta{PageSize: int32(len(defaultData.Clients) + 1)})
+		assert.Nil(t, err)
+		assert.Equal(t, len(defaultData.Clients), len(clients))
+		assert.Equal(t, defaultData.Clients, clients)
+	}
+}
+
+var logger = dot.NewTestLogger()
+
+func newTestPebble2(t *testing.T) (*pebble2dot.Pebble2, func(), error) {
+	sourcePath := filepath.Dir(kits.Config.GetCallSourceFile())
+	config := pebble2dot.Pebble2Config{
+		DbPath: filepath.Join(sourcePath, "temp/pebble"),
+	}
+	if !sfile.ExistDir(config.DbPath) {
+		err := os.MkdirAll(config.DbPath, 0755)
+		assert.Nil(t, err)
+	}
+	return pebble2dot.NewPebble2(&config, sconfig.NewTestSConfig(sourcePath, sourcePath, sourcePath), logger)
+}
+func newTestBadger(t *testing.T) (*badgerdot.BadgerDbDot, func(), error) {
+	sourcePath := filepath.Dir(kits.Config.GetCallSourceFile())
+	config := badgerdot.BadgerDbDotConfig{
+		DbPath: filepath.Join(sourcePath, "temp/badger"),
+	}
+	if !sfile.ExistDir(config.DbPath) {
+		err := os.MkdirAll(config.DbPath, 0755)
+		assert.Nil(t, err)
+	}
+	return badgerdot.NewBadgerDot(&config, sconfig.NewTestSConfig(sourcePath, sourcePath, sourcePath), logger)
 }

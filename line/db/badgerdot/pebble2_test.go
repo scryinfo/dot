@@ -1,4 +1,4 @@
-package pebble2dot
+package badgerdot
 
 import (
 	"encoding/binary"
@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/cockroachdb/pebble/v2"
+	"github.com/dgraph-io/badger/v4"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -14,25 +14,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPebble2(t *testing.T) {
-	db, fClear := newTestPebble2(t)
+func TestBadger(t *testing.T) {
+	db, fClear := newTestBadger(t)
 	defer fClear()
-	opt := &pebble.WriteOptions{}
-	err := db.Db().Set(binary.LittleEndian.AppendUint32(nil, uint32(10)), []byte("value"), opt)
+	err := db.Db().Update(func(txn *badger.Txn) error {
+		return txn.Set(binary.LittleEndian.AppendUint32(nil, uint32(10)), []byte("value"))
+	})
 	assert.Nil(t, err)
 }
 
-func newTestPebble2(t *testing.T) (*Pebble2, func()) {
+func newTestBadger(t *testing.T) (*BadgerDbDot, func()) {
 	sourcePath := filepath.Dir(kits.Config.GetCallSourceFile())
 	logger := dot.NewTestLogger()
-	config := Pebble2Config{
-		DbPath: filepath.Join(sourcePath, "temp/pebble"),
+	config := BadgerDbDotConfig{
+		DbPath: filepath.Join(sourcePath, "temp/badger"),
 	}
 	if !sfile.ExistDir(config.DbPath) {
 		err := os.MkdirAll(config.DbPath, 0755)
 		assert.Nil(t, err)
 	}
-	db, fClear, err := NewPebble2(&config, sconfig.NewTestSConfig(sourcePath, sourcePath, sourcePath), logger)
+	db, fClear, err := NewBadgerDot(&config, sconfig.NewTestSConfig(sourcePath, sourcePath, sourcePath), logger)
 	assert.Nil(t, err)
 	return db, fClear
 }
