@@ -128,3 +128,9 @@ bun_tools:
 	bun install -g @bufbuild/protoc-gen-es
 install_rocksdb:
 	VCPKG_BUILD_TYPE=release vcpkg.exe install --triplet=x64-mingw-static
+protoc_linux:
+	curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v36.0/protoc-36.0-linux-x86_64.zip
+	unzip -o protoc-36.0-linux-x86_64.zip -d protoc-36.0-linux-x86_64/
+	sudo cp -f ./protoc-36.0-linux-x86_64/bin/protoc /usr/local/bin/protoc
+	sudo cp -rf ./protoc-36.0-linux-x86_64/include/* /usr/local/include/
+	rm -rf protoc-36.0-linux-x86_64/ protoc-36.0-linux-x86_64.zip
