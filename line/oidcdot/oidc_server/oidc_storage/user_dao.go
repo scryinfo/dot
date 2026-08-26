@@ -12,19 +12,22 @@ import (
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
 )
 
-type UserDao struct {
-	daobase.Dao[User, *User]
+type UserDaoPebble2 struct {
+	dao_pebble2.Daobase[User, *User]
+}
+type UserDaoBadger struct {
+	dao_badger.Daobase[User, *User]
 }
 
-func NewUserDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *UserDao {
-	return &UserDao{
-		Dao: dao_pebble2.NewPointDaobase(db, logger, NewUserById),
+func NewUserDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *UserDaoPebble2 {
+	return &UserDaoPebble2{
+		Daobase: dao_pebble2.NewDaobase(db, logger, NewUserById),
 	}
 }
 
-func NewUserDaoBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) *UserDao {
-	return &UserDao{
-		Dao: dao_badger.NewPointDaobase(db, logger, NewUserById),
+func NewUserDaoBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) *UserDaoBadger {
+	return &UserDaoBadger{
+		Daobase: dao_badger.NewDaobase(db, logger, NewUserById),
 	}
 }
 

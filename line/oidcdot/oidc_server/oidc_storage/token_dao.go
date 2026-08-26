@@ -3,6 +3,8 @@ package oidc_storage
 import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
+	"github.com/scryinfo/dot/line/db/badgerdot"
+	"github.com/scryinfo/dot/line/db/badgerdot/dao_badger"
 	daobase "github.com/scryinfo/dot/line/db/dao/dao_base"
 	daokeys "github.com/scryinfo/dot/line/db/dao/dao_keys"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
@@ -10,13 +12,28 @@ import (
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
 )
 
-type TokenDao struct {
-	daobase.Dao[Token, *Token]
+// type TokenDao daobase.Dao[Token, *Token]
+// func NewTokenDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) TokenDao {
+// 	return dao_pebble2.NewPointDaobase(db, logger, NewTokenById)
+// }
+
+type TokenDaoPebble2 struct {
+	dao_pebble2.Daobase[Token, *Token]
 }
 
-func NewTokenDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *TokenDao {
-	return &TokenDao{
-		Dao: dao_pebble2.NewPointDaobase(db, logger, NewTokenById),
+func NewTokenDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *TokenDaoPebble2 {
+	return &TokenDaoPebble2{
+		Daobase: dao_pebble2.NewDaobase(db, logger, NewTokenById),
+	}
+}
+
+type TokenDaoBadger struct {
+	dao_badger.Daobase[Token, *Token]
+}
+
+func NewTokenDaoBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) *TokenDaoBadger {
+	return &TokenDaoBadger{
+		Daobase: dao_badger.NewDaobase(db, logger, NewTokenById),
 	}
 }
 

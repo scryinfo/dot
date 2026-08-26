@@ -11,12 +11,12 @@ import (
 )
 
 type CodeAuthRequestDao struct {
-	daobase.Dao[CodeAuthRequest, *CodeAuthRequest]
+	dao_pebble2.Daobase[CodeAuthRequest, *CodeAuthRequest]
 }
 
 func NewCodeAuthRequestDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *CodeAuthRequestDao {
 	return &CodeAuthRequestDao{
-		Dao: dao_pebble2.NewPointDaobase(db, logger, NewCodeAuthRequestById),
+		Daobase: dao_pebble2.NewDaobase(db, logger, NewCodeAuthRequestById),
 	}
 }
 

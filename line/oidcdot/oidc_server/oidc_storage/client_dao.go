@@ -12,19 +12,23 @@ import (
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
 )
 
-type OidcClientDao struct {
-	daobase.Dao[OidcClient, *OidcClient]
+type OidcClientDaoPebble2 struct {
+	dao_pebble2.Daobase[OidcClient, *OidcClient]
 }
 
-func NewOidcClientDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *OidcClientDao {
-	return &OidcClientDao{
-		Dao: dao_pebble2.NewPointDaobase(db, logger, NewOidcClientById),
+type OidcClientDaoBadger struct {
+	dao_badger.Daobase[OidcClient, *OidcClient]
+}
+
+func NewOidcClientDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *OidcClientDaoPebble2 {
+	return &OidcClientDaoPebble2{
+		Daobase: dao_pebble2.NewDaobase(db, logger, NewOidcClientById),
 	}
 }
 
-func NewOidcClientDaoBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) *OidcClientDao {
-	return &OidcClientDao{
-		Dao: dao_badger.NewPointDaobase(db, logger, NewOidcClientById),
+func NewOidcClientDaoBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) *OidcClientDaoBadger {
+	return &OidcClientDaoBadger{
+		Daobase: dao_badger.NewDaobase(db, logger, NewOidcClientById),
 	}
 }
 

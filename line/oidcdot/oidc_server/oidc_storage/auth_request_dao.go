@@ -11,12 +11,12 @@ import (
 )
 
 type AuthRequestDao struct {
-	daobase.Dao[AuthRequest, *AuthRequest]
+	dao_pebble2.Daobase[AuthRequest, *AuthRequest]
 }
 
 func NewBanPlayersDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *AuthRequestDao {
 	return &AuthRequestDao{
-		Dao: dao_pebble2.NewPointDaobase(db, logger, func(id daobase.IdType) AuthRequest {
+		Daobase: dao_pebble2.NewDaobase(db, logger, func(id daobase.IdType) AuthRequest {
 			return AuthRequest{
 				AuthRequest: &oidcapiv1.AuthRequest{
 					Id: string(id),
