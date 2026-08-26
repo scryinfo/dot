@@ -33,7 +33,7 @@ peer_cert = ''
 root_cert = ''
 
 [oidc_provider]
-oidc_issuer   = "http://localhost:8090"
-client_id     = "your-client-id"
-client_secret = "your-client-secret"
-redirect_url  = "your-redirect-url"
+oidc_issuer = "http://localhost:8090"
+client_id = "da5qmp7ip8rh4c6fege0"
+client_secret = "66"
+redirect_url = "http://localhost:8089/callback"

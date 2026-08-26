@@ -61,6 +61,7 @@ format:
 	cd line/db/rocksdbdot && command go fmt ./...
 	cd samples && make format
 	cd line/db/pebble_service && make format
+	bun run format
 build: ${VCPKG_INSTALLED}
 	bun install
 	# command go build -ldflags="-s -w" ./...

@@ -4,6 +4,6 @@
 // see the documentation: https://zed.dev/docs/configuring-zed#settings-files
 {
   "file_types": {
-    "Makefile": ["Makefile.gen"],
-  },
+    "Makefile": ["Makefile.gen"]
+  }
 }

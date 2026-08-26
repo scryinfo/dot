@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": ["node_modules/", "dist/", "build/"],
+  "useTabs": false,
+  "tabWidth": 2,
+  "printWidth": 160,
+  "singleQuote": true,
+  "semi": false,
+  "endOfLine": "crlf"
+}

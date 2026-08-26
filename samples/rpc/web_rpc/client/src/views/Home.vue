@@ -12,20 +12,12 @@
     </div>
     <div>
       <h1>server stream</h1>
-      <input
-        placeholder="Please input data"
-        v-model="serverStreamData"
-        @keyup.enter="onServerStream"
-      />
+      <input placeholder="Please input data" v-model="serverStreamData" @keyup.enter="onServerStream" />
       <div v-text="serverStreamReturn"></div>
     </div>
     <div>
       <h1>client stream(dont support)</h1>
-      <input
-        placeholder="Please input data"
-        v-model="clientStreamData"
-        @keyup.enter="onClientStream"
-      />
+      <input placeholder="Please input data" v-model="clientStreamData" @keyup.enter="onClientStream" />
       <div v-text="clientStreamReturn"></div>
     </div>
     <div>

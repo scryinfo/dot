@@ -5,7 +5,7 @@ inputs:
   - module: buf.build/googleapis/googleapis
 plugins:
   - local: protoc-gen-es
-  # - remote: buf.build/bufbuild/es:v2.12.1
+    # - remote: buf.build/bufbuild/es:v2.12.1
     out: ./kv_ts/src/kv_gen
     opt:
       - target=ts

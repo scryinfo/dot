@@ -4,5 +4,13 @@
     "samples/rpc/web_rpc/client",
     "line/db/pebble_service/kv_ts",
     "line/oidcdot/oidc_ts"
-  ]
+  ],
+  "scripts": {
+    "lint": "oxlint --fix",
+    "format": "oxfmt ./ --write"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0"
+  }
 }

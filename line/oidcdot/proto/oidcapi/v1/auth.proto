@@ -18,7 +18,6 @@ message CheckResponse {
 
 message LoginRequest {
   Reqbase reqbase = 1;
-  string name = 2;
 }
 
 message LoginResponse {

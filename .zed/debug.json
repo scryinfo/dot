@@ -11,7 +11,7 @@
     "mode": "debug",
     "program": "${ZED_WORKTREE_ROOT}/samples/certificate/ecdsa",
     "cwd": "${ZED_WORKTREE_ROOT}/samples/certificate/ecdsa",
-    "args": ["-GenerateConfig=true"],
+    "args": ["-GenerateConfig=true"]
     // "dlvConfig": {
     //   "args": ["-GenerateConfig=true"],
     // },
@@ -24,7 +24,7 @@
     "mode": "debug",
     "program": "${ZED_WORKTREE_ROOT}/samples/sconfig/",
     "cwd": "${ZED_WORKTREE_ROOT}/samples/sconfig",
-    "args": ["-GenerateConfig=true"],
+    "args": ["-GenerateConfig=true"]
     // "dlvConfig": {
     //   "args": ["-GenerateConfig=true"],
     // },
@@ -37,7 +37,7 @@
     "mode": "debug",
     "program": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_etcds",
     "cwd": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_etcds",
-    "args": ["-GenerateConfig=true"],
+    "args": ["-GenerateConfig=true"]
   },
   {
     "label": "bl_server",
@@ -47,7 +47,7 @@
     "mode": "debug",
     "program": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_server",
     "cwd": "${ZED_WORKTREE_ROOT}/samples/rpc/bl/bl_server",
-    "args": ["-GenerateConfig=true"],
+    "args": ["-GenerateConfig=true"]
   },
   {
     "label": "web_rpc_server",
@@ -57,6 +57,6 @@
     "mode": "debug",
     "program": "${ZED_WORKTREE_ROOT}/samples/rpc/web_rpc/web_rpc_server",
     "cwd": "${ZED_WORKTREE_ROOT}/samples/rpc/web_rpc/web_rpc_server",
-    "args": ["-GenerateConfig=true"],
-  },
+    "args": ["-GenerateConfig=true"]
+  }
 ]

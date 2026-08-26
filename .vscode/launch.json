@@ -11,8 +11,8 @@
       "cwd": "${workspaceRoot}/sample/db/tools/model",
       "env": {
         "GOPACKAGE": "model",
-        "GOFILE": "models_s.go",
-      },
+        "GOFILE": "models_s.go"
+      }
     },
     {
       "name": "wait_conn",
@@ -20,7 +20,7 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/demo/wait_conn/main.go",
-      "cwd": "${workspaceRoot}/demo/wait_conn/",
+      "cwd": "${workspaceRoot}/demo/wait_conn/"
     },
     {
       "name": "sconfig",
@@ -29,7 +29,7 @@
       "mode": "debug",
       "program": "${workspaceRoot}/samples/sconfig/",
       "cwd": "${workspaceRoot}/samples/sconfig",
-      "args": ["-GenerateConfig=true"],
+      "args": ["-GenerateConfig=true"]
       // "dlvConfig": {
       //   "args": ["-GenerateConfig=true"],
       // },
@@ -41,10 +41,10 @@
       "mode": "debug",
       "program": "${workspaceRoot}/samples/rpc/bls/bls_server/",
       "cwd": "${workspaceRoot}/samples/rpc/bls/bls_server",
-      "args": ["-GenerateConfig=true"],
+      "args": ["-GenerateConfig=true"]
       // "dlvConfig": {
       //   "args": ["-GenerateConfig=true"],
       // },
-    },
-  ],
+    }
+  ]
 }
