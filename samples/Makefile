@@ -4,7 +4,10 @@ else
 	EXE :=
 endif
 VERSION_PKG :=github.com/scryinfo/dot/dot
-COMMIT_MSG :=${shell git log -1 --pretty=%B | sed 's/"/\\"/g'}
+COMMIT_MSG := $(shell git log -1 --pretty=%B)
+# COMMIT_MSG := $(subst ',,$(COMMIT_MSG))
+COMMIT_MSG := $(subst ",,$(COMMIT_MSG))
+# COMMIT_MSG :=${shell git log -1 --pretty=%B}
 COMMIT_TIME :=${shell git show -s --format=%at}
 COMMIT_HASH :=${shell git rev-parse --short HEAD}
 BUILD_TIME :=${shell date +%s}
@@ -22,7 +25,8 @@ WIRES := certificate/ecdsa certificate/ed25519 etcd_server etcd_client gindot sc
  	not_stop_upgrader \
   	oidcs/oidc_server oidcs/app_server \
 	../tools/ende/decode ../tools/ende/encode
-
+ALL_GO_FILES := $(shell find . -name "*.go")
+MAINSRC := $(filter-out ./db/rocksdb/% ./db/rocksdb_bench/% ./db/pebble_server_bench/% $(foreach wire,$(WIRES),./$(wire)/%) , $(ALL_GO_FILES))
 clean:
 	cd rpc/proto && make clean
 	cd rpc/web_rpc/client && rm -rf dist node_modules bun.lock
@@ -80,7 +84,7 @@ db/rocksdb/wire_gen.go: db/rocksdb/rocksdb.go
 wire:  $(addsuffix /wire_gen.go, $(WIRES)) db/rocksdb/wire_gen.go
 
 define sample_rule
-$1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go
+$1/$(notdir $1)$(EXE): $1/$(notdir $1).go $1/wire_gen.go $(MAINSRC)
 	cd $1 && command go build -tags="release" -buildvcs=true -ldflags="-s -w \
  		-X \"${VERSION_PKG}.CommitMsg=${COMMIT_MSG}\" \
   		-X \"${VERSION_PKG}.CommitTime=${COMMIT_TIME}\" \
