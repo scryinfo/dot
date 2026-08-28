@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { config } from './config'
-import { authService } from './api_impl/client'
-import { LoginRequest } from './api/v1/auth_pb'
+import { authService } from '@/api_impl/client'
 
 async function loginApi() {
   try {
-    const res = await authService.login({ username: '', password: '' })
+    const res = await authService.login({})
     console.log(res)
   } catch (error) {
     console.error(error)

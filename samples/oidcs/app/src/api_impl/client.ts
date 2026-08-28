@@ -1,7 +1,7 @@
 import { createConnectTransport } from '@connectrpc/connect-web'
 import { createClient /*, type Interceptor*/ } from '@connectrpc/connect'
 import { config } from '@/config'
-import { AuthService } from '@/api/v1/auth_pb'
+import { AuthService } from 'oidc_ts/src/index'
 
 // const headerInterceptor: Interceptor = (next) => async (req) => {
 //   req.header.set('Content-Type', 'application/proto')

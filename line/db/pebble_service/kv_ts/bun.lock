@@ -6,7 +6,7 @@
       "name": "kv_ts",
       "devDependencies": {
         "oxfmt": "^0.56.0",
-        "typescript": "~6.0.2",
+        "typescript": "6.0.2",
         "vite": "^8.1.1",
       },
     },
