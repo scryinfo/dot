@@ -6,7 +6,7 @@ go 1.27.0
 
 require (
 	github.com/linxGnu/grocksdb v1.10.8
-	github.com/scryinfo/dot v0.9.14
+	github.com/scryinfo/dot v0.9.16
 )
 
 require (
@@ -31,6 +31,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/rs/xid v1.6.0 // indirect
 	github.com/rs/zerolog v1.35.1 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/sagikazarmark/locafero v0.12.0 // indirect
