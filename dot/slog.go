@@ -18,7 +18,10 @@ import (
 
 type LoggerType = zerolog.Logger
 
-var Logger LoggerType
+var (
+	Logger LoggerType
+	Slog   *slog.Logger
+)
 
 // init log with zerolog and lumberjack
 func NewLogger(conf *LogConfig) *LoggerType {
@@ -48,7 +51,8 @@ func NewLogger(conf *LogConfig) *LoggerType {
 	}
 	log.Logger = Logger
 	if conf.SetSlog {
-		slog.SetDefault(slog.New(&FastZerologHandler{logger: Logger}))
+		Slog = MakeSlog(&Logger)
+		slog.SetDefault(Slog)
 	}
 	Logger.Info().Msgf("log created")
 	OutBuildInfo(&Logger)
@@ -187,5 +191,14 @@ func NewTestLogger() *zerolog.Logger {
 func init() {
 	Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stdout}).With().Timestamp().Caller().Logger().Level(zerolog.DebugLevel)
 	log.Logger = Logger
-	slog.SetDefault(slog.New(&FastZerologHandler{logger: Logger}))
+	Slog = slog.New(&FastZerologHandler{logger: &Logger})
+	slog.SetDefault(Slog)
+}
+
+func DefaultSlog() *slog.Logger {
+	return Slog
+}
+
+func MakeSlog(logger *zerolog.Logger) *slog.Logger {
+	return slog.New(&FastZerologHandler{logger: logger})
 }

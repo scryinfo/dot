@@ -22,6 +22,21 @@ func NewIdentityDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *IdentityDao
 
 type Identity oidcapiv1.Identity
 
+// Expire implements [daobase.Modal].
+func (m *Identity) Expire() bool {
+	return daobase.ModalExpire(m.ExpireTs)
+}
+
+// GetExpireTs implements [daobase.Modal].
+func (m *Identity) GetExpireTs() uint64 {
+	return m.ExpireTs
+}
+
+// SetExpireTs implements [daobase.Modal].
+func (m *Identity) SetExpireTs(ts uint64) {
+	m.ExpireTs = ts
+}
+
 var _ daobase.Modal = (*Identity)(nil)
 
 // func (o *Identity) UnmarshalJSON(data []byte) error {

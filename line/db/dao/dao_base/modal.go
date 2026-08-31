@@ -2,6 +2,7 @@ package daobase
 
 import (
 	"encoding/json/v2"
+	"time"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
@@ -10,6 +11,9 @@ import (
 type IdType string
 
 type Modal interface {
+	GetExpireTs() uint64
+	SetExpireTs(ts uint64)
+	Expire() bool
 	GetId() IdType
 	SetId(id IdType)
 	Prefix() []byte //dont use any field in this methos, it is a static method
@@ -72,7 +76,8 @@ func Value[T any](m *T) ([]byte, error) {
 }
 
 type ModalBase struct {
-	Id IdType `json:"id"`
+	ExpireTs uint64 `json:"expire_ts"` // ts by seconds
+	Id       IdType `json:"id"`
 }
 
 func NewModalBase() ModalBase {
@@ -91,4 +96,27 @@ func (m *ModalBase) GetId() IdType {
 // SetId implements [Modal].
 func (m *ModalBase) SetId(id IdType) {
 	m.Id = id
+}
+
+// Expire implements [Modal].
+func (m *ModalBase) Expire() bool {
+	return ModalExpire(m.ExpireTs)
+}
+
+// inline
+func ModalExpire(ts uint64) bool {
+	if ts == 0 {
+		return false
+	}
+	return uint64(time.Now().Unix()) >= ts
+}
+
+// GetExpireTs implements [Modal].
+func (m *ModalBase) GetExpireTs() uint64 {
+	return m.ExpireTs
+}
+
+// SetExpireTs implements [Modal].
+func (m *ModalBase) SetExpireTs(ts uint64) {
+	m.ExpireTs = ts
 }

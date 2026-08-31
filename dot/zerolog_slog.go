@@ -8,7 +8,7 @@ import (
 )
 
 type FastZerologHandler struct {
-	logger zerolog.Logger
+	logger *zerolog.Logger
 }
 
 // Enabled implements [slog.Handler].
@@ -41,7 +41,8 @@ func (p *FastZerologHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
 			ctx = ctx.Any(a.Key, val.Any())
 		}
 	}
-	return &FastZerologHandler{logger: ctx.Logger()}
+	tempLogger := ctx.Logger()
+	return &FastZerologHandler{logger: &tempLogger}
 }
 
 // WithGroup implements [slog.Handler].

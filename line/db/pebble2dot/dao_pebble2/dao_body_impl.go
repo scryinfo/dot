@@ -70,6 +70,14 @@ func (p *DaoBodybase[T, PT]) Find(id daobase.IdType) (T, error) {
 	closer.Close()
 	if err != nil {
 		return m, err
+	} else if pt.Expire() {
+		err = p.Remove(pt)
+		if err != nil {
+			p.Logger.Error().AnErr("remove expired model", err).Send()
+			return m, err
+		} else {
+			return m, pebble.ErrNotFound
+		}
 	}
 
 	v, closer, err = txn.Get(pt.KeyBody())
@@ -127,6 +135,12 @@ func (p *DaoBodybase[T, PT]) NextPage(page *daobase.PageMeta) ([]T, error) {
 				} else {
 					return nil, err
 				}
+			} else if pt.Expire() {
+				err2 := p.Remove(pt)
+				if err2 != nil {
+					p.Logger.Error().AnErr("remove expired model", err2).Send()
+				}
+				continue
 			}
 			if len(pt.GetId()) < 1 {
 				continue
@@ -186,6 +200,12 @@ func (p *DaoBodybase[T, PT]) PrevPage(page *daobase.PageMeta) ([]T, error) {
 					return ms, nil
 				}
 				return nil, err
+			} else if pt.Expire() {
+				err2 := p.Remove(pt)
+				if err2 != nil {
+					p.Logger.Error().AnErr("remove expired model", err2).Send()
+				}
+				continue
 			}
 			if len(pt.GetId()) < 1 {
 				continue

@@ -22,6 +22,21 @@ func NewRefreshTokenDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *Refresh
 
 type RefreshToken oidcapiv1.RefreshToken
 
+// Expire implements [daobase.Modal].
+func (m *RefreshToken) Expire() bool {
+	return daobase.ModalExpire(m.ExpireTs)
+}
+
+// GetExpireTs implements [daobase.Modal].
+func (m *RefreshToken) GetExpireTs() uint64 {
+	return m.ExpireTs
+}
+
+// SetExpireTs implements [daobase.Modal].
+func (m *RefreshToken) SetExpireTs(ts uint64) {
+	m.ExpireTs = ts
+}
+
 var _ daobase.Modal = (*RefreshToken)(nil)
 
 // func (o *RefreshToken) UnmarshalJSON(data []byte) error {

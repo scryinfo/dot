@@ -51,6 +51,21 @@ func (m *AuthRequest) ToProto() *oidcapiv1.AuthRequest {
 	return m.AuthRequest
 }
 
+// Expire implements [daobase.Modal].
+func (p *AuthRequest) Expire() bool {
+	return daobase.ModalExpire(p.ExpireTs)
+}
+
+// SetExpireTs implements [daobase.Modal].
+func (p *AuthRequest) SetExpireTs(ts uint64) {
+	p.ExpireTs = ts
+}
+
+// GetExpireTs implements [daobase.Modal].
+func (p *AuthRequest) GetExpireTs() uint64 {
+	return p.ExpireTs
+}
+
 // GetId implements [daobase.Modal].
 // Subtle: this method shadows the method (*BanPlayers).GetId of BanPlayersM.BanPlayers.
 func (m *AuthRequest) GetId() daobase.IdType {

@@ -26,13 +26,14 @@ func InitializeService() (*Line, func(), error) {
 	}
 	logConfig := &lineConfig.Log
 	v := dot.NewLogger(logConfig)
+	authConfig := &lineConfig.AuthConfig
 	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
 	oidcProviderConfig := &lineConfig.OidcProvider
 	oidcProvider, err := oidcdot.NewOidcProvider(oidcProviderConfig, v)
 	if err != nil {
 		return nil, nil, err
 	}
-	authService := oidcdot.NewAuthService(connectHttpServerMux, oidcProvider, v)
+	authService := oidcdot.NewAuthService(authConfig, connectHttpServerMux, oidcProvider, v)
 	connectServerConfig := &lineConfig.ConnectServer
 	handlerMiddle := rpcdot.NewHandlerMiddle()
 	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, v, handlerMiddle)

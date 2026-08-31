@@ -22,6 +22,21 @@ func NewCodeAuthRequestDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *Code
 
 type CodeAuthRequest oidcapiv1.CodeAuthRequest
 
+// Expire implements [daobase.Modal].
+func (m *CodeAuthRequest) Expire() bool {
+	return daobase.ModalExpire(m.ExpireTs)
+}
+
+// GetExpireTs implements [daobase.Modal].
+func (m *CodeAuthRequest) GetExpireTs() uint64 {
+	return m.ExpireTs
+}
+
+// SetExpireTs implements [daobase.Modal].
+func (m *CodeAuthRequest) SetExpireTs(ts uint64) {
+	m.ExpireTs = ts
+}
+
 var _ daobase.Modal = (*CodeAuthRequest)(nil)
 
 // func (o *CodeAuthRequest) UnmarshalJSON(data []byte) error {

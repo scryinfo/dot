@@ -5,28 +5,31 @@ package oidcapi.v1;
 option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
 
 message User {
-  string id = 1;
-  string username = 2;
-  string password = 3;
-  string first_name = 4;
-  string last_name = 5;
-  string email = 6;
-  bool email_verified = 7;
-  string phone = 8;
-  bool phone_verified = 9;
-  string preferred_language = 10;
-  bool is_admin = 11;
+  uint64 expire_ts = 1;
+  string id = 2;
+  string username = 3;
+  string password = 4;
+  string first_name = 5;
+  string last_name = 6;
+  string email = 7;
+  bool email_verified = 8;
+  string phone = 9;
+  bool phone_verified = 10;
+  string preferred_language = 11;
+  bool is_admin = 12;
 }
 
 message Identity {
-  string id = 1;
-  string user_id = 2;
-  string provider = 3;
-  string subject = 4;
-  string email = 5;
+  uint64 expire_ts = 1;
+  string id = 2;
+  string user_id = 3;
+  string provider = 4;
+  string subject = 5;
+  string email = 6;
 }
 
 message UserIdentities {
-  string user_id = 1;
-  repeated string identities = 2;
+  uint64 expire_ts = 1;
+  string user_id = 2;
+  repeated string identities = 3;
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/cockroachdb/pebble/v2"
+	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
 	daobase "github.com/scryinfo/dot/line/db/dao/dao_base"
 )
@@ -41,6 +42,15 @@ func (p *Daobase[T, PT]) Find(id daobase.IdType) (T, error) {
 	}
 	err = pt.FromValue(v)
 	closer.Close()
+	if err == nil && pt.Expire() {
+		err = p.Remove(pt)
+		if err != nil {
+			dot.Logger.Error().AnErr("remove expired modal", err).Send()
+			return m, err
+		} else {
+			return m, pebble.ErrNotFound
+		}
+	}
 	return m, err
 }
 
@@ -88,6 +98,12 @@ func (p *Daobase[T, PT]) NextPage(page *daobase.PageMeta) ([]T, error) {
 				} else {
 					return nil, err
 				}
+			} else if pt.Expire() {
+				err2 := p.Remove(pt)
+				if err2 != nil {
+					p.Logger.Error().AnErr("remove expired modal", err2).Send()
+				}
+				continue
 			}
 			if len(pt.GetId()) < 1 {
 				continue
@@ -147,6 +163,12 @@ func (p *Daobase[T, PT]) PrevPage(page *daobase.PageMeta) ([]T, error) {
 				} else {
 					return nil, err
 				}
+			} else if pt.Expire() {
+				err2 := p.Remove(pt)
+				if err2 != nil {
+					p.Logger.Error().AnErr("remove expired modal", err2).Send()
+				}
+				continue
 			}
 			if len(pt.GetId()) < 1 {
 				continue

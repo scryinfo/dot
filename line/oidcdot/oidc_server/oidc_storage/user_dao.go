@@ -33,6 +33,21 @@ func NewUserDaoBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) *UserDa
 
 type User oidcapiv1.User
 
+// Expire implements [daobase.Modal].
+func (m *User) Expire() bool {
+	return daobase.ModalExpire(m.ExpireTs)
+}
+
+// GetExpireTs implements [daobase.Modal].
+func (m *User) GetExpireTs() uint64 {
+	return m.ExpireTs
+}
+
+// SetExpireTs implements [daobase.Modal].
+func (m *User) SetExpireTs(ts uint64) {
+	m.ExpireTs = ts
+}
+
 var _ daobase.Modal = (*User)(nil)
 
 // func (o *User) UnmarshalJSON(data []byte) error {

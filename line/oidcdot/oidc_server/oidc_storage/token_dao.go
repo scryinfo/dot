@@ -39,6 +39,21 @@ func NewTokenDaoBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) *Token
 
 type Token oidcapiv1.Token
 
+// Expire implements [daobase.Modal].
+func (m *Token) Expire() bool {
+	return daobase.ModalExpire(m.ExpireTs)
+}
+
+// GetExpireTs implements [daobase.Modal].
+func (m *Token) GetExpireTs() uint64 {
+	return m.ExpireTs
+}
+
+// SetExpireTs implements [daobase.Modal].
+func (m *Token) SetExpireTs(ts uint64) {
+	m.ExpireTs = ts
+}
+
 var _ daobase.Modal = (*Token)(nil)
 
 // func (o *Token) UnmarshalJSON(data []byte) error {

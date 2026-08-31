@@ -34,6 +34,21 @@ func NewOidcClientDaoBadger(db *badgerdot.BadgerDbDot, logger *dot.LoggerType) *
 
 type OidcClient oidcapiv1.OidcClient
 
+// Expire implements [daobase.Modal].
+func (m *OidcClient) Expire() bool {
+	return daobase.ModalExpire(m.ExpireTs)
+}
+
+// GetExpireTs implements [daobase.Modal].
+func (m *OidcClient) GetExpireTs() uint64 {
+	return m.ExpireTs
+}
+
+// SetExpireTs implements [daobase.Modal].
+func (m *OidcClient) SetExpireTs(ts uint64) {
+	m.ExpireTs = ts
+}
+
 var _ daobase.Modal = (*OidcClient)(nil)
 
 // func (o *OidcClient) UnmarshalJSON(data []byte) error {

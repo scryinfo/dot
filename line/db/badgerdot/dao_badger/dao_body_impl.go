@@ -16,14 +16,22 @@ func (p *DaoBodybase[T, PT]) Add(m PT) error {
 		if err != nil {
 			return err
 		}
-		if err = txn.Set(m.Key(), bs); err != nil {
-			return err
-		}
-		bs, err = m.ValueBody()
+		bsBody, err := m.ValueBody()
 		if err != nil {
 			return err
 		}
-		return txn.Set(m.KeyBody(), bs)
+		if m.GetExpireTs() < 1 {
+			if err = txn.Set(m.Key(), bs); err != nil {
+				return err
+			}
+			return txn.Set(m.KeyBody(), bsBody)
+		} else {
+			if err = txn.SetEntry(&badger.Entry{Key: m.Key(), Value: bs, ExpiresAt: m.GetExpireTs()}); err != nil {
+				return err
+			}
+			return txn.SetEntry(&badger.Entry{Key: m.KeyBody(), Value: bsBody, ExpiresAt: m.GetExpireTs()})
+		}
+
 	})
 }
 

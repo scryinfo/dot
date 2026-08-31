@@ -20,7 +20,12 @@ func (p *Daobase[T, PT]) Add(m PT) error {
 		if err != nil {
 			return err
 		}
-		return txn.Set(m.Key(), bs)
+		if m.GetExpireTs() < 1 {
+			return txn.Set(m.Key(), bs)
+		} else {
+			return txn.SetEntry(&badger.Entry{Key: m.Key(), Value: bs, ExpiresAt: m.GetExpireTs()})
+		}
+
 	})
 }
 

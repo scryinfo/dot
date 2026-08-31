@@ -8,29 +8,31 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
 
 message CodeAuthRequest {
-	string code          = 1;
-	string auth_request_id = 2;
+  uint64 expire_ts = 1;
+  string code = 2;
+  string auth_request_id = 3;
 }
 
 message AuthRequest {
-  string id = 1;
-  google.protobuf.Timestamp creation_date = 2;
-  string application_id = 3;
-  string callback_uri = 4;
-  string transfer_state = 5;
-  repeated string arompt = 6;
-  // repeated language.Tag UiLocales = 7;
-  string login_hint = 8;
-  google.protobuf.Duration max_auth_age = 9;
-  string user_id = 10;
-  repeated string scopes = 11;
-  string response_type = 12; //oidc.ResponseType
-  string response_mode = 13; //oidc.ResponseMode
-  string nonce = 14;
-  OIDCCodeChallenge code_challenge = 15;
+  uint64 expire_ts = 1;
+  string id = 2;
+  google.protobuf.Timestamp creation_date = 3;
+  string application_id = 4;
+  string callback_uri = 5;
+  string transfer_state = 6;
+  repeated string arompt = 7;
+  // repeated language.Tag UiLocales = 8;
+  string login_hint = 9;
+  google.protobuf.Duration max_auth_age = 10;
+  string user_id = 11;
+  repeated string scopes = 12;
+  string response_type = 13; //oidc.ResponseType
+  string response_mode = 14; //oidc.ResponseMode
+  string nonce = 15;
+  OIDCCodeChallenge code_challenge = 16;
 
-  bool done = 16;
-  google.protobuf.Timestamp auth_time = 17;
+  bool done = 17;
+  google.protobuf.Timestamp auth_time = 18;
 }
 
 message OIDCCodeChallenge {
