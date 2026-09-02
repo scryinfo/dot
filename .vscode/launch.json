@@ -45,6 +45,24 @@
       // "dlvConfig": {
       //   "args": ["-GenerateConfig=true"],
       // },
+    },
+    {
+      "name": "oidc_app_server",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/samples/oidcs/app_server/",
+      "cwd": "${workspaceRoot}/samples/oidcs/app_server"
+      // "args": ["-GenerateConfig=true"]
+    },
+    {
+      "name": "oidc_server",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/samples/oidcs/oidc_server/",
+      "cwd": "${workspaceRoot}/samples/oidcs/oidc_server"
+      // "args": ["-GenerateConfig=true"]
     }
   ]
 }

@@ -10,12 +10,12 @@ import (
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
 )
 
-type AuthRequestDao struct {
+type AuthRequestDaoPebble2 struct {
 	dao_pebble2.Daobase[AuthRequest, *AuthRequest]
 }
 
-func NewBanPlayersDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *AuthRequestDao {
-	return &AuthRequestDao{
+func NewAuthRequestDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *AuthRequestDaoPebble2 {
+	return &AuthRequestDaoPebble2{
 		Daobase: dao_pebble2.NewDaobase(db, logger, func(id daobase.IdType) AuthRequest {
 			return AuthRequest{
 				AuthRequest: &oidcapiv1.AuthRequest{

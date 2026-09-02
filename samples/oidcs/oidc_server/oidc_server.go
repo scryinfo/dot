@@ -10,20 +10,25 @@ import (
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line"
+	"github.com/scryinfo/dot/line/db/pebble2dot"
+	"github.com/scryinfo/dot/line/oidcdot"
+	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
 )
 
 type Line struct {
-	SConfig       dot.SConfig
-	Logger        *dot.LoggerType
-	ConnectServer *rpcdot.ConnectServer
+	SConfig         dot.SConfig
+	Logger          *dot.LoggerType
+	OidcServiceHttp *oidcdot.OidcServiceHttp
 }
 
 type LineConfig struct {
 	Log           dot.LogConfig              `json:"log" toml:"log" yaml:"log" mapstructure:"log"`
 	ConnectServer rpcdot.ConnectServerConfig `json:"connect_server" toml:"connect_server" yaml:"connect_server" mapstructure:"connect_server"`
+	OidcService   oidcdot.OidcServiceConfig  `json:"oidc_service" toml:"oidc_service" yaml:"oidc_service" mapstructure:"oidc_service"`
+	Pebble2       pebble2dot.Pebble2Config   `json:"pebble2" toml:"pebble2" yaml:"pebble2" mapstructure:"pebble2"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -40,10 +45,13 @@ var LineSet = wire.NewSet(
 	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
 	dot.NewLogger,
-	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer"),
+	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer", "OidcService", "Pebble2"),
 	line.RpcdotNewConnetServer,
 	line.RpcdotNewConnectHttpServerMux,
 	line.RpcdotNewHandlerMiddle,
+
+	oidcdot.NewOidcServiceHttp,
+	oidc_storage.Pebble2Set,
 )
 
 func main() {

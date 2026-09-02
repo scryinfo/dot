@@ -10,12 +10,12 @@ import (
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
 )
 
-type CodeAuthRequestDao struct {
+type CodeAuthRequestDaoPebble2 struct {
 	dao_pebble2.Daobase[CodeAuthRequest, *CodeAuthRequest]
 }
 
-func NewCodeAuthRequestDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *CodeAuthRequestDao {
-	return &CodeAuthRequestDao{
+func NewCodeAuthRequestDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *CodeAuthRequestDaoPebble2 {
+	return &CodeAuthRequestDaoPebble2{
 		Daobase: dao_pebble2.NewDaobase(db, logger, NewCodeAuthRequestById),
 	}
 }

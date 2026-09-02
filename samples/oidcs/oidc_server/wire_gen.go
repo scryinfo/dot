@@ -8,6 +8,9 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/db/pebble2dot"
+	"github.com/scryinfo/dot/line/oidcdot"
+	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 )
@@ -25,17 +28,35 @@ func InitializeService() (*Line, func(), error) {
 	}
 	logConfig := &lineConfig.Log
 	v := dot.NewLogger(logConfig)
-	connectServerConfig := &lineConfig.ConnectServer
+	oidcServiceConfig := &lineConfig.OidcService
 	connectHttpServerMux := rpcdot.NewConnectHttpServerMux()
-	handlerMiddle := rpcdot.NewHandlerMiddle()
-	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, v, handlerMiddle)
+	pebble2Config := &lineConfig.Pebble2
+	pebble2, cleanup, err := pebble2dot.NewPebble2(pebble2Config, sConfig, v)
 	if err != nil {
 		return nil, nil, err
 	}
+	authRequestDaoPebble2 := oidc_storage.NewAuthRequestDaoPebble2(pebble2, v)
+	oidcClientDaoPebble2 := oidc_storage.NewOidcClientDaoPebble2(pebble2, v)
+	codeAuthRequestDaoPebble2 := oidc_storage.NewCodeAuthRequestDaoPebble2(pebble2, v)
+	identityDaoPebble2 := oidc_storage.NewIdentityDaoPebble2(pebble2, v)
+	refreshTokenDaoPebble2 := oidc_storage.NewRefreshTokenDaoPebble2(pebble2, v)
+	tokenDaoPebble2 := oidc_storage.NewTokenDaoPebble2(pebble2, v)
+	userDaoPebble2 := oidc_storage.NewUserDaoPebble2(pebble2, v)
+	userIdentitiesDaoPebble2 := oidc_storage.NewUserIdentitiesDaoPebble2(pebble2, v)
+	storagePebble2, err := oidc_storage.NewStoragePebble2(pebble2, v, authRequestDaoPebble2, oidcClientDaoPebble2, codeAuthRequestDaoPebble2, identityDaoPebble2, refreshTokenDaoPebble2, tokenDaoPebble2, userDaoPebble2, userIdentitiesDaoPebble2)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	oidcServiceHttp, err := oidcdot.NewOidcServiceHttp(oidcServiceConfig, connectHttpServerMux, storagePebble2, v)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	line := &Line{
-		SConfig:       sConfig,
-		Logger:        v,
-		ConnectServer: connectServer,
+		SConfig:         sConfig,
+		Logger:          v,
+		OidcServiceHttp: oidcServiceHttp,
 	}
 	return line, func() {
 		cleanup()

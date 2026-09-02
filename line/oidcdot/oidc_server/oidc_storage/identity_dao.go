@@ -10,12 +10,12 @@ import (
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
 )
 
-type IdentityDao struct {
+type IdentityDaoPebble2 struct {
 	dao_pebble2.Daobase[Identity, *Identity]
 }
 
-func NewIdentityDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *IdentityDao {
-	return &IdentityDao{
+func NewIdentityDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *IdentityDaoPebble2 {
+	return &IdentityDaoPebble2{
 		Daobase: dao_pebble2.NewDaobase(db, logger, NewIdentityById),
 	}
 }

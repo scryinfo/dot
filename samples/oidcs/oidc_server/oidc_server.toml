@@ -31,3 +31,10 @@ cert = ''
 mode = 'none'
 peer_cert = ''
 root_cert = ''
+
+[oidc_service]
+oidc_issuer = "http://localhost:8090"
+
+[pebble2]
+db_path = "data/pebble2"
+sync = false
