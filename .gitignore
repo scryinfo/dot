@@ -125,3 +125,4 @@ samples/oidcs/oidc_server/oidc_server
 samples/sconfig_de/sconfig_de
 go.work.sum
 line/oidcdot/oidc_server/oidc_storage/default_data/temp/
+samples/oidcs/oidc_server/data/

@@ -21,6 +21,7 @@ import (
 type Line struct {
 	SConfig         dot.SConfig
 	Logger          *dot.LoggerType
+	ConnectServer   *rpcdot.ConnectServer
 	OidcServiceHttp *oidcdot.OidcServiceHttp
 }
 
