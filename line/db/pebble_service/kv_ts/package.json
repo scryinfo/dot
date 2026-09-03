@@ -10,7 +10,7 @@
     "format": "oxfmt . --write"
   },
   "devDependencies": {
-    "oxfmt": "^0.64.0",
+    "oxfmt": "^0.66.0",
     "typescript": "6.0.2",
     "vite": "^8.2.2"
   }
