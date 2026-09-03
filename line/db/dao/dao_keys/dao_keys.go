@@ -9,6 +9,7 @@ var (
 	PrefixToken          = []byte("oidc:token:")
 	PrefixRefreshToken   = []byte("oidc:refresh_token:")
 	PrefixOidcClient     = []byte("oidc:client:")
+	PrefixClientStatus   = []byte("oidc:client_status:")
 
 	// PrefixMessage     = []byte("admin:message:")
 	// PrefixMessageBody = []byte("admin:message_body:")

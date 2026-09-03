@@ -73,7 +73,6 @@ func (m *OidcClient) OidcClientToProto() *oidcapiv1.OidcClient {
 }
 
 // GetId implements [daobase.Modal].
-// Subtle: this method shadows the method (*BanPlayers).GetId of BanPlayersM.BanPlayers.
 func (m *OidcClient) GetId() daobase.IdType {
 	return daobase.IdType(m.Id)
 }

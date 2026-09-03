@@ -63,3 +63,27 @@ message OidcClient {
   repeated string post_logout_redirect_uri_globs = 15;
   repeated string redirect_uri_globs = 16;
 }
+
+message ClientStatus {
+  uint64 expire_ts = 1;
+  string id = 2; // the client id
+  SignAlgorithm sign_algorithm = 3; // the client's sign algorithm
+  SignAlgorithm default_algorithm = 4; // the client's default sign algorithm
+}
+
+enum SignAlgorithm {
+    SIGN_ALGORITHM_UNSPECIFIED = 0;
+    SIGN_ALGORITHM_EDDSA = 1;
+    SIGN_ALGORITHM_HS256 = 2;
+    SIGN_ALGORITHM_HS384 = 3;
+    SIGN_ALGORITHM_HS512 = 4;
+    SIGN_ALGORITHM_RS256 = 5;
+    SIGN_ALGORITHM_RS384 = 6;
+    SIGN_ALGORITHM_RS512 = 7;
+    SIGN_ALGORITHM_ES256 = 8;
+    SIGN_ALGORITHM_ES384 = 9;
+    SIGN_ALGORITHM_ES512 = 10;
+    SIGN_ALGORITHM_PS256 = 11;
+    SIGN_ALGORITHM_PS384 = 12;
+    SIGN_ALGORITHM_PS512 = 13;
+}
