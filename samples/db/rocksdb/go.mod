@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot/samples/db/rocksdb
 
-go 1.27.0
+go 1.27.1
 
 replace (
 	github.com/scryinfo/dot => ../../../

@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot
 
-go 1.27.0
+go 1.27.1
 
 // replace google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260610212136-7ab31c22f7ad
 // replace github.com/ugorji/go/codec => github.com/ugorji/go/codec v1.3.2

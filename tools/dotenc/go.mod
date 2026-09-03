@@ -1,6 +1,6 @@
 module github.com/scryinfo/dot/tools/dotenc
 
-go 1.27.0
+go 1.27.1
 
 require (
 	github.com/scryinfo/dot v0.9.13
