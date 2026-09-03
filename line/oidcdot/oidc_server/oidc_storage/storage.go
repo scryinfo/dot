@@ -24,6 +24,7 @@ type StoragePebble2 struct {
 	authRequestDao     *AuthRequestDaoPebble2
 	codeAuthRequestDao *CodeAuthRequestDaoPebble2
 	oidcClientDao      *OidcClientDaoPebble2
+	clientStatusDao    *ClientStatusDaoPebble2
 	identityDao        *IdentityDaoPebble2
 	refreshTokenDao    *RefreshTokenDaoPebble2
 	tokenDao           *TokenDaoPebble2
@@ -147,7 +148,7 @@ func (s *StoragePebble2) ValidateJWTProfileScopes(ctx context.Context, userID st
 }
 
 func NewStoragePebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType,
-	authRequestDao *AuthRequestDaoPebble2, oidcClientDao *OidcClientDaoPebble2, codeAuthRequestDao *CodeAuthRequestDaoPebble2,
+	authRequestDao *AuthRequestDaoPebble2, oidcClientDao *OidcClientDaoPebble2, clientStatusDao *ClientStatusDaoPebble2, codeAuthRequestDao *CodeAuthRequestDaoPebble2,
 	identityDao *IdentityDaoPebble2, refreshTokenDao *RefreshTokenDaoPebble2,
 	tokenDao *TokenDaoPebble2, userDao *UserDaoPebble2, userIdentitiesDao *UserIdentitiesDaoPebble2,
 ) (*StoragePebble2, error) {
@@ -156,6 +157,7 @@ func NewStoragePebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType,
 		log:                logger,
 		authRequestDao:     authRequestDao,
 		oidcClientDao:      oidcClientDao,
+		clientStatusDao:    clientStatusDao,
 		codeAuthRequestDao: codeAuthRequestDao,
 		identityDao:        identityDao,
 		refreshTokenDao:    refreshTokenDao,
@@ -169,6 +171,7 @@ var Pebble2Set = wire.NewSet(
 	NewStoragePebble2,
 	NewAuthRequestDaoPebble2,
 	NewOidcClientDaoPebble2,
+	NewClientStatusDaoPebble2,
 	NewCodeAuthRequestDaoPebble2,
 	NewIdentityDaoPebble2,
 	NewRefreshTokenDaoPebble2,
