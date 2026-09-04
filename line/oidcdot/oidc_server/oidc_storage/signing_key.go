@@ -9,11 +9,78 @@ import (
 	"uuid"
 
 	"github.com/go-jose/go-jose/v4"
+	"github.com/scryinfo/dot/dot"
 	"github.com/zitadel/oidc/v4/pkg/op"
 )
 
-type SigningKeys struct {
+// the map is performance optimized for binary search
+type _SigningKeys struct {
+	// arrayKeys []op.SigningKey
+	mapKeys map[jose.SignatureAlgorithm]op.SigningKey
 }
+
+// func (s *_SigningKeys) GetArraySigningKey(alg jose.SignatureAlgorithm) op.SigningKey {
+// 	index, find := slices.BinarySearchFunc(s.arrayKeys, alg, func(it op.SigningKey, t jose.SignatureAlgorithm) int {
+// 		itt := it.SignatureAlgorithm()
+// 		if itt == t {
+// 			return 0
+// 		} else if itt < t {
+// 			return -1
+// 		} else {
+// 			return 1
+// 		}
+// 	})
+// 	if find {
+// 		return s.arrayKeys[index]
+// 	} else {
+// 		dot.Logger.Debug().Msgf("no signing key found for algorithm %s", alg)
+// 		return nil
+// 	}
+// }
+
+func (s *_SigningKeys) GetMapSigningKey(alg jose.SignatureAlgorithm) op.SigningKey {
+	v, find := s.mapKeys[alg]
+	if find {
+		return v
+	} else {
+		dot.Logger.Debug().Msgf("no signing key found for algorithm %s", alg)
+		return nil
+	}
+}
+
+var SigningKeys _SigningKeys = _SigningKeys{
+	// arrayKeys: []op.SigningKey{
+	// 	SigningKeyES256,
+	// 	SigningKeyES384,
+	// 	SigningKeyES512,
+	// 	SigningKeyEdDSA,
+	// 	SigningKeyHS256,
+	// 	SigningKeyHS384,
+	// 	SigningKeyHS512,
+	// 	SigningKeyPS256,
+	// 	SigningKeyPS384,
+	// 	SigningKeyPS512,
+	// 	SigningKeyRS256,
+	// 	SigningKeyRS384,
+	// 	SigningKeyRS512,
+	// },
+	mapKeys: map[jose.SignatureAlgorithm]op.SigningKey{
+		SigningKeyES256.SignatureAlgorithm(): SigningKeyES256,
+		SigningKeyES384.SignatureAlgorithm(): SigningKeyES384,
+		SigningKeyES512.SignatureAlgorithm(): SigningKeyES512,
+		SigningKeyEdDSA.SignatureAlgorithm(): SigningKeyEdDSA,
+		SigningKeyHS256.SignatureAlgorithm(): SigningKeyHS256,
+		SigningKeyHS384.SignatureAlgorithm(): SigningKeyHS384,
+		SigningKeyHS512.SignatureAlgorithm(): SigningKeyHS512,
+		SigningKeyPS256.SignatureAlgorithm(): SigningKeyPS256,
+		SigningKeyPS384.SignatureAlgorithm(): SigningKeyPS384,
+		SigningKeyPS512.SignatureAlgorithm(): SigningKeyPS512,
+		SigningKeyRS256.SignatureAlgorithm(): SigningKeyRS256,
+		SigningKeyRS384.SignatureAlgorithm(): SigningKeyRS384,
+		SigningKeyRS512.SignatureAlgorithm(): SigningKeyRS512,
+	},
+}
+
 // EdDSA
 var _ op.SigningKey = (*signingKeyEdDSA)(nil)
 
@@ -24,6 +91,7 @@ var (
 		key:       mustEdDSAKey(ed25519.GenerateKey(rand.Reader)),
 	}
 )
+
 func mustEdDSAKey(_ ed25519.PublicKey, key ed25519.PrivateKey, _ error) *ed25519.PrivateKey {
 	return &key
 }
@@ -50,22 +118,23 @@ func (s *signingKeyEdDSA) ID() string {
 var _ op.SigningKey = (*signingKeyRsa)(nil)
 
 var (
-	SigningKeyRs256 = &signingKeyRsa{
+	SigningKeyRS256 = &signingKeyRsa{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.RS256,
 		key:       mustRSAKey(rsa.GenerateKey(rand.Reader, 2048)),
 	}
-	SigningKeyRs384 = &signingKeyRsa{
+	SigningKeyRS384 = &signingKeyRsa{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.RS384,
 		key:       mustRSAKey(rsa.GenerateKey(rand.Reader, 3072)),
 	}
-	SigningKeyRs512 = &signingKeyRsa{
+	SigningKeyRS512 = &signingKeyRsa{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.RS512,
 		key:       mustRSAKey(rsa.GenerateKey(rand.Reader, 4096)),
 	}
 )
+
 func mustRSAKey(key *rsa.PrivateKey, _ error) *rsa.PrivateKey {
 	return key
 }
@@ -92,22 +161,23 @@ func (s *signingKeyRsa) ID() string {
 var _ op.SigningKey = (*signingKeyEs)(nil)
 
 var (
-	SigningKeyEs256 = &signingKeyEs{
+	SigningKeyES256 = &signingKeyEs{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.ES256,
-		key:       mustESKey(ecdsa.GenerateKey(elliptic.P256(),rand.Reader)),
+		key:       mustESKey(ecdsa.GenerateKey(elliptic.P256(), rand.Reader)),
 	}
-	SigningKeyEs384 = &signingKeyEs{
+	SigningKeyES384 = &signingKeyEs{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.ES384,
 		key:       mustESKey(ecdsa.GenerateKey(elliptic.P384(), rand.Reader)),
 	}
-	SigningKeyEs512 = &signingKeyEs{
+	SigningKeyES512 = &signingKeyEs{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.ES512,
 		key:       mustESKey(ecdsa.GenerateKey(elliptic.P521(), rand.Reader)),
 	}
 )
+
 func mustESKey(key *ecdsa.PrivateKey, _ error) *ecdsa.PrivateKey {
 	return key
 }
@@ -130,27 +200,27 @@ func (s *signingKeyEs) ID() string {
 	return s.id
 }
 
-
 // hs256 hs384 hs512
 var _ op.SigningKey = (*signingKeyHs)(nil)
 
 var (
-	SigningKeyHs256 = &signingKeyHs{
+	SigningKeyHS256 = &signingKeyHs{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.HS256,
 		key:       mustHSKey(32),
 	}
-	SigningKeyHs384 = &signingKeyHs{
+	SigningKeyHS384 = &signingKeyHs{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.HS384,
 		key:       mustHSKey(48),
 	}
-	SigningKeyHs512 = &signingKeyHs{
+	SigningKeyHS512 = &signingKeyHs{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.HS512,
 		key:       mustHSKey(64),
 	}
 )
+
 func mustHSKey(len int) []byte {
 	key := make([]byte, len)
 	_, _ = rand.Read(key)
@@ -175,27 +245,27 @@ func (s *signingKeyHs) ID() string {
 	return s.id
 }
 
-
 // ps256 ps384 ps512
 var _ op.SigningKey = (*signingKeyPs)(nil)
 
 var (
-	SigningKeyPs256 = &signingKeyPs{
+	SigningKeyPS256 = &signingKeyPs{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.PS256,
 		key:       mustPSKey(rsa.GenerateKey(rand.Reader, 2048)),
 	}
-	SigningKeyPs384 = &signingKeyPs{
+	SigningKeyPS384 = &signingKeyPs{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.PS384,
 		key:       mustPSKey(rsa.GenerateKey(rand.Reader, 3072)),
 	}
-	SigningKeyPs512 = &signingKeyPs{
+	SigningKeyPS512 = &signingKeyPs{
 		id:        uuid.NewV7().String(),
 		algorithm: jose.PS512,
 		key:       mustPSKey(rsa.GenerateKey(rand.Reader, 4096)),
 	}
 )
+
 func mustPSKey(key *rsa.PrivateKey, _ error) *rsa.PrivateKey {
 	return key
 }

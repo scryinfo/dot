@@ -13,7 +13,7 @@ require (
 	github.com/dgraph-io/badger/v4 v4.9.6
 	github.com/linxGnu/grocksdb v1.10.8
 	github.com/scryinfo/dot v0.9.16
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260902035532-0d908a6855bd
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260903141624-b30f1ffc9f96
 	github.com/scryinfo/scryg v0.2.0
 )
 
@@ -34,7 +34,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/getsentry/sentry-go v0.49.0 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.5 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect

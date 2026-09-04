@@ -6,7 +6,7 @@ replace (
 	// github.com/knadh/koanf => github.com/knadh/koanf/v2 v2.3.5 // Or whichever v2 version you upgraded to
 	github.com/scryinfo/dot => ../../../
 	github.com/scryinfo/dot/line/db/rocksdbdot => ../../../line/db/rocksdbdot
-	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260610212136-7ab31c22f7ad
+// google.golang.org/genproto => google.golang.org/genproto v0.0.0-20260902075111-185039ac62a5
 )
 
 require (
@@ -45,12 +45,12 @@ require (
 	github.com/getsentry/sentry-go v0.49.0 // indirect
 	github.com/gin-contrib/sse v1.1.1 // indirect
 	github.com/gin-gonic/gin v1.12.0 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.5 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.30.3 // indirect
+	github.com/go-playground/validator/v10 v10.30.4 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/goccy/go-json v0.10.6 // indirect
 	github.com/goccy/go-yaml v1.19.2 // indirect

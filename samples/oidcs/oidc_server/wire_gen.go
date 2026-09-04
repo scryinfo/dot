@@ -44,13 +44,14 @@ func InitializeService() (*Line, func(), error) {
 	}
 	authRequestDaoPebble2 := oidc_storage.NewAuthRequestDaoPebble2(pebble2, v)
 	oidcClientDaoPebble2 := oidc_storage.NewOidcClientDaoPebble2(pebble2, v)
+	clientStatusDaoPebble2 := oidc_storage.NewClientStatusDaoPebble2(pebble2, v)
 	codeAuthRequestDaoPebble2 := oidc_storage.NewCodeAuthRequestDaoPebble2(pebble2, v)
 	identityDaoPebble2 := oidc_storage.NewIdentityDaoPebble2(pebble2, v)
 	refreshTokenDaoPebble2 := oidc_storage.NewRefreshTokenDaoPebble2(pebble2, v)
 	tokenDaoPebble2 := oidc_storage.NewTokenDaoPebble2(pebble2, v)
 	userDaoPebble2 := oidc_storage.NewUserDaoPebble2(pebble2, v)
 	userIdentitiesDaoPebble2 := oidc_storage.NewUserIdentitiesDaoPebble2(pebble2, v)
-	storagePebble2, err := oidc_storage.NewStoragePebble2(pebble2, v, authRequestDaoPebble2, oidcClientDaoPebble2, codeAuthRequestDaoPebble2, identityDaoPebble2, refreshTokenDaoPebble2, tokenDaoPebble2, userDaoPebble2, userIdentitiesDaoPebble2)
+	storagePebble2, err := oidc_storage.NewStoragePebble2(pebble2, v, authRequestDaoPebble2, oidcClientDaoPebble2, clientStatusDaoPebble2, codeAuthRequestDaoPebble2, identityDaoPebble2, refreshTokenDaoPebble2, tokenDaoPebble2, userDaoPebble2, userIdentitiesDaoPebble2)
 	if err != nil {
 		cleanup2()
 		cleanup()

@@ -11,7 +11,7 @@ require (
 	github.com/google/wire v0.7.0
 	github.com/linxGnu/grocksdb v1.10.8
 	github.com/scryinfo/dot v0.9.16
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260902035532-0d908a6855bd
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260903141624-b30f1ffc9f96
 	github.com/scryinfo/scryg v0.2.0
 )
 
@@ -46,12 +46,12 @@ require (
 	github.com/getsentry/sentry-go v0.49.0 // indirect
 	github.com/gin-contrib/sse v1.1.1 // indirect
 	github.com/gin-gonic/gin v1.12.0 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.5 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.30.3 // indirect
+	github.com/go-playground/validator/v10 v10.30.4 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/goccy/go-json v0.10.6 // indirect
 	github.com/goccy/go-yaml v1.19.2 // indirect

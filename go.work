@@ -3,13 +3,14 @@ go 1.27.1
 use (
 	./
 	./demo
+	./demo/bench_http
 	./demo/redis
 	./demo/redis/orm
-	./demo/bench_http
+	./line/db/rocksdbdot
 	./line/db/tools/gdao
 	./line/db/tools/gmodel
-	./line/db/rocksdbdot
+	./samples/db/pebble_server_bench
 	./samples/db/rocksdb
 	./samples/db/rocksdb_bench
-	./samples/db/pebble_server_bench
+	./tools/dotenc
 )
