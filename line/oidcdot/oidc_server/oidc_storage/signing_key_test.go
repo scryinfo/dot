@@ -9,6 +9,8 @@ import (
 	"github.com/zitadel/oidc/v4/pkg/op"
 )
 
+var SigningKeys _SigningKeys = NewSigningKeys()
+
 func TestGetSigningKey(t *testing.T) {
 	for _, alg := range SigningKeys.mapKeys {
 		it := SigningKeys.GetMapSigningKey(alg.SignatureAlgorithm())

@@ -16,7 +16,9 @@ import (
 // the map is performance optimized for binary search
 type _SigningKeys struct {
 	// arrayKeys []op.SigningKey
-	mapKeys map[jose.SignatureAlgorithm]op.SigningKey
+	mapKeys    map[jose.SignatureAlgorithm]op.SigningKey
+	defaultKey op.SigningKey
+	publicKeys map[jose.SignatureAlgorithm]op.Key
 }
 
 // func (s *_SigningKeys) GetArraySigningKey(alg jose.SignatureAlgorithm) op.SigningKey {
@@ -48,37 +50,55 @@ func (s *_SigningKeys) GetMapSigningKey(alg jose.SignatureAlgorithm) op.SigningK
 	}
 }
 
-var SigningKeys _SigningKeys = _SigningKeys{
-	// arrayKeys: []op.SigningKey{
-	// 	SigningKeyES256,
-	// 	SigningKeyES384,
-	// 	SigningKeyES512,
-	// 	SigningKeyEdDSA,
-	// 	SigningKeyHS256,
-	// 	SigningKeyHS384,
-	// 	SigningKeyHS512,
-	// 	SigningKeyPS256,
-	// 	SigningKeyPS384,
-	// 	SigningKeyPS512,
-	// 	SigningKeyRS256,
-	// 	SigningKeyRS384,
-	// 	SigningKeyRS512,
-	// },
-	mapKeys: map[jose.SignatureAlgorithm]op.SigningKey{
-		SigningKeyES256.SignatureAlgorithm(): SigningKeyES256,
-		SigningKeyES384.SignatureAlgorithm(): SigningKeyES384,
-		SigningKeyES512.SignatureAlgorithm(): SigningKeyES512,
-		SigningKeyEdDSA.SignatureAlgorithm(): SigningKeyEdDSA,
-		SigningKeyHS256.SignatureAlgorithm(): SigningKeyHS256,
-		SigningKeyHS384.SignatureAlgorithm(): SigningKeyHS384,
-		SigningKeyHS512.SignatureAlgorithm(): SigningKeyHS512,
-		SigningKeyPS256.SignatureAlgorithm(): SigningKeyPS256,
-		SigningKeyPS384.SignatureAlgorithm(): SigningKeyPS384,
-		SigningKeyPS512.SignatureAlgorithm(): SigningKeyPS512,
-		SigningKeyRS256.SignatureAlgorithm(): SigningKeyRS256,
-		SigningKeyRS384.SignatureAlgorithm(): SigningKeyRS384,
-		SigningKeyRS512.SignatureAlgorithm(): SigningKeyRS512,
-	},
+func NewSigningKeys() _SigningKeys {
+	return _SigningKeys{
+		// arrayKeys: []op.SigningKey{
+		// 	SigningKeyES256,
+		// 	SigningKeyES384,
+		// 	SigningKeyES512,
+		// 	SigningKeyEdDSA,
+		// 	SigningKeyHS256,
+		// 	SigningKeyHS384,
+		// 	SigningKeyHS512,
+		// 	SigningKeyPS256,
+		// 	SigningKeyPS384,
+		// 	SigningKeyPS512,
+		// 	SigningKeyRS256,
+		// 	SigningKeyRS384,
+		// 	SigningKeyRS512,
+		// },
+		mapKeys: map[jose.SignatureAlgorithm]op.SigningKey{
+			SigningKeyES256.SignatureAlgorithm(): SigningKeyES256,
+			SigningKeyES384.SignatureAlgorithm(): SigningKeyES384,
+			SigningKeyES512.SignatureAlgorithm(): SigningKeyES512,
+			SigningKeyEdDSA.SignatureAlgorithm(): SigningKeyEdDSA,
+			SigningKeyHS256.SignatureAlgorithm(): SigningKeyHS256,
+			SigningKeyHS384.SignatureAlgorithm(): SigningKeyHS384,
+			SigningKeyHS512.SignatureAlgorithm(): SigningKeyHS512,
+			SigningKeyPS256.SignatureAlgorithm(): SigningKeyPS256,
+			SigningKeyPS384.SignatureAlgorithm(): SigningKeyPS384,
+			SigningKeyPS512.SignatureAlgorithm(): SigningKeyPS512,
+			SigningKeyRS256.SignatureAlgorithm(): SigningKeyRS256,
+			SigningKeyRS384.SignatureAlgorithm(): SigningKeyRS384,
+			SigningKeyRS512.SignatureAlgorithm(): SigningKeyRS512,
+		},
+		defaultKey: SigningKeyES256,
+		publicKeys: map[jose.SignatureAlgorithm]op.Key{
+			SigningKeyES256.SignatureAlgorithm(): &signingPublicKeyEs{signingKeyEs: *SigningKeyES256},
+			SigningKeyES384.SignatureAlgorithm(): &signingPublicKeyEs{signingKeyEs: *SigningKeyES384},
+			SigningKeyES512.SignatureAlgorithm(): &signingPublicKeyEs{signingKeyEs: *SigningKeyES512},
+			SigningKeyEdDSA.SignatureAlgorithm(): &signingPublicKeyEdDSA{signingKeyEdDSA: *SigningKeyEdDSA},
+			// SigningKeyHS256.SignatureAlgorithm(): &signingPublicKeyHs{signingKeyHs: *SigningKeyHS256},
+			// SigningKeyHS384.SignatureAlgorithm(): &signingPublicKeyHs{signingKeyHs: *SigningKeyHS384},
+			// SigningKeyHS512.SignatureAlgorithm(): &signingPublicKeyHs{signingKeyHs: *SigningKeyHS512},
+			SigningKeyPS256.SignatureAlgorithm(): &signingPublicKeyPs{signingKeyPs: *SigningKeyPS256},
+			SigningKeyPS384.SignatureAlgorithm(): &signingPublicKeyPs{signingKeyPs: *SigningKeyPS384},
+			SigningKeyPS512.SignatureAlgorithm(): &signingPublicKeyPs{signingKeyPs: *SigningKeyPS512},
+			SigningKeyRS256.SignatureAlgorithm(): &signingPublicKeyRsa{signingKeyRsa: *SigningKeyRS256},
+			SigningKeyRS384.SignatureAlgorithm(): &signingPublicKeyRsa{signingKeyRsa: *SigningKeyRS384},
+			SigningKeyRS512.SignatureAlgorithm(): &signingPublicKeyRsa{signingKeyRsa: *SigningKeyRS512},
+		},
+	}
 }
 
 // EdDSA
@@ -112,6 +132,25 @@ func (s *signingKeyEdDSA) Key() any {
 
 func (s *signingKeyEdDSA) ID() string {
 	return s.id
+}
+
+var _ op.Key = (*signingPublicKeyEdDSA)(nil)
+
+type signingPublicKeyEdDSA struct {
+	signingKeyEdDSA
+}
+
+// Algorithm implements [op.Key].
+func (s *signingPublicKeyEdDSA) Algorithm() jose.SignatureAlgorithm {
+	return s.algorithm
+}
+
+// Use implements [op.Key].
+func (s *signingPublicKeyEdDSA) Use() string {
+	return "sig"
+}
+func (s *signingPublicKeyEdDSA) Key() any {
+	return s.key.Public()
 }
 
 // rsa256 rsa384 rsa512
@@ -157,6 +196,25 @@ func (s *signingKeyRsa) ID() string {
 	return s.id
 }
 
+var _ op.Key = (*signingPublicKeyRsa)(nil)
+
+type signingPublicKeyRsa struct {
+	signingKeyRsa
+}
+
+// Algorithm implements [op.Key].
+func (s *signingPublicKeyRsa) Algorithm() jose.SignatureAlgorithm {
+	return s.algorithm
+}
+
+// Use implements [op.Key].
+func (s *signingPublicKeyRsa) Use() string {
+	return "sig"
+}
+func (s *signingPublicKeyRsa) Key() any {
+	return s.key.Public()
+}
+
 // es256 es384 es512
 var _ op.SigningKey = (*signingKeyEs)(nil)
 
@@ -198,6 +256,25 @@ func (s *signingKeyEs) Key() any {
 
 func (s *signingKeyEs) ID() string {
 	return s.id
+}
+
+var _ op.Key = (*signingPublicKeyEs)(nil)
+
+type signingPublicKeyEs struct {
+	signingKeyEs
+}
+
+// Algorithm implements [op.Key].
+func (s *signingPublicKeyEs) Algorithm() jose.SignatureAlgorithm {
+	return s.algorithm
+}
+
+// Use implements [op.Key].
+func (s *signingPublicKeyEs) Use() string {
+	return "sig"
+}
+func (s *signingPublicKeyEs) Key() any {
+	return s.key.Public()
 }
 
 // hs256 hs384 hs512
@@ -245,6 +322,25 @@ func (s *signingKeyHs) ID() string {
 	return s.id
 }
 
+// var _ op.Key = (*signingPublicKeyHs)(nil)
+
+// type signingPublicKeyHs struct {
+// 	signingKeyHs
+// }
+
+// // Algorithm implements [op.Key].
+// func (s *signingPublicKeyHs) Algorithm() jose.SignatureAlgorithm {
+// 	return s.algorithm
+// }
+
+// // Use implements [op.Key].
+// func (s *signingPublicKeyHs) Use() string {
+// 	return "sig"
+// }
+// func (s *signingPublicKeyHs) Key() any {
+// 	return s.key
+// }
+
 // ps256 ps384 ps512
 var _ op.SigningKey = (*signingKeyPs)(nil)
 
@@ -286,4 +382,24 @@ func (s *signingKeyPs) Key() any {
 
 func (s *signingKeyPs) ID() string {
 	return s.id
+}
+
+var _ op.Key = (*signingPublicKeyPs)(nil)
+
+type signingPublicKeyPs struct {
+	signingKeyPs
+}
+
+// Algorithm implements [op.Key].
+func (s *signingPublicKeyPs) Algorithm() jose.SignatureAlgorithm {
+	return s.algorithm
+}
+
+// Use implements [op.Key].
+func (s *signingPublicKeyPs) Use() string {
+	return "sig"
+}
+
+func (s *signingPublicKeyPs) Key() any {
+	return s.key.Public()
 }

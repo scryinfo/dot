@@ -18,8 +18,9 @@ type StoragerConfig struct {
 }
 
 type StoragePebble2 struct {
-	db  *pebble2dot.Pebble2
-	log *dot.LoggerType
+	db          *pebble2dot.Pebble2
+	log         *dot.LoggerType
+	signingKeys _SigningKeys
 
 	authRequestDao     *AuthRequestDaoPebble2
 	codeAuthRequestDao *CodeAuthRequestDaoPebble2
@@ -58,7 +59,7 @@ func (s *StoragePebble2) CreateAccessToken(context.Context, op.TokenRequest) (ac
 }
 
 // CreateAuthRequest implements [op.Storage].
-func (s *StoragePebble2) CreateAuthRequest(context.Context, *oidc.AuthRequest, string) (op.AuthRequest, error) {
+func (s *StoragePebble2) CreateAuthRequest(ctx context.Context, authRequest *oidc.AuthRequest, userId string) (op.AuthRequest, error) {
 	panic("unimplemented")
 }
 
@@ -94,7 +95,11 @@ func (s *StoragePebble2) Health(context.Context) error {
 
 // KeySet implements [op.Storage].
 func (s *StoragePebble2) KeySet(context.Context) ([]op.Key, error) {
-	panic("unimplemented")
+	keys := make([]op.Key, 0, len(s.signingKeys.publicKeys))
+	for _, key := range s.signingKeys.publicKeys {
+		keys = append(keys, key)
+	}
+	return keys, nil
 }
 
 // RevokeToken implements [op.Storage].
@@ -124,12 +129,31 @@ func (s *StoragePebble2) SetUserinfoFromToken(ctx context.Context, userinfo *oid
 
 // SignatureAlgorithms implements [op.Storage].
 func (s *StoragePebble2) SignatureAlgorithms(context.Context) ([]jose.SignatureAlgorithm, error) {
-	panic("unimplemented")
+	algs := make([]jose.SignatureAlgorithm, 0, len(s.signingKeys.mapKeys))
+	for alg, _ := range s.signingKeys.mapKeys {
+		algs = append(algs, alg)
+	}
+	return algs, nil
 }
 
 // SigningKey implements [op.Storage].
-func (s *StoragePebble2) SigningKey(context.Context) (op.SigningKey, error) {
-	panic("unimplemented")
+func (s *StoragePebble2) SigningKey(ctx context.Context) (op.SigningKey, error) {
+	// if authReq, ok := op.ClientFromContext(ctx); ok {
+	//     clientID := authReq.GetClientID()
+
+	//     // 2. 从你自己的数据库中查出该 clientID 注册的算法 (例如 ES256)
+	//     if client, err := s.GetClientByID(ctx, clientID); err == nil {
+	//         preferredAlg := client.IDTokenSignedResponseAlg // 拿到了算法！
+
+	//         // 3. 匹配对应的私钥
+	//         if key, exists := s.activeKeys[preferredAlg]; exists {
+	//             return key, nil
+	//         }
+	//     }
+	// }
+
+	// 4. 如果 ctx 里没有 AuthRequest (比如非 Token 签发场景)，返回默认密钥兜底
+	return s.signingKeys.defaultKey, nil
 }
 
 // TerminateSession implements [op.Storage].
@@ -155,6 +179,7 @@ func NewStoragePebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType,
 	return &StoragePebble2{
 		db:                 db,
 		log:                logger,
+		signingKeys:        NewSigningKeys(),
 		authRequestDao:     authRequestDao,
 		oidcClientDao:      oidcClientDao,
 		clientStatusDao:    clientStatusDao,
