@@ -1,6 +1,8 @@
 package oidc_storage
 
 import (
+	"time"
+
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
 	"github.com/scryinfo/dot/line/db/badgerdot"
@@ -10,6 +12,8 @@ import (
 	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/scryinfo/dot/line/db/pebble2dot/dao_pebble2"
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
+	"github.com/zitadel/oidc/v4/pkg/oidc"
+	"github.com/zitadel/oidc/v4/pkg/op"
 )
 
 type OidcClientDaoPebble2 struct {
@@ -112,4 +116,87 @@ func (m *OidcClient) Value() ([]byte, error) {
 // FromValue implements [daobase.Modal].
 func (m *OidcClient) FromValue(bs []byte) error {
 	return daobase.FromValue(m, bs)
+}
+
+// implements [op.Client]
+var _ op.Client = (*OidcClient)(nil)
+
+// AccessTokenType implements [op.Client].
+func (m *OidcClient) AccessTokenType() op.AccessTokenType {
+	return op.AccessTokenType(m.AccessTokenTypeF)
+}
+
+// ApplicationType implements [op.Client].
+func (m *OidcClient) ApplicationType() op.ApplicationType {
+	panic("unimplemented")
+}
+
+// AuthMethod implements [op.Client].
+func (m *OidcClient) AuthMethod() oidc.AuthMethod {
+	panic("unimplemented")
+}
+
+// ClockSkew implements [op.Client].
+func (m *OidcClient) ClockSkew() time.Duration {
+	panic("unimplemented")
+}
+
+// DevMode implements [op.Client].
+func (m *OidcClient) DevMode() bool {
+	panic("unimplemented")
+}
+
+// GetID implements [op.Client].
+func (m *OidcClient) GetID() string {
+	panic("unimplemented")
+}
+
+// GrantTypes implements [op.Client].
+func (m *OidcClient) GrantTypes() []oidc.GrantType {
+	panic("unimplemented")
+}
+
+// IDTokenLifetime implements [op.Client].
+func (m *OidcClient) IDTokenLifetime() time.Duration {
+	panic("unimplemented")
+}
+
+// IDTokenUserinfoClaimsAssertion implements [op.Client].
+func (m *OidcClient) IDTokenUserinfoClaimsAssertion() bool {
+	panic("unimplemented")
+}
+
+// IsScopeAllowed implements [op.Client].
+func (m *OidcClient) IsScopeAllowed(scope string) bool {
+	panic("unimplemented")
+}
+
+// LoginURL implements [op.Client].
+func (m *OidcClient) LoginURL(string) string {
+	panic("unimplemented")
+}
+
+// PostLogoutRedirectURIs implements [op.Client].
+func (m *OidcClient) PostLogoutRedirectURIs() []string {
+	panic("unimplemented")
+}
+
+// RedirectURIs implements [op.Client].
+func (m *OidcClient) RedirectURIs() []string {
+	panic("unimplemented")
+}
+
+// ResponseTypes implements [op.Client].
+func (m *OidcClient) ResponseTypes() []oidc.ResponseType {
+	panic("unimplemented")
+}
+
+// RestrictAdditionalAccessTokenScopes implements [op.Client].
+func (m *OidcClient) RestrictAdditionalAccessTokenScopes() func(scopes []string) []string {
+	panic("unimplemented")
+}
+
+// RestrictAdditionalIdTokenScopes implements [op.Client].
+func (m *OidcClient) RestrictAdditionalIdTokenScopes() func(scopes []string) []string {
+	panic("unimplemented")
 }

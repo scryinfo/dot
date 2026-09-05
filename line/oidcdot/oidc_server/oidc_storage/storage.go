@@ -7,6 +7,7 @@ import (
 	jose "github.com/go-jose/go-jose/v4"
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	daobase "github.com/scryinfo/dot/line/db/dao/dao_base"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/zitadel/oidc/v4/pkg/oidc"
 	"github.com/zitadel/oidc/v4/pkg/op"
@@ -70,7 +71,11 @@ func (s *StoragePebble2) DeleteAuthRequest(context.Context, string) error {
 
 // GetClientByClientID implements [op.Storage].
 func (s *StoragePebble2) GetClientByClientID(ctx context.Context, clientID string) (op.Client, error) {
-	panic("unimplemented")
+	m, err := s.oidcClientDao.Find((daobase.IdType(clientID)))
+	if err != nil {
+		return nil, err
+	}
+	return &m, nil
 }
 
 // GetKeyByIDAndClientID implements [op.Storage].

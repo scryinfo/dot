@@ -118,8 +118,9 @@ func (m *ClientStatus) FromValue(bs []byte) error {
 type _SignAlgorithmEx int
 
 var SignAlgorithmEx = _SignAlgorithmEx(0)
+var _ EnumTo[oidcapiv1.SignAlgorithm, jose.SignatureAlgorithm] = (*_SignAlgorithmEx)(nil)
 
-func (m *_SignAlgorithmEx) ToSignatureAlgorithm(alg oidcapiv1.SignAlgorithm) jose.SignatureAlgorithm {
+func (m *_SignAlgorithmEx) ToGoType(alg oidcapiv1.SignAlgorithm) jose.SignatureAlgorithm {
 	switch alg {
 	case oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_UNSPECIFIED:
 		return ""

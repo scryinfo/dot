@@ -26,16 +26,16 @@ func TestGenerateDefaultData(t *testing.T) {
 	}
 	{
 		data.Clients = append(data.Clients, oidc_storage.OidcClient{
-			Id:           kits.Ids.NewXId(),
-			Secret:       "66",
-			ShowName:     "client1",
-			RedirectUris: []string{"http://localhost:8089/callback"},
+			Id:            kits.Ids.NewXId(),
+			SecretF:       "66",
+			ShowNameF:     "client1",
+			RedirectUrisF: []string{"http://localhost:8089/callback"},
 		})
 		data.Clients = append(data.Clients, oidc_storage.OidcClient{
-			Id:           kits.Ids.NewXId(),
-			Secret:       "66",
-			ShowName:     "client2",
-			RedirectUris: []string{"http://localhost:8089/callback"},
+			Id:            kits.Ids.NewXId(),
+			SecretF:       "66",
+			ShowNameF:     "client2",
+			RedirectUrisF: []string{"http://localhost:8089/callback"},
 		})
 		data.Users = append(data.Users, oidc_storage.User{
 			Id:                kits.Ids.NewXId(),
@@ -87,9 +87,9 @@ func TestGenerateDefaultData(t *testing.T) {
 		})
 		for i, _ := range data.Clients {
 			c := &data.Clients[i]
-			p, err := oidc_storage.PasswordHash.HashPassword(c.Secret)
+			p, err := oidc_storage.PasswordHash.HashPassword(c.SecretF)
 			assert.Nil(t, err)
-			c.Secret = p
+			c.SecretF = p
 		}
 		for i, _ := range data.Users {
 			u := &data.Users[i]

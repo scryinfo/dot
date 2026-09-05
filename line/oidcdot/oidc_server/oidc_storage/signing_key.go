@@ -72,9 +72,9 @@ func NewSigningKeys() _SigningKeys {
 			SigningKeyES384.SignatureAlgorithm(): SigningKeyES384,
 			SigningKeyES512.SignatureAlgorithm(): SigningKeyES512,
 			SigningKeyEdDSA.SignatureAlgorithm(): SigningKeyEdDSA,
-			SigningKeyHS256.SignatureAlgorithm(): SigningKeyHS256,
-			SigningKeyHS384.SignatureAlgorithm(): SigningKeyHS384,
-			SigningKeyHS512.SignatureAlgorithm(): SigningKeyHS512,
+			// SigningKeyHS256.SignatureAlgorithm(): SigningKeyHS256,
+			// SigningKeyHS384.SignatureAlgorithm(): SigningKeyHS384,
+			// SigningKeyHS512.SignatureAlgorithm(): SigningKeyHS512,
 			SigningKeyPS256.SignatureAlgorithm(): SigningKeyPS256,
 			SigningKeyPS384.SignatureAlgorithm(): SigningKeyPS384,
 			SigningKeyPS512.SignatureAlgorithm(): SigningKeyPS512,
@@ -278,49 +278,49 @@ func (s *signingPublicKeyEs) Key() any {
 }
 
 // hs256 hs384 hs512
-var _ op.SigningKey = (*signingKeyHs)(nil)
+// var _ op.SigningKey = (*signingKeyHs)(nil)
 
-var (
-	SigningKeyHS256 = &signingKeyHs{
-		id:        uuid.NewV7().String(),
-		algorithm: jose.HS256,
-		key:       mustHSKey(32),
-	}
-	SigningKeyHS384 = &signingKeyHs{
-		id:        uuid.NewV7().String(),
-		algorithm: jose.HS384,
-		key:       mustHSKey(48),
-	}
-	SigningKeyHS512 = &signingKeyHs{
-		id:        uuid.NewV7().String(),
-		algorithm: jose.HS512,
-		key:       mustHSKey(64),
-	}
-)
+// var (
+// 	SigningKeyHS256 = &signingKeyHs{
+// 		id:        uuid.NewV7().String(),
+// 		algorithm: jose.HS256,
+// 		key:       mustHSKey(32),
+// 	}
+// 	SigningKeyHS384 = &signingKeyHs{
+// 		id:        uuid.NewV7().String(),
+// 		algorithm: jose.HS384,
+// 		key:       mustHSKey(48),
+// 	}
+// 	SigningKeyHS512 = &signingKeyHs{
+// 		id:        uuid.NewV7().String(),
+// 		algorithm: jose.HS512,
+// 		key:       mustHSKey(64),
+// 	}
+// )
 
-func mustHSKey(len int) []byte {
-	key := make([]byte, len)
-	_, _ = rand.Read(key)
-	return key
-}
+// func mustHSKey(len int) []byte {
+// 	key := make([]byte, len)
+// 	_, _ = rand.Read(key)
+// 	return key
+// }
 
-type signingKeyHs struct {
-	id        string
-	algorithm jose.SignatureAlgorithm
-	key       []byte
-}
+// type signingKeyHs struct {
+// 	id        string
+// 	algorithm jose.SignatureAlgorithm
+// 	key       []byte
+// }
 
-func (s *signingKeyHs) SignatureAlgorithm() jose.SignatureAlgorithm {
-	return s.algorithm
-}
+// func (s *signingKeyHs) SignatureAlgorithm() jose.SignatureAlgorithm {
+// 	return s.algorithm
+// }
 
-func (s *signingKeyHs) Key() any {
-	return s.key
-}
+// func (s *signingKeyHs) Key() any {
+// 	return s.key
+// }
 
-func (s *signingKeyHs) ID() string {
-	return s.id
-}
+// func (s *signingKeyHs) ID() string {
+// 	return s.id
+// }
 
 // var _ op.Key = (*signingPublicKeyHs)(nil)
 

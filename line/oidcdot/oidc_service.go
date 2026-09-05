@@ -112,7 +112,7 @@ func newOP(
 			//we must explicitly allow the use of the http issuer
 			op.WithAllowInsecure(),
 			// as an example on how to customize an endpoint this will change the authorization_endpoint from /authorize to /auth
-			// op.WithCustomAuthEndpoint(op.NewEndpoint("auth")),
+			op.WithCustomAuthEndpoint(op.NewEndpoint("auth")),
 			// Pass our logger to the OP
 			op.WithLogger(logger.WithGroup("op")),
 		}, extraOptions...)...,

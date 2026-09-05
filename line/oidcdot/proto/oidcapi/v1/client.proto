@@ -29,9 +29,16 @@ enum AccessTokenType {
 
 enum ResponseType {
   RESPONSE_TYPE_UNSPECIFIED = 0;
-  RESPONSE_TYPE_QUERY = 1; // oidc.ResponseTypeQuery
-  RESPONSE_TYPE_FRAGMENT = 2; // oidc.ResponseTypeFragment
-  RESPONSE_TYPE_FORM_POST = 3; // oidc.ResponseTypeFormPost
+  RESPONSE_TYPE_CODE = 1; // oidc.ResponseTypeCode
+  RESPONSE_TYPE_ID_TOKEN = 2; // oidc.ResponseTypeIDToken
+  RESPONSE_TYPE_ID_TOKEN_ONLY = 3; // oidc.ResponseTypeIDTokenOnly
+}
+
+enum ResponseMode {
+  RESPONSE_MODE_UNSPECIFIED = 0;
+  RESPONSE_MODE_QUERY = 1; // oidc.ResponseModeQuery
+  RESPONSE_MODE_FRAGMENT = 2; // oidc.ResponseModeFragment
+  RESPONSE_MODE_FORM_POST = 3; // oidc.ResponseModeFormPost
 }
 
 enum GrantType {
@@ -48,20 +55,20 @@ enum GrantType {
 message OidcClient {
   uint64 expire_ts = 1;
   string id = 2;
-  string secret = 3;
-  string show_name = 4;
-  repeated string redirect_uris = 5;
-  ApplicationType application_type = 6;
-  AuthMethod auth_method = 7;
-  string login_url = 8;
-  repeated ResponseType response_types = 9;
-  repeated GrantType grant_types = 10;
-  AccessTokenType access_token_type = 11;
-  bool dev_mode = 12;
-  bool id_token_userinfo_claims_assertion = 13;
-  google.protobuf.Duration clock_skew = 14;
-  repeated string post_logout_redirect_uri_globs = 15;
-  repeated string redirect_uri_globs = 16;
+  string secret_f = 3;
+  string show_name_f = 4;
+  repeated string redirect_uris_f = 5;
+  ApplicationType application_type_f = 6;
+  AuthMethod auth_method_f = 7;
+  string login_url_f = 8;
+  repeated ResponseType response_types_f = 9;
+  repeated GrantType grant_types_f = 10;
+  AccessTokenType access_token_type_f = 11;
+  bool dev_mode_f = 12;
+  bool id_token_userinfo_claims_assertion_f = 13;
+  google.protobuf.Duration clock_skew_f = 14;
+  repeated string post_logout_redirect_uri_globs_f = 15;
+  repeated string redirect_uri_globs_f = 16;
 }
 
 message ClientStatus {
