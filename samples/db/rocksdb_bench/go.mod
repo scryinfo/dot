@@ -11,9 +11,9 @@ replace (
 require (
 	github.com/cockroachdb/pebble/v2 v2.1.7
 	github.com/dgraph-io/badger/v4 v4.9.6
-	github.com/linxGnu/grocksdb v1.10.8
+	github.com/linxGnu/grocksdb v1.11.1
 	github.com/scryinfo/dot v0.9.16
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260903141624-b30f1ffc9f96
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260907033605-b8f413165f1f
 	github.com/scryinfo/scryg v0.2.0
 )
 
