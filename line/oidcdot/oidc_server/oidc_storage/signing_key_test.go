@@ -18,7 +18,7 @@ func TestGetSigningKey(t *testing.T) {
 	}
 }
 
-func BenchmarkMap(b *testing.B) {
+func BenchmarkSigningKeyMap(b *testing.B) {
 	l := len(SigningKeys.mapKeys)
 	arrayAlg := _makeArrayAlg()
 	mapKeys := _makeMapKeys(arrayAlg)
@@ -26,11 +26,11 @@ func BenchmarkMap(b *testing.B) {
 	b.ResetTimer()
 	for b.Loop() {
 		index := i % l
-		_findMap(mapKeys, arrayAlg[index])
+		_findSigningKeydMap(mapKeys, arrayAlg[index])
 		i++
 	}
 }
-func BenchmarkBinarySearch(b *testing.B) {
+func BenchmarkSigningKeyBinarySearch(b *testing.B) {
 	l := len(SigningKeys.mapKeys)
 	arrayAlg := _makeArrayAlg()
 	arrayKeys := _makeArrayKeys(arrayAlg)
@@ -38,12 +38,12 @@ func BenchmarkBinarySearch(b *testing.B) {
 	b.ResetTimer()
 	for b.Loop() {
 		index := i % l
-		_findBinary(arrayKeys, arrayAlg[index])
+		_findSigningKeyBinary(arrayKeys, arrayAlg[index])
 		i++
 	}
 }
 
-func BenchmarkArray(b *testing.B) {
+func BenchmarkSigningKeyArray(b *testing.B) {
 	l := len(SigningKeys.mapKeys)
 
 	arrayAlg := _makeArrayAlg()
@@ -52,7 +52,7 @@ func BenchmarkArray(b *testing.B) {
 	b.ResetTimer()
 	for b.Loop() {
 		index := i % l
-		_findArray(arrayKeys, arrayAlg[index])
+		_findSigningKeyArray(arrayKeys, arrayAlg[index])
 		i++
 	}
 }
@@ -98,7 +98,7 @@ func _makeMapKeys(arrayAlg []jose.SignatureAlgorithm) map[jose.SignatureAlgorith
 }
 
 // inline
-func _compare(it op.SigningKey, t jose.SignatureAlgorithm) int {
+func _compareSigningKey(it op.SigningKey, t jose.SignatureAlgorithm) int {
 	itt := it.SignatureAlgorithm()
 	if itt == t {
 		return 0
@@ -110,12 +110,12 @@ func _compare(it op.SigningKey, t jose.SignatureAlgorithm) int {
 }
 
 // inline
-func _findMap(mapKeys map[jose.SignatureAlgorithm]op.SigningKey, alg jose.SignatureAlgorithm) op.SigningKey {
+func _findSigningKeydMap(mapKeys map[jose.SignatureAlgorithm]op.SigningKey, alg jose.SignatureAlgorithm) op.SigningKey {
 	return mapKeys[alg]
 }
 
 // inline
-func _findArray(arrayKeys []op.SigningKey, alg jose.SignatureAlgorithm) op.SigningKey {
+func _findSigningKeyArray(arrayKeys []op.SigningKey, alg jose.SignatureAlgorithm) op.SigningKey {
 	for _, key := range arrayKeys {
 		if key.SignatureAlgorithm() == alg {
 			return key
@@ -125,8 +125,8 @@ func _findArray(arrayKeys []op.SigningKey, alg jose.SignatureAlgorithm) op.Signi
 }
 
 // inline
-func _findBinary(arrayKeys []op.SigningKey, alg jose.SignatureAlgorithm) op.SigningKey {
-	index, find := slices.BinarySearchFunc(arrayKeys, alg, _compare)
+func _findSigningKeyBinary(arrayKeys []op.SigningKey, alg jose.SignatureAlgorithm) op.SigningKey {
+	index, find := slices.BinarySearchFunc(arrayKeys, alg, _compareSigningKey)
 	if find {
 		return arrayKeys[index]
 	} else {

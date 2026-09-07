@@ -6,3 +6,12 @@ type EnumTo[TProto any, TGo any] interface {
 	EnumsGo() []TGo
 	EnumsProto() []TProto
 }
+
+const (
+	QueryAuthRequestID = "authRequestID"
+	LoginEndpoint      = "/login"
+)
+
+var (
+	_scopes = ScopeEx.EnumsGo()
+)

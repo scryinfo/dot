@@ -1,6 +1,8 @@
 package oidc_storage
 
 import (
+	"net/url"
+	"slices"
 	"time"
 
 	"github.com/scryinfo/dot/dot"
@@ -172,12 +174,25 @@ func (m *OidcClient) IDTokenUserinfoClaimsAssertion() bool {
 
 // IsScopeAllowed implements [op.Client].
 func (m *OidcClient) IsScopeAllowed(scope string) bool {
-	panic("unimplemented")
+	return slices.Contains(_scopes, scope)
 }
 
 // LoginURL implements [op.Client].
-func (m *OidcClient) LoginURL(string) string {
-	panic("unimplemented")
+func (m *OidcClient) LoginURL(authRequestID string) string {
+	baseURL := m.LoginUrlF
+	if baseURL == "" {
+		baseURL = LoginEndpoint
+	}
+
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		dot.Logger.Error().AnErr("failed to parse login URL", err).Send()
+		return LoginEndpoint + "?" + QueryAuthRequestID + "=" + authRequestID
+	}
+	q := u.Query()
+	q.Set(QueryAuthRequestID, authRequestID)
+	u.RawQuery = q.Encode()
+	return u.String()
 }
 
 // PostLogoutRedirectURIs implements [op.Client].
@@ -201,10 +216,10 @@ func (m *OidcClient) ResponseTypes() []oidc.ResponseType {
 
 // RestrictAdditionalAccessTokenScopes implements [op.Client].
 func (m *OidcClient) RestrictAdditionalAccessTokenScopes() func(scopes []string) []string {
-	panic("unimplemented")
+	return func(scopes []string) []string { return scopes }
 }
 
 // RestrictAdditionalIdTokenScopes implements [op.Client].
 func (m *OidcClient) RestrictAdditionalIdTokenScopes() func(scopes []string) []string {
-	panic("unimplemented")
+	return func(scopes []string) []string { return scopes }
 }
