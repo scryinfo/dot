@@ -191,3 +191,41 @@ func (m *_SignAlgorithmEx) ToProto(alg jose.SignatureAlgorithm) oidcapiv1.SignAl
 		return oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_UNSPECIFIED
 	}
 }
+
+// EnumsGo implements [EnumTo].
+func (m *_SignAlgorithmEx) EnumsGo() []jose.SignatureAlgorithm {
+	return []jose.SignatureAlgorithm{
+		jose.EdDSA,
+		jose.HS256,
+		jose.HS384,
+		jose.HS512,
+		jose.RS256,
+		jose.RS384,
+		jose.RS512,
+		jose.ES256,
+		jose.ES384,
+		jose.ES512,
+		jose.PS256,
+		jose.PS384,
+		jose.PS512,
+	}
+}
+
+// EnumsProto implements [EnumTo].
+func (m *_SignAlgorithmEx) EnumsProto() []oidcapiv1.SignAlgorithm {
+	return []oidcapiv1.SignAlgorithm{
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_EDDSA,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_HS256,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_HS384,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_HS512,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_RS256,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_RS384,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_RS512,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_ES256,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_ES384,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_ES512,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_PS256,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_PS384,
+		oidcapiv1.SignAlgorithm_SIGN_ALGORITHM_PS512,
+	}
+}

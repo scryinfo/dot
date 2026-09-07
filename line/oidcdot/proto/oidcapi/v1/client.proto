@@ -52,6 +52,16 @@ enum GrantType {
   GRANT_TYPE_DEVICE_CODE = 7; // oidc.GrantTypeDeviceCode
 }
 
+enum Scope {
+  SCOPE_UNSPECIFIED = 0;
+  SCOPE_OPENID = 1; // oidc.ScopeOpenID
+  SCOPE_PROFILE = 2; // oidc.ScopeProfile
+  SCOPE_EMAIL = 3; // oidc.ScopeEmail
+  SCOPE_ADDRESS = 4; // oidc.ScopeAddress
+  SCOPE_PHONE = 5; // oidc.ScopePhone
+  SCOPE_OFFLINE_ACCESS = 6; // oidc.ScopeOfflineAccess
+}
+
 message OidcClient {
   uint64 expire_ts = 1;
   string id = 2;
@@ -69,6 +79,8 @@ message OidcClient {
   google.protobuf.Duration clock_skew_f = 14;
   repeated string post_logout_redirect_uri_globs_f = 15;
   repeated string redirect_uri_globs_f = 16;
+
+  google.protobuf.Duration id_token_lifetime_f = 17;
 }
 
 message ClientStatus {
@@ -79,18 +91,18 @@ message ClientStatus {
 }
 
 enum SignAlgorithm {
-    SIGN_ALGORITHM_UNSPECIFIED = 0;
-    SIGN_ALGORITHM_EDDSA = 1;
-    SIGN_ALGORITHM_HS256 = 2;
-    SIGN_ALGORITHM_HS384 = 3;
-    SIGN_ALGORITHM_HS512 = 4;
-    SIGN_ALGORITHM_RS256 = 5;
-    SIGN_ALGORITHM_RS384 = 6;
-    SIGN_ALGORITHM_RS512 = 7;
-    SIGN_ALGORITHM_ES256 = 8;
-    SIGN_ALGORITHM_ES384 = 9;
-    SIGN_ALGORITHM_ES512 = 10;
-    SIGN_ALGORITHM_PS256 = 11;
-    SIGN_ALGORITHM_PS384 = 12;
-    SIGN_ALGORITHM_PS512 = 13;
+  SIGN_ALGORITHM_UNSPECIFIED = 0;
+  SIGN_ALGORITHM_EDDSA = 1;
+  SIGN_ALGORITHM_HS256 = 2;
+  SIGN_ALGORITHM_HS384 = 3;
+  SIGN_ALGORITHM_HS512 = 4;
+  SIGN_ALGORITHM_RS256 = 5;
+  SIGN_ALGORITHM_RS384 = 6;
+  SIGN_ALGORITHM_RS512 = 7;
+  SIGN_ALGORITHM_ES256 = 8;
+  SIGN_ALGORITHM_ES384 = 9;
+  SIGN_ALGORITHM_ES512 = 10;
+  SIGN_ALGORITHM_PS256 = 11;
+  SIGN_ALGORITHM_PS384 = 12;
+  SIGN_ALGORITHM_PS512 = 13;
 }

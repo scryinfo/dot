@@ -123,47 +123,51 @@ var _ op.Client = (*OidcClient)(nil)
 
 // AccessTokenType implements [op.Client].
 func (m *OidcClient) AccessTokenType() op.AccessTokenType {
-	return op.AccessTokenType(m.AccessTokenTypeF)
+	return AccessTokenTypeEx.ToGoType(m.AccessTokenTypeF)
 }
 
 // ApplicationType implements [op.Client].
 func (m *OidcClient) ApplicationType() op.ApplicationType {
-	panic("unimplemented")
+	return ApplicationTypeEx.ToGoType(m.ApplicationTypeF)
 }
 
 // AuthMethod implements [op.Client].
 func (m *OidcClient) AuthMethod() oidc.AuthMethod {
-	panic("unimplemented")
+	return AuthMethodEx.ToGoType(m.AuthMethodF)
 }
 
 // ClockSkew implements [op.Client].
 func (m *OidcClient) ClockSkew() time.Duration {
-	panic("unimplemented")
+	return m.ClockSkewF.AsDuration()
 }
 
 // DevMode implements [op.Client].
 func (m *OidcClient) DevMode() bool {
-	panic("unimplemented")
+	return m.DevModeF
 }
 
 // GetID implements [op.Client].
 func (m *OidcClient) GetID() string {
-	panic("unimplemented")
+	return m.Id
 }
 
 // GrantTypes implements [op.Client].
 func (m *OidcClient) GrantTypes() []oidc.GrantType {
-	panic("unimplemented")
+	re := make([]oidc.GrantType, 0, len(m.GrantTypesF))
+	for _, gt := range m.GrantTypesF {
+		re = append(re, GrantTypeEx.ToGoType(gt))
+	}
+	return re
 }
 
 // IDTokenLifetime implements [op.Client].
 func (m *OidcClient) IDTokenLifetime() time.Duration {
-	panic("unimplemented")
+	return m.IdTokenLifetimeF.AsDuration()
 }
 
 // IDTokenUserinfoClaimsAssertion implements [op.Client].
 func (m *OidcClient) IDTokenUserinfoClaimsAssertion() bool {
-	panic("unimplemented")
+	return m.IdTokenUserinfoClaimsAssertionF
 }
 
 // IsScopeAllowed implements [op.Client].
@@ -178,17 +182,21 @@ func (m *OidcClient) LoginURL(string) string {
 
 // PostLogoutRedirectURIs implements [op.Client].
 func (m *OidcClient) PostLogoutRedirectURIs() []string {
-	panic("unimplemented")
+	return m.PostLogoutRedirectUriGlobsF
 }
 
 // RedirectURIs implements [op.Client].
 func (m *OidcClient) RedirectURIs() []string {
-	panic("unimplemented")
+	return m.RedirectUrisF
 }
 
 // ResponseTypes implements [op.Client].
 func (m *OidcClient) ResponseTypes() []oidc.ResponseType {
-	panic("unimplemented")
+	re := make([]oidc.ResponseType, 0, len(m.ResponseTypesF))
+	for _, rt := range m.ResponseTypesF {
+		re = append(re, ResponseTypeEx.ToGoType(rt))
+	}
+	return re
 }
 
 // RestrictAdditionalAccessTokenScopes implements [op.Client].
