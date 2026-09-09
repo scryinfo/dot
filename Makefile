@@ -2,8 +2,8 @@
 ifeq ($(OS),Windows_NT)
 	EXE := .exe
 	VCPKG := $(subst \,/,$(abspath ./vcpkg_installed))
-	ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
-	ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
+	ROCKSDB_INCLUDE :=${VCPKG}/x64-windows/include
+	ROCKSDB_LIB :=${VCPKG}/x64-windows/lib
 	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 else
@@ -20,9 +20,9 @@ go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" command go
 .PHONY: clean upgrade format build samples
 
 ifeq ($(OS),Windows_NT)
-VCPKG_INSTALLED:= ${VCPKG}/x64-mingw-static/lib/libzs.a
+VCPKG_INSTALLED:= ${VCPKG}/x64-windows/lib/rocksdb.lib
 ${VCPKG_INSTALLED}:
-	VCPKG_BUILD_TYPE=release vcpkg.exe install --triplet=x64-mingw-static
+	vcpkg.exe install --triplet=x64-windows
 endif
 clean:
 	rm -rf go.sum go.work.sum demo/go.sum node_modules bun.lock
@@ -128,7 +128,7 @@ go_tools:
 bun_tools:
 	bun install -g @bufbuild/protoc-gen-es
 install_rocksdb:
-	VCPKG_BUILD_TYPE=release vcpkg.exe install --triplet=x64-mingw-static
+	VCPKG_BUILD_TYPE=release vcpkg.exe install --triplet=x64-windows
 protoc_linux:
 	curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v36.0/protoc-36.0-linux-x86_64.zip
 	unzip -o protoc-36.0-linux-x86_64.zip -d protoc-36.0-linux-x86_64/
