@@ -20,7 +20,7 @@ go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" command go
 .PHONY: clean upgrade format build samples
 
 ifeq ($(OS),Windows_NT)
-VCPKG_INSTALLED:= ${VCPKG}/x64-mingw-static/lib/libz.a
+VCPKG_INSTALLED:= ${VCPKG}/x64-mingw-static/lib/libzs.a
 ${VCPKG_INSTALLED}:
 	VCPKG_BUILD_TYPE=release vcpkg.exe install --triplet=x64-mingw-static
 endif
