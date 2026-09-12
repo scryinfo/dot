@@ -18,6 +18,9 @@
     {
       "name": "rocksdb",
       "features": ["lz4", "snappy", "zstd", "zlib", "bzip2"]
+    },
+    {
+      "name": "dlfcn-win32"
     }
   ],
   "overrides": [

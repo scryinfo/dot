@@ -1,8 +1,8 @@
 ifeq ($(OS),Windows_NT)
 	EXE := .exe
 	override VCPKG := $(abspath ./../../../vcpkg_installed)
-	override ROCKSDB_INCLUDE :=${VCPKG}/x64-windows/include
-	override ROCKSDB_LIB :=${VCPKG}/x64-windows/lib
+	override ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
+	override ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
 	# -static -static-libgcc -static-libstdc++
 	override CGO_LDFLAGS := -static -L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
 	override CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}

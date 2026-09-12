@@ -27,8 +27,8 @@ vcpkg.exe x-update-baseline --add-initial-baseline
 vcpkg.exe install --triplet=x64-mingw-static
 # set the environment variables
 VCPKG:="../../../vcpkg_installed"
-ROCKSDB_INCLUDE="%VCPKG%/x64-windows/include"
-ROCKSDB_LIB="%VCPKG%/x64-windows/lib"
+ROCKSDB_INCLUDE="%VCPKG%/x64-mingw-static/include"
+ROCKSDB_LIB="%VCPKG%/x64-mingw-static/lib"
 ```
 
 <!--```bash
