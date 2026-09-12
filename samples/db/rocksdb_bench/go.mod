@@ -13,7 +13,7 @@ require (
 	github.com/dgraph-io/badger/v4 v4.9.6
 	github.com/linxGnu/grocksdb v1.11.1
 	github.com/scryinfo/dot v0.9.16
-	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260907033605-b8f413165f1f
+	github.com/scryinfo/dot/line/db/rocksdbdot v0.0.0-20260912033357-f6278529df78
 	github.com/scryinfo/scryg v0.2.0
 )
 
@@ -82,12 +82,12 @@ require (
 	go.opentelemetry.io/otel/metric v1.46.0 // indirect
 	go.opentelemetry.io/otel/trace v1.46.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-	golang.org/x/crypto v0.56.0 // indirect
-	golang.org/x/exp v0.0.0-20260824195058-e88cd73687aa // indirect
-	golang.org/x/net v0.58.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/text v0.41.0 // indirect
-	golang.org/x/time v0.15.0 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
+	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba // indirect
+	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
+	golang.org/x/time v0.16.0 // indirect
 	google.golang.org/protobuf v1.36.12 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

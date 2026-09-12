@@ -13,7 +13,7 @@
     "format": "oxfmt . --write"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^2.14.1",
+    "@bufbuild/protobuf": "^2.15.0",
     "@connectrpc/connect": "^2.2.0",
     "@connectrpc/connect-web": "^2.2.0",
     "vue": "^3.5.42",
@@ -28,9 +28,9 @@
     "@vue/tsconfig": "^0.9.1",
     "jsdom": "^30.0.1",
     "npm-run-all2": "^9.0.3",
-    "oxfmt": "^0.66.0",
+    "oxfmt": "^0.67.0",
     "typescript": "6.0.2",
-    "vite": "^8.2.2",
+    "vite": "^8.3.0",
     "vite-plugin-vue-devtools": "^8.2.1",
     "vitest": "^5.0.0",
     "vue-tsc": "^3.3.11"
