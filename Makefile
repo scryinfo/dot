@@ -18,12 +18,7 @@ CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" command go
 
 .PHONY: clean upgrade format build samples
-$(info "vcpkg: ${VCPKG}")
-ifeq ($(OS),Windows_NT)
-VCPKG_INSTALLED:= ${VCPKG}/x64-mingw-static/lib/librocksdb.a
-${VCPKG_INSTALLED}:install_rocksdb
-	# vcpkg.exe install --triplet=x64-mingw-static
-endif
+
 clean:
 	rm -rf go.sum go.work.sum demo/go.sum node_modules bun.lock
 	command go clean
@@ -62,7 +57,7 @@ format:
 	cd samples && make format
 	cd line/db/pebble_service && make format
 	bun run format
-build: ${VCPKG_INSTALLED}
+build: ${ROCKSDB_INSTALL}
 	bun install
 	# command go build -ldflags="-s -w" ./...
 	cd demo && make build
@@ -130,6 +125,7 @@ bun_tools:
 install_rocksdb:
 	# VCPKG_BUILD_TYPE=release vcpkg.exe install --triplet=x64-windows
 	vcpkg.exe install --triplet=x64-mingw-static
+	cp ${ROCKSDB_LIB}/libzs.a ${ROCKSDB_LIB}/libz.a
 	# vcpkg.exe install dlfcn-win32:x64-mingw-static
 protoc_linux:
 	curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v36.0/protoc-36.0-linux-x86_64.zip

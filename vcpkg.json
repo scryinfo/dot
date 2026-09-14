@@ -28,57 +28,5 @@
       "name": "rocksdb",
       "version-string": "11.1.2"
     }
-  ],
-  "default-features": ["zlib"],
-  "features": {
-    "bzip2": {
-      "description": "build with bzip2",
-      "dependencies": ["bzip2"]
-    },
-    "liburing": {
-      "description": "build with liburing",
-      "supports": "linux",
-      "dependencies": [
-        {
-          "name": "liburing",
-          "platform": "linux"
-        }
-      ]
-    },
-    "lz4": {
-      "description": "build with lz4",
-      "dependencies": ["lz4"]
-    },
-    "numa": {
-      "description": "build with NUMA policy support",
-      "supports": "linux",
-      "dependencies": [
-        {
-          "name": "numactl",
-          "platform": "linux"
-        }
-      ]
-    },
-    "snappy": {
-      "description": "build with SNAPPY",
-      "dependencies": [
-        {
-          "name": "snappy",
-          "features": ["rtti"]
-        }
-      ]
-    },
-    "tbb": {
-      "description": "build with Threading Building Blocks (TBB)",
-      "dependencies": ["tbb"]
-    },
-    "zlib": {
-      "description": "build with zlib",
-      "dependencies": ["zlib"]
-    },
-    "zstd": {
-      "description": "build with zstd",
-      "dependencies": ["zstd"]
-    }
-  }
+  ]
 }

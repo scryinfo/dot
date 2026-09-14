@@ -1,11 +1,12 @@
 ifeq ($(OS),Windows_NT)
 	EXE := .exe
-	override VCPKG := $(abspath ./../../../vcpkg_installed)
-	override ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
-	override ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
+	VCPKG := $(abspath ./../../../vcpkg_installed)
+	ROCKSDB_INCLUDE :=${VCPKG}/x64-mingw-static/include
+	ROCKSDB_LIB :=${VCPKG}/x64-mingw-static/lib
 	# -static -static-libgcc -static-libstdc++
-	override CGO_LDFLAGS := -static -L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
-	override CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
+	#CGO_LDFLAGS := -static -L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -lbz2 -llz4 -lzstd -lrpcrt4 -lshlwapi
+	CGO_LDFLAGS := -static -L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -llz4 -lzstd -lbz2 -lrpcrt4 -lshlwapi
+	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 	go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" command go
 
 else
