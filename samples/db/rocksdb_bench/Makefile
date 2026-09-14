@@ -8,7 +8,7 @@ ifeq ($(OS),Windows_NT)
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 else
 	EXE :=
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -static -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB}  -lrocksdb -lstdc++ -lm -lz -lsnappy -llz4 -lzstd -lbz2
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 endif
 

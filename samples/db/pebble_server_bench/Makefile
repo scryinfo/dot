@@ -9,7 +9,7 @@ ifeq ($(OS),Windows_NT)
 	KILL_CMD = taskkill /F /IM $(1) /T
 else
 	EXE :=
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -static -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -llz4 -lzstd -lbz2
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 	KILL_CMD = pkill -f '^\./$(1).*' || true
 endif

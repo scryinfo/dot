@@ -9,7 +9,7 @@ ifeq ($(OS),Windows_NT)
 else
 	EXE :=
 	VCPKG :=""
-	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lzstd -llz4 -lsnappy -lz -lbz2 -lstdc++ -lm -ldl -pthread
+	CGO_LDFLAGS :=-L${ROCKSDB_LIB} -lrocksdb -lstdc++ -lm -lz -lsnappy -llz4 -lzstd -lbz2
 	CGO_CFLAGS :=-I${ROCKSDB_INCLUDE}
 
 endif
@@ -29,6 +29,11 @@ clean:
 clean_web:
 	find . -name "node_modules" -type d -prune -exec rm -rf {} +
 	find . -name "dist" -type d -prune -exec rm -rf {} +
+build_web:
+	cd line/db/pebble_service/kv_ts && bun install && bun run build
+	cd line/oidcdot/oidc_ts && bun install && bun run build
+	cd samples/rpc/web_rpc/client && bun install && bun run build
+	cd samples/oidcs/app && bun install && bun run build
 tidy:
 	command go mod tidy
 	cd demo && make tidy

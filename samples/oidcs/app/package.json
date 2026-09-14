@@ -15,8 +15,8 @@
     "vue": "^3.5.42"
   },
   "devDependencies": {
-    "@types/node": "^26.4.1",
-    "@vitejs/plugin-vue": "^6.0.8",
+    "@types/node": "^26.5.1",
+    "@vitejs/plugin-vue": "^6.0.9",
     "@vue/tsconfig": "^0.9.1",
     "oidc_ts": "workspace:^",
     "typescript": "6.0.2",
