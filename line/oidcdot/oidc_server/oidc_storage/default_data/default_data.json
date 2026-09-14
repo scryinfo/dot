@@ -1,33 +1,36 @@
 {
   "clients": [
     {
-      "id": "da5qmp7ip8rh4c6fege0",
-      "secret": "$argon2id$v=19$m=65536,t=1,p=4$T4tingZUb7znmeOpn9iznw$fjpBSZ5x/0VNVdbP0bNvJV5wz4TV1iJ2T0QMmDu4ja8",
-      "show_name": "client1",
-      "redirect_uris": ["http://localhost:8089/callback"],
-      "application_type": 0,
-      "auth_method": 0,
-      "access_token_type": 0,
-      "dev_mode": false,
-      "id_token_userinfo_claims_assertion": false
+      "expire_ts": 0,
+      "id": "dajma87ip8rh292hmrk0",
+      "secret_f": "$argon2id$v=19$m=65536,t=1,p=4$voKo9h7LGICJMo2pOmfjCA$2ZApXP5Rb7NguUAjvDwq3JuyGKe6i4TUHl1lEdsQFDI",
+      "show_name_f": "client1",
+      "redirect_uris_f": ["http://localhost:8089/auth2/callback"],
+      "application_type_f": 1,
+      "auth_method_f": 0,
+      "access_token_type_f": 0,
+      "dev_mode_f": false,
+      "id_token_userinfo_claims_assertion_f": false
     },
     {
-      "id": "da5qmp7ip8rh4c6fegeg",
-      "secret": "$argon2id$v=19$m=65536,t=1,p=4$eUg7/+fde9SPxKSoR+gQcQ$x0zibroSsCPGERkX7hOD9ImU2ZZ5moIHZlVaMBpB8Uc",
-      "show_name": "client2",
-      "redirect_uris": ["http://localhost:8089/callback"],
-      "application_type": 0,
-      "auth_method": 0,
-      "access_token_type": 0,
-      "dev_mode": false,
-      "id_token_userinfo_claims_assertion": false
+      "expire_ts": 0,
+      "id": "dajma87ip8rh292hmrkg",
+      "secret_f": "$argon2id$v=19$m=65536,t=1,p=4$a/q5rLESrCVr+bI27kFn8Q$TKqyk3jHFUPhYOfEcqmIzsOo6zSRdZ9jJ/EtQ2rz82U",
+      "show_name_f": "client2",
+      "redirect_uris_f": ["http://localhost:8089/auth2/callback"],
+      "application_type_f": 1,
+      "auth_method_f": 0,
+      "access_token_type_f": 0,
+      "dev_mode_f": false,
+      "id_token_userinfo_claims_assertion_f": false
     }
   ],
   "users": [
     {
-      "id": "da5qmp7ip8rh4c6fegf0",
+      "expire_ts": 0,
+      "id": "dajma87ip8rh292hmrl0",
       "username": "test1",
-      "password": "$argon2id$v=19$m=65536,t=1,p=4$x4/kkGbit7i5AytkNqn1Mw$dUBV1TqT+6K6elcNw3Aa21ebhNc1Wdmgf0YeVnQeRo0",
+      "password": "$argon2id$v=19$m=65536,t=1,p=4$hQOCX3294VfNQXmvundPHQ$vn3aMgURT7S5dKmyOi2evl/hCg6zoVRf0wRfgyw4cIk",
       "first_name": "test1-1",
       "last_name": "test1-2",
       "email": "test1@scryinfo.info",
@@ -38,9 +41,10 @@
       "is_admin": false
     },
     {
-      "id": "da5qmp7ip8rh4c6fegfg",
+      "expire_ts": 0,
+      "id": "dajma87ip8rh292hmrlg",
       "username": "test2",
-      "password": "$argon2id$v=19$m=65536,t=1,p=4$QSsCqDz97NUETMjZLCaRag$Fr8hOpQi5CnDFwLrUVyA5qLf0BaEhKmRutt+fwmo718",
+      "password": "$argon2id$v=19$m=65536,t=1,p=4$GmK3c49cUCEt2kdslF/r9A$QIAMv+83tM1FFVaSfAMRm1RqO+nzyxAUrHwS1iz9NuM",
       "first_name": "test2-1",
       "last_name": "test2-2",
       "email": "test2@scryinfo.info",
@@ -51,9 +55,10 @@
       "is_admin": false
     },
     {
-      "id": "da5qmp7ip8rh4c6fegg0",
+      "expire_ts": 0,
+      "id": "dajma87ip8rh292hmrm0",
       "username": "test3",
-      "password": "$argon2id$v=19$m=65536,t=1,p=4$Z/xMm7rcIh0eVA1aXFCM6A$iaVE2somkoGzZj1252uQpzfkevmQEddMCChDHAeXyUc",
+      "password": "$argon2id$v=19$m=65536,t=1,p=4$AUc3NDs9FO6P3VkNXcqELA$fSSo8rHvF41bPQtzl/iW8bpnHN3nZO5jGrC0r3bTV/k",
       "first_name": "test3-1",
       "last_name": "test3-2",
       "email": "test3@scryinfo.info",
@@ -64,9 +69,10 @@
       "is_admin": false
     },
     {
-      "id": "da5qmp7ip8rh4c6feggg",
+      "expire_ts": 0,
+      "id": "dajma87ip8rh292hmrmg",
       "username": "test4",
-      "password": "$argon2id$v=19$m=65536,t=1,p=4$o5QgwFhgh87O1LAqLEabtg$i0yVNkrxpCfozbr9WKvXWPvDiB9UMj6l/lukvhsBP1s",
+      "password": "$argon2id$v=19$m=65536,t=1,p=4$268ug+2VjfTxLVnDwW53xQ$s9kBH/sgaKlHy7QXOhAlzTFV14XYgTK37XoOKSYLWto",
       "first_name": "test4-1",
       "last_name": "test4-2",
       "email": "test4@scryinfo.info",

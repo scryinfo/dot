@@ -11,6 +11,7 @@ import (
 	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/scryinfo/dot/line/oidcdot"
 	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
+	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage/default_data"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 )
@@ -63,11 +64,18 @@ func InitializeService() (*Line, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
+	defaultDataPebble2, err := default_data.NewDefaultDataPebble2(pebble2, v)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	line := &Line{
 		SConfig:         sConfig,
 		Logger:          v,
 		ConnectServer:   connectServer,
 		OidcServiceHttp: oidcServiceHttp,
+		DefaultData:     defaultDataPebble2,
 	}
 	return line, func() {
 		cleanup2()

@@ -1,4 +1,4 @@
-package oidc_storage
+package default_data
 
 import (
 	"encoding/json/v2"
@@ -12,6 +12,7 @@ import (
 	"github.com/scryinfo/dot/line/db/badgerdot"
 	daobase "github.com/scryinfo/dot/line/db/dao/dao_base"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
+	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
 	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/sfile"
@@ -26,19 +27,21 @@ func TestGenerateDefaultData(t *testing.T) {
 	}
 	{
 		data.Clients = append(data.Clients, oidc_storage.OidcClient{
-			Id:            kits.Ids.NewXId(),
-			SecretF:       "66",
-			ShowNameF:     "client1",
-			RedirectUrisF: []string{"http://localhost:8089/callback"},
+			Id:               "dajma87ip8rh292hmrk0",
+			SecretF:          "66",
+			ShowNameF:        "client1",
+			ApplicationTypeF: oidcapiv1.ApplicationType_APPLICATION_TYPE_WEB,
+			RedirectUrisF:    []string{"http://localhost:8089/auth2/callback"},
 		})
 		data.Clients = append(data.Clients, oidc_storage.OidcClient{
-			Id:            kits.Ids.NewXId(),
-			SecretF:       "66",
-			ShowNameF:     "client2",
-			RedirectUrisF: []string{"http://localhost:8089/callback"},
+			Id:               "dajma87ip8rh292hmrkg",
+			SecretF:          "66",
+			ShowNameF:        "client2",
+			ApplicationTypeF: oidcapiv1.ApplicationType_APPLICATION_TYPE_WEB,
+			RedirectUrisF:    []string{"http://localhost:8089/auth2/callback"},
 		})
 		data.Users = append(data.Users, oidc_storage.User{
-			Id:                kits.Ids.NewXId(),
+			Id:                "dajma87ip8rh292hmrl0",
 			Username:          "test1",
 			Password:          "66",
 			FirstName:         "test1-1",
@@ -50,7 +53,7 @@ func TestGenerateDefaultData(t *testing.T) {
 			PreferredLanguage: language.English.String(),
 		})
 		data.Users = append(data.Users, oidc_storage.User{
-			Id:                kits.Ids.NewXId(),
+			Id:                "dajma87ip8rh292hmrlg",
 			Username:          "test2",
 			Password:          "66",
 			FirstName:         "test2-1",
@@ -62,7 +65,7 @@ func TestGenerateDefaultData(t *testing.T) {
 			PreferredLanguage: language.English.String(),
 		})
 		data.Users = append(data.Users, oidc_storage.User{
-			Id:                kits.Ids.NewXId(),
+			Id:                "dajma87ip8rh292hmrm0",
 			Username:          "test3",
 			Password:          "66",
 			FirstName:         "test3-1",
@@ -74,7 +77,7 @@ func TestGenerateDefaultData(t *testing.T) {
 			PreferredLanguage: language.English.String(),
 		})
 		data.Users = append(data.Users, oidc_storage.User{
-			Id:                kits.Ids.NewXId(),
+			Id:                "dajma87ip8rh292hmrmg",
 			Username:          "test4",
 			Password:          "66",
 			FirstName:         "test4-1",

@@ -1,4 +1,4 @@
-package oidc_storage
+package default_data
 
 import (
 	_ "embed"

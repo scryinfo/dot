@@ -3,6 +3,7 @@ package dot
 import (
 	"context"
 	"log/slog"
+	"runtime"
 
 	"github.com/rs/zerolog"
 )
@@ -65,6 +66,13 @@ func (p *FastZerologHandler) Handle(ctx context.Context, r slog.Record) error {
 	}
 	if e == nil {
 		return nil
+	}
+	if r.PC != 0 {
+		frames := runtime.CallersFrames([]uintptr{r.PC})
+		frame, _ := frames.Next()
+		if frame.File != "" {
+			e.Str(zerolog.CallerFieldName, frame.File+":"+string(rune(frame.Line)))
+		}
 	}
 	if !r.Time.IsZero() {
 		e.Time(zerolog.TimestampFieldName, r.Time)

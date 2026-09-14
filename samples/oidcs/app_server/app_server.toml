@@ -34,13 +34,13 @@ root_cert = ''
 
 [oidc_provider]
 oidc_issuer = "http://localhost:8090"
-client_id = "da5qmp7ip8rh4c6fege0"
+client_id = "dajma87ip8rh292hmrk0"
 client_secret = "66"
 redirect_url = "http://localhost:8089/callback"
 
 [auth_config]
-login_path = "/auth/login"
-logout_path = "/auth/logout"
-callback_path = "/auth/callback"
+login_path = "/auth2/login"
+logout_path = "/auth2/logout"
+callback_path = "/auth2/callback"
 hash_key = ""
 encrypt_key = ""

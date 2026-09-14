@@ -13,6 +13,7 @@ import (
 	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/scryinfo/dot/line/oidcdot"
 	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
+	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage/default_data"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
@@ -23,6 +24,7 @@ type Line struct {
 	Logger          *dot.LoggerType
 	ConnectServer   *rpcdot.ConnectServer
 	OidcServiceHttp *oidcdot.OidcServiceHttp
+	DefaultData     *default_data.DefaultDataPebble2
 }
 
 type LineConfig struct {
@@ -53,6 +55,7 @@ var LineSet = wire.NewSet(
 
 	oidcdot.NewOidcServiceHttp,
 	oidc_storage.Pebble2Set,
+	default_data.NewDefaultDataPebble2,
 )
 
 func main() {

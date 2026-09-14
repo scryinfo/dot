@@ -73,6 +73,7 @@ func (s *StoragePebble2) DeleteAuthRequest(context.Context, string) error {
 func (s *StoragePebble2) GetClientByClientID(ctx context.Context, clientID string) (op.Client, error) {
 	m, err := s.oidcClientDao.Find((daobase.IdType(clientID)))
 	if err != nil {
+		s.log.Debug().Err(err).Send()
 		return nil, err
 	}
 	return &m, nil
