@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"runtime"
+	"strconv"
 
 	"github.com/rs/zerolog"
 )
@@ -71,7 +72,7 @@ func (p *FastZerologHandler) Handle(ctx context.Context, r slog.Record) error {
 		frames := runtime.CallersFrames([]uintptr{r.PC})
 		frame, _ := frames.Next()
 		if frame.File != "" {
-			e.Str(zerolog.CallerFieldName, frame.File+":"+string(rune(frame.Line)))
+			e.Str(zerolog.CallerFieldName, frame.File+":"+strconv.Itoa(frame.Line))
 		}
 	}
 	if !r.Time.IsZero() {

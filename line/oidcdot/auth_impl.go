@@ -58,7 +58,7 @@ func NewAuthService(config *AuthConfig, mux *rpcdot.ConnectHttpServerMux, provid
 			rp.WithCookieHandler(cookieHandler),
 			rp.WithVerifierOpts(rp.WithIssuedAtOffset(5 * time.Second)),
 			rp.WithHTTPClient(client),
-			rp.WithLogger(dot.MakeSlog(logger)),
+			rp.WithLogger(dot.Slog),
 			rp.WithSigningAlgsFromDiscovery(),
 		}
 	}

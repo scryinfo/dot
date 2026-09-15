@@ -54,8 +54,7 @@ func (p *OidcServiceHttp) initOp() error {
 	}
 	var key [32]byte
 	copy(key[:], p.config.Key)
-	logger := dot.MakeSlog(p.logger)
-	op, err := newOP(p.store, p.config.OidcIssuer, key, p.config.KeyId, logger)
+	op, err := newOP(p.store, p.config.OidcIssuer, key, p.config.KeyId, dot.Slog)
 	if err != nil {
 		p.logger.Error().Err(err).Send()
 		return err

@@ -39,7 +39,7 @@ func NewLogger(conf *LogConfig) *LoggerType {
 	if err != nil {
 		level = zerolog.DebugLevel
 	}
-
+	var slogWithZerolog zerolog.Logger
 	{
 		var writer io.Writer = rotator
 		if conf.AddStdout || (IsDebug && conf.AddStdoutInDebug) {
@@ -48,10 +48,11 @@ func NewLogger(conf *LogConfig) *LoggerType {
 		}
 		Logger = zerolog.New(writer).With().Caller().Logger().Level(level)
 		log.Logger = Logger
+		slogWithZerolog = zerolog.New(writer).With().Logger().Level(level)
 	}
 	log.Logger = Logger
 	if conf.SetSlog {
-		Slog = MakeSlog(&Logger)
+		Slog = _makeSlog(&slogWithZerolog)
 		slog.SetDefault(Slog)
 	}
 	Logger.Info().Msgf("log created")
@@ -191,7 +192,8 @@ func NewTestLogger() *zerolog.Logger {
 func init() {
 	Logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stdout}).With().Timestamp().Caller().Logger().Level(zerolog.DebugLevel)
 	log.Logger = Logger
-	Slog = slog.New(&FastZerologHandler{logger: &Logger})
+	slogWithZerolog := zerolog.New(zerolog.ConsoleWriter{Out: os.Stdout}).With().Timestamp().Logger().Level(zerolog.DebugLevel)
+	Slog = slog.New(&FastZerologHandler{logger: &slogWithZerolog})
 	slog.SetDefault(Slog)
 }
 
@@ -199,6 +201,6 @@ func DefaultSlog() *slog.Logger {
 	return Slog
 }
 
-func MakeSlog(logger *zerolog.Logger) *slog.Logger {
+func _makeSlog(logger *zerolog.Logger) *slog.Logger {
 	return slog.New(&FastZerologHandler{logger: logger})
 }
