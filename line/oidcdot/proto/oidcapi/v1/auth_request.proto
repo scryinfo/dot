@@ -4,6 +4,7 @@ package oidcapi.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+import "oidcapi/v1/base.proto";
 
 option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
 
@@ -20,18 +21,18 @@ message AuthRequest {
   string application_id = 4;
   string callback_uri = 5;
   string transfer_state = 6;
-  repeated string arompt = 7;
+  repeated string prompt = 7;
   // repeated language.Tag UiLocales = 8;
   string login_hint = 9;
   google.protobuf.Duration max_auth_age = 10;
   string user_id = 11;
   repeated string scopes = 12;
-  string response_type = 13; //oidc.ResponseType
-  string response_mode = 14; //oidc.ResponseMode
+  ResponseType response_type = 13; //oidc.ResponseType
+  ResponseMode response_mode = 14; //oidc.ResponseMode
   string nonce = 15;
   OIDCCodeChallenge code_challenge = 16;
 
-  bool done = 17;
+  bool done_f = 17;
   google.protobuf.Timestamp auth_time = 18;
 }
 

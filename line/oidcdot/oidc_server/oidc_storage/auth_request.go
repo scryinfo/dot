@@ -8,14 +8,12 @@ import (
 	"github.com/zitadel/oidc/v4/pkg/op"
 )
 
-type AuthRequest struct {
-	*oidcapiv1.AuthRequest
-}
+type AuthRequest oidcapiv1.AuthRequest
 
 var _ op.AuthRequest = (*AuthRequest)(nil)
 
 func (p *AuthRequest) GetID() string {
-	return p.AuthRequest.Id
+	return p.Id
 }
 
 func (p *AuthRequest) GetACR() string {
@@ -24,58 +22,58 @@ func (p *AuthRequest) GetACR() string {
 
 func (p *AuthRequest) GetAMR() []string {
 	// this example only uses password for authentication
-	if p.AuthRequest.Done {
+	if p.DoneF {
 		return []string{"pwd"}
 	}
 	return nil
 }
 
 func (p *AuthRequest) GetAudience() []string {
-	return []string{p.AuthRequest.ApplicationId} // this example will always just use the client_id as audience
+	return []string{p.ApplicationId} // this example will always just use the client_id as audience
 }
 
 func (p *AuthRequest) GetAuthTime() time.Time {
-	return p.AuthRequest.AuthTime.AsTime()
+	return p.AuthTime.AsTime()
 }
 
 func (p *AuthRequest) GetClientID() string {
-	return p.AuthRequest.ApplicationId
+	return p.ApplicationId
 }
 
 func (p *AuthRequest) GetCodeChallenge() *oidc.CodeChallenge {
-	return CodeChallengeToOIDC(p.AuthRequest.CodeChallenge)
+	return CodeChallengeToOIDC(p.CodeChallenge)
 }
 
 func (p *AuthRequest) GetNonce() string {
-	return p.AuthRequest.Nonce
+	return p.Nonce
 }
 
 func (p *AuthRequest) GetRedirectURI() string {
-	return p.AuthRequest.CallbackUri
+	return p.CallbackUri
 }
 
 func (p *AuthRequest) GetResponseType() oidc.ResponseType {
-	return oidc.ResponseType(p.AuthRequest.ResponseType)
+	return oidc.ResponseType(p.ResponseType)
 }
 
 func (p *AuthRequest) GetResponseMode() oidc.ResponseMode {
-	return oidc.ResponseMode(p.AuthRequest.ResponseMode)
+	return oidc.ResponseMode(p.ResponseMode)
 }
 
 func (p *AuthRequest) GetScopes() []string {
-	return p.AuthRequest.Scopes
+	return p.Scopes
 }
 
 func (p *AuthRequest) GetState() string {
-	return p.AuthRequest.TransferState
+	return p.TransferState
 }
 
 func (p *AuthRequest) GetSubject() string {
-	return p.AuthRequest.UserId
+	return p.UserId
 }
 
 func (p *AuthRequest) Done() bool {
-	return p.AuthRequest.Done
+	return p.DoneF
 }
 
 func CodeChallengeToOIDC(challenge *oidcapiv1.OIDCCodeChallenge) *oidc.CodeChallenge {

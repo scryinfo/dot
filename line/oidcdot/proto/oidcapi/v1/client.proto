@@ -3,64 +3,9 @@ syntax = "proto3";
 package oidcapi.v1;
 
 import "google/protobuf/duration.proto";
+import "oidcapi/v1/base.proto";
 
 option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
-
-enum ApplicationType {
-  APPLICATION_TYPE_UNSPECIFIED = 0;
-  APPLICATION_TYPE_WEB = 1; // op.ApplicationTypeWeb
-  APPLICATION_TYPE_USER_AGENT = 2; // op.ApplicationTypeUserAgent
-  APPLICATION_TYPE_NATIVE = 3; // op.ApplicationTypeNative
-}
-
-enum AuthMethod {
-  AUTH_METHOD_UNSPECIFIED = 0;
-  AUTH_METHOD_BASIC = 1; // oidc.AuthMethodBasic
-  AUTH_METHOD_POST = 2; // oidc.AuthMethodPost
-  AUTH_METHOD_NONE = 3; // oidc.AuthMethodNone
-  AUTH_METHOD_PRIVATE_KEY_JWT = 4; // oidc.AuthMethodPrivateKeyJWT
-}
-
-enum AccessTokenType {
-  ACCESS_TOKEN_TYPE_UNSPECIFIED = 0;
-  ACCESS_TOKEN_TYPE_BEARER = 1; // oidc.AccessTokenTypeBearer
-  ACCESS_TOKEN_TYPE_JWT = 2; // oidc.AccessTokenTypeJWT
-}
-
-enum ResponseType {
-  RESPONSE_TYPE_UNSPECIFIED = 0;
-  RESPONSE_TYPE_CODE = 1; // oidc.ResponseTypeCode
-  RESPONSE_TYPE_ID_TOKEN = 2; // oidc.ResponseTypeIDToken
-  RESPONSE_TYPE_ID_TOKEN_ONLY = 3; // oidc.ResponseTypeIDTokenOnly
-}
-
-enum ResponseMode {
-  RESPONSE_MODE_UNSPECIFIED = 0;
-  RESPONSE_MODE_QUERY = 1; // oidc.ResponseModeQuery
-  RESPONSE_MODE_FRAGMENT = 2; // oidc.ResponseModeFragment
-  RESPONSE_MODE_FORM_POST = 3; // oidc.ResponseModeFormPost
-}
-
-enum GrantType {
-  GRANT_TYPE_UNSPECIFIED = 0;
-  GRANT_TYPE_CODE = 1; // oidc.GrantTypeCode
-  GRANT_TYPE_REFRESH_TOKEN = 2; // oidc.GrantTypeRefreshToken
-  GRANT_TYPE_CLIENT_CREDENTIALS = 3; // oidc.GrantTypeClientCredentials
-  GRANT_TYPE_BEARER = 4; // oidc.GrantTypeBearer
-  GRANT_TYPE_TOKEN_EXCHANGE = 5; // oidc.GrantTypeTokenExchange
-  GRANT_TYPE_IMPLICIT = 6; // oidc.GrantTypeImplicit
-  GRANT_TYPE_DEVICE_CODE = 7; // oidc.GrantTypeDeviceCode
-}
-
-enum Scope {
-  SCOPE_UNSPECIFIED = 0;
-  SCOPE_OPENID = 1; // oidc.ScopeOpenID
-  SCOPE_PROFILE = 2; // oidc.ScopeProfile
-  SCOPE_EMAIL = 3; // oidc.ScopeEmail
-  SCOPE_ADDRESS = 4; // oidc.ScopeAddress
-  SCOPE_PHONE = 5; // oidc.ScopePhone
-  SCOPE_OFFLINE_ACCESS = 6; // oidc.ScopeOfflineAccess
-}
 
 message OidcClient {
   uint64 expire_ts = 1;

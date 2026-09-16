@@ -219,6 +219,61 @@ func (m *_ResponseTypeEx) EnumsProto() []oidcapiv1.ResponseType {
 	}
 }
 
+// ResposeMode
+type _ResponseModeEx struct{}
+
+var ResponseModeEx = _ResponseModeEx{}
+var _ EnumTo[oidcapiv1.ResponseMode, oidc.ResponseMode] = (*_ResponseModeEx)(nil)
+
+func (m *_ResponseModeEx) ToGoType(p oidcapiv1.ResponseMode) oidc.ResponseMode {
+	switch p {
+	case oidcapiv1.ResponseMode_RESPONSE_MODE_UNSPECIFIED:
+		dot.Logger.Error().Msgf("unknown response mode, =%d", p)
+		return oidc.ResponseModeQuery
+	case oidcapiv1.ResponseMode_RESPONSE_MODE_QUERY:
+		return oidc.ResponseModeQuery
+	case oidcapiv1.ResponseMode_RESPONSE_MODE_FRAGMENT:
+		return oidc.ResponseModeFragment
+	case oidcapiv1.ResponseMode_RESPONSE_MODE_FORM_POST:
+		return oidc.ResponseModeFormPost
+	default:
+		dot.Logger.Error().Msgf("unknown response mode, =%d", p)
+		return oidc.ResponseModeQuery
+	}
+}
+
+func (m *_ResponseModeEx) ToProto(g oidc.ResponseMode) oidcapiv1.ResponseMode {
+	switch g {
+	case oidc.ResponseModeQuery:
+		return oidcapiv1.ResponseMode_RESPONSE_MODE_QUERY
+	case oidc.ResponseModeFragment:
+		return oidcapiv1.ResponseMode_RESPONSE_MODE_FRAGMENT
+	case oidc.ResponseModeFormPost:
+		return oidcapiv1.ResponseMode_RESPONSE_MODE_FORM_POST
+	default:
+		dot.Logger.Error().Msgf("unknown response mode, =%s", g)
+		return oidcapiv1.ResponseMode_RESPONSE_MODE_UNSPECIFIED
+	}
+}
+
+// EnumsGo implements [EnumTo].
+func (m *_ResponseModeEx) EnumsGo() []oidc.ResponseMode {
+	return []oidc.ResponseMode{
+		oidc.ResponseModeQuery,
+		oidc.ResponseModeFragment,
+		oidc.ResponseModeFormPost,
+	}
+}
+
+// EnumsProto implements [EnumTo].
+func (m *_ResponseModeEx) EnumsProto() []oidcapiv1.ResponseMode {
+	return []oidcapiv1.ResponseMode{
+		oidcapiv1.ResponseMode_RESPONSE_MODE_QUERY,
+		oidcapiv1.ResponseMode_RESPONSE_MODE_FRAGMENT,
+		oidcapiv1.ResponseMode_RESPONSE_MODE_FORM_POST,
+	}
+}
+
 // GrantType
 type _GrantTypeEx struct{}
 
