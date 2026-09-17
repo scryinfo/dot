@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	loginPath    = "/auth/login"
-	logoutPath   = "/auth/logout"
-	callbackPath = "/auth/callback"
+	loginPath    = "/auth2/login"
+	logoutPath   = "/auth2/logout"
+	callbackPath = "/auth2/callback"
 )
 
 type AuthConfig struct {

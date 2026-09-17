@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"github.com/zitadel/oidc/v4/pkg/client/rp"
 )
 
@@ -37,7 +38,8 @@ func (s *OidcProvider) newOIDCRelyingParty() error {
 
 	config := s.config
 	rpOpts := []rp.Option{}
-	provider, err := rp.NewRelyingPartyOIDC(ctx, config.OidcIssuer, config.ClientID, config.ClientSecret, config.RedirectURL, []string{}, rpOpts...)
+	provider, err := rp.NewRelyingPartyOIDC(ctx, config.OidcIssuer, config.ClientID, config.ClientSecret, config.RedirectURL,
+		oidc_storage.ScopeEx.EnumsGo(), rpOpts...)
 	if err != nil {
 		s.logger.Error().AnErr("init oidc client failed", err).Send()
 		return err
