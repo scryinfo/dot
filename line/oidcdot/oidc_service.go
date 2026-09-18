@@ -1,8 +1,11 @@
 package oidcdot
 
 import (
+	"embed"
 	"fmt"
+	"io/fs"
 	"log/slog"
+	"net/http"
 	"time"
 
 	"github.com/scryinfo/dot/dot"
@@ -11,6 +14,9 @@ import (
 	"github.com/zitadel/oidc/v4/pkg/op"
 	"golang.org/x/text/language"
 )
+
+//go:embed oidc_web/dist
+var webFS embed.FS
 
 type OidcServiceHttp struct {
 	config               *OidcServiceConfig
@@ -44,6 +50,20 @@ func NewOidcServiceHttp(config *OidcServiceConfig, mux *rpcdot.ConnectHttpServer
 		return nil, err
 	}
 	mux.Handle("/", d.oidcProvider)
+	{
+		staticFS, err := fs.Sub(webFS, "dist/assets")
+		if err != nil {
+			return nil, err
+		}
+
+		mux.Handle(
+			"/assets/",
+			http.StripPrefix(
+				"/assets/",
+				http.FileServer(http.FS(staticFS)),
+			),
+		)
+	}
 
 	return d, nil
 }

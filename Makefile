@@ -32,6 +32,7 @@ clean_web:
 build_web:
 	cd line/db/pebble_service/kv_ts && bun install && bun run build
 	cd line/oidcdot/oidc_ts && bun install && bun run build
+	cd line/oidcdot/oidc_web && bun install && bun run build-ssg
 	cd samples/rpc/web_rpc/client && bun install && bun run build
 	cd samples/oidcs/app && bun install && bun run build
 tidy:
@@ -64,6 +65,7 @@ format:
 	bun run format
 build: ${ROCKSDB_INSTALL}
 	bun install
+	cd line/oidcdot/oidc_web && bun install && bun run build-ssg
 	# command go build -ldflags="-s -w" ./...
 	cd demo && make build
 	cd line/db/tools/gdao && command go build ./...
