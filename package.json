@@ -5,7 +5,7 @@
     "samples/oidcs/app",
     "line/db/pebble_service/kv_ts",
     "line/oidcdot/oidc_ts",
-    "samples/oidcs/oidc_web"
+    "line/oidcdot/oidc_web"
   ],
   "scripts": {
     "lint": "oxlint --fix",
