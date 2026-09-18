@@ -63,9 +63,10 @@ format:
 	cd samples && make format
 	cd line/db/pebble_service && make format
 	bun run format
-build: ${ROCKSDB_INSTALL}
-	bun install
+line/oidcdot/oidc_web/dist/login.html:
 	cd line/oidcdot/oidc_web && bun install && bun run build-ssg
+build: ${ROCKSDB_INSTALL} line/oidcdot/oidc_web/dist/login.html
+	bun install
 	# command go build -ldflags="-s -w" ./...
 	cd demo && make build
 	cd line/db/tools/gdao && command go build ./...
