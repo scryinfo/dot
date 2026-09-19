@@ -15,12 +15,13 @@ import (
 	"golang.org/x/text/language"
 )
 
-//go:embed oidc_web/dist
+//go:embed oidc_web/dist/*
 var webFS embed.FS
+
+const loginFile = "oidc_web/dist/login.html"
 
 type OidcServiceHttp struct {
 	config               *OidcServiceConfig
-	logger               *dot.LoggerType
 	connectHttpServerMux *rpcdot.ConnectHttpServerMux
 	store                *oidc_storage.StoragePebble2
 	oidcProvider         op.OpenIDProvider
@@ -32,38 +33,51 @@ type OidcServiceConfig struct {
 	KeyId      string `toml:"key_id" json:"key_id" yaml:"key_id" mapstructure:"key_id"`
 }
 
-func NewOidcServiceHttp(config *OidcServiceConfig, mux *rpcdot.ConnectHttpServerMux, store *oidc_storage.StoragePebble2, logger *dot.LoggerType) (*OidcServiceHttp, error) {
+func init() {
+	// if file, err := webFS.Open(loginFile); err == nil {
+	// 	bs, err := io.ReadAll(file)
+	// 	if err != nil {
+	// 		dot.Logger.Error().Err(err).Send()
+	// 	}
+	// 	loginReader = bytes.NewReader(bs)
+	// 	loginModTime = time.Now()
+	// 	_ = file.Close()
+	// }else {
+	// 	dot.Logger.Error().Err(err).Send()
+	// }
+}
+
+func NewOidcServiceHttp(config *OidcServiceConfig, mux *rpcdot.ConnectHttpServerMux, store *oidc_storage.StoragePebble2) (*OidcServiceHttp, error) {
 	if len(config.Key) != 32 {
 		err := fmt.Errorf("key must be 32 characters")
-		logger.Error().Err(err).Send()
+		dot.Logger.Error().Err(err).Send()
 		return nil, err
 	}
 
 	d := &OidcServiceHttp{
 		config:               config,
-		logger:               logger,
 		connectHttpServerMux: mux,
 		store:                store,
 	}
 	err := d.initOp()
 	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return nil, err
 	}
-	mux.Handle("/", d.oidcProvider)
 	{
-		staticFS, err := fs.Sub(webFS, "dist/assets")
+		staticFS, err := fs.Sub(webFS, "oidc_web/dist/assets")
 		if err != nil {
+			dot.Logger.Error().Err(err).Send()
 			return nil, err
 		}
 
 		mux.Handle(
 			"/assets/",
-			http.StripPrefix(
-				"/assets/",
-				http.FileServer(http.FS(staticFS)),
-			),
+			http.StripPrefix("/assets/", http.FileServer(http.FS(staticFS))),
 		)
+		mux.HandleFunc("/login", d.Login)
 	}
+	mux.Handle("/", d.oidcProvider)
 
 	return d, nil
 }
@@ -76,11 +90,22 @@ func (p *OidcServiceHttp) initOp() error {
 	copy(key[:], p.config.Key)
 	op, err := newOP(p.store, p.config.OidcIssuer, key, p.config.KeyId, dot.Slog)
 	if err != nil {
-		p.logger.Error().Err(err).Send()
+		dot.Logger.Error().Err(err).Send()
 		return err
 	}
 	p.oidcProvider = op
 	return nil
+}
+
+func (a *OidcServiceHttp) Login(w http.ResponseWriter, req *http.Request) {
+	// set Content-Type header to text/html, otherwise the method http.ServeContent will check and set it, it take more time
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	http.ServeFileFS(w, req, webFS, loginFile)
+	// http.ServeContent(w, req, "login.html", loginModTime, loginReader)
+}
+
+func (a *OidcServiceHttp) Logout(w http.ResponseWriter, req *http.Request) {
+	//todo
 }
 
 // newOP will create an OpenID Provider for localhost on a specified port

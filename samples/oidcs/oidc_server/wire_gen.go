@@ -58,7 +58,7 @@ func InitializeService() (*Line, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
-	oidcServiceHttp, err := oidcdot.NewOidcServiceHttp(oidcServiceConfig, connectHttpServerMux, storagePebble2, v)
+	oidcServiceHttp, err := oidcdot.NewOidcServiceHttp(oidcServiceConfig, connectHttpServerMux, storagePebble2)
 	if err != nil {
 		cleanup2()
 		cleanup()
