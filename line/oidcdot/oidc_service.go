@@ -116,10 +116,35 @@ func (p *OidcServiceHttp) LoginPost(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "authRequestId is required", http.StatusBadRequest)
 		return
 	}
+	username := req.FormValue(oidcconsts.UsernameParam)
+	if username == "" {
+		http.Error(w, "username is required", http.StatusBadRequest)
+		return
+	}
+	password := req.FormValue(oidcconsts.PasswordParam)
+	if password == "" {
+		http.Error(w, "password is required", http.StatusBadRequest)
+		return
+	}
 
 	authReq, err := p.store.AuthRequestByID(req.Context(), authRequestId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	user, err := p.store.UserByKeyname(req.Context(), username)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	ok, err := oidc_storage.PasswordHash.ComparePasswordAndHash(password, user.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		http.Error(w, "invalid password", http.StatusUnauthorized)
 		return
 	}
 

@@ -43,8 +43,9 @@ func (s *StoragePebble2) AuthRequestByCode(context.Context, string) (op.AuthRequ
 }
 
 // AuthRequestByID implements [op.Storage].
-func (s *StoragePebble2) AuthRequestByID(context.Context, string) (op.AuthRequest, error) {
-	panic("unimplemented")
+func (s *StoragePebble2) AuthRequestByID(ctx context.Context, authRequestId string) (op.AuthRequest, error) {
+	auth, err := s.authRequestDao.Find(daobase.IdType(authRequestId))
+	return &auth, err
 }
 
 // AuthorizeClientIDSecret implements [op.Storage].

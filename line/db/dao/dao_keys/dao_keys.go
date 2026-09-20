@@ -4,6 +4,7 @@ var (
 	PrefixAuthCode       = []byte("oidc:auth_code:")
 	PrefixAuthRequest    = []byte("oidc:auth_request:")
 	PrefixUser           = []byte("oidc:user:")
+	PrefixIndexUser      = []byte("oidc:indexuser:")
 	PrefixIdentity       = []byte("oidc:identity:")
 	PrefixUserIdentities = []byte("oidc:user_identities:")
 	PrefixToken          = []byte("oidc:token:")
