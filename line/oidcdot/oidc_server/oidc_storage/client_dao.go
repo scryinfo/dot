@@ -14,6 +14,7 @@ import (
 	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/scryinfo/dot/line/db/pebble2dot/dao_pebble2"
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
+	oidcconsts "github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_consts"
 	"github.com/zitadel/oidc/v4/pkg/oidc"
 	"github.com/zitadel/oidc/v4/pkg/op"
 )
@@ -181,16 +182,16 @@ func (m *OidcClient) IsScopeAllowed(scope string) bool {
 func (m *OidcClient) LoginURL(authRequestID string) string {
 	baseURL := m.LoginUrlF
 	if baseURL == "" {
-		baseURL = LoginEndpoint
+		baseURL = oidcconsts.LoginEndpoint
 	}
 
 	u, err := url.Parse(baseURL)
 	if err != nil {
 		dot.Logger.Error().AnErr("failed to parse login URL", err).Send()
-		return LoginEndpoint + "?" + QueryAuthRequestID + "=" + authRequestID
+		return oidcconsts.LoginEndpoint + "?" + oidcconsts.QueryAuthRequestID + "=" + authRequestID
 	}
 	q := u.Query()
-	q.Set(QueryAuthRequestID, authRequestID)
+	q.Set(oidcconsts.QueryAuthRequestID, authRequestID)
 	u.RawQuery = q.Encode()
 	return u.String()
 }

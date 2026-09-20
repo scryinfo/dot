@@ -21,6 +21,7 @@ go_rocksdb := CGO_CFLAGS="${CGO_CFLAGS}" CGO_LDFLAGS="${CGO_LDFLAGS}" command go
 
 clean:
 	rm -rf go.sum go.work.sum demo/go.sum node_modules bun.lock
+	rm -rf line/oidcdot/oidc_web/dist
 	command go clean
 	cd demo && make clean
 	cd samples && make clean

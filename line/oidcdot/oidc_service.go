@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/scryinfo/dot/dot"
+	oidcconsts "github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_consts"
 	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/zitadel/oidc/v4/pkg/op"
@@ -75,7 +76,8 @@ func NewOidcServiceHttp(config *OidcServiceConfig, mux *rpcdot.ConnectHttpServer
 			"/assets/",
 			http.StripPrefix("/assets/", http.FileServer(http.FS(staticFS))),
 		)
-		mux.HandleFunc("/login", d.Login)
+		mux.HandleFunc("GET /login", d.LoginGet)
+		mux.HandleFunc("POST /login", d.LoginPost)
 	}
 	mux.Handle("/", d.oidcProvider)
 
@@ -97,14 +99,35 @@ func (p *OidcServiceHttp) initOp() error {
 	return nil
 }
 
-func (a *OidcServiceHttp) Login(w http.ResponseWriter, req *http.Request) {
+func (p *OidcServiceHttp) LoginGet(w http.ResponseWriter, req *http.Request) {
+	authRequestId := req.URL.Query().Get(oidcconsts.QueryAuthRequestID)
+	if authRequestId == "" {
+		http.Error(w, "authRequestId is required", http.StatusBadRequest)
+		return
+	}
 	// set Content-Type header to text/html, otherwise the method http.ServeContent will check and set it, it take more time
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	http.ServeFileFS(w, req, webFS, loginFile)
 	// http.ServeContent(w, req, "login.html", loginModTime, loginReader)
 }
+func (p *OidcServiceHttp) LoginPost(w http.ResponseWriter, req *http.Request) {
+	authRequestId := req.URL.Query().Get(oidcconsts.QueryAuthRequestID)
+	if authRequestId == "" {
+		http.Error(w, "authRequestId is required", http.StatusBadRequest)
+		return
+	}
 
-func (a *OidcServiceHttp) Logout(w http.ResponseWriter, req *http.Request) {
+	authReq, err := p.store.AuthRequestByID(req.Context(), authRequestId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.ServeFileFS(w, req, webFS, loginFile)
+	// http.ServeContent(w, req, "login.html", loginModTime, loginReader)
+}
+
+func (p *OidcServiceHttp) Logout(w http.ResponseWriter, req *http.Request) {
 	//todo
 }
 
