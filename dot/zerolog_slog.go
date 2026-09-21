@@ -98,8 +98,15 @@ func (p *FastZerologHandler) Handle(ctx context.Context, r slog.Record) error {
 			e.Time(a.Key, val.Time())
 		case slog.KindUint64:
 			e.Uint64(a.Key, val.Uint64())
+		case slog.KindAny:
+			temp := val.Any()
+			if ee, ok := temp.(error); ok {
+				e.AnErr(a.Key, ee)
+			} else {
+				e.Interface(a.Key, temp)
+			}
 		default:
-			e.Any(a.Key, val.Any())
+			e.Any(a.Key, a.Value.Any())
 		}
 		return true
 	})
