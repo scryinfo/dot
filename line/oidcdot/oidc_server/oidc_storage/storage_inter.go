@@ -8,6 +8,10 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+func (s *StoragePebble2) SaveAuthRequest_(authReq *AuthRequest) error {
+	return s.authRequestDao.Add(authReq)
+}
+
 func (s *StoragePebble2) authRequestToInternal(authReq *oidc.AuthRequest, userID string) *AuthRequest {
 	var codeChallenge *oidcapiv1.OIDCCodeChallenge
 	if authReq.CodeChallenge != "" {

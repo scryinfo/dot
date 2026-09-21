@@ -49,6 +49,9 @@ func (s *StoragePebble2) AuthRequestByCode(ctx context.Context, code string) (op
 
 // AuthRequestByID implements [op.Storage].
 func (s *StoragePebble2) AuthRequestByID(ctx context.Context, authRequestId string) (op.AuthRequest, error) {
+	return s.AuthRequestById_(authRequestId)
+}
+func (s *StoragePebble2) AuthRequestById_(authRequestId string) (*AuthRequest, error) {
 	auth, err := s.authRequestDao.Find(daobase.IdType(authRequestId))
 	return &auth, err
 }

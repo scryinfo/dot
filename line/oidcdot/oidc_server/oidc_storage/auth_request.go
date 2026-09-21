@@ -53,11 +53,11 @@ func (p *AuthRequest) GetRedirectURI() string {
 }
 
 func (p *AuthRequest) GetResponseType() oidc.ResponseType {
-	return oidc.ResponseType(p.ResponseType)
+	return ResponseTypeEx.ToGoType(p.ResponseType)
 }
 
 func (p *AuthRequest) GetResponseMode() oidc.ResponseMode {
-	return oidc.ResponseMode(p.ResponseMode)
+	return ResponseModeEx.ToGoType(p.ResponseMode)
 }
 
 func (p *AuthRequest) GetScopes() []string {

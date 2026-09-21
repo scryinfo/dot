@@ -69,7 +69,7 @@
     "cwd": "${ZED_WORKTREE_ROOT}/samples/oidcs/oidc_server"
   },
   {
-    "label": "oidc_app",
+    "label": "oidc_app_server",
     "type": "go",
     "adapter": "Delve",
     "request": "launch",

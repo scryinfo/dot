@@ -127,7 +127,7 @@ func (p *OidcServiceHttp) LoginPost(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	authReq, err := p.store.AuthRequestByID(req.Context(), authRequestId)
+	authReq, err := p.store.AuthRequestById_(authRequestId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -145,6 +145,12 @@ func (p *OidcServiceHttp) LoginPost(w http.ResponseWriter, req *http.Request) {
 	}
 	if !ok {
 		http.Error(w, "invalid password", http.StatusUnauthorized)
+		return
+	}
+	authReq.DoneF = true
+	err = p.store.SaveAuthRequest_(authReq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	_, err = op.CreateAuthRequestCode(req.Context(), authReq, p.store, p.oidcProvider.Crypto())
