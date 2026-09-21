@@ -147,9 +147,12 @@ func (p *OidcServiceHttp) LoginPost(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "invalid password", http.StatusUnauthorized)
 		return
 	}
-
-	http.ServeFileFS(w, req, webFS, loginFile)
-	// http.ServeContent(w, req, "login.html", loginModTime, loginReader)
+	_, err = op.CreateAuthRequestCode(req.Context(), authReq, p.store, p.oidcProvider.Crypto())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	op.AuthResponse(authReq, p.oidcProvider, w, req)
 }
 
 func (p *OidcServiceHttp) Logout(w http.ResponseWriter, req *http.Request) {

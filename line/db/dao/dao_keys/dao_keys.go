@@ -2,6 +2,7 @@ package daokeys
 
 var (
 	PrefixAuthCode       = []byte("oidc:auth_code:")
+	PrefixIndexAuthCode  = []byte("oidc:indexauth_code:")
 	PrefixAuthRequest    = []byte("oidc:auth_request:")
 	PrefixUser           = []byte("oidc:user:")
 	PrefixIndexUser      = []byte("oidc:indexuser:")

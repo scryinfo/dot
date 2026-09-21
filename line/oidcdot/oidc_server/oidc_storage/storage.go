@@ -5,15 +5,12 @@ import (
 	"time"
 
 	jose "github.com/go-jose/go-jose/v4"
-	"github.com/google/uuid"
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	daobase "github.com/scryinfo/dot/line/db/dao/dao_base"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
-	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
 	"github.com/zitadel/oidc/v4/pkg/oidc"
 	"github.com/zitadel/oidc/v4/pkg/op"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var _ op.Storage = (*StoragePebble2)(nil)
@@ -38,8 +35,16 @@ type StoragePebble2 struct {
 }
 
 // AuthRequestByCode implements [op.Storage].
-func (s *StoragePebble2) AuthRequestByCode(context.Context, string) (op.AuthRequest, error) {
-	panic("unimplemented")
+func (s *StoragePebble2) AuthRequestByCode(ctx context.Context, code string) (op.AuthRequest, error) {
+	codeAuth, err := s.codeAuthRequestDao.Find(daobase.IdType(code))
+	if err != nil {
+		return nil, err
+	}
+	auth, err := s.authRequestDao.Find(daobase.IdType(codeAuth.AuthRequestId))
+	if err != nil {
+		return nil, err
+	}
+	return &auth, nil
 }
 
 // AuthRequestByID implements [op.Storage].
@@ -59,8 +64,21 @@ func (s *StoragePebble2) CreateAccessAndRefreshTokens(ctx context.Context, reque
 }
 
 // CreateAccessToken implements [op.Storage].
-func (s *StoragePebble2) CreateAccessToken(context.Context, op.TokenRequest) (accessTokenID string, expiration time.Time, err error) {
-	panic("unimplemented")
+func (s *StoragePebble2) CreateAccessToken(ctx context.Context, request op.TokenRequest) (accessTokenID string, expiration time.Time, err error) {
+	var applicationID string
+	switch req := request.(type) {
+	case *AuthRequest:
+		// if authenticated for an app (auth code / implicit flow) we must save the client_id to the token
+		applicationID = req.ApplicationId
+	case op.TokenExchangeRequest:
+		applicationID = req.GetClientID()
+	}
+
+	token, err := s.accessToken(applicationID, "", request.GetSubject(), request.GetAudience(), request.GetScopes())
+	if err != nil {
+		return "", time.Time{}, err
+	}
+	return token.Id, token.Expiration.AsTime(), nil
 }
 
 // CreateAuthRequest implements [op.Storage].
@@ -72,20 +90,29 @@ func (s *StoragePebble2) CreateAuthRequest(ctx context.Context, authReq *oidc.Au
 
 	// typically, you'll fill your storage / storage model with the information of the passed object
 	request := s.authRequestToInternal(authReq, userId)
-
-	// you'll also have to create a unique id for the request (this might be done by your database; we'll use a UUID)
-	request.Id = uuid.NewString()
-
-	// and save it in your database (for demonstration purposed we will use a simple map)
-	// s.authRequests[request.ID] = request
-
+	err := s.authRequestDao.Add(request)
+	if err != nil {
+		return nil, err
+	}
 	// finally, return the request (which implements the AuthRequest interface of the OP
 	return request, nil
 }
 
 // DeleteAuthRequest implements [op.Storage].
-func (s *StoragePebble2) DeleteAuthRequest(context.Context, string) error {
-	panic("unimplemented")
+func (s *StoragePebble2) DeleteAuthRequest(ctx context.Context, id string) error {
+	err := s.authRequestDao.RemoveBy(daobase.IdType(id))
+	if err != nil {
+		return err
+	}
+	m, err := s.codeAuthRequestDao.FindByAuthRequestId(id)
+	if err != nil {
+		return err
+	}
+	err = s.codeAuthRequestDao.Remove(m)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // GetClientByClientID implements [op.Storage].
@@ -133,8 +160,16 @@ func (s *StoragePebble2) RevokeToken(ctx context.Context, tokenOrTokenID string,
 }
 
 // SaveAuthCode implements [op.Storage].
-func (s *StoragePebble2) SaveAuthCode(context.Context, string, string) error {
-	panic("unimplemented")
+func (s *StoragePebble2) SaveAuthCode(ctx context.Context, id string, code string) error {
+	m := CodeAuthRequest{
+		Code:          code,
+		AuthRequestId: id,
+	}
+	err := s.codeAuthRequestDao.Add(&m)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // SetIntrospectionFromToken implements [op.Storage].
@@ -144,7 +179,7 @@ func (s *StoragePebble2) SetIntrospectionFromToken(ctx context.Context, userinfo
 
 // SetUserinfoFromScopes implements [op.Storage].
 func (s *StoragePebble2) SetUserinfoFromScopes(ctx context.Context, userinfo *oidc.UserInfo, userID string, clientID string, scopes []string) error {
-	panic("unimplemented")
+	return nil
 }
 
 // SetUserinfoFromToken implements [op.Storage].
@@ -194,34 +229,6 @@ func (s *StoragePebble2) TokenRequestByRefreshToken(ctx context.Context, refresh
 // ValidateJWTProfileScopes implements [op.Storage].
 func (s *StoragePebble2) ValidateJWTProfileScopes(ctx context.Context, userID string, scopes []string) ([]string, error) {
 	panic("unimplemented")
-}
-
-func (s *StoragePebble2) authRequestToInternal(authReq *oidc.AuthRequest, userID string) *AuthRequest {
-	var codeChallenge *oidcapiv1.OIDCCodeChallenge
-	if authReq.CodeChallenge != "" {
-		codeChallenge = &oidcapiv1.OIDCCodeChallenge{
-			Challenge: authReq.CodeChallenge,
-			Method:    string(authReq.CodeChallengeMethod),
-		}
-	}
-
-	return &AuthRequest{
-		Id:            NewAuthRequestId(),
-		CreationDate:  timestamppb.New(time.Now()),
-		ApplicationId: authReq.ClientID,
-		CallbackUri:   authReq.RedirectURI,
-		TransferState: authReq.State,
-		Prompt:        PromptToInternal(authReq.Prompt),
-		// UiLocales:     authReq.UILocales,
-		LoginHint:     authReq.LoginHint,
-		MaxAuthAge:    MaxAgeToInternal(authReq.MaxAge),
-		UserId:        userID,
-		Scopes:        authReq.Scopes,
-		ResponseType:  ResponseTypeEx.ToProto(authReq.ResponseType),
-		ResponseMode:  ResponseModeEx.ToProto(authReq.ResponseMode),
-		Nonce:         authReq.Nonce,
-		CodeChallenge: codeChallenge,
-	}
 }
 
 func NewStoragePebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType,
