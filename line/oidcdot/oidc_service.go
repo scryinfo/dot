@@ -148,6 +148,7 @@ func (p *OidcServiceHttp) LoginPost(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	authReq.DoneF = true
+	authReq.UserId = user.Id
 	err = p.store.SaveAuthRequest_(authReq)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
