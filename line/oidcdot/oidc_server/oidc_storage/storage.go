@@ -7,6 +7,7 @@ import (
 	jose "github.com/go-jose/go-jose/v4"
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/lib/kits"
 	daobase "github.com/scryinfo/dot/line/db/dao/dao_base"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/zitadel/oidc/v4/pkg/oidc"
@@ -63,7 +64,43 @@ func (s *StoragePebble2) AuthorizeClientIDSecret(ctx context.Context, clientID s
 
 // CreateAccessAndRefreshTokens implements [op.Storage].
 func (s *StoragePebble2) CreateAccessAndRefreshTokens(ctx context.Context, request op.TokenRequest, currentRefreshToken string) (accessTokenID string, newRefreshToken string, expiration time.Time, err error) {
-	panic("unimplemented")
+	// generate tokens via token exchange flow if request is relevant
+	if teReq, ok := request.(op.TokenExchangeRequest); ok {
+		return s.exchangeRefreshToken(ctx, teReq)
+	}
+
+	// get the information depending on the request type / implementation
+	applicationID, authTime, amr := getInfoFromRequest(request)
+
+	// if currentRefreshToken is empty (Code Flow) we will have to create a new refresh token
+	if currentRefreshToken == "" {
+		refreshTokenID := kits.Ids.Uuid()
+		accessToken, err := s.accessToken(applicationID, refreshTokenID, request.GetSubject(), request.GetAudience(), request.GetScopes())
+		if err != nil {
+			return "", "", time.Time{}, err
+		}
+		refreshToken, err := s.createRefreshToken(accessToken, amr, authTime)
+		if err != nil {
+			return "", "", time.Time{}, err
+		}
+		return accessToken.Id, refreshToken, accessToken.Expiration.AsTime(), nil
+	}
+
+	// if we get here, the currentRefreshToken was not empty, so the call is a refresh token request
+	// we therefore will have to check the currentRefreshToken and renew the refresh token
+
+	newRefreshToken = kits.Ids.Uuid()
+
+	accessToken, err := s.accessToken(applicationID, newRefreshToken, request.GetSubject(), request.GetAudience(), request.GetScopes())
+	if err != nil {
+		return "", "", time.Time{}, err
+	}
+
+	if err := s.renewRefreshToken(currentRefreshToken, newRefreshToken, accessToken.Id); err != nil {
+		return "", "", time.Time{}, err
+	}
+
+	return accessToken.Id, newRefreshToken, accessToken.Expiration.AsTime(), nil
 }
 
 // CreateAccessToken implements [op.Storage].

@@ -6,6 +6,7 @@ import (
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"github.com/zitadel/oidc/v4/pkg/client/rp"
+	httphelper "github.com/zitadel/oidc/v4/pkg/http"
 )
 
 type OidcProviderConfig struct {
@@ -13,6 +14,7 @@ type OidcProviderConfig struct {
 	ClientID     string `toml:"client_id" json:"client_id" yaml:"client_id" mapstructure:"client_id"`                 // "your-client-id"
 	ClientSecret string `toml:"client_secret" json:"client_secret" yaml:"client_secret" mapstructure:"client_secret"` // "your-client-secret"
 	RedirectURL  string `toml:"redirect_url" json:"redirect_url" yaml:"redirect_url" mapstructure:"redirect_url"`     // "http://localhost:8080/callback"
+	CookieKey    string `toml:"cookie_key" json:"cookie_key" yaml:"cookie_key" mapstructure:"cookie_key"`             // 32/64 bytes
 }
 
 type OidcProvider struct {
@@ -37,7 +39,11 @@ func (s *OidcProvider) newOIDCRelyingParty() error {
 	ctx := context.Background()
 
 	config := s.config
-	rpOpts := []rp.Option{}
+	cookieHandler := httphelper.NewCookieHandler([]byte(config.CookieKey), []byte(config.CookieKey), httphelper.WithUnsecure())
+	rpOpts := []rp.Option{
+		rp.WithCookieHandler(cookieHandler),
+		rp.WithPKCE(cookieHandler),
+	}
 	provider, err := rp.NewRelyingPartyOIDC(ctx, config.OidcIssuer, config.ClientID, config.ClientSecret, config.RedirectURL,
 		oidc_storage.ScopeEx.EnumsGo(), rpOpts...)
 	if err != nil {

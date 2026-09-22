@@ -33,6 +33,7 @@ func TestGenerateDefaultData(t *testing.T) {
 			ApplicationTypeF: oidcapiv1.ApplicationType_APPLICATION_TYPE_WEB,
 			RedirectUrisF:    []string{"http://localhost:8089/auth2/callback"},
 			ResponseTypesF:   oidc_storage.ResponseTypeEx.EnumsProto(),
+			GrantTypesF:      oidc_storage.GrantTypeEx.EnumsProto(),
 		})
 		data.Clients = append(data.Clients, oidc_storage.OidcClient{
 			Id:               "dajma87ip8rh292hmrkg",
@@ -41,6 +42,7 @@ func TestGenerateDefaultData(t *testing.T) {
 			ApplicationTypeF: oidcapiv1.ApplicationType_APPLICATION_TYPE_WEB,
 			RedirectUrisF:    []string{"http://localhost:8089/auth2/callback"},
 			ResponseTypesF:   oidc_storage.ResponseTypeEx.EnumsProto(),
+			GrantTypesF:      oidc_storage.GrantTypeEx.EnumsProto(),
 		})
 		data.Users = append(data.Users, oidc_storage.User{
 			Id:                "dajma87ip8rh292hmrl0",

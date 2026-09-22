@@ -89,3 +89,16 @@ func CodeChallengeToOIDC(challenge *oidcapiv1.OIDCCodeChallenge) *oidc.CodeChall
 		Method:    challengeMethod,
 	}
 }
+func CodeChallengeToProto(challenge *oidc.CodeChallenge) *oidcapiv1.OIDCCodeChallenge {
+	if challenge == nil {
+		return nil
+	}
+	challengeMethod := oidc.CodeChallengeMethodPlain
+	if challenge.Method == "S256" {
+		challengeMethod = oidc.CodeChallengeMethodS256
+	}
+	return &oidcapiv1.OIDCCodeChallenge{
+		Challenge: challenge.Challenge,
+		Method:    string(challengeMethod),
+	}
+}

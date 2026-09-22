@@ -37,6 +37,7 @@ oidc_issuer = "http://localhost:8090"
 client_id = "dajma87ip8rh292hmrk0"
 client_secret = "66"
 redirect_url = "http://localhost:8089/auth2/callback"
+cookie_key = "12345678901234567890123456789012"
 
 [auth_config]
 login_path = "/auth2/login"

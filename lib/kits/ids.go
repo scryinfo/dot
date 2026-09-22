@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"time"
+	"uuid"
 
 	"github.com/rs/xid"
 )
@@ -27,4 +28,10 @@ func (c _Ids) NewAuthCode() string {
 		panic("rand.Read: " + err.Error())
 	}
 	return base64.RawURLEncoding.EncodeToString(buf)
+}
+func (c _Ids) Uuid() string {
+	return uuid.New().String()
+}
+func (c _Ids) UuidV7() string {
+	return uuid.NewV7().String()
 }
