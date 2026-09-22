@@ -11,15 +11,17 @@
   },
   "dependencies": {
     "unocss": "^66.10.5",
-    "vue": "^3.5.42"
+    "vue": "3.6.0-rc.9"
   },
   "devDependencies": {
-    "@types/node": "^24.13.3",
-    "@vitejs/plugin-vue": "^6.0.8",
+    "@types/node": "^26.6.2",
+    "@unhead/vue": "^3.4.1",
+    "@vitejs/plugin-vue": "^6.0.9",
     "@vue/tsconfig": "^0.9.1",
-    "typescript": "~6.0.2",
+    "typescript": "~6.0.3",
     "vite": "^8.3.0",
     "vite-ssg": "^28.3.0",
+    "vue-router": "^5.3.1",
     "vue-tsc": "^3.3.11"
   }
 }

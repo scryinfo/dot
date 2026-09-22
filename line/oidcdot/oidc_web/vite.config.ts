@@ -6,7 +6,7 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vite.dev/config/
 export default defineConfig({
   base: './',
-  plugins: [vue(), UnoCSS()],
+  plugins: [vue({ features: { vapor: true } }), UnoCSS()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
