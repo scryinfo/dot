@@ -14,6 +14,7 @@ import (
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/zitadel/oidc/v4/pkg/op"
 	"golang.org/x/text/language"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 //go:embed oidc_web/dist/*
@@ -149,6 +150,7 @@ func (p *OidcServiceHttp) LoginPost(w http.ResponseWriter, req *http.Request) {
 	}
 	authReq.DoneF = true
 	authReq.UserId = user.Id
+	authReq.AuthTime = timestamppb.Now()
 	err = p.store.SaveAuthRequest_(authReq)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
