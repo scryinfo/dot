@@ -20,7 +20,7 @@ import (
 //go:embed oidc_web/dist/*
 var webFS embed.FS
 
-const loginFile = "oidc_web/dist/op_login.html"
+const opLoginFile = "oidc_web/dist/op_login.html"
 
 type OidcServiceHttp struct {
 	config               *OidcServiceConfig
@@ -108,7 +108,7 @@ func (p *OidcServiceHttp) LoginGet(w http.ResponseWriter, req *http.Request) {
 	}
 	// set Content-Type header to text/html, otherwise the method http.ServeContent will check and set it, it take more time
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	http.ServeFileFS(w, req, webFS, loginFile)
+	http.ServeFileFS(w, req, webFS, opLoginFile)
 	// http.ServeContent(w, req, "login.html", loginModTime, loginReader)
 }
 func (p *OidcServiceHttp) LoginPost(w http.ResponseWriter, req *http.Request) {

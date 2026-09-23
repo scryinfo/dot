@@ -2,7 +2,9 @@ package oidcdot
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"time"
 
@@ -30,6 +32,23 @@ type AuthConfig struct {
 	LoginPath    string `json:"login_path" toml:"login_path" yaml:"login_path" mapstructure:"login_path"`
 	LogoutPath   string `json:"logout_path" toml:"logout_path" yaml:"logout_path" mapstructure:"logout_path"`
 	CallbackPath string `json:"callback_path" toml:"callback_path" yaml:"callback_path" mapstructure:"callback_path"`
+}
+
+//go:embed oidc_templates/*
+var goTemplateFs embed.FS
+
+const rpLoginFile = "oidc_templates/rp_login.gohtml"
+
+var (
+	tmplRpLogin *template.Template
+)
+
+func init() {
+	tmpl, err := template.ParseFS(goTemplateFs, rpLoginFile)
+	if err != nil {
+		panic(err)
+	}
+	tmplRpLogin = tmpl
 }
 
 func NewAuthService(config *AuthConfig, mux *rpcdot.ConnectHttpServerMux, provider *OidcProvider, logger *dot.LoggerType) *AuthService {
@@ -107,13 +126,17 @@ func (a *AuthService) OidcCallback() http.HandlerFunc {
 		// fmt.Println("access token", tokens.AccessToken)
 		// fmt.Println("refresh token", tokens.RefreshToken)
 		// fmt.Println("id token", tokens.IDToken)
-		data, err := json.Marshal(info)
+		_, err := json.Marshal(info)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		w.Header().Set("content-type", "application/json")
-		w.Write(data)
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		err = tmplRpLogin.Execute(w, map[string]string{})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		// http.ServeFileFS(w, r, goTemplateFs, rpLoginFile)
 	}
 	return rp.CodeExchangeHandler(rp.UserinfoCallback(marshalUserinfo), a.provider.provider)
 }
