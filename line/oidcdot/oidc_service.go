@@ -20,7 +20,7 @@ import (
 //go:embed oidc_web/dist/*
 var webFS embed.FS
 
-const loginFile = "oidc_web/dist/login.html"
+const loginFile = "oidc_web/dist/op_login.html"
 
 type OidcServiceHttp struct {
 	config               *OidcServiceConfig

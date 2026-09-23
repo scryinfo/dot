@@ -9,8 +9,16 @@ export const createApp = ViteSSG(
   {
     routes: [
       {
-        path: '/login',
-        component: () => import('@/pages/login.vue'),
+        path: '/op_login',
+        component: () => import('@/pages/op_login.vue'),
+      },
+      {
+        path: '/op_logout',
+        component: () => import('@/pages/op_logout.vue'),
+      },
+      {
+        path: '/rp_login',
+        component: () => import('@/pages/rp_login.vue'),
       },
     ],
   }, // { routes },
