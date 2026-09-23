@@ -4,6 +4,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -17,6 +18,9 @@ import (
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 	"github.com/scryinfo/scryg/sutils/ssignal"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+	"go.opentelemetry.io/otel/sdk/trace"
 )
 
 type Line struct {
@@ -59,6 +63,9 @@ var LineSet = wire.NewSet(
 )
 
 func main() {
+	// cleanTracer := initTracer()
+	// defer cleanTracer()
+
 	line, clean, err := InitializeService()
 	if err != nil {
 		if line != nil {
@@ -82,6 +89,22 @@ func main() {
 	dot.Logger.Info().Msg("line exist")
 }
 
-func makeTestData(line *Line) {
+func initTracer() func() {
+	exporter, err := stdouttrace.New(
+		stdouttrace.WithWriter(os.Stdout),
+		stdouttrace.WithPrettyPrint(),
+	)
+	if err != nil {
+		panic(err)
+	}
 
+	tp := trace.NewTracerProvider(
+		trace.WithBatcher(exporter),
+	)
+
+	otel.SetTracerProvider(tp)
+
+	return func() {
+		_ = tp.Shutdown(context.Background())
+	}
 }

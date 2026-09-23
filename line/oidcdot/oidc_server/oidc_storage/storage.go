@@ -2,8 +2,10 @@ package oidc_storage
 
 import (
 	"context"
+	"errors"
 	"time"
 
+	"github.com/cockroachdb/pebble/v2"
 	jose "github.com/go-jose/go-jose/v4"
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
@@ -39,10 +41,12 @@ type StoragePebble2 struct {
 func (s *StoragePebble2) AuthRequestByCode(ctx context.Context, code string) (op.AuthRequest, error) {
 	codeAuth, err := s.codeAuthRequestDao.Find(daobase.IdType(code))
 	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return nil, err
 	}
 	auth, err := s.authRequestDao.Find(daobase.IdType(codeAuth.AuthRequestId))
 	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return nil, err
 	}
 	return &auth, nil
@@ -54,6 +58,9 @@ func (s *StoragePebble2) AuthRequestByID(ctx context.Context, authRequestId stri
 }
 func (s *StoragePebble2) AuthRequestById_(authRequestId string) (*AuthRequest, error) {
 	auth, err := s.authRequestDao.Find(daobase.IdType(authRequestId))
+	if err != nil {
+		dot.Logger.Error().Err(err).Send()
+	}
 	return &auth, err
 }
 
@@ -77,10 +84,12 @@ func (s *StoragePebble2) CreateAccessAndRefreshTokens(ctx context.Context, reque
 		refreshTokenID := kits.Ids.Uuid()
 		accessToken, err := s.accessToken(applicationID, refreshTokenID, request.GetSubject(), request.GetAudience(), request.GetScopes())
 		if err != nil {
+			dot.Logger.Error().Err(err).Send()
 			return "", "", time.Time{}, err
 		}
 		refreshToken, err := s.createRefreshToken(accessToken, amr, authTime)
 		if err != nil {
+			dot.Logger.Error().Err(err).Send()
 			return "", "", time.Time{}, err
 		}
 		return accessToken.Id, refreshToken, accessToken.Expiration.AsTime(), nil
@@ -93,10 +102,12 @@ func (s *StoragePebble2) CreateAccessAndRefreshTokens(ctx context.Context, reque
 
 	accessToken, err := s.accessToken(applicationID, newRefreshToken, request.GetSubject(), request.GetAudience(), request.GetScopes())
 	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return "", "", time.Time{}, err
 	}
 
 	if err := s.renewRefreshToken(currentRefreshToken, newRefreshToken, accessToken.Id); err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return "", "", time.Time{}, err
 	}
 
@@ -116,6 +127,7 @@ func (s *StoragePebble2) CreateAccessToken(ctx context.Context, request op.Token
 
 	token, err := s.accessToken(applicationID, "", request.GetSubject(), request.GetAudience(), request.GetScopes())
 	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return "", time.Time{}, err
 	}
 	return token.Id, token.Expiration.AsTime(), nil
@@ -125,6 +137,7 @@ func (s *StoragePebble2) CreateAccessToken(ctx context.Context, request op.Token
 func (s *StoragePebble2) CreateAuthRequest(ctx context.Context, authReq *oidc.AuthRequest, userId string) (op.AuthRequest, error) {
 
 	if len(authReq.Prompt) == 1 && authReq.Prompt[0] == "none" {
+		dot.Logger.Error().Err(oidc.ErrLoginRequired()).Send()
 		return nil, oidc.ErrLoginRequired()
 	}
 
@@ -132,6 +145,7 @@ func (s *StoragePebble2) CreateAuthRequest(ctx context.Context, authReq *oidc.Au
 	request := s.authRequestToInternal(authReq, userId)
 	err := s.authRequestDao.Add(request)
 	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return nil, err
 	}
 	// finally, return the request (which implements the AuthRequest interface of the OP
@@ -142,14 +156,17 @@ func (s *StoragePebble2) CreateAuthRequest(ctx context.Context, authReq *oidc.Au
 func (s *StoragePebble2) DeleteAuthRequest(ctx context.Context, id string) error {
 	err := s.authRequestDao.RemoveBy(daobase.IdType(id))
 	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return err
 	}
 	m, err := s.codeAuthRequestDao.FindByAuthRequestId(id)
 	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return err
 	}
 	err = s.codeAuthRequestDao.Remove(m)
 	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return err
 	}
 	return nil
@@ -159,7 +176,7 @@ func (s *StoragePebble2) DeleteAuthRequest(ctx context.Context, id string) error
 func (s *StoragePebble2) GetClientByClientID(ctx context.Context, clientID string) (op.Client, error) {
 	m, err := s.oidcClientDao.Find((daobase.IdType(clientID)))
 	if err != nil {
-		s.log.Debug().Err(err).Send()
+		dot.Logger.Error().Err(err).Send()
 		return nil, err
 	}
 	return &m, nil
@@ -207,6 +224,7 @@ func (s *StoragePebble2) SaveAuthCode(ctx context.Context, id string, code strin
 	}
 	err := s.codeAuthRequestDao.Add(&m)
 	if err != nil {
+		dot.Logger.Error().Err(err).Send()
 		return err
 	}
 	return nil
@@ -214,17 +232,101 @@ func (s *StoragePebble2) SaveAuthCode(ctx context.Context, id string, code strin
 
 // SetIntrospectionFromToken implements [op.Storage].
 func (s *StoragePebble2) SetIntrospectionFromToken(ctx context.Context, userinfo *oidc.IntrospectionResponse, tokenID string, subject string, clientID string) error {
-	panic("unimplemented")
+	token, err := s.tokenDao.Find(daobase.IdType(tokenID))
+	if err != nil {
+		if errors.Is(err, pebble.ErrNotFound) {
+			userinfo.Active = false
+			return nil
+		}
+
+		return err
+	}
+	user, err := s.userDao.Find(daobase.IdType(subject))
+	if err != nil {
+		return err
+	}
+
+	// if token.Revoked {
+	// 	introspection.Active = false
+	// 	return nil
+	// }
+
+	if time.Now().After(token.Expiration.AsTime()) {
+		userinfo.Active = false
+		return nil
+	}
+
+	userinfo.Active = true
+	userinfo.Subject = subject
+	userinfo.ClientID = clientID
+	userinfo.Username = user.Username
+
+	return nil
 }
 
 // SetUserinfoFromScopes implements [op.Storage].
 func (s *StoragePebble2) SetUserinfoFromScopes(ctx context.Context, userinfo *oidc.UserInfo, userID string, clientID string, scopes []string) error {
+	user, err := s.userDao.Find(daobase.IdType(userID))
+	if err != nil {
+		dot.Logger.Error().Err(err).Send()
+		return err
+	}
+
+	userinfo.Subject = user.Id
+	for _, scope := range scopes {
+		switch scope {
+		case oidc.ScopeProfile:
+			userinfo.Name = user.Username
+			userinfo.GivenName = user.FirstName
+			userinfo.FamilyName = user.LastName
+			// userinfo.Nickname = user.Nickname
+			// userinfo.PreferredUsername = user.Username
+			// userinfo.Picture = user.AvatarURL
+			// userinfo.UpdatedAt = oidc.FromTime(user.UpdatedAt)
+
+		case oidc.ScopeEmail:
+			userinfo.Email = user.Email
+			userinfo.EmailVerified = oidc.Bool(user.EmailVerified)
+
+		case oidc.ScopePhone:
+			userinfo.PhoneNumber = user.Phone
+			userinfo.PhoneNumberVerified = oidc.Bool(user.PhoneVerified)
+
+		case oidc.ScopeAddress:
+			userinfo.Address = &oidc.UserInfoAddress{
+				Formatted:     user.Address.Formatted,
+				StreetAddress: user.Address.StreetAddress,
+				Locality:      user.Address.Locality,
+				Region:        user.Address.Region,
+				PostalCode:    user.Address.PostalCode,
+				Country:       user.Address.Country,
+			}
+		}
+	}
 	return nil
 }
 
 // SetUserinfoFromToken implements [op.Storage].
 func (s *StoragePebble2) SetUserinfoFromToken(ctx context.Context, userinfo *oidc.UserInfo, tokenID string, subject string, origin string) error {
-	panic("unimplemented")
+	user, err := s.userDao.Find(daobase.IdType(subject))
+	if err != nil {
+		return err
+	}
+
+	userinfo.Subject = subject
+	userinfo.Name = user.Username
+	// userinfo.GivenName = user.GivenName
+	// userinfo.FamilyName = user.FamilyName
+	// userinfo.NickName = user.NickName
+	userinfo.PreferredUsername = user.Username
+
+	userinfo.Email = user.Email
+	userinfo.EmailVerified = oidc.Bool(user.EmailVerified)
+
+	userinfo.PhoneNumber = user.Phone
+	userinfo.PhoneNumberVerified = oidc.Bool(user.PhoneVerified)
+
+	return nil
 }
 
 // SignatureAlgorithms implements [op.Storage].

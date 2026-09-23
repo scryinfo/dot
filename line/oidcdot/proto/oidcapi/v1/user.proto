@@ -17,6 +17,7 @@ message User {
   bool phone_verified = 10;
   string preferred_language = 11;
   bool is_admin = 12;
+  UserInfoAddress address = 13;
 }
 
 message Identity {
@@ -32,4 +33,12 @@ message UserIdentities {
   uint64 expire_ts = 1;
   string user_id = 2;
   repeated string identities = 3;
+}
+message UserInfoAddress {
+  string formatted = 1;
+  string street_address = 2;
+  string locality = 3;
+  string region = 4;
+  string postal_code = 5;
+  string country = 6;
 }

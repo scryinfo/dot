@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/lib/kits"
@@ -18,6 +19,7 @@ import (
 	"github.com/scryinfo/scryg/sutils/sfile"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 func TestGenerateDefaultData(t *testing.T) {
@@ -34,6 +36,8 @@ func TestGenerateDefaultData(t *testing.T) {
 			RedirectUrisF:    []string{"http://localhost:8089/auth2/callback"},
 			ResponseTypesF:   oidc_storage.ResponseTypeEx.EnumsProto(),
 			GrantTypesF:      oidc_storage.GrantTypeEx.EnumsProto(),
+			ClockSkewF:       durationpb.New(0),
+			IdTokenLifetimeF: durationpb.New(time.Minute * 5),
 		})
 		data.Clients = append(data.Clients, oidc_storage.OidcClient{
 			Id:               "dajma87ip8rh292hmrkg",
@@ -43,6 +47,8 @@ func TestGenerateDefaultData(t *testing.T) {
 			RedirectUrisF:    []string{"http://localhost:8089/auth2/callback"},
 			ResponseTypesF:   oidc_storage.ResponseTypeEx.EnumsProto(),
 			GrantTypesF:      oidc_storage.GrantTypeEx.EnumsProto(),
+			ClockSkewF:       durationpb.New(0),
+			IdTokenLifetimeF: durationpb.New(time.Minute * 5),
 		})
 		data.Users = append(data.Users, oidc_storage.User{
 			Id:                "dajma87ip8rh292hmrl0",

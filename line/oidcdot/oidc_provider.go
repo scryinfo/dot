@@ -43,6 +43,8 @@ func (s *OidcProvider) newOIDCRelyingParty() error {
 	rpOpts := []rp.Option{
 		rp.WithCookieHandler(cookieHandler),
 		rp.WithPKCE(cookieHandler),
+		rp.WithLogger(dot.Slog),
+		rp.WithSigningAlgsFromDiscovery(),
 	}
 	provider, err := rp.NewRelyingPartyOIDC(ctx, config.OidcIssuer, config.ClientID, config.ClientSecret, config.RedirectURL,
 		oidc_storage.ScopeEx.EnumsGo(), rpOpts...)
