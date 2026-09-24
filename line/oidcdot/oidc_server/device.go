@@ -114,7 +114,7 @@ func redirectBack(w http.ResponseWriter, r *http.Request, prompt string) {
 		Path:     "/device",
 		RawQuery: values.Encode(),
 	}
-	http.Redirect(w, r, url.String(), http.StatusSeeOther)
+	http.Redirect(w, r, url.String(), http.StatusFound)
 }
 
 const userCodeCookieName = "user_code"

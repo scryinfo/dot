@@ -5,6 +5,7 @@ import (
 	"embed"
 	"encoding/json"
 	"html/template"
+	"io/fs"
 	"net/http"
 	"time"
 
@@ -12,10 +13,13 @@ import (
 	"github.com/scryinfo/dot/dot"
 	oidcapiv1 "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1"
 	"github.com/scryinfo/dot/line/oidcdot/oidc_impl"
+	oidcrp "github.com/scryinfo/dot/line/oidcdot/oidc_rp"
+	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/zitadel/oidc/v4/pkg/client/rp"
 	httphelper "github.com/zitadel/oidc/v4/pkg/http"
 	"github.com/zitadel/oidc/v4/pkg/oidc"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -51,8 +55,8 @@ func init() {
 	tmplRpLogin = tmpl
 }
 
-func NewAuthService(config *AuthConfig, mux *rpcdot.ConnectHttpServerMux, provider *OidcProvider, logger *dot.LoggerType) *AuthService {
-	d := &AuthService{logger: logger, provider: provider}
+func NewAuthService(config *AuthConfig, mux *rpcdot.ConnectHttpServerMux, provider *OidcProvider, dao *oidc_storage.AppSessionDaoPebble2, logger *dot.LoggerType) (*AuthService, error) {
+	d := &AuthService{logger: logger, provider: provider, appSessionHelper: oidcrp.NewAppSessionHelper(dao)}
 	if config.HashKey == "" {
 		config.HashKey = "t123456789012345678901234567890t"
 	}
@@ -82,23 +86,37 @@ func NewAuthService(config *AuthConfig, mux *rpcdot.ConnectHttpServerMux, provid
 		}
 	}
 
+	{
+		staticFS, err := fs.Sub(webFS, "oidc_web/dist/assets")
+		if err != nil {
+			dot.Logger.Error().Err(err).Send()
+			return nil, err
+		}
+
+		mux.Handle(
+			"/auth2/assets/",
+			http.StripPrefix("/auth2/assets/", http.FileServer(http.FS(staticFS))),
+		)
+	}
+
 	mux.HandleFunc(config.LoginPath, d.Login)
 	mux.HandleFunc(config.LogoutPath, d.Logout)
 	mux.HandleFunc(config.CallbackPath, d.OidcCallback())
 
 	// path, handle := oidcapiv1connect.NewAuthServiceHandler(d)
 	// mux.Handle(path, handle)
-	return d
+	return d, nil
 }
 
 type AuthService struct {
-	logger    *dot.LoggerType
-	provider  *OidcProvider
-	rpOptions []rp.Option
+	logger           *dot.LoggerType
+	provider         *OidcProvider
+	rpOptions        []rp.Option
+	appSessionHelper *oidcrp.AppSessionHelper
 }
 
 // Callback implements [apiv1connect.AuthServiceHandler].
-func (a *AuthService) OidcCallback() http.HandlerFunc {
+func (p *AuthService) OidcCallback() http.HandlerFunc {
 	// res := &oidcapiv1.OidcCallbackResponse{
 	// 	Resbase: &oidcapiv1.Resbase{},
 	// }
@@ -122,13 +140,14 @@ func (a *AuthService) OidcCallback() http.HandlerFunc {
 	// res.UserId = userInfo.Subject
 	// res.Email = userInfo.Email
 
-	marshalUserinfo := func(w http.ResponseWriter, r *http.Request, tokens *oidc.Tokens[*oidc.IDTokenClaims], state string, rp rp.RelyingParty, info *oidc.UserInfo) {
-		// fmt.Println("access token", tokens.AccessToken)
-		// fmt.Println("refresh token", tokens.RefreshToken)
-		// fmt.Println("id token", tokens.IDToken)
-		_, err := json.Marshal(info)
+	marshalUserinfo := func(w http.ResponseWriter, req *http.Request, tokens *oidc.Tokens[*oidc.IDTokenClaims], state string, rp rp.RelyingParty, info *oidc.UserInfo) {
+		session, err := p.appSessionHelper.GetWebId(w, req)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if session.RedirectUri != "" {
+			http.Redirect(w, req, session.RedirectUri, http.StatusFound)
 			return
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -136,18 +155,17 @@ func (a *AuthService) OidcCallback() http.HandlerFunc {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-		// http.ServeFileFS(w, r, goTemplateFs, rpLoginFile)
+		http.ServeFileFS(w, req, goTemplateFs, rpLoginFile)
 	}
-	return rp.CodeExchangeHandler(rp.UserinfoCallback(marshalUserinfo), a.provider.provider)
+	return rp.CodeExchangeHandler(rp.UserinfoCallback(marshalUserinfo), p.provider.provider)
 }
 
 // Check implements [apiv1connect.AuthServiceHandler].
-func (a *AuthService) Check(context.Context, *connect.Request[oidcapiv1.CheckRequest]) (*connect.Response[oidcapiv1.CheckResponse], error) {
+func (p *AuthService) Check(context.Context, *connect.Request[oidcapiv1.CheckRequest]) (*connect.Response[oidcapiv1.CheckResponse], error) {
 	panic("unimplemented")
 }
 
-// Login implements [apiv1connect.AuthServiceHandler].
-func (a *AuthService) Login(w http.ResponseWriter, req *http.Request) {
+func (p *AuthService) Login(w http.ResponseWriter, req *http.Request) {
 	// res := &oidcapiv1.LoginResponse{
 	// 	Resbase: &oidcapiv1.Resbase{},
 	// }
@@ -156,17 +174,30 @@ func (a *AuthService) Login(w http.ResponseWriter, req *http.Request) {
 	// 	a.logger.Error().Err(err).Send()
 	// 	return nil, err
 	// }
+	session, err := p.appSessionHelper.GetWebId(w, req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	redirectUri := p.appSessionHelper.RedirectUri(req)
+	if redirectUri != "" {
+		session.RedirectUri = redirectUri
+	}
+	session.CreationDate = timestamppb.Now()
+	err = p.appSessionHelper.SaveSession(session)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	rp.AuthURLHandler(func() string {
 		return oidc_impl.NewState()
-	}, a.provider.provider)(w, req)
+	}, p.provider.provider)(w, req)
 }
 
-// Logout implements [apiv1connect.AuthServiceHandler].
-func (a *AuthService) Logout(w http.ResponseWriter, re *http.Request) {
+func (p *AuthService) Logout(w http.ResponseWriter, re *http.Request) {
 	panic("unimplemented")
 }
 
-// Reshresh implements [apiv1connect.AuthServiceHandler].
-func (a *AuthService) Reshresh(context.Context, *connect.Request[oidcapiv1.ReshreshRequest]) (*connect.Response[oidcapiv1.ReshreshResponse], error) {
+func (p *AuthService) Reshresh(context.Context, *connect.Request[oidcapiv1.ReshreshRequest]) (*connect.Response[oidcapiv1.ReshreshResponse], error) {
 	panic("unimplemented")
 }

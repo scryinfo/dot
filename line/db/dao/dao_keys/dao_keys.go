@@ -18,4 +18,8 @@ var (
 
 	SettingOg = []byte("admin:setting:og:")
 	SettingTg = []byte("admin:setting:tg:")
+
+	/// app server
+	PrefixAppSession      = []byte("app:session:")
+	PrefixIndexAppSession = []byte("app:index_session:")
 )

@@ -3,6 +3,10 @@ import './style.css'
 import 'virtual:uno.css'
 import App from './App.vue'
 
+import OpLogin from '@/pages/op_login.vue'
+import OpLogout from '@/pages/op_logout.vue'
+import RpLogin from '@/pages/rp_login.vue'
+
 export const createApp = ViteSSG(
   // the root component
   App,
@@ -10,19 +14,16 @@ export const createApp = ViteSSG(
     routes: [
       {
         path: '/op_login',
-        component: () => import('@/pages/op_login.vue'),
+        component: OpLogin,
       },
       {
         path: '/op_logout',
-        component: () => import('@/pages/op_logout.vue'),
+        component: OpLogout,
       },
       {
         path: '/rp_login',
-        component: () => import('@/pages/rp_login.vue'),
+        component: RpLogin,
       },
     ],
-  }, // { routes },
-  // ({ app, router, routes, isClient, initialState }) => {
-  //   // install plugins etc.
-  // },
+  },
 )

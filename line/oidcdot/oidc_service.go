@@ -77,8 +77,8 @@ func NewOidcServiceHttp(config *OidcServiceConfig, mux *rpcdot.ConnectHttpServer
 			"/assets/",
 			http.StripPrefix("/assets/", http.FileServer(http.FS(staticFS))),
 		)
-		mux.HandleFunc("GET /login", d.LoginGet)
-		mux.HandleFunc("POST /login", d.LoginPost)
+		mux.HandleFunc("GET /op_login", d.LoginGet)
+		mux.HandleFunc("POST /op_login", d.LoginPost)
 	}
 	mux.Handle("/", d.oidcProvider)
 

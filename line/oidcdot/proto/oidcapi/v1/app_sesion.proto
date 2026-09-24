@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package oidcapi.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/scryinfo/dot/line/oidcdot/oidc_gen/oidcapi/v1;oidcapiv1";
+
+
+
+message AppSession {
+  uint64 expire_ts = 1;
+  string id = 2;
+  google.protobuf.Timestamp creation_date = 3;
+  string token_id = 4;
+  string redirect_uri = 5;
+  string web_id = 6; // web session id for browser,  this is a uuid
+}

@@ -33,7 +33,10 @@ func InitializeService() (*Line, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	authService := oidcdot.NewAuthService(authConfig, connectHttpServerMux, oidcProvider, v)
+	authService, err := oidcdot.NewAuthService(authConfig, connectHttpServerMux, oidcProvider, v)
+	if err != nil {
+		return nil, nil, err
+	}
 	connectServerConfig := &lineConfig.ConnectServer
 	handlerMiddle := rpcdot.NewHandlerMiddle()
 	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, v, handlerMiddle)

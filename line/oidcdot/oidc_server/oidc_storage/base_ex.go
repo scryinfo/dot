@@ -252,7 +252,7 @@ func (m *_ResponseModeEx) ToProto(g oidc.ResponseMode) oidcapiv1.ResponseMode {
 		return oidcapiv1.ResponseMode_RESPONSE_MODE_FORM_POST
 	default:
 		dot.Logger.Error().Msgf("unknown response mode, =%s", g)
-		return oidcapiv1.ResponseMode_RESPONSE_MODE_UNSPECIFIED
+		return oidcapiv1.ResponseMode_RESPONSE_MODE_QUERY
 	}
 }
 

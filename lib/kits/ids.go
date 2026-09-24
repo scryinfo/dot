@@ -35,3 +35,11 @@ func (c _Ids) Uuid() string {
 func (c _Ids) UuidV7() string {
 	return uuid.NewV7().String()
 }
+func (c _Ids) WebSessionID() string {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		panic("rand.Read: " + err.Error())
+	}
+	return base64.RawURLEncoding.EncodeToString(b)
+}

@@ -1,8 +1,8 @@
 package oidcconsts
 
 const (
-	LoginEndpoint      = "/login"
-	LogoutEndpoint     = "/logout"
+	LoginEndpoint      = "/op_login"
+	LogoutEndpoint     = "/op_logout"
 	QueryAuthRequestID = "authRequestID"
 
 	UsernameParam = "username"
