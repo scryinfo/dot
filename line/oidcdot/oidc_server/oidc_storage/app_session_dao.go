@@ -19,7 +19,7 @@ type AppSessionDaoBadger struct {
 	dao_badger.Daobase[AppSession, *AppSession]
 }
 
-func NewAppSessionDao(db *pebble2dot.Pebble2, logger *dot.LoggerType) *AppSessionDaoPebble2 {
+func NewAppSessionDaoPebble2(db *pebble2dot.Pebble2, logger *dot.LoggerType) *AppSessionDaoPebble2 {
 	return &AppSessionDaoPebble2{
 		Daobase: dao_pebble2.NewDaobase(db, logger, NewAppSessionById),
 	}

@@ -38,5 +38,5 @@ key = "tt123456789012345678901234567890"
 key_id = "test_oidc_service_key"
 
 [pebble2]
-db_path = "data/pebble2"
+db_path = "data/pebble2_oidc_server"
 sync = false

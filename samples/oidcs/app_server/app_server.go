@@ -11,6 +11,7 @@ import (
 	"github.com/google/wire"
 	"github.com/scryinfo/dot/dot"
 	"github.com/scryinfo/dot/line"
+	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/scryinfo/dot/line/oidcdot"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -32,6 +33,7 @@ type LineConfig struct {
 	ConnectServer rpcdot.ConnectServerConfig `json:"connect_server" toml:"connect_server" yaml:"connect_server" mapstructure:"connect_server"`
 	OidcProvider  oidcdot.OidcProviderConfig `json:"oidc_provider" toml:"oidc_provider" yaml:"oidc_provider" mapstructure:"oidc_provider"`
 	AuthConfig    oidcdot.AuthConfig         `json:"auth_config" toml:"auth_config" yaml:"auth_config" mapstructure:"auth_config"`
+	Pebble2       pebble2dot.Pebble2Config   `json:"pebble2" toml:"pebble2" yaml:"pebble2" mapstructure:"pebble2"`
 }
 
 func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
@@ -44,7 +46,7 @@ func NewLineConfig(config *sconfig.SConfig) (*LineConfig, error) {
 
 var LineSet = wire.NewSet(
 	wire.Struct(new(Line), "*"),
-	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer", "OidcProvider", "AuthConfig"),
+	wire.FieldsOf(new(*LineConfig), "Log", "ConnectServer", "OidcProvider", "AuthConfig", "Pebble2"),
 	NewLineConfig,
 	line.SconfigNewConfig,
 	wire.Bind(new(dot.SConfig), new(*sconfig.SConfig)),
@@ -54,6 +56,7 @@ var LineSet = wire.NewSet(
 	line.RpcdotNewHandlerMiddle,
 	oidcdot.NewAuthService,
 	oidcdot.NewOidcProvider,
+	oidcdot.OidcPebble2Set,
 )
 
 func main() {

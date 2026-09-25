@@ -3,7 +3,6 @@ package oidcdot
 import (
 	"context"
 	"embed"
-	"encoding/json"
 	"html/template"
 	"io/fs"
 	"net/http"

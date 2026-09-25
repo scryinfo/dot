@@ -8,7 +8,9 @@ package main
 
 import (
 	"github.com/scryinfo/dot/dot"
+	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/scryinfo/dot/line/oidcdot"
+	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
 )
@@ -33,14 +35,22 @@ func InitializeService() (*Line, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	authService, err := oidcdot.NewAuthService(authConfig, connectHttpServerMux, oidcProvider, v)
+	pebble2Config := &lineConfig.Pebble2
+	pebble2, cleanup, err := pebble2dot.NewPebble2(pebble2Config, sConfig, v)
 	if err != nil {
+		return nil, nil, err
+	}
+	appSessionDaoPebble2 := oidc_storage.NewAppSessionDaoPebble2(pebble2, v)
+	authService, err := oidcdot.NewAuthService(authConfig, connectHttpServerMux, oidcProvider, appSessionDaoPebble2, v)
+	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	connectServerConfig := &lineConfig.ConnectServer
 	handlerMiddle := rpcdot.NewHandlerMiddle()
-	connectServer, cleanup, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, v, handlerMiddle)
+	connectServer, cleanup2, err := rpcdot.NewConnetServer(connectServerConfig, sConfig, connectHttpServerMux, v, handlerMiddle)
 	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	line := &Line{
@@ -49,6 +59,7 @@ func InitializeService() (*Line, func(), error) {
 		ConnectServer: connectServer,
 	}
 	return line, func() {
+		cleanup2()
 		cleanup()
 	}, nil
 }

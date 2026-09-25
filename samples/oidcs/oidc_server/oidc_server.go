@@ -13,7 +13,6 @@ import (
 	"github.com/scryinfo/dot/line"
 	"github.com/scryinfo/dot/line/db/pebble2dot"
 	"github.com/scryinfo/dot/line/oidcdot"
-	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage/default_data"
 	"github.com/scryinfo/dot/line/rpcdot"
 	"github.com/scryinfo/dot/line/sconfig"
@@ -58,7 +57,7 @@ var LineSet = wire.NewSet(
 	line.RpcdotNewHandlerMiddle,
 
 	oidcdot.NewOidcServiceHttp,
-	oidc_storage.Pebble2Set,
+	oidcdot.OidcPebble2Set,
 	default_data.NewDefaultDataPebble2,
 )
 

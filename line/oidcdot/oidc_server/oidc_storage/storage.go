@@ -405,6 +405,7 @@ var Pebble2Set = wire.NewSet(
 	NewTokenDaoPebble2,
 	NewUserDaoPebble2,
 	NewUserIdentitiesDaoPebble2,
+	NewAppSessionDaoPebble2,
 
 	pebble2dot.NewPebble2,
 )

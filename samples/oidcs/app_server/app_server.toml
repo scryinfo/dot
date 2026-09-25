@@ -45,3 +45,7 @@ logout_path = "/auth2/logout"
 callback_path = "/auth2/callback"
 hash_key = ""
 encrypt_key = ""
+
+[pebble2]
+db_path = "data/pebble2_app_server"
+sync = false
