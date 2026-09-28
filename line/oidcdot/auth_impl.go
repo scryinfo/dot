@@ -153,6 +153,7 @@ func (p *AuthService) OidcCallback() http.HandlerFunc {
 		err = tmplRpLogin.Execute(w, map[string]string{})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 		http.ServeFileFS(w, req, goTemplateFs, rpLoginFile)
 	}
