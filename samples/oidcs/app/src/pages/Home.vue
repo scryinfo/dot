@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { config } from '@/config'
 import { authService } from '@/api_impl/client'
+import { ref } from 'vue'
+
+const redirectUrl = ref('')
+;(() => {
+  const t = new URL(config.OIDC_LOGIN)
+  t.searchParams.set('_redirect_uri', window.location.href + 'logined')
+  redirectUrl.value = t.toString()
+})()
 
 async function loginApi() {
   try {
@@ -18,7 +26,7 @@ async function loginApi() {
       <a @click="loginApi">Login api</a>
     </div>
     <div>
-      <a :href="config.OIDC_LOGIN">Login</a>
+      <a :href="redirectUrl">Login</a>
     </div>
     <div>
       <a :href="config.OIDC_LOGOUT">Logout</a>

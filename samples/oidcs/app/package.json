@@ -20,6 +20,7 @@
     "@vue/tsconfig": "^0.9.1",
     "oidc_ts": "workspace:^",
     "typescript": "6.0.2",
+    "unocss": "^66.10.5",
     "vite": "^8.3.0",
     "vue-tsc": "^3.3.11"
   }
