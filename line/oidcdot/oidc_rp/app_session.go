@@ -3,6 +3,7 @@ package oidcrp
 import (
 	"net/http"
 
+	"github.com/cockroachdb/pebble/v2"
 	"github.com/scryinfo/dot/line/oidcdot/oidc_server/oidc_storage"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -42,7 +43,24 @@ func (p *AppSessionHelper) GetWebId(w http.ResponseWriter, req *http.Request) (*
 		webId := c.Value
 		oldS, err := p.dao.FindByWebId(webId)
 		if err != nil {
-			return nil, err
+			if err != pebble.ErrNotFound {
+				return nil, err
+			}
+			newS := oidc_storage.NewAppSession()
+			newS.CreationDate = timestamppb.Now()
+			err = p.dao.Add(&newS)
+			if err != nil {
+				return nil, err
+			}
+			http.SetCookie(w, &http.Cookie{
+				Name:     _session_web,
+				Value:    newS.WebId,
+				Path:     "/",
+				HttpOnly: true,
+				Secure:   true,
+				SameSite: http.SameSiteLaxMode,
+			})
+			return &newS, nil
 		}
 		return oldS, nil
 	}
