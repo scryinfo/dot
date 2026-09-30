@@ -279,7 +279,7 @@ func (s *StoragePebble2) SetUserinfoFromScopes(ctx context.Context, userinfo *oi
 			userinfo.Name = user.Username
 			userinfo.GivenName = user.FirstName
 			userinfo.FamilyName = user.LastName
-			// userinfo.Nickname = user.Nickname
+			userinfo.Nickname = user.Nickname
 			// userinfo.PreferredUsername = user.Username
 			// userinfo.Picture = user.AvatarURL
 			// userinfo.UpdatedAt = oidc.FromTime(user.UpdatedAt)
@@ -317,7 +317,7 @@ func (s *StoragePebble2) SetUserinfoFromToken(ctx context.Context, userinfo *oid
 	userinfo.Name = user.Username
 	// userinfo.GivenName = user.GivenName
 	// userinfo.FamilyName = user.FamilyName
-	// userinfo.NickName = user.NickName
+	userinfo.Nickname = user.Nickname
 	userinfo.PreferredUsername = user.Username
 
 	userinfo.Email = user.Email

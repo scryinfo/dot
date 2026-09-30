@@ -54,6 +54,7 @@ func TestGenerateDefaultData(t *testing.T) {
 			Id:                "dajma87ip8rh292hmrl0",
 			Username:          "test1",
 			Password:          "66",
+			Nickname:          "nick test1",
 			FirstName:         "test1-1",
 			LastName:          "test1-2",
 			Email:             "test1@scryinfo.info",
@@ -66,6 +67,7 @@ func TestGenerateDefaultData(t *testing.T) {
 			Id:                "dajma87ip8rh292hmrlg",
 			Username:          "test2",
 			Password:          "66",
+			Nickname:          "nick test2",
 			FirstName:         "test2-1",
 			LastName:          "test2-2",
 			Email:             "test2@scryinfo.info",
@@ -78,6 +80,7 @@ func TestGenerateDefaultData(t *testing.T) {
 			Id:                "dajma87ip8rh292hmrm0",
 			Username:          "test3",
 			Password:          "66",
+			Nickname:          "nick test3",
 			FirstName:         "test3-1",
 			LastName:          "test3-2",
 			Email:             "test3@scryinfo.info",
@@ -113,6 +116,7 @@ func TestGenerateDefaultData(t *testing.T) {
 	}
 	bs, err := json.Marshal(data)
 	assert.Nil(t, err)
+	fmt.Printf("\n\n")
 	fmt.Println(string(bs))
 	fmt.Printf("\n\n")
 }

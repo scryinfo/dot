@@ -9,15 +9,16 @@ message User {
   string id = 2;
   string username = 3;
   string password = 4;
-  string first_name = 5;
-  string last_name = 6;
-  string email = 7;
-  bool email_verified = 8;
-  string phone = 9;
-  bool phone_verified = 10;
-  string preferred_language = 11;
-  bool is_admin = 12;
-  UserInfoAddress address = 13;
+  string nickname = 5;
+  string first_name = 6;
+  string last_name = 7;
+  string email = 8;
+  bool email_verified = 9;
+  string phone = 10;
+  bool phone_verified = 11;
+  string preferred_language = 12;
+  bool is_admin = 13;
+  UserInfoAddress address = 14;
 }
 
 message Identity {
