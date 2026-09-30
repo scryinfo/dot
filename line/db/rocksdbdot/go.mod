@@ -6,7 +6,7 @@ go 1.27.1
 
 require (
 	github.com/linxGnu/grocksdb v1.11.1
-	github.com/scryinfo/dot v0.9.16
+	github.com/scryinfo/dot v0.9.17
 )
 
 require (

@@ -52,12 +52,15 @@ tidy:
 	cd db/rocksdb && command go mod tidy
 	cd db/rocksdb_bench && command go mod tidy
 	cd db/pebble_server_bench && command go mod tidy
-upgrade:
-	cd rpc/web_rpc/client && bun update --latest
-	cd oidcs/app && bun update --latest
+upgrade_go:
 	cd db/rocksdb && command go get -t -u ./... && command go mod tidy
 	cd db/rocksdb_bench && command go get -t -u ./... && command go mod tidy
 	cd db/pebble_server_bench && command go get -t -u ./... && command go mod tidy
+upgrade_ts:
+	cd rpc/web_rpc/client && bun update --latest
+	cd oidcs/app && bun update --latest
+upgrade: upgrade_go upgrade_ts
+
 format:
 	cd rpc/web_rpc/client && bun run format
 	cd db/rocksdb && command go fmt ./...

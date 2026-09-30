@@ -44,16 +44,19 @@ tidy:
 	cd line/db/rocksdbdot && command go mod tidy
 	cd samples && make tidy
 
-upgrade:
+upgrade_go:
 	command go get -t -u ./... && command go mod tidy
 	cd demo && make upgrade
 	cd line/db/tools/gdao && command go get -t -u ./... && command go mod tidy
 	cd line/db/tools/gmodel && command go get -t -u ./... && command go mod tidy
 	cd line/db/rocksdbdot && command go get -t -u ./... && command go mod tidy
-	cd samples && make upgrade
+	cd samples && make upgrade_go
+upgrade_ts:
 	cd line/db/pebble_service && make upgrade
 	cd line/oidcdot/oidc_ts && bun update --latest
 	cd line/db/pebble_service/kv_ts && bun update --latest
+	cd samples && make upgrade_ts
+upgrade: upgrade_go upgrade_ts
 
 format:
 	command go fmt ./...

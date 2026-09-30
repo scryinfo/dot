@@ -4,7 +4,7 @@ go 1.27.1
 
 require (
 	github.com/jinzhu/inflection v1.0.0
-	github.com/scryinfo/dot v0.9.16
+	github.com/scryinfo/dot v0.9.17
 	golang.org/x/tools v0.50.0
 )
 
